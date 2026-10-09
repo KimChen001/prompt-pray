@@ -4,23 +4,30 @@ import { useI18n } from "@/lib/i18n";
 import { getDaily, getDeviceId, getSettings, saveDaily, saveReading } from "@/lib/store";
 import { dailyCard } from "@/lib/tarot/daily";
 import { getCard } from "@/lib/tarot/deck";
-import { formatLocalDate, localDateKey } from "@/lib/time";
+import { formatLocalDate, localDateKey, userTimeZone } from "@/lib/time";
 import type { DrawnCard, Topic } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
 import { SourceBadge } from "@/components/bits";
+import { SkyPanel } from "@/components/SkyPanel";
 
 const TOPICS: Topic[] = ["general", "love", "work", "growth"];
 
 export default function TodayPage() {
   const { m, fmt, pick, pickList, locale } = useI18n();
   const [date, setDate] = useState<string | null>(null);
+  const [now, setNow] = useState<Date | null>(null);
+  const [tz, setTz] = useState("UTC");
   const [topic, setTopic] = useState<Topic>("general");
   const [drawn, setDrawn] = useState<DrawnCard | null>(null);
   const [revealed, setRevealed] = useState(false);
 
   // The local date is only known in the browser; also refresh it if the tab stays open past midnight.
   useEffect(() => {
-    const update = () => setDate(localDateKey());
+    setTz(userTimeZone());
+    const update = () => {
+      setDate(localDateKey());
+      setNow(new Date());
+    };
     update();
     const timer = window.setInterval(update, 60_000);
     return () => window.clearInterval(timer);
@@ -102,11 +109,7 @@ export default function TodayPage() {
       </section>
 
       <section className="grid-tiles">
-        <div className="panel stack gap-8">
-          <SourceBadge source="dev" />
-          <h2 className="h3">{m.daily.skyTitle}</h2>
-          <p className="muted small" style={{ margin: 0 }}>{m.daily.skyDev}</p>
-        </div>
+        {now && <SkyPanel localDate={date} timeZone={tz} now={now} />}
         <div className="panel stack gap-8">
           <SourceBadge source="dev" />
           <h2 className="h3">{m.daily.horoscopeTitle}</h2>

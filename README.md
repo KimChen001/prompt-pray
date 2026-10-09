@@ -41,7 +41,7 @@ npm run build
 | Module | Route | State |
 | --- | --- | --- |
 | Tarot: ask → spread → shuffle → pick from fan → reveal → reading | `/tarot`, `/tarot/new`, `/tarot/r/[id]` | **Working**, offline engine |
-| Daily card | `/today` | **Working** — card part; sky and horoscope scheduled Oct 14 |
+| Daily card + Today's sky (Moon sign/phase, sign changes, stations, lunations, retrogrades) | `/today` | **Working** — sky checked against Swiss Ephemeris for all of 2026; horoscope Oct 10 |
 | History, settings, export, clear data | `/me` | **Working** (local only) |
 | Crisis detection on the question | `/tarot/new` | **Working**, keyword layer (AI layer Oct 13) |
 | EN / 中文 switch | everywhere | **Working** — switching never changes cards or state |
@@ -60,7 +60,8 @@ Nothing in the app is mock data. Unbuilt modules show an "In development" page w
 - Ascendant, Midheaven, Placidus and Whole Sign houses: `src/lib/astro/houses.ts`. Placidus falls back to Whole Sign above ~66.6° latitude, with a notice.
 - Birth time → UTC: `src/lib/astro/birth.ts`, using the browser's IANA history (DST, pre-1970 rules, half-hour zones). Times that happened twice (fall back) ask the user; times that never happened (spring forward) are flagged with the shifted time.
 - Unknown birth time (`src/lib/astro/chart.ts`): no Rising, no houses; Sun/Moon show both signs and the local change time when they change sign that day.
-- **Accuracy check:** `tests/fixtures/charts.sweph.json` holds 8 reference charts (US east/west, Shanghai, Kolkata, Sydney, London 1965, Reykjavik, Cambridge 2026) generated with Swiss Ephemeris 2.10 outside this repo. Swiss Ephemeris is not a dependency (AGPL); it is only the test oracle. Current tolerances: planets and angles < 0.02°, Placidus cusps < 0.05°.
+- **Today's sky** (`src/lib/astro/sky.ts`): events are assigned to the user's local day. `tests/fixtures/sky-2026.sweph.json` covers every 2026 new/full moon (< 5 min), Sun ingress (< 5 min) and Mercury/Venus station (< 3 h; stations are inherently soft).
+- **Accuracy check:** `tests/fixtures/charts.sweph.json` holds 8 reference charts (US east/west, Shanghai, Kolkata, Sydney, London 1965, Reykjavik, Cambridge 2026) generated with Swiss Ephemeris 2.10 outside this repo (`scripts/oracle/` regenerates them). Swiss Ephemeris is not a dependency (AGPL); it is only the test oracle. Current tolerances: planets and angles < 0.02°, Placidus cusps < 0.05°.
 - Places: GeoNames cities5000 (CC BY 4.0), 69,780 places with IANA zones and Chinese aliases, built by `npm run build:places` into `data/places.json` and searched server-side by `/api/places` (the query is not logged).
 
 ## What was reused from the mini-program
