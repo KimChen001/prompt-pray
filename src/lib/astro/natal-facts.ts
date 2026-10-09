@@ -59,6 +59,8 @@ export interface NatalFacts {
   timeKnown: boolean;
   facts: NatalFact[];
   byId: Map<string, NatalFact>;
+  /** v1 facts only for recognizing already-saved reports; never used for new interpretation. */
+  legacyFacts?: NatalFact[];
 }
 
 const ELEMENTS: Element[] = ["fire", "earth", "air", "water"];
@@ -104,6 +106,7 @@ export function natalFacts(birth: BirthData, chart: NatalChart): NatalFacts {
   // using the widest sampled orb, never the fortuitously tight local-noon value.
   const day = known ? null : birthDayRange(birth);
   const samples = day ? Array.from({ length: 25 }, (_, i) => allPositions(new Date(day.start.getTime() + (day.end.getTime() - day.start.getTime()) * i / 24))) : null;
+  const legacyAspects: NatalFact[] = [];
   for (let i = 0; i < PLANETS.length; i++) {
     for (let j = i + 1; j < PLANETS.length; j++) {
       const a = PLANETS[i], b = PLANETS[j];
@@ -111,6 +114,13 @@ export function natalFacts(birth: BirthData, chart: NatalChart): NatalFacts {
       const maxOrb = Math.max(...Object.values(NATAL_RULES.orbs)) + NATAL_RULES.luminaryBonus;
       const hit = aspectBetween(chart.positions[a].lon, chart.positions[b].lon, maxOrb);
       if (!hit || hit.orb > orbFor(hit.aspect, a, b)) continue;
+      // Reconstruct the former v1 fingerprint so an upgrade offers an explicit refresh instead
+      // of treating this same birth chart as new and automatically paying for another report.
+      if (samples) {
+        const other = a === "moon" ? chart.positions[b].lon : chart.positions[a].lon;
+        const legacyHolds = a !== "moon" && b !== "moon" || [samples[0], samples[24]].every((p) => aspectBetween(p.moon.lon, other, orbFor(hit.aspect, a, b))?.aspect === hit.aspect);
+        if (legacyHolds) legacyAspects.push({ id: `asp.${a}.${b}.${hit.aspect}`, kind: "aspect", timeIndependent: true, a, b, aspect: hit.aspect, orb: hit.orb, tight: hit.orb <= NATAL_RULES.tightOrb });
+      }
       let orb = hit.orb;
       let orbRange: [number, number] | undefined;
       if (samples) {
@@ -175,7 +185,8 @@ export function natalFacts(birth: BirthData, chart: NatalChart): NatalFacts {
   }
 
   facts.sort((x, y) => x.id.localeCompare(y.id));
-  return { version: NATAL_RULES.version, timeKnown: known, facts, byId: new Map(facts.map((f) => [f.id, f])) };
+  const legacyFacts = samples ? [...facts.filter((f) => f.kind !== "aspect"), ...legacyAspects].sort((a, b) => a.id.localeCompare(b.id)) : undefined;
+  return { version: NATAL_RULES.version, timeKnown: known, facts, byId: new Map(facts.map((f) => [f.id, f])), ...(legacyFacts ? { legacyFacts } : {}) };
 }
 
 export function factBodies(f: NatalFact): Body[] {

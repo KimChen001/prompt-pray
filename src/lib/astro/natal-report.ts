@@ -31,6 +31,7 @@ export interface NatalVersionKey {
   promptVersion: string;
   locale: Locale;
   reportType: string;
+  previousFingerprints?: string[];
 }
 
 export function natalVersionKey(nf: NatalFacts, sel: ThemeSelection, houseSystem: HouseSystem, promptVersion: string, locale: Locale): NatalVersionKey {
@@ -45,6 +46,7 @@ export function natalVersionKey(nf: NatalFacts, sel: ThemeSelection, houseSystem
     promptVersion,
     locale,
     reportType: NATAL_REPORT_TYPE,
+    ...(nf.legacyFacts ? { previousFingerprints: [chartFingerprint({ ...nf, facts: nf.legacyFacts })] } : {}),
   };
 }
 
@@ -53,7 +55,7 @@ export const keyString = (k: NatalVersionKey) =>
 
 /** Same chart and language, any rule/prompt version. */
 export const sameChart = (a: NatalVersionKey, b: NatalVersionKey) =>
-  a.reportType === b.reportType && a.fingerprint === b.fingerprint && a.timeKnown === b.timeKnown && a.houseSystem === b.houseSystem && a.locale === b.locale;
+  a.reportType === b.reportType && (a.fingerprint === b.fingerprint || a.previousFingerprints?.includes(b.fingerprint) || b.previousFingerprints?.includes(a.fingerprint)) === true && a.timeKnown === b.timeKnown && a.houseSystem === b.houseSystem && a.locale === b.locale;
 
 export interface SavedNatalTheme {
   id: string;

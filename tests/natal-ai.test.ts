@@ -215,6 +215,17 @@ describe("natal report versions", () => {
       expect(t.title).toEqual(a.sel.themes.find((s) => s.id === t.id)!.title);
     }
   });
+  it("recognizes a saved v1 unknown-time report after the orb-rule upgrade", () => {
+    const unknown = setup(c, false);
+    const current = natalVersionKey(unknown.nf, unknown.sel, "placidus", NATAL_PROMPT_VERSION, "en");
+    const legacy = { ...current, fingerprint: chartFingerprint({ ...unknown.nf, facts: unknown.nf.legacyFacts! }), factsVersion: "natal-facts@1", themesVersion: "natal-themes@1", textVersion: "natal-text@1", previousFingerprints: undefined };
+    expect(legacy.fingerprint).toBe("b90c878a"); // independently computed from the v1 Git source, Boston fixture
+    expect(keyString(legacy)).not.toBe(keyString(current));
+    expect(sameChart(legacy, current)).toBe(true); // component keeps this report and offers a manual update
+    expect(sameChart(current, legacy)).toBe(true);
+    expect(sameChart({ ...legacy, locale: "zh" }, current)).toBe(false);
+    expect(natalRequestBody(unknown.nf, unknown.sel, "en")).not.toHaveProperty("legacyFacts");
+  });
 });
 
 describe("natal route (mocked provider)", () => {
