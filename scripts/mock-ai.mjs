@@ -23,6 +23,14 @@ function reply(body) {
   if (system.includes("continuing a conversation")) {
     return { reply: t(`You said: "${user.slice(0, 60)}". The cards stay the same; that detail shifts the emphasis.`, `你说：“${user.slice(0, 40)}”。牌没有变，但这个细节改变了重点。`) };
   }
+  if (system.includes("birth-chart reading")) {
+    const themes = user.split("\n\n").filter((b) => b.startsWith("Theme ")).map((block) => ({
+      id: block.match(/\(id: ([^)]+)\)/)[1],
+      text: t("This theme may show up in how you make everyday choices.", "这个主题可能体现在你日常的选择里。"),
+      evidenceIds: [...block.matchAll(/\[([^\]]+)\]/g)].map((m) => m[1]).slice(0, 2),
+    }));
+    return { themes, overview: t("Taken together, these themes describe tendencies to notice, not rules.", "合起来看，这些主题描述的是值得留意的倾向，而不是定论。") };
+  }
   if (system.includes("astrology companion")) {
     return { overall: t("A steady day.", "平稳的一天。"), love: t("Keep it simple.", "简单一点。"), work: t("Finish one thing.", "完成一件事。") };
   }

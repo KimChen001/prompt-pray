@@ -8,6 +8,7 @@ import { userTimeZone } from "@/lib/time";
 import type { BirthData } from "@/lib/astro/birth";
 import type { HouseSystem } from "@/lib/astro/houses";
 import type { Sign } from "@/lib/astro/zodiac";
+import { keyString, type SavedNatalReport } from "@/lib/astro/natal-report";
 
 const KEYS = {
   settings: "moona.settings.v1",
@@ -16,9 +17,11 @@ const KEYS = {
   daily: "moona.daily.v1",
   birth: "moona.birth.v1",
   horoscope: "moona.horoscope.v2", // v2 adds generation metadata; v1 entries are ignored
+  natal: "moona.natal.v1", // saved natal report versions (derived from birth details)
 } as const;
 
 const MAX_READINGS = 100;
+const MAX_NATAL_VERSIONS = 20;
 
 export interface Settings {
   reversals: boolean;
@@ -141,9 +144,11 @@ export function getBirth(): BirthData | null {
 export function saveBirth(birth: BirthData): boolean {
   return write(KEYS.birth, birth);
 }
+/** Removing birth details also removes everything derived from them (saved natal reports). */
 export function clearBirth(): void {
   try {
     window.localStorage.removeItem(KEYS.birth);
+    window.localStorage.removeItem(KEYS.natal);
   } catch {
     /* storage unavailable */
   }
@@ -167,10 +172,23 @@ export function cacheHoroscope(key: string, text: CachedText): void {
   write(KEYS.horoscope, Object.fromEntries(entries));
 }
 
+// ---- natal report versions (newest first) ----
+export function listNatalReports(): SavedNatalReport[] {
+  return read<SavedNatalReport[]>(KEYS.natal, []);
+}
+export function saveNatalReport(report: SavedNatalReport): boolean {
+  const id = keyString(report.key);
+  const rest = listNatalReports().filter((r) => keyString(r.key) !== id);
+  return write(KEYS.natal, [report, ...rest].slice(0, MAX_NATAL_VERSIONS));
+}
+export function deleteNatalReport(createdAt: string): void {
+  write(KEYS.natal, listNatalReports().filter((r) => r.createdAt !== createdAt));
+}
+
 // ---- export / wipe ----
 export function exportLocalData(): string {
   return JSON.stringify(
-    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}) },
+    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}), natalReports: listNatalReports() },
     null,
     2,
   );

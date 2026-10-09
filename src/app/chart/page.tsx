@@ -10,6 +10,7 @@ import { formatPlacement, placement, PLANET_NAME, PLANETS, SIGN_INFO } from "@/l
 import type { HouseSystem } from "@/lib/astro/houses";
 import { formatLocalDate } from "@/lib/time";
 import { SourceBadge } from "@/components/bits";
+import { NatalReport } from "@/components/NatalReport";
 
 export default function ChartPage() {
   const { m, fmt, pick, locale } = useI18n();
@@ -165,11 +166,7 @@ export default function ChartPage() {
         )}
       </section>
 
-      <section className="panel stack gap-8">
-        <SourceBadge source="dev" />
-        <h2 className="h3">{m.chart.interpretTitle}</h2>
-        <p className="muted small" style={{ margin: 0 }}>{m.chart.interpretDev}</p>
-      </section>
+      <NatalReport birth={birth} chart={chart} houseSystem={chart.houseSystem ?? system} />
 
       <p className="muted small" style={{ margin: 0 }}>{m.chart.privacy} {m.chart.accuracy}</p>
     </div>

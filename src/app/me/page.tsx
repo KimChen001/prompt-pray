@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import {
-  clearLocalData, deleteReading, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
+  clearBirth, clearLocalData, deleteReading, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
 } from "@/lib/store";
 import { computeChart } from "@/lib/astro/chart";
 import { SIGN_INFO } from "@/lib/astro/zodiac";
@@ -76,6 +76,7 @@ export default function MePage() {
         {bigThree ? <p style={{ margin: 0 }}>{bigThree}</p> : <p className="muted small" style={{ margin: 0 }}>{m.me.birthDev}</p>}
         <div className="btn-row">
           <Link href={birth ? "/chart" : "/chart/edit"} className="btn btn-ghost">{birth ? m.chart.title : m.chart.add}</Link>
+          {birth && <button type="button" className="btn-text" onClick={() => window.confirm(m.me.confirmRemoveBirth) && clearBirth()}>{m.me.removeBirth}</button>}
         </div>
       </section>
 

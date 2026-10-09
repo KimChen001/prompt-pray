@@ -5,7 +5,7 @@ import type { L10n } from "@/lib/tarot/types";
 import { PLANET_NAME, SIGN_INFO, type Planet } from "./zodiac";
 import { ASPECT_TONE, dayTone, type Fact, type NatalPoint, type Tone } from "./transits";
 
-const HOUSE_THEME: L10n[] = [
+export const HOUSE_THEME: L10n[] = [
   { en: "self and fresh starts", zh: "自我与新开始" },
   { en: "money and what you value", zh: "金钱与价值" },
   { en: "messages and your neighborhood", zh: "沟通与身边事" },
