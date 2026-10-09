@@ -18,6 +18,10 @@ export default function AboutPage() {
         <p className="muted small" style={{ margin: 0 }}>{m.about.backNote}</p>
       </section>
       <section className="stack gap-8">
+        <h2 className="h2">{m.about.dataTitle}</h2>
+        <p style={{ margin: 0 }}>{m.about.data}</p>
+      </section>
+      <section className="stack gap-8">
         <h2 className="h2">{m.about.privacyTitle}</h2>
         <p style={{ margin: 0 }}>{m.about.privacy}</p>
       </section>

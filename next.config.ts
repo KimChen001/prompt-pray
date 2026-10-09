@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // Pin the root to this repo so a stray lockfile in a parent folder (e.g. the home directory) is ignored.
   turbopack: { root: path.join(__dirname) },
+  // The place search reads this file at runtime; make sure deployments ship it with the route.
+  outputFileTracingIncludes: { "/api/places": ["./data/places.json"] },
 };
 
 export default nextConfig;

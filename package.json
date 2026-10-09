@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check:content": "node scripts/check-content.mjs",
-    "fetch:cards": "node scripts/fetch-cards.mjs"
+    "fetch:cards": "node scripts/fetch-cards.mjs",
+    "build:places": "node scripts/build-places.mjs"
   },
   "engines": {
     "node": ">=20.9"
@@ -19,6 +20,7 @@
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
+    "astronomy-engine": "^2.1.19",
     "next": "16.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

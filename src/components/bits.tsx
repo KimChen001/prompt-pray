@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n";
 import { effectiveHelpRegion, getSettings } from "@/lib/store";
 import type { HelpRegion } from "@/lib/safety";
 
-export type Source = "offline" | "live" | "template" | "library" | "sky" | "dev";
+export type Source = "offline" | "live" | "template" | "library" | "sky" | "dev" | "calc";
 
 export function SourceBadge({ source }: { source: Source }) {
   const { m } = useI18n();

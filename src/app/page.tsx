@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n";
 const TILES = [
   { key: "tarot", href: "/tarot", ready: true },
   { key: "today", href: "/today", ready: true },
-  { key: "chart", href: "/chart", ready: false, date: { en: "Oct 15", zh: "10月15日" } },
+  { key: "chart", href: "/chart", ready: true },
   { key: "match", href: "/match", ready: false, date: { en: "Oct 17", zh: "10月17日" } },
   { key: "learn", href: "/learn", ready: false, date: { en: "Oct 16", zh: "10月16日" } },
   { key: "whispers", href: "/whispers", ready: false, date: { en: "Oct 18", zh: "10月18日" } },

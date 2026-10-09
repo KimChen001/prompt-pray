@@ -256,3 +256,27 @@ button, input, textarea, select { font: inherit; color: inherit; }
   .hero-logo img { animation: none; }
   .tcard-inner { transition: opacity 0.2s; }
 }
+
+/* ---------- forms & tables (functional baseline; visual design pending) ---------- */
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field > label { font-weight: 500; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.input { width: 100%; min-height: 44px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--bg-1); font-size: 16px; }
+.input:disabled { opacity: 0.45; }
+.input::placeholder { color: var(--text-3); }
+input[type="date"].input, input[type="time"].input { color-scheme: dark; }
+.check { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; color: var(--text-2); }
+.check input { width: 18px; height: 18px; accent-color: var(--silver); }
+.field-error { color: var(--danger); font-size: 14px; }
+.picked { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--bg-1); }
+.results { list-style: none; margin: 0; padding: 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-1); }
+.results button { width: 100%; text-align: left; display: flex; justify-content: space-between; gap: 12px; align-items: center; min-height: 44px; padding: 8px 12px; border: 0; border-radius: 8px; background: none; cursor: pointer; }
+.results button:hover, .results button:focus-visible { background: var(--bg-2); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-card); }
+.table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.table th, .table td { text-align: left; padding: 10px 14px; border-top: 1px solid var(--line); white-space: nowrap; }
+.table thead th { border-top: 0; font: 400 12px/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+.table tbody th { font-weight: 500; }
+.cusps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+.cusps li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-1); }
+.meta-raw { text-transform: none; letter-spacing: 0.02em; } /* identifiers such as IANA zones are case-sensitive */

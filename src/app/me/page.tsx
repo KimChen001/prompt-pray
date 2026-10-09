@@ -1,29 +1,46 @@
 "use client";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import {
-  clearLocalData, deleteReading, exportLocalData, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
+  clearLocalData, deleteReading, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
 } from "@/lib/store";
+import { computeChart } from "@/lib/astro/chart";
+import { SIGN_INFO } from "@/lib/astro/zodiac";
+import type { BirthData } from "@/lib/astro/birth";
 import { guessHelpRegion } from "@/lib/safety";
 import { userTimeZone } from "@/lib/time";
 import type { Reading } from "@/lib/tarot/types";
 import { ReadingList } from "@/components/ReadingList";
-import { SourceBadge } from "@/components/bits";
 
 export default function MePage() {
-  const { m, fmt, locale, setLocale } = useI18n();
+  const { m, fmt, pick, locale, setLocale } = useI18n();
   const version = useStoreVersion();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [readings, setReadings] = useState<Reading[]>([]);
   const [storageOk, setStorageOk] = useState(true);
   const [guess, setGuess] = useState<"US" | "other">("other");
+  const [birth, setBirth] = useState<BirthData | null>(null);
 
   useEffect(() => {
     setSettings(getSettings());
     setReadings(listReadings());
     setStorageOk(storageAvailable());
     setGuess(guessHelpRegion(userTimeZone()));
+    setBirth(getBirth());
   }, [version]);
+
+  const bigThree = useMemo(() => {
+    if (!birth) return null;
+    try {
+      const { sun, moon, rising } = computeChart(birth).bigThree;
+      const show = (c: typeof sun | null) =>
+        !c ? "?" : c.placement ? pick(SIGN_INFO[c.placement.sign].name) : c.options ? fmt(m.chart.or, { a: pick(SIGN_INFO[c.options[0]].name), b: pick(SIGN_INFO[c.options[1]].name) }) : "?";
+      return `${m.chart.sun} ${show(sun)} · ${m.chart.moon} ${show(moon)} · ${m.chart.rising} ${show(rising)}`;
+    } catch {
+      return null;
+    }
+  }, [birth, pick, fmt, m]);
 
   if (!settings) return null;
 
@@ -45,9 +62,11 @@ export default function MePage() {
       {!storageOk && <p className="notice">{m.common.storageOff}</p>}
 
       <section className="panel stack gap-8">
-        <SourceBadge source="dev" />
         <h2 className="h3">{m.me.birthTitle}</h2>
-        <p className="muted small" style={{ margin: 0 }}>{m.me.birthDev}</p>
+        {bigThree ? <p style={{ margin: 0 }}>{bigThree}</p> : <p className="muted small" style={{ margin: 0 }}>{m.me.birthDev}</p>}
+        <div className="btn-row">
+          <Link href={birth ? "/chart" : "/chart/edit"} className="btn btn-ghost">{birth ? m.chart.title : m.chart.add}</Link>
+        </div>
       </section>
 
       <section className="panel">

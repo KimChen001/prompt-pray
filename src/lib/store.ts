@@ -5,12 +5,15 @@ import { useSyncExternalStore } from "react";
 import type { DrawnCard, Reading, Topic } from "@/lib/tarot/types";
 import { guessHelpRegion, type HelpRegion } from "@/lib/safety";
 import { userTimeZone } from "@/lib/time";
+import type { BirthData } from "@/lib/astro/birth";
+import type { HouseSystem } from "@/lib/astro/houses";
 
 const KEYS = {
   settings: "moona.settings.v1",
   device: "moona.device.v1",
   readings: "moona.readings.v1",
   daily: "moona.daily.v1",
+  birth: "moona.birth.v1",
 } as const;
 
 const MAX_READINGS = 100;
@@ -18,9 +21,10 @@ const MAX_READINGS = 100;
 export interface Settings {
   reversals: boolean;
   helpRegion: HelpRegion | "auto";
+  houseSystem: HouseSystem;
 }
 
-const DEFAULT_SETTINGS: Settings = { reversals: true, helpRegion: "auto" };
+const DEFAULT_SETTINGS: Settings = { reversals: true, helpRegion: "auto", houseSystem: "placidus" };
 
 function read<T>(key: string, fallback: T): T {
   try {
@@ -127,10 +131,26 @@ export function saveDaily(localDate: string, topic: Topic, card: DrawnCard): voi
   write(KEYS.daily, Object.fromEntries(entries));
 }
 
+// ---- birth details (never sent anywhere) ----
+export function getBirth(): BirthData | null {
+  return read<BirthData | null>(KEYS.birth, null);
+}
+export function saveBirth(birth: BirthData): boolean {
+  return write(KEYS.birth, birth);
+}
+export function clearBirth(): void {
+  try {
+    window.localStorage.removeItem(KEYS.birth);
+  } catch {
+    /* storage unavailable */
+  }
+  emit();
+}
+
 // ---- export / wipe ----
 export function exportLocalData(): string {
   return JSON.stringify(
-    { exportedAt: new Date().toISOString(), settings: getSettings(), readings: listReadings(), daily: read(KEYS.daily, {}) },
+    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}) },
     null,
     2,
   );
