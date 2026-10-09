@@ -23,8 +23,8 @@ export function checkWallPost(raw: string): WallCheck {
   if (text.length > WALL_MAX) return { ok: false, reason: "too_long" };
   // Crisis language is never posted; the writer is shown support resources instead.
   if (detectCrisis(text)) return { ok: false, reason: "crisis" };
-  if (LINK.test(text)) return { ok: false, reason: "link" };
   if (EMAIL.test(text) || PHONE.test(text) || HANDLE.test(text)) return { ok: false, reason: "contact" };
+  if (LINK.test(text)) return { ok: false, reason: "link" };
   return { ok: true, text };
 }
 
