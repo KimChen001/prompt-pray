@@ -26,6 +26,11 @@ export interface NatalChart {
   bigThree: { sun: SignCandidate; moon: SignCandidate; rising: SignCandidate | null };
 }
 
+/** First and last minute of the birth date in the birthplace's time zone. */
+export function birthDayRange(b: BirthData): { start: Date; end: Date } {
+  return { start: instantForLocal(b, "00:00"), end: instantForLocal(b, "23:59") };
+}
+
 function instantForLocal(b: BirthData, time: string): Date {
   const r = resolveLocal(b.date, time, b.place.tz);
   return r.status === "ok" ? r.result.utc : r.status === "ambiguous" ? r.options[0].utc : r.suggestion.utc;
