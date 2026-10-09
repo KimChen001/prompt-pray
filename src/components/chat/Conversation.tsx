@@ -49,6 +49,7 @@ export function Conversation({ id }: { id: string | null }) {
   const [birth, setBirth] = useState<BirthData | null>(null);
   const [notes, setNotes] = useState<MemoryNote[]>([]);
   const [freshFrom, setFreshFrom] = useState(Number.POSITIVE_INFINITY);
+  const [previous, setPrevious] = useState<ChatSession | undefined>(undefined); // for the greeting; browser-only data
   const inflight = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +57,7 @@ export function Conversation({ id }: { id: string | null }) {
   useEffect(() => {
     setBirth(getBirth());
     setNotes(listNotes());
+    setPrevious(listChats()[0]);
     if (sessionId) {
       const s = getChat(sessionId);
       setSession(s);
@@ -220,7 +222,6 @@ export function Conversation({ id }: { id: string | null }) {
   }
 
   const unanswered = session ? awaitingReply(session) : false;
-  const previous = !session ? listChats()[0] : undefined;
 
   return (
     <div className="talk">
@@ -241,7 +242,7 @@ export function Conversation({ id }: { id: string | null }) {
         {!session && (
           <div className="chat-turn chat-assistant">
             <span className="chat-who">MOONA</span>
-            <p>{previous ? fmt(m.talk.welcomeBack, { title: previous.title, date: formatLocalDate(localDateKey(new Date(previous.updatedAt)), locale) }) : m.talk.hello}</p>
+            <p>{previous && previous.id !== sessionId ? fmt(m.talk.welcomeBack, { title: previous.title, date: formatLocalDate(localDateKey(new Date(previous.updatedAt)), locale) }) : m.talk.hello}</p>
             <span className="badge" style={{ alignSelf: "flex-start" }}>{m.talk.fromRecords}</span>
           </div>
         )}

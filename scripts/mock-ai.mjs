@@ -28,6 +28,16 @@ function reply(body) {
       remember: quote.length >= 4 ? [{ text: t(`Note: ${quote}`, `笔记：${quote}`), quote }] : [],
     };
   }
+  if (system.includes("companion for reflection")) {
+    // Talk: cites up to two context ids it was given (a real subset, as the server requires).
+    const ids = [...system.matchAll(/^- \[([^\]]+)\]/gm)].map((m) => m[1]).slice(0, 2);
+    const quote = user.slice(0, 40).trim();
+    return {
+      reply: t(`I hear: "${user.slice(0, 60)}". One way to look at it: notice what you already know, and what you're guessing.`, `我听到你说：“${user.slice(0, 40)}”。可以先分清哪些是你已经知道的，哪些是猜测。`),
+      basis: ids,
+      remember: quote.length >= 4 ? [{ text: t(`Note: ${quote}`, `笔记：${quote}`), quote }] : [],
+    };
+  }
   if (system.includes("birth-chart reading")) {
     const themes = user.split("\n\n").filter((b) => b.startsWith("Theme ")).map((block) => ({
       id: block.match(/\(id: ([^)]+)\)/)[1],
@@ -52,7 +62,10 @@ createServer((req, res) => {
     }
     const body = JSON.parse(raw || "{}");
     const content = JSON.stringify(reply(body));
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ model: "mock-model", choices: [{ message: { content }, finish_reason: "stop" }], usage: { prompt_tokens: 500, completion_tokens: 200 } }));
+    // MOCK_DELAY_MS simulates a slow model (to test undo, delete and language switches mid-request).
+    setTimeout(() => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ model: "mock-model", choices: [{ message: { content }, finish_reason: "stop" }], usage: { prompt_tokens: 500, completion_tokens: 200 } }));
+    }, Number(process.env.MOCK_DELAY_MS ?? 0));
   });
 }).listen(port, "127.0.0.1", () => console.log(`mock AI listening on http://127.0.0.1:${port}/v1 (DEV ONLY)`));

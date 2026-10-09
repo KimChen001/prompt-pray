@@ -154,7 +154,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <nav className="tabbar" aria-label={m.nav.tabsLabel}>
         {TABS.map(({ href, key, icon, accent }) => (
-          <Link key={href} href={href} aria-current={current(href)} data-accent={accent ? "true" : undefined}>
+          <Link key={href} href={href} aria-current={current(href)} aria-label={m.nav[key]} data-accent={accent ? "true" : undefined}>
             {accent ? <span className="tab-orb"><Icon name={icon} size={20} /></span> : <Icon name={icon} />}
             <span>{m.nav[key]}</span>
           </Link>

@@ -139,6 +139,15 @@ body:has(input:focus, textarea:focus, select:focus) .tabbar { display: none; }
 .footer-row { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; align-items: center; }
 .footer-tagline { font: 400 9px/1 var(--font-mono); letter-spacing: 0.12em; color: var(--text-3); white-space: pre; margin: 6px 0 0; }
 
+/* Landscape phones: every vertical pixel counts. Icon-only tab bar, slimmer header. */
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 899px) {
+  :root { --tabbar-h: 46px; }
+  .tabbar a > span:not(.tab-orb) { display: none; }
+  .tabbar a[data-accent="true"] .tab-orb { width: 34px; height: 34px; margin-top: 0; }
+  .site-header-row { min-height: 50px; }
+  .shell-main { padding-top: 14px; }
+  .home-hero .eyebrow { display: none; }
+}
 @media (min-width: 900px) {
   :root { --gutter: 40px; }
   .site-nav { display: flex; }
@@ -254,6 +263,7 @@ html[data-motion="full"] .nebula[data-live="false"] .nebula-static { animation: 
 .home-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 360px; margin-top: 12px; }
 .home-actions .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .home-actions .btn-row .btn { padding: 10px 12px; font-size: 14px; }
+@media (max-width: 359px) { .home-actions .btn-row { grid-template-columns: 1fr; } }
 .home-note { font-size: 13px; color: var(--text-3); margin: 10px 0 0; max-width: 40ch; }
 .home-greeting { display: flex; gap: 14px; align-items: flex-start; }
 .home-greeting p { margin: 0; }
@@ -272,6 +282,16 @@ html[data-motion="full"] .nebula[data-live="false"] .nebula-static { animation: 
 }
 /* Short or landscape phones: smaller orb so the main button stays near the fold. */
 @media (max-height: 560px) and (max-width: 899px) { .home-orb { --orb: min(44vh, 200px) !important; } }
+/* Landscape phones: copy and actions beside the orb, like desktop, so "Draw a card" is on the first screen. */
+@media (max-height: 560px) and (min-width: 600px) and (max-width: 899px) {
+  .home-hero { grid-template-columns: minmax(0, 1fr) auto; justify-items: start; text-align: left; align-items: center; gap: 12px 28px; }
+  .home-hero-copy { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .home-hero .display { font-size: 34px; }
+  .home-hero .lede { font-size: 15px; }
+  .home-orb { order: 0; grid-column: 2; grid-row: 1; --orb: min(60vh, 210px) !important; }
+  .home-actions { margin-top: 4px; }
+  .home-note { display: none; }
+}
 .desktop-only { display: none; }
 @media (max-width: 899px) { .talk .talk-side.desktop-only { display: none; } }
 @media (min-width: 900px) { .desktop-only { display: block; } .only-mobile { display: none; } .home-orb { --orb: min(500px, 40vw) !important; } }

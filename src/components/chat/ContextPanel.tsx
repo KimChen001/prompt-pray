@@ -3,7 +3,7 @@
 // messages. Three kinds, labelled the same everywhere: what they said (saved notes), what was
 // calculated (chart, today's sky), and MOONA's own reflection (the replies, symbolic).
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { getSettings } from "@/lib/store";
 import { computeChart, type SignCandidate } from "@/lib/astro/chart";
@@ -31,12 +31,14 @@ export function ContextPanel({ choice, onChange, birth, notes, idPrefix = "ctx",
     }
   }, [birth, m, fmt, pick]);
 
-  const skyLine = useMemo(() => {
+  // The local day and zone exist only in the browser: computed after mount, never during server render.
+  const [skyLine, setSkyLine] = useState("");
+  useEffect(() => {
     try {
       const sky = skyForDay(localDateKey(), userTimeZone());
-      return `${fmt(m.sky.moonIn, { sign: pick(SIGN_INFO[sky.moon.placement.sign].name) })} · ${m.sky.phases[sky.moon.phase]} · ${fmt(m.sky.sunIn, { sign: pick(SIGN_INFO[sky.sun.sign].name) })}`;
+      setSkyLine(`${fmt(m.sky.moonIn, { sign: pick(SIGN_INFO[sky.moon.placement.sign].name) })} · ${m.sky.phases[sky.moon.phase]} · ${fmt(m.sky.sunIn, { sign: pick(SIGN_INFO[sky.sun.sign].name) })}`);
     } catch {
-      return "";
+      setSkyLine("");
     }
   }, [m, fmt, pick]);
 

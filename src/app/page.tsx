@@ -40,7 +40,7 @@ export default function HomePage() {
           </div>
           <p className="home-note">{m.home.note}</p>
         </div>
-        <Nebula className="home-orb" mode="idle" size="clamp(220px, 66vw, 280px)" interactive particles />
+        <Nebula className="home-orb" mode="idle" size="clamp(190px, 62vw, 280px)" interactive particles />
       </section>
 
       <div className="stack gap-16">
