@@ -7,7 +7,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
-import { deleteNatalReport, listNatalReports, saveNatalReport, useStoreVersion } from "@/lib/store";
+import { dataEpoch, deleteNatalReport, listNatalReports, saveNatalReport, useStoreVersion } from "@/lib/store";
 import type { BirthData } from "@/lib/astro/birth";
 import type { NatalChart } from "@/lib/astro/chart";
 import type { HouseSystem } from "@/lib/astro/houses";
@@ -39,6 +39,8 @@ export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem:
   }, [birth, chart]);
   const key = useMemo(() => natalVersionKey(nf, sel, houseSystem, NATAL_PROMPT_VERSION, locale), [nf, sel, houseSystem, locale]);
   const currentId = keyString(key);
+  const latestId = useRef(currentId);
+  latestId.current = currentId;
 
   const saved = useMemo(() => {
     const list = listNatalReports();
@@ -51,6 +53,8 @@ export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem:
 
   const generate = useCallback(async () => {
     attempted.current.add(currentId);
+    const requestedFor = currentId;
+    const epoch = dataEpoch();
     setGen("loading");
     try {
       const res = await fetch("/api/ai/natal", {
@@ -58,16 +62,21 @@ export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem:
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(natalRequestBody(nf, sel, locale)),
       });
-      if (res.status === 503) return setGen("off"); // not configured / locked: library text, no warning
-      if (!res.ok) return setGen("failed");
+      // Birth details were removed or changed while this was being written: it belongs to nobody now.
+      if (epoch !== dataEpoch()) return;
+      const stillHere = latestId.current === requestedFor; // the person may have switched language or house system
+      if (res.status === 503) return stillHere && setGen("off"); // not configured / locked: library text, no warning
+      if (!res.ok) return stillHere && setGen("failed");
       const body = (await res.json()) as NatalAiResponse;
+      // A valid result for its own key (chart + rules + language) is kept even if the view moved on.
       const report = toSavedReport({ ...key, promptVersion: body.promptVersion }, nf, sel, body);
       if (!saveNatalReport(report)) setMemory(report);
+      if (!stillHere) return;
       setLiveAt(report.createdAt);
       setSelected(null);
       setGen("live");
     } catch {
-      setGen("failed");
+      if (latestId.current === requestedFor) setGen("failed");
     }
   }, [currentId, nf, sel, locale, key]);
 
