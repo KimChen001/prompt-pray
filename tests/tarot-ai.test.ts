@@ -128,8 +128,10 @@ describe("follow-up chat", () => {
   it("rejects malformed threads", () => {
     expect(parseChatRequest({ ...body, messages: [] })).toBeNull();
     expect(parseChatRequest({ ...body, messages: [{ role: "assistant", content: "hi" }] })).toBeNull();
-    expect(parseChatRequest({ ...body, messages: [{ role: "user", content: "x".repeat(801) }] })).toBeNull();
-    expect(parseChatRequest({ ...body, messages: Array.from({ length: 13 }, () => ({ role: "user", content: "a" })) })).toBeNull();
+    // One contract (lib/chat/limits): merged user turns up to 2000 chars, replies up to 1500, 16 messages.
+    expect(parseChatRequest({ ...body, messages: [{ role: "user", content: "x".repeat(2001) }] })).toBeNull();
+    expect(parseChatRequest({ ...body, messages: [{ role: "user", content: "hi" }, { role: "assistant", content: "x".repeat(1501) }, { role: "user", content: "ok" }] })).toBeNull();
+    expect(parseChatRequest({ ...body, messages: Array.from({ length: 17 }, () => ({ role: "user", content: "a" })) })).toBeNull();
   });
   it("validates replies against the drawn cards", () => {
     const p = parseChatRequest(body)!;

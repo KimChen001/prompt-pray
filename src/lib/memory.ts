@@ -18,10 +18,14 @@ export interface MemoryNote {
   quote?: string;
   /** The reading it came from; deleting that reading deletes the note. */
   readingId?: string;
+  /** The conversation it came from; deleting that conversation deletes the note. */
+  chatId?: string;
   createdAt: string;
   /** When the person confirmed (saved) it. Unconfirmed suggestions are never stored here. */
   confirmedAt: string;
   updatedAt: string;
+  /** Withdrawn by the person: kept on the device but never offered to MOONA until they resume it. */
+  paused?: boolean;
 }
 
 export interface CheckIn {

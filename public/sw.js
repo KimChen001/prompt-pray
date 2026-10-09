@@ -15,13 +15,14 @@ const CARD_IDS = [
   ...Array.from({ length: 22 }, (_, i) => `major-${String(i).padStart(2, "0")}`),
   ...SUITS.flatMap((s) => Array.from({ length: 14 }, (_, i) => `${s}-${String(i + 1).padStart(2, "0")}`)),
 ];
-const PRECACHE_STATIC = [...CARD_IDS.map((id) => `/cards/${id}.jpg`), "/cards/back.jpg", "/brand/moona-logo.webp", "/icons/icon-192.png"];
-const PRECACHE_PAGES = ["/offline", "/", "/tarot", "/tarot/new", "/today", "/learn", "/chart", "/match", "/me"];
+const PRECACHE_STATIC = [...CARD_IDS.map((id) => `/cards/${id}.jpg`), "/cards/back.jpg", "/brand/moona-mark.svg", "/icons/icon-192.png"];
+const PRECACHE_PAGES = ["/offline", "/", "/tarot", "/tarot/new", "/today", "/learn", "/chart", "/match", "/me", "/talk", "/whispers", "/about"];
 // One cached copy per dynamic route; the page reads the real id from the address bar (src/lib/shell.ts).
 const SHELLS = [
   { pattern: /^\/tarot\/r\/[^/]+$/, shell: "/tarot/r/_shell" },
   { pattern: /^\/match\/r\/[^/]+$/, shell: "/match/r/_shell" },
   { pattern: /^\/learn\/[^/]+\/[^/]+$/, shell: "/learn/_shell/_shell" },
+  { pattern: /^\/talk\/c\/[^/]+$/, shell: "/talk/c/_shell" },
 ];
 
 /** The shell page that can stand in for an uncached URL, or null. */
@@ -34,7 +35,7 @@ function strategyFor(url, mode) {
   if (url.pathname.startsWith("/api/")) return "network";
   if (url.searchParams.has("_rsc")) return "network"; // client-side navigation payloads
   if (url.pathname === "/sw.js") return "network";
-  if (/^\/(_next\/static|cards|brand|icons)\//.test(url.pathname)) return "cache-first";
+  if (/^\/(_next\/static|cards|brand|icons|design)\//.test(url.pathname)) return "cache-first";
   if (mode === "navigate") return "page";
   return "network";
 }

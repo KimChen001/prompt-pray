@@ -8,7 +8,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { useRouteSegment } from "@/lib/shell";
-import { getBirth, getReading, saveReading } from "@/lib/store";
+import { dataEpoch, getBirth, getReading, patchReading, useStoreVersion } from "@/lib/store";
 import { analyze, type Analysis } from "@/lib/tarot/engine";
 import { getCard, hasCard } from "@/lib/tarot/deck";
 import { SPREADS } from "@/lib/tarot/spreads";
@@ -65,6 +65,7 @@ function ReadingView() {
   const [canShare, setCanShare] = useState(false);
   const requested = useRef(new Set<string>());
 
+  const version = useStoreVersion();
   useEffect(() => {
     if (id === null) return;
     const r = getReading(id);
@@ -72,13 +73,15 @@ function ReadingView() {
     const birth = getBirth();
     setChart(birth ? bigThreeNames(birth) : undefined);
     setCanShare(typeof navigator !== "undefined" && typeof navigator.share === "function");
-  }, [id]);
+  }, [id, version]);
 
   const analysis = useMemo(() => (reading ? analyze(reading.spread, reading.cards, reading.topic) : null), [reading]);
   const ai = reading?.ai?.[locale];
 
   // Generate the AI interpretation in the background as soon as the page opens (once per reading + language).
   const generate = useCallback(async (r: Reading) => {
+    const reqLocale = locale;
+    const epoch = dataEpoch();
     setAiStatus("loading");
     try {
       const res = await fetch("/api/ai/tarot", {
@@ -94,9 +97,10 @@ function ReadingView() {
       if (!res.ok) return setAiStatus("failed");
       const body = (await res.json()) as TarotAiResult & { code?: string };
       if (body.code) return setAiStatus("failed");
-      const next: Reading = { ...r, ai: { ...r.ai, [locale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } };
-      saveReading(next);
-      setReading(next);
+      if (epoch !== dataEpoch()) return;
+      // Merge only this language's interpretation into the latest copy; nothing else is touched.
+      const next = patchReading(r.id, (latest) => (latest.ai?.[reqLocale] ? latest : { ...latest, ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }));
+      if (!next) return;
       setAiStatus("live");
     } catch {
       setAiStatus("failed");
@@ -185,7 +189,7 @@ function ReadingView() {
           <h1 className="h1">{m.reading.noQuestion}</h1>
         )}
         {params.get("local") === "0" && <p className="notice">{m.common.storageOff}</p>}
-        <SharedNotes reading={reading} onChange={setReading} />
+        <SharedNotes reading={reading} />
       </header>
 
       {/* Layer 1: cards + one-line phrases */}
@@ -265,7 +269,7 @@ function ReadingView() {
           </div>
 
           <h2 className="h3">{m.reading.talk}</h2>
-          <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={aiStatus === "off"} onChange={setReading} />
+          <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={aiStatus === "off"} />
 
           <CheckInPlanner readingId={reading.id} suggestedAction={ai ? ai.action : pick(analysis.action)} />
 

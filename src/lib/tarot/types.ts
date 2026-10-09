@@ -54,6 +54,15 @@ export interface ChatTurn {
   meta?: AiMeta; // assistant turns only
   /** Assistant turns: a note MOONA offered to remember, from the person's own words. Saved only if they confirm. */
   suggestion?: { text: string; quote: string; status: "pending" | "saved" | "dismissed" };
+  /** Assistant turns in free conversations: the context items the reply says it relied on (checked by the server). */
+  basis?: BasisItem[];
+}
+
+/** One piece of context behind a reply: something the person said, or a calculated fact. */
+export interface BasisItem {
+  id: string;
+  kind: "said" | "calc";
+  label: string;
 }
 
 export interface Reading {
