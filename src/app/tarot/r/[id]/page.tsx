@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useRouteSegment } from "@/lib/shell";
 import { getBirth, getReading, saveReading } from "@/lib/store";
 import { analyze, type Analysis } from "@/lib/tarot/engine";
 import { getCard, hasCard } from "@/lib/tarot/deck";
@@ -51,7 +52,7 @@ function readingText(r: Reading, a: Analysis, ai: TarotAiResult | undefined, m: 
 }
 
 function ReadingView() {
-  const { id } = useParams<{ id: string }>();
+  const id = useRouteSegment(useParams<{ id: string }>().id, 2); // null until known on the offline shell
   const params = useSearchParams();
   const { m, fmt, pick, locale } = useI18n();
   const [reading, setReading] = useState<Reading | null | undefined>(undefined);
@@ -65,6 +66,7 @@ function ReadingView() {
   const requested = useRef(new Set<string>());
 
   useEffect(() => {
+    if (id === null) return;
     const r = getReading(id);
     setReading(r && r.cards.every((c) => hasCard(c.id)) && r.cards.length === SPREADS[r.spread].count ? r : null);
     const birth = getBirth();

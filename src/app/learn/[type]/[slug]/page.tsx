@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useRouteSegment } from "@/lib/shell";
 import { getBirth, getSettings, isFavorite, toggleFavorite, useStoreVersion } from "@/lib/store";
 import {
   ASPECT_CONTENT, HOUSE_CONTENT, PLANET_CONTENT, RULES, SIGN_CONTENT, SPREAD_CONTENT, SUIT_NAME, TRADITIONAL_RULER,
@@ -88,10 +89,14 @@ function Side({ title, side }: { title: string; side: CardSide }) {
 }
 
 export default function LearnDetail() {
-  const params = useParams<{ type: string; slug: string }>();
+  const raw = useParams<{ type: string; slug: string }>();
+  const type = useRouteSegment(raw.type, 1); // null until known on the offline shell
+  const slug = useRouteSegment(raw.slug, 2);
   const { m, fmt, pick, locale } = useI18n();
   const list = (items: string[]) => items.join(locale === "zh" ? "、" : ", ");
-  const entry = useMemo(() => (isLearnType(params.type) ? getEntry(params.type, decodeURIComponent(params.slug)) : null), [params]);
+  const entry = useMemo(() => (type && slug && isLearnType(type) ? getEntry(type, decodeURIComponent(slug)) : null), [type, slug]);
+
+  if (type === null || slug === null) return null;
 
   if (!entry) {
     return (

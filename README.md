@@ -58,6 +58,8 @@ Nothing in the app is mock data. Unbuilt modules show an "In development" page w
 - **Today's sky** (`src/lib/astro/sky.ts`): events are assigned to the user's local day. `tests/fixtures/sky-2026.sweph.json` covers every 2026 new/full moon (< 5 min), Sun ingress (< 5 min) and Mercury/Venus station (< 3 h; stations are inherently soft).
 - **Accuracy check:** `tests/fixtures/charts.sweph.json` holds 8 reference charts (US east/west, Shanghai, Kolkata, Sydney, London 1965, Reykjavik, Cambridge 2026) generated with Swiss Ephemeris 2.10 outside this repo (`scripts/oracle/` regenerates them). Swiss Ephemeris is not a dependency (AGPL); it is only the test oracle. Current tolerances: planets and angles < 0.02°, Placidus cusps < 0.05°.
 - Places: GeoNames cities5000 (CC BY 4.0), 69,780 places with IANA zones and Chinese aliases, built by `npm run build:places` into `data/places.json` and searched server-side by `/api/places` (the query is not logged).
+- **Installable / offline (PWA):** `src/app/manifest.ts`, icons from `node scripts/make-icons.mjs`, and `public/sw.js` (registered only in production builds as `/sw.js?v=<build id>`). It pre-caches the main pages, their build files and all 78 card images, so drawing and reading cards works offline; `/api/*` is never cached. No push notifications. The service worker can't be tested in the Claude desktop in-app browser (it refuses service workers); use a normal browser against `npm run build && npm start`.
+- **Evaluation:** `eval/README.md` (28 fixed cases, runner, blind A/B sheet).
 
 ## What was reused from the mini-program
 

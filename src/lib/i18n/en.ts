@@ -426,6 +426,11 @@ const en = {
     includeName: "Include their nickname",
     privacy: "Made on your device and not uploaded. Birth details are never on it; your question and their nickname appear only if you tick the box.",
   },
+  offline: {
+    title: "You're offline",
+    body: "This page wasn't saved for offline use. Drawing cards, today's card, Learn and everything saved on this device still work.",
+    needsNet: "AI readings, birthplace search and the AI horoscope need a connection.",
+  },
   birthForm: {
     title: "Your birth details",
     intro: "We use these to calculate your chart. They stay in this browser.",

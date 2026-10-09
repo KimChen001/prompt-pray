@@ -9,11 +9,13 @@ import "./globals.css";
 import { I18nProvider } from "@/lib/i18n";
 import { LOCALE_COOKIE, toLocale } from "@/lib/i18n/config";
 import { AppShell } from "@/components/AppShell";
+import { ServiceWorker } from "@/components/ServiceWorker";
 
 export const metadata: Metadata = {
   title: "MOONA — Ask the cards",
   description: "A cyber-mystic tarot and astrology companion. Draw your own cards and get a reading that answers your question.",
-  icons: { icon: "/brand/moona-logo.webp" },
+  icons: { icon: "/icons/favicon-48.png", apple: "/icons/apple-touch-icon.png" },
+  appleWebApp: { capable: true, title: "MOONA", statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = { themeColor: "#0b0c10", width: "device-width", initialScale: 1 };
@@ -25,6 +27,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body>
         <I18nProvider initialLocale={locale}>
           <AppShell>{children}</AppShell>
+          <ServiceWorker />
         </I18nProvider>
       </body>
     </html>

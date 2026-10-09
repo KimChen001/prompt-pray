@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useRouteSegment } from "@/lib/shell";
 import { deleteMatch, getMatch, type SavedMatch } from "@/lib/store";
 import type { Dimension } from "@/lib/astro/match";
 import { formatLocalDate, localDateKey } from "@/lib/time";
@@ -25,12 +26,14 @@ export default function MatchResultPage() {
 const DIMS: Exclude<Dimension, "core">[] = ["emotional", "communication", "attraction"];
 
 function MatchResult() {
-  const { id } = useParams<{ id: string }>();
+  const id = useRouteSegment(useParams<{ id: string }>().id, 2); // null until known on the offline shell
   const params = useSearchParams();
   const router = useRouter();
   const { m, fmt, locale } = useI18n();
   const [match, setMatch] = useState<SavedMatch | null | undefined>(undefined);
-  useEffect(() => setMatch(getMatch(id)), [id]);
+  useEffect(() => {
+    if (id !== null) setMatch(getMatch(id));
+  }, [id]);
 
   if (match === undefined) return null;
   if (!match) {
