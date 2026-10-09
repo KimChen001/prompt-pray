@@ -21,6 +21,8 @@ import { TarotChat } from "@/components/TarotChat";
 import { SharedNotes, sharedNotes } from "@/components/Notes";
 import { CheckInPlanner } from "@/components/CheckIns";
 import { learnHref } from "@/lib/learn";
+import { ShareImage } from "@/components/ShareImage";
+import { readingCard } from "@/lib/share/content";
 
 export default function ReadingPage() {
   return (
@@ -274,6 +276,11 @@ function ReadingView() {
         {canShare && (
           <button type="button" className="btn btn-ghost" onClick={() => navigator.share({ title: m.reading.shareText, text }).catch(() => undefined)}>{m.common.share}</button>
         )}
+        <ShareImage
+          filename={`moona-${reading.localDate}.png`}
+          options={reading.question ? [{ key: "question", label: m.share.includeQuestion }] : []}
+          build={(o) => readingCard(reading, analysis, ai, m, locale, { includeQuestion: !!o.question })}
+        />
         <Link href={`/tarot/new?from=${reading.id}`} className="btn btn-ghost">{m.reading.drawAgain}</Link>
         <Link href="/tarot/new" className="btn btn-text">{m.reading.newQuestion}</Link>
       </div>

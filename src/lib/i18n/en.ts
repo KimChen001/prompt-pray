@@ -414,6 +414,18 @@ const en = {
     all: "All matches",
     notFound: "This match isn't on this device.",
   },
+  share: {
+    button: "Share image",
+    preparing: "Making the image…",
+    previewAlt: "Preview of the share image",
+    download: "Download PNG",
+    shareFile: "Share…",
+    close: "Close",
+    failed: "Couldn't make the image. Please try again.",
+    includeQuestion: "Include my question",
+    includeName: "Include their nickname",
+    privacy: "Made on your device and not uploaded. Birth details are never on it; your question and their nickname appear only if you tick the box.",
+  },
   birthForm: {
     title: "Your birth details",
     intro: "We use these to calculate your chart. They stay in this browser.",

@@ -12,6 +12,8 @@ import { formatLocalDate } from "@/lib/time";
 import { SourceBadge } from "@/components/bits";
 import { NatalReport } from "@/components/NatalReport";
 import { learnHref } from "@/lib/learn";
+import { ShareImage } from "@/components/ShareImage";
+import { bigThreeCard } from "@/lib/share/content";
 
 export default function ChartPage() {
   const { m, fmt, pick, locale } = useI18n();
@@ -113,6 +115,7 @@ export default function ChartPage() {
           ))}
         </div>
         {!chart.timeKnown && <p className="muted small" style={{ margin: 0 }}>{m.chart.noonNote}</p>}
+        <div className="btn-row"><ShareImage filename="moona-big-three.png" build={() => bigThreeCard(chart, m, locale)} /></div>
       </section>
 
       <section className="stack gap-12">

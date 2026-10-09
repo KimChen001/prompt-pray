@@ -11,6 +11,8 @@ import type { Dimension } from "@/lib/astro/match";
 import { formatLocalDate, localDateKey } from "@/lib/time";
 import { SourceBadge } from "@/components/bits";
 import { FactorLine } from "@/components/MatchParts";
+import { ShareImage } from "@/components/ShareImage";
+import { matchCard } from "@/lib/share/content";
 
 export default function MatchResultPage() {
   return (
@@ -96,6 +98,11 @@ function MatchResult() {
       </section>
 
       <div className="btn-row">
+        <ShareImage
+          filename="moona-match.png"
+          options={match.b.name ? [{ key: "name", label: m.share.includeName }] : []}
+          build={(o) => matchCard(match, m, { includeName: !!o.name })}
+        />
         <Link href="/match" className="btn btn-ghost">{m.match.newMatch}</Link>
         <button
           type="button"

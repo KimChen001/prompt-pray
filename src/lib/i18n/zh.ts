@@ -416,6 +416,18 @@ const zh: Messages = {
     all: "全部配对",
     notFound: "这台设备上没有这次配对。",
   },
+  share: {
+    button: "分享图片",
+    preparing: "正在生成图片…",
+    previewAlt: "分享图片预览",
+    download: "下载 PNG",
+    shareFile: "分享…",
+    close: "关闭",
+    failed: "图片生成失败，请重试。",
+    includeQuestion: "包含我的问题",
+    includeName: "包含对方的昵称",
+    privacy: "图片在你的设备上生成，不会上传。图片上永远不含出生资料；你的问题和对方昵称只有勾选后才会出现。",
+  },
   birthForm: {
     title: "你的出生资料",
     intro: "我们用这些资料计算星盘，资料只保存在这个浏览器里。",

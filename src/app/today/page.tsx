@@ -10,6 +10,9 @@ import type { DrawnCard, Topic } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
 import { learnHref } from "@/lib/learn";
 import { SourceBadge } from "@/components/bits";
+import { ShareImage } from "@/components/ShareImage";
+import { dailyCard as dailyShareCard } from "@/lib/share/content";
+import { firstSentence } from "@/lib/tarot/engine";
 import { SkyPanel } from "@/components/SkyPanel";
 import { HoroscopePanel } from "@/components/HoroscopePanel";
 
@@ -106,6 +109,12 @@ export default function TodayPage() {
             {topic !== "general" && <p className="muted" style={{ margin: 0 }}>{pick(side[topic])}</p>}
             <p className="quote">{pick(side.advice)}</p>
             <p className="meta" style={{ margin: 0 }}>{m.daily.comeBack}</p>
+            <div className="btn-row">
+              <ShareImage
+                filename={`moona-today-${date}.png`}
+                build={() => dailyShareCard(date!, card.id, drawn.reversed, pick(card.name), firstSentence(pick(side.meaning)), m, locale)}
+              />
+            </div>
           </div>
         ) : (
           <div />
