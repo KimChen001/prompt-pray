@@ -37,7 +37,7 @@ for (const c of cards) {
   if (!existsSync(`public/cards/${c.id}.jpg`)) err(c.id, "image missing");
   if (!credited.has(c.id)) err(c.id, "no entry in content/credits.json");
 }
-if (!existsSync("public/cards/back.jpg")) err("back", "image missing");
+if (!existsSync("public/cards/moona-back.svg")) err("back", "image missing");
 
 // Learn content: every entry present once, every text field in both languages.
 const LEARN = {

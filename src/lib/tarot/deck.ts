@@ -20,7 +20,7 @@ export function hasCard(id: string): boolean {
   return BY_ID.has(id);
 }
 
-export const CARD_BACK = "/cards/back.jpg";
+export const CARD_BACK = "/cards/moona-back.svg"; // original MOONA artwork (content/credits.json)
 
 export function cardImage(id: string): string {
   return `/cards/${id}.jpg`;

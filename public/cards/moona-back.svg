@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="708" viewBox="0 0 400 708" fill="none">
+  <!-- MOONA card back (original artwork for this project). Rotationally symmetric, so a card's
+       orientation can never be read from its back. Moonlight palette; line art only. -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0" stop-color="#26213f"/>
+      <stop offset="0.55" stop-color="#16142a"/>
+      <stop offset="1" stop-color="#0d0c16"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#a394c7" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#a394c7" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="cres">
+      <rect width="400" height="708" fill="#fff"/>
+      <circle cx="209" cy="160" r="21" fill="#000"/>
+      <circle cx="191" cy="548" r="21" fill="#000"/>
+    </mask>
+    <g id="spark">
+      <path d="M0 -9 L2.1 -2.1 L9 0 L2.1 2.1 L0 9 L-2.1 2.1 L-9 0 L-2.1 -2.1 Z" fill="#bfc5d2"/>
+    </g>
+  </defs>
+  <rect width="400" height="708" rx="22" fill="url(#bg)"/>
+  <rect x="14" y="14" width="372" height="680" rx="14" stroke="#bfc5d2" stroke-opacity="0.6" stroke-width="2"/>
+  <rect x="24" y="24" width="352" height="660" rx="9" stroke="#bfc5d2" stroke-opacity="0.22" stroke-width="1"/>
+
+  <!-- centre: a full moon in a ring of twelve marks -->
+  <circle cx="200" cy="354" r="150" fill="url(#glow)"/>
+  <circle cx="200" cy="354" r="104" stroke="#bfc5d2" stroke-opacity="0.35" stroke-width="1" stroke-dasharray="1.5 6"/>
+  <circle cx="200" cy="354" r="86" stroke="#bfc5d2" stroke-opacity="0.75" stroke-width="1.6"/>
+  <circle cx="200" cy="354" r="58" stroke="#a394c7" stroke-opacity="0.55" stroke-width="1"/>
+  <g stroke="#bfc5d2" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round">
+    <path d="M200 260v-12M200 448v12M106 354h-12M294 354h12M133.5 287.5l-8.5-8.5M266.5 420.5l8.5 8.5M133.5 420.5l-8.5 8.5M266.5 287.5l8.5-8.5"/>
+    <path d="M151 269.1l-4-6.9M249 438.9l4 6.9M115.1 305l-6.9-4M284.9 403l6.9 4M115.1 403l-6.9 4M284.9 305l6.9-4M151 438.9l-4 6.9M249 269.1l4-6.9" stroke-opacity="0.4"/>
+  </g>
+  <circle cx="200" cy="354" r="30" fill="#e4e7ee" fill-opacity="0.9"/>
+  <circle cx="200" cy="354" r="30" stroke="#bfc5d2" stroke-width="1"/>
+  <circle cx="193" cy="347" r="5" fill="#bfc5d2" fill-opacity="0.55"/>
+  <circle cx="209" cy="363" r="4" fill="#bfc5d2" fill-opacity="0.5"/>
+
+  <!-- waxing above, waning below -->
+  <g mask="url(#cres)">
+    <circle cx="200" cy="160" r="22" fill="#e4e7ee" fill-opacity="0.85"/>
+    <circle cx="200" cy="548" r="22" fill="#e4e7ee" fill-opacity="0.85"/>
+  </g>
+  <path d="M200 196v38M200 512v-38" stroke="#bfc5d2" stroke-opacity="0.45" stroke-width="1" stroke-dasharray="2 5"/>
+
+  <!-- sparks: corners, sides, and the four quarters -->
+  <use href="#spark" x="56" y="58"/>
+  <use href="#spark" x="344" y="650"/>
+  <use href="#spark" x="344" y="58" opacity="0.6"/>
+  <use href="#spark" x="56" y="650" opacity="0.6"/>
+  <use href="#spark" x="200" y="96" opacity="0.8" transform="scale(1)"/>
+  <use href="#spark" x="200" y="612" opacity="0.8"/>
+  <g fill="#a394c7">
+    <circle cx="96" cy="200" r="1.6"/><circle cx="304" cy="508" r="1.6"/>
+    <circle cx="318" cy="214" r="1.2"/><circle cx="82" cy="494" r="1.2"/>
+    <circle cx="72" cy="354" r="1.8"/><circle cx="328" cy="354" r="1.8"/>
+    <circle cx="140" cy="120" r="1"/><circle cx="260" cy="588" r="1"/>
+    <circle cx="276" cy="128" r="1.4"/><circle cx="124" cy="580" r="1.4"/>
+  </g>
+</svg>

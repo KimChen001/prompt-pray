@@ -67,10 +67,10 @@ for (let i = 0; i < cards.length; i += 40) {
 
 credits.push({
   id: "back",
-  file: "public/cards/back.jpg",
-  source: "Carried over from the MOONA WeChat mini-program; original source not yet documented",
-  license: "UNVERIFIED — pending team decision on the card back",
-  artist: "Unknown",
+  file: "public/cards/moona-back.svg",
+  source: "Original artwork made for MOONA (2026-10-09)",
+  license: "MOONA project's own work",
+  artist: "MOONA team",
 });
 
 await writeFile(join(process.cwd(), "content", "credits.json"), JSON.stringify(credits, null, 2) + "\n");

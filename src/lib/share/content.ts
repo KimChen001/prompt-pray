@@ -37,6 +37,26 @@ export function readingCard(r: Reading, a: Analysis, ai: TarotAiResult | undefin
   };
 }
 
+/**
+ * The text version of a reading, with the same defaults as the image: the question appears only when
+ * the person ticks "Include my question". Birth details are never part of it.
+ */
+export function readingShareText(r: Reading, a: Analysis, ai: TarotAiResult | undefined, m: Messages, locale: Locale, opts: { includeQuestion: boolean }): string {
+  const lines = [`${m.reading.shareText} · ${m.spreads[r.spread].name} · ${formatLocalDate(r.localDate, locale)}`];
+  if (opts.includeQuestion && r.question) lines.push(`${m.reading.yourQuestion}: ${r.question}`);
+  lines.push("");
+  a.perCard.forEach((c, i) => {
+    lines.push(`【${pick(c.position, locale)}】${pick(c.name, locale)}${c.reversed ? ` (${m.common.reversed})` : ""}`);
+    lines.push(ai ? ai.cards[i].insight : pick(c.meaning, locale));
+    lines.push("");
+  });
+  lines.push(`${m.reading.synthesis}: ${ai ? ai.synthesis : pick(a.summary, locale)}`);
+  lines.push(`${m.reading.action}: ${ai ? ai.action : pick(a.action, locale)}`);
+  lines.push(`${m.reading.reflection}: ${ai ? ai.reflection : pick(a.reflection, locale)}`);
+  lines.push("", ai ? `(AI · ${ai.meta.model})` : `(${m.badge.offline})`, m.disclaimer);
+  return lines.join("\n");
+}
+
 export function dailyCard(localDate: string, cardId: string, reversed: boolean, name: string, line: string, m: Messages, locale: Locale): ShareCard {
   return {
     eyebrow: `MOONA · ${m.daily.title}`,

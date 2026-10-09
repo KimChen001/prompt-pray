@@ -15,7 +15,7 @@ const CARD_IDS = [
   ...Array.from({ length: 22 }, (_, i) => `major-${String(i).padStart(2, "0")}`),
   ...SUITS.flatMap((s) => Array.from({ length: 14 }, (_, i) => `${s}-${String(i + 1).padStart(2, "0")}`)),
 ];
-const PRECACHE_STATIC = [...CARD_IDS.map((id) => `/cards/${id}.jpg`), "/cards/back.jpg", "/brand/moona-mark.svg", "/icons/icon-192.png"];
+const PRECACHE_STATIC = [...CARD_IDS.map((id) => `/cards/${id}.jpg`), "/cards/moona-back.svg", "/brand/moona-mark.svg", "/icons/icon-192.png"];
 const PRECACHE_PAGES = ["/offline", "/", "/tarot", "/tarot/new", "/today", "/learn", "/chart", "/match", "/me", "/talk", "/whispers", "/about"];
 // One cached copy per dynamic route; the page reads the real id from the address bar (src/lib/shell.ts).
 const SHELLS = [

@@ -18,3 +18,13 @@ export function bigThreeNames(birth: BirthData): BigThreeNames {
     rising: name(b.rising?.placement?.sign),
   };
 }
+
+/** The same Big Three in the reader's language, for showing what was shared ("Virgo or Libra" / "处女座或天秤座"). */
+export function bigThreeLocalized(birth: BirthData, locale: "en" | "zh"): BigThreeNames {
+  const b = computeChart(birth).bigThree;
+  const name = (s?: Sign) => (s ? SIGN_INFO[s].name[locale] : undefined);
+  const or = locale === "zh" ? "或" : " or ";
+  const either = (c: { placement: { sign: Sign } | null; options: Sign[] | null }) =>
+    c.placement ? name(c.placement.sign) : c.options ? `${name(c.options[0])}${or}${name(c.options[1])}` : undefined;
+  return { sun: either(b.sun), moon: either(b.moon), rising: name(b.rising?.placement?.sign) };
+}
