@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Glyph / Rising / SVG">
+<g id="Vector">
+<path d="M7 33H41ZM9 38H39Z" fill="black"/>
+<path d="M7 33H41M9 38H39" stroke-width="1.5" stroke-linecap="round" stroke="#DDE1E8"/>
+</g>
+<path id="Vector_2" d="M14 29C14 26.3478 15.0536 23.8043 16.9289 21.9289C18.8043 20.0536 21.3478 19 24 19C26.6522 19 29.1957 20.0536 31.0711 21.9289C32.9464 23.8043 34 26.3478 34 29" stroke-width="1.5" stroke="#DDE1E8"/>
+<g id="Vector_3" opacity="0.65">
+<path d="M24 8V15ZM6 20L11 22ZM42 20L37 22Z" fill="black"/>
+<path d="M24 8V15M6 20L11 22M42 20L37 22" stroke="#DDE1E8"/>
+</g>
+</g>
+</svg>

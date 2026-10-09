@@ -2,14 +2,16 @@
 // Natal report: 3–5 rule-selected themes. Library text is always available offline; an AI version is
 // generated once per chart + rules + language and saved on this device. When the rules or prompt
 // change, the saved version stays and a new one is written only when the user asks.
-// Functional build; visual design pending.
+// `useNatalReport` holds the state so the "Chart synthesis" card (Figma: Interpretation / Chart
+// synthesis) and the full report below it show the same version.
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { deleteNatalReport, listNatalReports, saveNatalReport, useStoreVersion } from "@/lib/store";
 import type { BirthData } from "@/lib/astro/birth";
 import type { NatalChart } from "@/lib/astro/chart";
 import type { HouseSystem } from "@/lib/astro/houses";
-import { natalFacts } from "@/lib/astro/natal-facts";
+import { natalFacts, type NatalFacts } from "@/lib/astro/natal-facts";
 import { selectThemes } from "@/lib/astro/natal-themes";
 import { factLabel, themeLibraryText } from "@/lib/astro/natal-text";
 import {
@@ -22,8 +24,8 @@ import { SourceBadge } from "./bits";
 type GenStatus = "idle" | "loading" | "live" | "failed" | "off";
 const LIBRARY = "library";
 
-export function NatalReport({ birth, chart, houseSystem }: { birth: BirthData; chart: NatalChart; houseSystem: HouseSystem }) {
-  const { m, fmt, pick, locale } = useI18n();
+export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem: HouseSystem) {
+  const { pick, locale } = useI18n();
   const storeVersion = useStoreVersion();
   const [gen, setGen] = useState<GenStatus>("idle");
   const [liveAt, setLiveAt] = useState<string | null>(null); // createdAt of the version generated in this view
@@ -88,7 +90,45 @@ export function NatalReport({ birth, chart, houseSystem }: { birth: BirthData; c
 
   const chosen = selected && selected !== LIBRARY ? saved.find((r) => r.createdAt === selected) ?? null : null;
   const report = selected === LIBRARY ? null : chosen ?? exact ?? older;
-  const themes = report ? report.themes : library;
+  const removeVersion = (r: SavedNatalReport) => {
+    // The deleted version must not be regenerated behind the user's back.
+    attempted.current.add(keyString(r.key));
+    if (selected === r.createdAt) setSelected(null);
+    if (memory?.createdAt === r.createdAt) setMemory(null);
+    deleteNatalReport(r.createdAt);
+  };
+
+  return { nf, gen, liveAt, saved, exact, older, chosen, report, themes: report ? report.themes : library, selected, setSelected, generate, removeVersion, key, currentId };
+}
+
+export type NatalState = ReturnType<typeof useNatalReport>;
+
+/** Facts for the wheel's aspect lines, from the same fact layer the report cites. */
+export function wheelAspects(nf: NatalFacts) {
+  return nf.facts.flatMap((f) => (f.kind === "aspect" ? [{ a: f.a, b: f.b, aspect: f.aspect }] : []));
+}
+
+/** Figma "Interpretation / Chart synthesis" card: the report's overview, linked to the full reading. */
+export function SynthesisCard({ natal }: { natal: NatalState }) {
+  const { m } = useI18n();
+  const { report, gen, liveAt } = natal;
+  return (
+    <article className="interp-card">
+      {report ? (
+        <SourceBadge source={report.createdAt === liveAt ? "live" : "saved"} time={report.createdAt} title={report.meta.model} />
+      ) : (
+        <SourceBadge source="library" />
+      )}
+      <h3>{m.chartPage.synthesis}</h3>
+      <p>{gen === "loading" && !report ? m.natal.loadingAi : report ? report.overview : m.chartPage.synthesisLibrary}</p>
+      <Link href="#natal-title" className="more">{m.chartPage.readFull} ↓</Link>
+    </article>
+  );
+}
+
+export function NatalReport({ natal }: { natal: NatalState }) {
+  const { m, fmt, pick, locale } = useI18n();
+  const { gen, liveAt, saved, exact, older, chosen, report, themes, selected, setSelected, generate, removeVersion, key, currentId } = natal;
   const describe = (r: SavedNatalReport) =>
     keyString(r.key) === currentId ? m.natal.thisChart : sameChart(r.key, key) ? m.natal.earlierRules : m.natal.earlierChart;
   const fmtTime = (iso: string) =>
@@ -97,7 +137,7 @@ export function NatalReport({ birth, chart, houseSystem }: { birth: BirthData; c
   return (
     <section className="stack gap-16" aria-labelledby="natal-title" aria-busy={gen === "loading"}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-        <h2 className="h2" id="natal-title">{m.natal.title}</h2>
+        <h2 className="h2" id="natal-title" style={{ scrollMarginTop: 100 }}>{m.natal.title}</h2>
         {report ? (
           <SourceBadge source={report.createdAt === liveAt ? "live" : "saved"} time={report.createdAt} title={report.meta.model} />
         ) : (
@@ -145,21 +185,23 @@ export function NatalReport({ birth, chart, houseSystem }: { birth: BirthData; c
         </div>
       )}
 
-      {themes.map((t) => (
-        <article key={t.id} className="panel stack gap-8">
-          <h3 className="h3" style={{ margin: 0 }}>{pick(t.title)}</h3>
-          <p style={{ margin: 0 }}>{t.text}</p>
-          <details>
-            <summary className="meta" style={{ cursor: "pointer" }}>{m.natal.why}</summary>
-            <ul style={{ margin: "8px 0 0", paddingLeft: 20, color: "var(--text-2)" }}>
-              {t.evidence.map((e) => <li key={e.id} className="small">{pick(e.label)}</li>)}
-            </ul>
-            {t.limitations.length > 0 && (
-              <p className="muted small" style={{ margin: "8px 0 0" }}>{m.natal.limits} {t.limitations.map((l) => pick(l)).join(" ")}</p>
-            )}
-          </details>
-        </article>
-      ))}
+      <div className="interp-grid">
+        {themes.map((t) => (
+          <article key={t.id} className="interp-card">
+            <h3 style={{ fontSize: 26 }}>{pick(t.title)}</h3>
+            <p style={{ color: "var(--text-1)" }}>{t.text}</p>
+            <details style={{ marginTop: "auto" }}>
+              <summary className="meta" style={{ cursor: "pointer" }}>{m.natal.why}</summary>
+              <ul style={{ margin: "8px 0 0", paddingLeft: 20, color: "var(--text-2)" }}>
+                {t.evidence.map((e) => <li key={e.id} className="small">{pick(e.label)}</li>)}
+              </ul>
+              {t.limitations.length > 0 && (
+                <p className="muted small" style={{ margin: "8px 0 0" }}>{m.natal.limits} {t.limitations.map((l) => pick(l)).join(" ")}</p>
+              )}
+            </details>
+          </article>
+        ))}
+      </div>
 
       <p className="muted small" style={{ margin: 0 }}>{report ? m.natal.aiNote : m.natal.libraryNote} {m.natal.sentNote}</p>
 
@@ -175,20 +217,7 @@ export function NatalReport({ birth, chart, houseSystem }: { birth: BirthData; c
               <span className="small">{fmtTime(r.createdAt)} · {describe(r)}</span>
               <span className="muted small">{r.meta.model} · {r.key.promptVersion}</span>
               <button type="button" className="btn-text" style={{ minHeight: 0, padding: 0 }} aria-pressed={report?.createdAt === r.createdAt} onClick={() => setSelected(r.createdAt)}>{m.natal.view}</button>
-              <button
-                type="button"
-                className="btn-text"
-                style={{ minHeight: 0, padding: 0 }}
-                onClick={() => {
-                  // The deleted version must not be regenerated behind the user's back.
-                  attempted.current.add(keyString(r.key));
-                  if (selected === r.createdAt) setSelected(null);
-                  if (memory?.createdAt === r.createdAt) setMemory(null);
-                  deleteNatalReport(r.createdAt);
-                }}
-              >
-                {m.natal.delete}
-              </button>
+              <button type="button" className="btn-text" style={{ minHeight: 0, padding: 0 }} onClick={() => removeVersion(r)}>{m.natal.delete}</button>
             </li>
           ))}
         </ul>

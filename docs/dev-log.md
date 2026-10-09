@@ -158,3 +158,18 @@ Next: Claude should read this entry and the shared `outputs/MOONA夜间修复交
 - First attempt failed and was fixed: pages loaded offline but crashed with `ChunkLoadError`, because the precached pages' JS chunks had never been downloaded. Asset discovery at install was added for that, and the build-id versioning so later deployments stay consistent.
 - Side notes: the fresh Edge profile auto-installed a Tampermonkey extension (it opened a welcome tab and wrote an `AMP_unsent_*` localStorage key). That's machine-level browser configuration, not MOONA: the build and source contain no analytics code (searched `.next/static`, `src`, `public`). Editing `next.config.ts` made the user's `next dev` restart its worker process (new PID under the same `next dev` parent); the dev server kept running.
 - Brand note for the team: the logo's zodiac wheel has errors (Libra, Scorpio and Capricorn appear twice; Aries, Sagittarius and Pisces are missing; the order is off). It's used unchanged; it should be fixed when the UI design lands.
+
+## Visual pass 1: Graphite Night design system (2026-10-09)
+
+Decision (user, 2026-10-09): web only; the WeChat mini-program is obsolete. Visuals come from the team's Figma file "MOONA — Graphite Night · Design System · Birth Details"; pages without a design only inherit the foundations. Implementation notes for the team: `outputs/MOONA设计稿实现记录-2026-10-09.md`.
+
+**What**
+- Foundations (`globals.css`): the Figma tokens (BG #0B0C10, PANEL #14161C, INPUT #1B1E26, FG / SECONDARY / META, SILVER, GOLD for the Sun only, CYAN for the Live AI badge only, 1px white-10% borders), Cormorant Garamond / Inter / JetBrains Mono roles, 16px panels, pill buttons, mono field labels, Library / Live AI badges. Starfield and glows removed ("no gradients").
+- Header (`AppShell`): wordmark + text nav (Home · Natal Chart · Tarot · Guidance → /today · Journal → /me) with Learn / Match / Whispers / About under "More"; phone menu button; footer tagline. Old sidebar, tab bar and `icons.tsx` removed.
+- `/chart/edit` (Birth Details), new `/chart/reveal` (Big Three Reveal), `/chart` (Birth Chart) rebuilt to the frames. Assets from the design in `public/design/` (astrolabe rings, houses circle, original MOONA Sun/Moon/Rising glyphs, 12 zodiac vectors), used unmodified.
+- `ChartWheel`: data-driven wheel in the design's style. Standard convention (AC at 9 o'clock, counter-clockwise zodiac, house 1 below the AC, MC on top); planets at their real longitudes with overlap spreading, aspect lines from the natal fact layer; no houses or angles without a birth time. The Figma wheel is a fixed illustration and doesn't follow this convention.
+- Big Three taglines (`content/astro/taglines.json`, 12 signs × Sun/Moon/Rising, EN/ZH); interpretation cards for the Big Three (Library) + "Chart synthesis" (AI overview, same version as the full report via the new `useNatalReport` hook).
+
+**Verified**
+- Typecheck, 451 tests, `next build` clean. Screenshots from a headless Edge with a throwaway profile against `next start` on :3101 (both stopped): Birth Details, Big Three and Birth Chart at 1440 and 390 match the Figma layouts; Aug 14 1999 07:30 Boston computes Leo Sun 21°14′, Virgo Moon 28°58′, Virgo Rising 9°38′ (the Figma numbers are illustrative); unknown-time Chinese state shows "X或Y"/"未解锁"; home, tarot and today inherit the foundations; phone menu lists all sections; no horizontal scroll at 390px. Wheel labels were too small on phones and were enlarged.
+- Not done: designs for Home, Tarot, Guidance, Journal, Learn, Match, Whispers and share images (waiting for the team).

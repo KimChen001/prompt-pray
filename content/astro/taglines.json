@@ -1,0 +1,44 @@
+{
+  "sun": {
+    "aries": { "en": "Bold, direct, and quick to begin.", "zh": "大胆、直接，行动迅速。" },
+    "taurus": { "en": "Steady, sensual, and loyal to what lasts.", "zh": "稳重、重感受，忠于长久的事物。" },
+    "gemini": { "en": "Curious, quick-witted, and endlessly talkative.", "zh": "好奇、机敏，总有话可聊。" },
+    "cancer": { "en": "Protective, intuitive, and devoted to home.", "zh": "护短、直觉强，心系家与归属。" },
+    "leo": { "en": "Radiant, expressive, and driven to create.", "zh": "光芒四射、善于表达，热爱创造。" },
+    "virgo": { "en": "Precise, thoughtful, and quietly helpful.", "zh": "细致、周到，默默帮忙。" },
+    "libra": { "en": "Fair-minded, gracious, and drawn to harmony.", "zh": "公正、优雅，追求和谐。" },
+    "scorpio": { "en": "Intense, private, and unafraid of depth.", "zh": "强烈、内敛，不惧深入。" },
+    "sagittarius": { "en": "Adventurous, honest, and hungry for meaning.", "zh": "爱冒险、坦率，渴望意义。" },
+    "capricorn": { "en": "Ambitious, patient, and built for the long game.", "zh": "有抱负、有耐心，擅长长线。" },
+    "aquarius": { "en": "Independent, inventive, and true to principle.", "zh": "独立、有创意，坚守原则。" },
+    "pisces": { "en": "Imaginative, empathetic, and quietly intuitive.", "zh": "富有想象、善于共情，直觉细腻。" }
+  },
+  "moon": {
+    "aries": { "en": "Feels fast and honestly, and needs room to act.", "zh": "情绪来得快也直接，需要行动的空间。" },
+    "taurus": { "en": "Comforted by calm, routine, and the senses.", "zh": "在平静、规律和感官享受中得到安慰。" },
+    "gemini": { "en": "Makes sense of feelings by talking them through.", "zh": "通过聊天来理清情绪。" },
+    "cancer": { "en": "Deeply caring, sensitive, and home-loving.", "zh": "深情、敏感，恋家。" },
+    "leo": { "en": "Needs warmth, play, and to feel seen.", "zh": "需要温暖、乐趣，也需要被看见。" },
+    "virgo": { "en": "Finds calm in order and in being useful.", "zh": "在秩序和有用之中找到安心。" },
+    "libra": { "en": "Feels steadiest in fair, peaceful company.", "zh": "在公平、和睦的关系里最安稳。" },
+    "scorpio": { "en": "Emotionally intense, perceptive, and private.", "zh": "情感浓烈、洞察力强、注重隐私。" },
+    "sagittarius": { "en": "Needs freedom, laughter, and a bigger view.", "zh": "需要自由、笑声和更开阔的视野。" },
+    "capricorn": { "en": "Steady under pressure; shows care through action.", "zh": "压力下依然沉稳，用行动表达关心。" },
+    "aquarius": { "en": "Needs space and friendship as much as closeness.", "zh": "需要空间与友谊，不亚于需要亲密。" },
+    "pisces": { "en": "Tender, absorbent, and deeply compassionate.", "zh": "柔软、容易被感染，富有同情心。" }
+  },
+  "rising": {
+    "aries": { "en": "Energetic, direct, and brave at first meeting.", "zh": "初见时有活力、直接、勇敢。" },
+    "taurus": { "en": "Calm, warm, and grounded at first meeting.", "zh": "初见时沉稳、温和、踏实。" },
+    "gemini": { "en": "Lively, curious, and quick at first meeting.", "zh": "初见时活泼、好奇、反应快。" },
+    "cancer": { "en": "Gentle, caring, and easy to approach.", "zh": "温柔、体贴，容易亲近。" },
+    "leo": { "en": "Confident, warm, and magnetic.", "zh": "自信、热情，有吸引力。" },
+    "virgo": { "en": "Composed, observant, and capable.", "zh": "从容、细心、能干。" },
+    "libra": { "en": "Charming, poised, and socially intuitive.", "zh": "有魅力、得体，懂得人情。" },
+    "scorpio": { "en": "Magnetic, reserved, and intense.", "zh": "有磁场、内敛、强烈。" },
+    "sagittarius": { "en": "Open, upbeat, and adventurous.", "zh": "开朗、乐观、爱冒险。" },
+    "capricorn": { "en": "Serious, reliable, and self-possessed.", "zh": "认真、可靠、沉着。" },
+    "aquarius": { "en": "Friendly, original, and a little aloof.", "zh": "友善、特别，带点疏离。" },
+    "pisces": { "en": "Soft, dreamy, and sympathetic.", "zh": "温柔、梦幻、善解人意。" }
+  }
+}

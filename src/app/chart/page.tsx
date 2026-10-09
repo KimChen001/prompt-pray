@@ -1,22 +1,30 @@
 "use client";
-// Natal chart (plan v0.2 §3.4). Functional build: data and states are final, visuals come later.
+// Birth chart (plan v0.2 §3.4; Figma: "Birth Chart / Desktop 1440" + "Mobile 390"): wheel, planets &
+// points, chart interpretations (Library cards for the Big Three + the AI "Chart synthesis"), then the
+// full natal report. Everything is calculated in the browser from the saved birth details.
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { getBirth, getSettings, updateSettings, useStoreVersion } from "@/lib/store";
 import { computeChart, type NatalChart, type SignCandidate } from "@/lib/astro/chart";
-import { formatOffset, zoneAbbreviation, type BirthData } from "@/lib/astro/birth";
-import { formatPlacement, placement, PLANET_NAME, PLANETS, SIGN_INFO } from "@/lib/astro/zodiac";
+import type { BirthData } from "@/lib/astro/birth";
+import { PLANET_NAME, PLANETS, SIGN_INFO, type Placement } from "@/lib/astro/zodiac";
 import type { HouseSystem } from "@/lib/astro/houses";
-import { formatLocalDate } from "@/lib/time";
 import { SourceBadge } from "@/components/bits";
-import { NatalReport } from "@/components/NatalReport";
+import { NatalReport, SynthesisCard, useNatalReport, wheelAspects } from "@/components/NatalReport";
+import { ChartWheel } from "@/components/ChartWheel";
+import { BirthMetaLine } from "@/components/BirthMeta";
+import { TAGLINES, type BigThreeKind } from "@/components/BigThree";
 import { learnHref } from "@/lib/learn";
 import { ShareImage } from "@/components/ShareImage";
 import { bigThreeCard } from "@/lib/share/content";
 
+const GLYPH: Record<string, string> = { sun: "☉", moon: "☽", mercury: "☿", venus: "♀", mars: "♂", jupiter: "♃", saturn: "♄", uranus: "♅", neptune: "♆", pluto: "♇" };
+const TEXT_STYLE = String.fromCharCode(0xfe0e);
+const deg = (p: Placement) => `${p.degree}°${String(p.minute).padStart(2, "0")}′`;
+
 export default function ChartPage() {
-  const { m, fmt, pick, locale } = useI18n();
+  const { m } = useI18n();
   const version = useStoreVersion();
   const [birth, setBirth] = useState<BirthData | null | undefined>(undefined);
   const [system, setSystem] = useState<HouseSystem>("placidus");
@@ -39,141 +47,162 @@ export default function ChartPage() {
 
   if (!birth) {
     return (
-      <div className="stack gap-16" style={{ maxWidth: 560 }}>
-        <h1 className="h1">{m.chart.title}</h1>
-        <p className="lede">{m.chart.empty}</p>
-        <div><Link href="/chart/edit" className="btn btn-primary">{m.chart.add}</Link></div>
+      <div className="form-page">
+        <header className="page-head page-head-center">
+          <p className="eyebrow">{m.chartPage.eyebrow}</p>
+          <h1 className="h1">{m.chartPage.title}</h1>
+          <p className="lede">{m.chart.empty}</p>
+        </header>
+        <Link href="/chart/edit" className="btn btn-primary btn-lg">{m.chart.add}</Link>
       </div>
     );
   }
 
-  const placeName = [locale === "zh" && birth.place.zh ? birth.place.zh : birth.place.name, birth.place.admin1].filter(Boolean).join(", ");
   if (!result || "error" in result) {
     return (
-      <div className="stack gap-16" style={{ maxWidth: 560 }}>
-        <h1 className="h1">{m.chart.title}</h1>
-        <p className="notice">{m.chart.computeError} {birth.date} {birth.time ?? ""} · {placeName} · {birth.place.tz}</p>
-        <div><Link href="/chart/edit" className="btn btn-primary">{m.chart.edit}</Link></div>
+      <div className="form-page">
+        <h1 className="h1">{m.chartPage.title}</h1>
+        <p className="notice">{m.chart.computeError} {birth.date} {birth.time ?? ""} · {birth.place.name} · {birth.place.tz}</p>
+        <Link href="/chart/edit" className="btn btn-primary">{m.chart.edit}</Link>
       </div>
     );
-  }
-
-  const { chart } = result;
-  const r = chart.resolved;
-  const zone = r ? zoneAbbreviation(r.utc, birth.place.tz) : null;
-  const bornLine = birth.time
-    ? fmt(m.chart.born, { date: formatLocalDate(birth.date, locale), time: `${birth.time}${r ? ` (${zone ? `${zone}, ` : ""}${formatOffset(r.offset)})` : ""}`, place: placeName })
-    : fmt(m.chart.bornNoTime, { date: formatLocalDate(birth.date, locale), place: placeName });
-
-  const signName = (s: keyof typeof SIGN_INFO) => pick(SIGN_INFO[s].name);
-  const candidate = (c: SignCandidate) =>
-    c.placement ? formatPlacement(c.placement, locale) : c.options ? fmt(m.chart.or, { a: signName(c.options[0]), b: signName(c.options[1]) }) : "—";
-
-  const big = [
-    { key: "sun", label: m.chart.sun, desc: m.chart.sunDesc, c: chart.bigThree.sun },
-    { key: "moon", label: m.chart.moon, desc: m.chart.moonDesc, c: chart.bigThree.moon },
-    { key: "rising", label: m.chart.rising, desc: m.chart.risingDesc, c: chart.bigThree.rising },
-  ];
-
-  function changeSystem(next: HouseSystem) {
-    updateSettings({ houseSystem: next });
-    setSystem(next);
   }
 
   return (
-    <div className="stack gap-32">
-      <header className="stack gap-8">
-        <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-          <h1 className="h1">{m.chart.title}</h1>
-          <SourceBadge source="calc" />
-        </div>
-        <p className="lede">{bornLine}</p>
-        <div className="btn-row">
-          <Link href="/chart/edit" className="btn btn-ghost">{m.chart.edit}</Link>
+    <ChartView
+      birth={birth}
+      chart={result.chart}
+      system={system}
+      onSystem={(next) => {
+        updateSettings({ houseSystem: next });
+        setSystem(next);
+      }}
+    />
+  );
+}
+
+function PlacementCard({ kind, title, c }: { kind: BigThreeKind; title: string; c: SignCandidate | null }) {
+  const { m, fmt, pick } = useI18n();
+  if (!c) {
+    return (
+      <article className="interp-card">
+        <SourceBadge source="library" />
+        <h3>{m.chartPage.risingLockedTitle} · {m.big3.locked}</h3>
+        <p>{m.chartPage.timeOnly}</p>
+        <Link href="/chart/edit" className="more">{m.big3.lockedHint} →</Link>
+      </article>
+    );
+  }
+  const sign = c.placement?.sign;
+  const signName = sign ? pick(SIGN_INFO[sign].name) : fmt(m.big3.either, { a: pick(SIGN_INFO[c.options![0]].name), b: pick(SIGN_INFO[c.options![1]].name) });
+  return (
+    <article className="interp-card">
+      <SourceBadge source="library" />
+      <h3>{fmt(m.chartPage.inSign, { body: title, sign: signName })}</h3>
+      <p>{sign ? pick(TAGLINES[kind][sign]) : fmt(m.big3.changesAt, { time: c.changesAt ?? "" })}</p>
+      {sign && <Link href={learnHref("sign", sign)} className="more">{fmt(m.chartPage.learnMore, { sign: signName })} →</Link>}
+    </article>
+  );
+}
+
+function ChartView({ birth, chart, system, onSystem }: { birth: BirthData; chart: NatalChart; system: HouseSystem; onSystem: (s: HouseSystem) => void }) {
+  const { m, pick, locale } = useI18n();
+  const natal = useNatalReport(birth, chart, chart.houseSystem ?? system);
+  const aspects = useMemo(() => wheelAspects(natal.nf), [natal.nf]);
+  const approx = !chart.timeKnown;
+
+  return (
+    <div className="stack gap-48">
+      <header className="page-head">
+        <p className="eyebrow">{m.chartPage.eyebrow}</p>
+        <h1 className="h1">{m.chartPage.title}</h1>
+        <p className="lede">{m.chartPage.sub}</p>
+        <BirthMetaLine birth={birth} chart={chart} />
+        <div className="btn-row" style={{ marginTop: 4 }}>
+          <Link href="/chart/reveal" className="btn-text" style={{ paddingLeft: 0 }}>{m.big3.title}</Link>
+          <Link href="/chart/edit" className="btn-text">{m.chart.edit}</Link>
+          <ShareImage filename="moona-big-three.png" build={() => bigThreeCard(chart, m, locale)} />
         </div>
       </header>
 
-      <section className="stack gap-12">
-        <h2 className="h2">{m.chart.bigThree}</h2>
-        <div className="grid-tiles">
-          {big.map(({ key, label, desc, c }) => (
-            <div key={key} className="panel stack gap-8">
-              <span className="meta">{label} · {desc}</span>
-              {c ? (
-                <>
-                  <span className="h2">{c.placement ? <Link href={learnHref("sign", c.placement.sign)}>{candidate(c)}</Link> : candidate(c)}</span>
-                  {c.changesAt && <span className="muted small">{fmt(m.chart.changesAt, { time: c.changesAt })}</span>}
-                </>
-              ) : (
-                <>
-                  <span className="h2" style={{ color: "var(--text-3)" }}>?</span>
-                  <span className="muted small">{m.chart.risingLocked}</span>
-                  <Link href="/chart/edit" className="btn-text" style={{ padding: 0, minHeight: 0, alignSelf: "flex-start" }}>{m.chart.edit}</Link>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-        {!chart.timeKnown && <p className="muted small" style={{ margin: 0 }}>{m.chart.noonNote}</p>}
-        <div className="btn-row"><ShareImage filename="moona-big-three.png" build={() => bigThreeCard(chart, m, locale)} /></div>
-      </section>
+      <div className="chart-grid">
+        <section className="chart-panel" aria-labelledby="wheel-title">
+          <div className="chart-panel-head">
+            <h2 className="eyebrow" id="wheel-title">{m.chartPage.wheel}</h2>
+            {chart.timeKnown && (
+              <div className="seg" role="group" aria-label={m.chart.houseSystem}>
+                <button type="button" aria-pressed={system === "placidus"} onClick={() => onSystem("placidus")}>{m.chart.placidus}</button>
+                <span className="seg-sep" aria-hidden="true">/</span>
+                <button type="button" aria-pressed={system === "whole"} onClick={() => onSystem("whole")}>{m.chart.whole}</button>
+              </div>
+            )}
+          </div>
+          {chart.houseFallback && <p className="notice" style={{ margin: "0 0 12px" }}>{m.chart.houseFallback}</p>}
+          <ChartWheel chart={chart} aspects={aspects} />
+          {approx && <p className="muted small" style={{ margin: "12px 0 0" }}>{m.chartPage.timeOnly} {m.chart.noonNote}</p>}
+        </section>
 
-      <section className="stack gap-12">
-        <h2 className="h2">{m.chart.planets}</h2>
-        <div className="table-wrap">
-          <table className="table">
+        <section className="chart-panel" aria-labelledby="points-title" style={{ overflowX: "auto" }}>
+          <h2 className="eyebrow" id="points-title" style={{ marginBottom: 14 }}>{m.chartPage.points}</h2>
+          <table className="planet-table">
             <thead>
-              <tr><th scope="col">{m.chart.planet}</th><th scope="col">{m.chart.position}</th><th scope="col">{m.chart.house}</th><th scope="col"><span className="visually-hidden">{m.chart.retro}</span>℞</th></tr>
+              <tr>
+                <th scope="col">{m.chartPage.planet}</th>
+                <th scope="col">{m.chartPage.sign}</th>
+                <th scope="col">{m.chartPage.degree}</th>
+                <th scope="col">{m.chartPage.house}</th>
+                <th scope="col"><abbr title={m.chart.retro} style={{ textDecoration: "none" }}>{m.chartPage.rx}</abbr></th>
+              </tr>
             </thead>
             <tbody>
               {PLANETS.map((p) => {
                 const pos = chart.positions[p];
                 return (
                   <tr key={p}>
-                    <th scope="row"><Link href={learnHref("planet", p)}>{pick(PLANET_NAME[p])}</Link></th>
-                    <td>{formatPlacement(pos.placement, locale)}</td>
-                    <td>{pos.house ?? "—"}</td>
-                    <td>{pos.retrograde ? <abbr title={m.chart.retro}>℞</abbr> : ""}</td>
+                    <th scope="row"><Link href={learnHref("planet", p)}><span aria-hidden="true">{GLYPH[p] + TEXT_STYLE} </span>{pick(PLANET_NAME[p])}</Link></th>
+                    <td><Link href={learnHref("sign", pos.placement.sign)}>{pick(SIGN_INFO[pos.placement.sign].name)}</Link></td>
+                    <td className="num">{approx ? "≈" : ""}{deg(pos.placement)}</td>
+                    <td>{pos.house ? <Link href={learnHref("house", pos.house)}>{pos.house}</Link> : "–"}</td>
+                    <td>{pos.retrograde ? "R" : "–"}</td>
                   </tr>
                 );
               })}
               {chart.asc && chart.mc && (
                 <>
-                  <tr><th scope="row">{pick(PLANET_NAME.asc)}</th><td>{formatPlacement(chart.asc, locale)}</td><td>1</td><td /></tr>
-                  <tr><th scope="row">{pick(PLANET_NAME.mc)}</th><td>{formatPlacement(chart.mc, locale)}</td><td>{chart.houseSystem === "placidus" ? 10 : "—"}</td><td /></tr>
+                  <tr>
+                    <th scope="row"><Link href={learnHref("house", 1)}>AC {m.chartPage.ascendant}</Link></th>
+                    <td><Link href={learnHref("sign", chart.asc.sign)}>{pick(SIGN_INFO[chart.asc.sign].name)}</Link></td>
+                    <td className="num">{deg(chart.asc)}</td>
+                    <td>1</td>
+                    <td>–</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><Link href={learnHref("house", 10)}>MC {m.chartPage.midheaven}</Link></th>
+                    <td><Link href={learnHref("sign", chart.mc.sign)}>{pick(SIGN_INFO[chart.mc.sign].name)}</Link></td>
+                    <td className="num">{deg(chart.mc)}</td>
+                    <td>{chart.houseSystem === "placidus" ? 10 : "–"}</td>
+                    <td>–</td>
+                  </tr>
                 </>
               )}
             </tbody>
           </table>
+        </section>
+      </div>
+
+      <section className="stack gap-16" aria-labelledby="interp-title">
+        <h2 className="eyebrow" id="interp-title">{m.chartPage.interpretations}</h2>
+        <div className="interp-grid">
+          <PlacementCard kind="sun" title={m.chart.sun} c={chart.bigThree.sun} />
+          <PlacementCard kind="moon" title={m.chart.moon} c={chart.bigThree.moon} />
+          <PlacementCard kind="rising" title={m.chartPage.ascendant} c={chart.bigThree.rising} />
+          <SynthesisCard natal={natal} />
         </div>
       </section>
 
-      <section className="stack gap-12">
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-          <h2 className="h2">{m.chart.houses}</h2>
-          {chart.timeKnown && (
-            <div className="btn-row" role="group" aria-label={m.chart.houseSystem}>
-              <button type="button" className="chip" aria-pressed={system === "placidus"} onClick={() => changeSystem("placidus")}>{m.chart.placidus}</button>
-              <button type="button" className="chip" aria-pressed={system === "whole"} onClick={() => changeSystem("whole")}>{m.chart.whole}</button>
-            </div>
-          )}
-        </div>
-        {chart.houseFallback && <p className="notice" style={{ margin: 0 }}>{m.chart.houseFallback}</p>}
-        {chart.cusps ? (
-          <ol className="cusps">
-            {chart.cusps.map((c, i) => (
-              <li key={i}><Link href={learnHref("house", i + 1)} className="meta">{i + 1}</Link> {formatPlacement(placement(c), locale)}</li>
-            ))}
-          </ol>
-        ) : (
-          <p className="muted" style={{ margin: 0 }}>{m.chart.noHouses}</p>
-        )}
-      </section>
-
-      <NatalReport birth={birth} chart={chart} houseSystem={chart.houseSystem ?? system} />
+      <NatalReport natal={natal} />
 
       <p className="muted small" style={{ margin: 0 }}>{m.chart.privacy} {m.chart.accuracy}</p>
     </div>
   );
 }
-
