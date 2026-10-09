@@ -43,6 +43,17 @@ export function nextLocalDate(date: LocalDate): LocalDate {
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
 }
 
+/**
+ * The fixed reference moment for one local day's facts (the daily horoscope): halfway between its
+ * two local midnights. Fixed, so the same day always yields the same facts and a saved text never
+ * drifts away from the sky it was written from. (The "Today's sky" panel uses the live moment.)
+ */
+export function dayMidpoint(localDate: LocalDate, timeZone: string): Date {
+  const start = startOfLocalDay(localDate, timeZone).getTime();
+  const end = startOfLocalDay(nextLocalDate(localDate), timeZone).getTime();
+  return new Date((start + end) / 2);
+}
+
 /** Bisect for the instant where `changed(t)` flips from false to true. */
 function bisect(lo: number, hi: number, changed: (t: number) => boolean, precisionMs = 20e3): Date {
   while (hi - lo > precisionMs) {

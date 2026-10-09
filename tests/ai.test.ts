@@ -7,11 +7,15 @@ import { modelCaps } from "@/lib/ai/capabilities";
 import { aiConfig, type AiConfig } from "@/lib/ai/config";
 import { Budget } from "@/lib/ai/budget";
 import { AiError, extractJson, generateJson, requestCostBound } from "@/lib/ai/provider";
-import { HOROSCOPE_SCHEMA, horoscopePrompt, parseHoroscopeRequest, validateHoroscope } from "@/lib/ai/horoscope-prompt";
+import { HOROSCOPE_SCHEMA, horoscopePrompt, parseHoroscopeRequest, referenceSky, validateHoroscope } from "@/lib/ai/horoscope-prompt";
 import { resetAiLimits } from "@/lib/ai/guard";
 import { POST as horoscopePOST } from "@/app/api/ai/horoscope/route";
 import { GET as statusGET } from "@/app/api/ai/status/route";
 import type { JsonRequest } from "@/lib/ai/types";
+import { dayHoroscope, horoscopeBody } from "@/lib/astro/horoscope-day";
+
+// A real request body (Sun-sign subject) for the hackathon day, as the browser builds it.
+const horoscopeReq = JSON.parse(JSON.stringify(horoscopeBody(dayHoroscope({ sunSign: "leo" }, "2026-10-28", "America/New_York"), "2026-10-28", "America/New_York", "en")));
 
 const tmp = () => join(mkdtempSync(join(tmpdir(), "moona-ai-")), "usage.json");
 const limits = { maxCallsPerDay: 100, maxUsdPerDay: 5, maxUsdTotal: 25 };
@@ -236,9 +240,11 @@ describe("parsing and validation", () => {
     expect(() => extractJson("no json here")).toThrow(AiError);
   });
   it("validates horoscope requests and output", () => {
-    const body = { locale: "en", date: "2026-10-28", tone: "tension", subject: { sun: "Leo" }, facts: ["Mercury is retrograde."] };
-    expect(parseHoroscopeRequest(body)).toMatchObject({ locale: "en" });
+    const body = horoscopeReq;
+    expect(parseHoroscopeRequest(body)).toMatchObject({ locale: "en", timeZone: "America/New_York" });
     expect(parseHoroscopeRequest({ ...body, facts: [] })).toBeNull();
+    expect(parseHoroscopeRequest({ ...body, facts: ["Mercury is retrograde."] })).toBeNull(); // free text is no longer accepted
+    expect(parseHoroscopeRequest({ ...body, timeZone: "Mars/Olympus" })).toBeNull();
     expect(horoscopePrompt(parseHoroscopeRequest({ ...body, locale: "zh" })!).system).toMatch(/Simplified Chinese/);
     expect(validateHoroscope(good)).toEqual(good);
     expect(validateHoroscope({ overall: "You may want to die today", love: "b", work: "c" })).toBeNull();
@@ -252,7 +258,7 @@ describe("parsing and validation", () => {
 describe("routes", () => {
   const post = (body: unknown, cookie?: string) => new NextRequest("http://localhost/api/ai/horoscope", { method: "POST", body: JSON.stringify(body), headers: cookie ? { cookie } : {} });
   const get = (cookie?: string) => new NextRequest("http://localhost/api/ai/status", { headers: cookie ? { cookie } : {} });
-  const body = { locale: "en", date: "2026-10-28", tone: "tension", subject: { sun: "Leo" }, facts: ["Mercury is retrograde."] };
+  const body = horoscopeReq;
   beforeEach(() => vi.stubEnv("AI_USAGE_FILE", tmp()));
 
   it("horoscope: 503 when unconfigured, locked without the code", async () => {
@@ -268,8 +274,22 @@ describe("routes", () => {
     const res = await horoscopePOST(post(body));
     const json = await res.json();
     expect(res.status).toBe(200);
-    expect(json).toMatchObject({ ...good, source: "live", meta: { provider: "openai-compatible", model: "claude-haiku-4-5" } });
+    expect(json).toMatchObject({ ...good, source: "live", promptVersion: "horoscope@2", meta: { provider: "openai-compatible", model: "claude-haiku-4-5" } });
+    expect(json.basis.length).toBe(body.facts.length); // the server's own fact sentences, saved with the text
     expect(Date.parse(json.meta.generatedAt)).not.toBeNaN();
+  });
+  it("horoscope: refuses facts that don't match the recalculated sky, without calling the model", async () => {
+    vi.stubEnv("AI_API_KEY", "k");
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    // The Moon's sign on that day is recalculated on the server; claim a different one.
+    const moonSign = referenceSky("2026-10-28", "America/New_York").moon.placement.sign;
+    const wrong = moonSign === "aries" ? "taurus" : "aries";
+    const forged = { ...body, facts: [...body.facts.slice(0, -1), { kind: "moonHouse", house: 1, basis: "solar", sign: wrong }] };
+    const res = await horoscopePOST(post(forged));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ code: "bad_facts" });
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
   it("status: hides details from locked clients, shows budget to the demo device", async () => {
     vi.stubEnv("AI_API_KEY", "");

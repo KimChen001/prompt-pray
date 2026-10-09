@@ -1,105 +1,97 @@
 "use client";
 // Daily horoscope: template text from real transits immediately, AI rewrite when available.
-// Functional build; visual design pending.
+// - Facts use the day's fixed reference moment, so the template, the AI request and any saved text
+//   describe the same sky (lib/astro/horoscope-day.ts).
+// - Saved AI text is keyed by every input (birth details incl. DST choice and zone, house system,
+//   the person's time zone, rules/prompt versions, language) and shown with the facts it came from.
+// - A response that arrives after the language, birth details or day changed is dropped.
+// - Unknown birth time: both candidate signs, no Rising, houses counted from the Sun sign and labelled.
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
-import { cacheHoroscope, getBirth, getCachedHoroscope, getSettings, updateSettings, useStoreVersion, type CachedText } from "@/lib/store";
-import { computeChart } from "@/lib/astro/chart";
-import { skyForDay } from "@/lib/astro/sky";
-import { dailyFacts, type Subject } from "@/lib/astro/transits";
-import { composeHoroscope } from "@/lib/astro/horoscope";
+import { cacheHoroscope, dataEpoch, getBirth, getCachedHoroscope, getSettings, updateSettings, useStoreVersion, type CachedText } from "@/lib/store";
+import { dayHoroscope, horoscopeBody, horoscopeCacheKey, type HoroscopeInput } from "@/lib/astro/horoscope-day";
 import { SIGNS, SIGN_INFO, type Sign } from "@/lib/astro/zodiac";
 import type { BirthData } from "@/lib/astro/birth";
+import type { HouseSystem } from "@/lib/astro/houses";
 import { SourceBadge } from "./bits";
 import { ZodiacIcon } from "./AstroIcon";
 
 // "live" = generated for this view just now; "saved" = read back from this device's cache.
-type AiState = { status: "idle" | "loading" | "live" | "saved" | "failed" | "off"; text?: CachedText };
+type AiState = { status: "idle" | "loading" | "live" | "saved" | "failed" | "off"; text?: CachedText; key?: string };
 
-export function HoroscopePanel({ localDate, timeZone, now }: { localDate: string; timeZone: string; now: Date }) {
+export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: string; timeZone: string; onBusy?: (busy: boolean) => void }) {
   const { m, fmt, pick, locale } = useI18n();
   const version = useStoreVersion();
   const [birth, setBirth] = useState<BirthData | null | undefined>(undefined);
   const [sunSign, setSunSign] = useState<Sign | null>(null);
+  const [houseSystem, setHouseSystem] = useState<HouseSystem>("placidus");
   const [ai, setAi] = useState<AiState>({ status: "idle" });
   const [attempt, setAttempt] = useState(0);
+  const currentKey = useRef<string | null>(null);
 
   useEffect(() => {
     setBirth(getBirth());
-    setSunSign(getSettings().sunSign);
+    const s = getSettings();
+    setSunSign(s.sunSign);
+    setHouseSystem(s.houseSystem);
   }, [version]);
 
-  // Facts depend on the local day, not the minute: recompute only when the day changes.
-  const dayKey = `${localDate}|${timeZone}`;
-  const result = useMemo(() => {
-    if (birth === undefined) return null;
-    let subject: Subject | null = null;
-    let names: { sun?: string; moon?: string; rising?: string } = {};
-    let subjectKey = "";
-    if (birth) {
-      const natal = computeChart(birth, getSettings().houseSystem);
-      const b = natal.bigThree;
-      const sign = (s?: Sign) => (s ? SIGN_INFO[s].name.en : undefined);
-      subject = { mode: "natal", sunSign: natal.positions.sun.placement.sign, natal };
-      names = {
-        sun: sign(b.sun.placement?.sign ?? b.sun.options?.[0]),
-        moon: b.moon.placement ? sign(b.moon.placement.sign) : b.moon.options ? `${sign(b.moon.options[0])} or ${sign(b.moon.options[1])}` : undefined,
-        rising: sign(b.rising?.placement?.sign),
-      };
-      subjectKey = `natal:${birth.date}:${birth.time ?? "-"}:${birth.place.lat},${birth.place.lon}`;
-    } else if (sunSign) {
-      subject = { mode: "sign", sunSign };
-      names = { sun: SIGN_INFO[sunSign].name.en };
-      subjectKey = `sign:${sunSign}`;
-    }
-    if (!subject) return null;
-    const sky = skyForDay(localDate, timeZone, now);
-    const facts = dailyFacts(subject, sky);
-    return { subject, names, subjectKey, facts, horoscope: composeHoroscope(facts) };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `now` only matters through the day key
-  }, [birth, sunSign, dayKey]);
-
-  const cacheKey = result ? `${localDate}|${result.subjectKey}|${locale}` : null;
-
-  const askAi = useCallback(async () => {
-    if (!result || !cacheKey) return;
-    const cached = getCachedHoroscope(cacheKey);
-    if (cached) return setAi({ status: "saved", text: cached });
-    setAi({ status: "loading" });
+  const input: HoroscopeInput | null = birth ? { birth, houseSystem } : sunSign ? { sunSign } : null;
+  const inputKey = JSON.stringify(input);
+  const day = useMemo(() => {
+    if (!input) return null;
     try {
-      const res = await fetch("/api/ai/horoscope", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          locale,
-          date: localDate,
-          tone: result.horoscope.tone,
-          subject: result.names,
-          facts: result.horoscope.why.map((w) => w.line[locale]),
-        }),
-      });
-      if (res.status === 503) return setAi({ status: "off" }); // not configured or locked: template only, no warning
-      if (!res.ok) return setAi({ status: "failed" });
-      const body = (await res.json()) as CachedText;
-      const text: CachedText = { overall: body.overall, love: body.love, work: body.work, meta: body.meta };
-      cacheHoroscope(cacheKey, text);
-      setAi({ status: "live", text });
+      return dayHoroscope(input, localDate, timeZone);
     } catch {
-      setAi({ status: "failed" });
+      return null;
     }
-  }, [result, cacheKey, locale, localDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- input is captured by its serialized key
+  }, [inputKey, localDate, timeZone]);
+
+  const cacheKey = day ? horoscopeCacheKey(day, localDate, timeZone, locale) : null;
+  currentKey.current = cacheKey;
 
   useEffect(() => {
-    void askAi();
-  }, [askAi, attempt]);
+    if (!day || !cacheKey) return;
+    const cached = getCachedHoroscope(cacheKey);
+    if (cached) {
+      setAi({ status: "saved", text: cached, key: cacheKey });
+      return;
+    }
+    const key = cacheKey;
+    const epoch = dataEpoch();
+    setAi({ status: "loading", key });
+    onBusy?.(true);
+    (async () => {
+      try {
+        const res = await fetch("/api/ai/horoscope", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(horoscopeBody(day, localDate, timeZone, locale)),
+        });
+        if (currentKey.current !== key || epoch !== dataEpoch()) return; // inputs, language or data changed meanwhile
+        if (res.status === 503) return setAi({ status: "off", key }); // not configured or locked: template only
+        if (!res.ok) return setAi({ status: "failed", key });
+        const body = (await res.json()) as CachedText & { basis?: string[] };
+        const text: CachedText = { overall: body.overall, love: body.love, work: body.work, meta: body.meta, basis: body.basis };
+        cacheHoroscope(key, text);
+        setAi({ status: "live", text, key });
+      } catch {
+        if (currentKey.current === key) setAi({ status: "failed", key });
+      } finally {
+        onBusy?.(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one request per key and attempt
+  }, [cacheKey, attempt]);
 
   if (birth === undefined) return null;
 
-  if (!result) {
+  if (!day) {
     return (
-      <section className="panel stack gap-12">
-        <h2 className="h3">{m.horoscope.title}</h2>
+      <section className="panel stack gap-12" aria-labelledby="horoscope-title">
+        <h2 className="h3" id="horoscope-title">{m.horoscope.title}</h2>
         <p style={{ margin: 0 }}>{m.horoscope.pickSign}</p>
         <div className="btn-row" role="group" aria-label={m.horoscope.pickSign}>
           {SIGNS.map((s) => (
@@ -115,50 +107,54 @@ export function HoroscopePanel({ localDate, timeZone, now }: { localDate: string
     );
   }
 
-  const h = result.horoscope;
-  const aiText = (ai.status === "live" || ai.status === "saved") && ai.text ? ai.text : null;
+  const h = day.horoscope;
+  const fresh = ai.key === cacheKey;
+  const aiText = fresh && (ai.status === "live" || ai.status === "saved") && ai.text ? ai.text : null;
   const text = aiText ?? { overall: pick(h.overall), love: pick(h.love), work: pick(h.work) };
+  const why = aiText?.basis?.length ? aiText.basis : h.why.map((w) => pick(w.line));
+  const subject = day.subject;
+  const uncertainSun = subject.sunOptions && subject.sunOptions.length > 1;
 
   return (
-    <section className="panel stack gap-16" aria-labelledby="horoscope-title" aria-busy={ai.status === "loading"}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+    <section className="panel stack gap-16" aria-labelledby="horoscope-title" aria-busy={fresh && ai.status === "loading"}>
+      <div className="row-between">
         <h2 className="h3" id="horoscope-title">{m.horoscope.title}</h2>
-        {aiText ? (
-          <SourceBadge source={ai.status === "live" ? "live" : "saved"} time={aiText.meta.generatedAt} title={aiText.meta.model} />
-        ) : (
-          <SourceBadge source="template" />
-        )}
+        {aiText ? <SourceBadge source={ai.status === "live" ? "live" : "saved"} time={aiText.meta.generatedAt} title={aiText.meta.model} /> : <SourceBadge source="template" />}
       </div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <span className="badge">{m.horoscope.tones[h.tone]}</span>
+      <div className="row" style={{ gap: 8 }}>
+        <span className="badge badge-mist">{m.horoscope.tones[h.tone]}</span>
         <span className="muted small">
-          {result.subject.mode === "natal" ? m.horoscope.personal : fmt(m.horoscope.bySign, { sign: pick(SIGN_INFO[result.subject.sunSign].name) })}
+          {subject.mode === "natal"
+            ? subject.natal?.timeKnown ? m.horoscope.personal : m.horoscope.personalNoTime
+            : fmt(m.horoscope.bySign, { sign: pick(SIGN_INFO[subject.sunSign!].name) })}
         </span>
-        {result.subject.mode === "sign" && (
-          <button type="button" className="btn-text" style={{ minHeight: 0, padding: 0 }} onClick={() => updateSettings({ sunSign: null })}>{m.horoscope.change}</button>
-        )}
+        {subject.mode === "sign" && <button type="button" className="btn-link small" onClick={() => updateSettings({ sunSign: null })}>{m.horoscope.change}</button>}
       </div>
+      {uncertainSun && (
+        <p className="notice-quiet">{fmt(m.horoscope.sunUncertain, { a: pick(SIGN_INFO[subject.sunOptions![0]].name), b: pick(SIGN_INFO[subject.sunOptions![1]].name) })}</p>
+      )}
 
       {(["overall", "love", "work"] as const).map((k) => (
-        <div key={k} className="stack gap-4">
+        <div key={k} className="interp-section">
           <span className="meta">{m.horoscope[k]}</span>
-          <p style={{ margin: 0 }}>{text[k]}</p>
+          <p>{text[k]}</p>
         </div>
       ))}
 
-      {ai.status === "loading" && <p className="muted small" style={{ margin: 0 }}>{m.horoscope.loadingAi}</p>}
-      {ai.status === "failed" && (
-        <p className="notice" style={{ margin: 0 }}>
+      {fresh && ai.status === "loading" && <span className="status-line"><span className="status-dot" />{m.horoscope.loadingAi}</span>}
+      {fresh && ai.status === "failed" && (
+        <p className="notice">
           {m.horoscope.aiFallback}{" "}
-          <button type="button" className="btn-text" style={{ minHeight: 0, padding: 0 }} onClick={() => setAttempt((n) => n + 1)}>{m.horoscope.retry}</button>
+          <button type="button" className="btn-link" onClick={() => setAttempt((n) => n + 1)}>{m.horoscope.retry}</button>
         </p>
       )}
 
-      <details>
-        <summary className="meta" style={{ cursor: "pointer" }}>{m.horoscope.why}</summary>
+      <details className="panel-quiet">
+        <summary className="disclosure-summary" style={{ listStyle: "none", cursor: "pointer" }}>{m.horoscope.why}</summary>
         <ul style={{ margin: "8px 0 0", paddingLeft: 20, color: "var(--text-2)" }}>
-          {h.why.map((w, i) => <li key={i} className="small">{pick(w.line)}</li>)}
+          {why.map((line, i) => <li key={i} className="small">{line}</li>)}
         </ul>
+        <p className="muted small" style={{ margin: "10px 0 0" }}>{aiText ? m.horoscope.basisAi : m.horoscope.basisTemplate} {m.horoscope.reference}</p>
       </details>
     </section>
   );

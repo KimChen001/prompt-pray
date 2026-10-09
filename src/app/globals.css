@@ -288,6 +288,12 @@ details.disclosure > summary::-webkit-details-marker { display: none; }
 .disclosure-summary::after { content: ""; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform 0.2s; }
 details[open] > summary .disclosure-summary::after, details[open] > .disclosure-summary::after { transform: rotate(225deg) translateY(-1px); }
 
+/* ---------- today ---------- */
+.today-grid { display: grid; gap: 20px; align-items: start; }
+@media (min-width: 1000px) { .today-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+.today-card { display: grid; gap: 20px; grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+@media (max-width: 520px) { .today-card { grid-template-columns: 1fr; justify-items: center; } .today-card > .stack { width: 100%; } }
+
 /* ---------- birth details (Figma: Birth Details) ---------- */
 .form-page { display: flex; flex-direction: column; align-items: center; gap: 40px; }
 .form-card { width: 100%; max-width: 610px; display: flex; flex-direction: column; gap: 24px; padding: 29px; border-radius: var(--radius-card); border: 1px solid var(--line); background: var(--bg-1); }

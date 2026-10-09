@@ -14,8 +14,8 @@ import { selectThemes } from "@/lib/astro/natal-themes";
 import { factLabel } from "@/lib/astro/natal-text";
 import { natalRequestBody } from "@/lib/astro/natal-report";
 import { skyForDay } from "@/lib/astro/sky";
-import { dailyFacts, type Subject } from "@/lib/astro/transits";
-import { composeHoroscope } from "@/lib/astro/horoscope";
+import { dailyFacts } from "@/lib/astro/transits";
+import { dayHoroscope, horoscopeBody } from "@/lib/astro/horoscope-day";
 import { bigThreeNames } from "@/lib/astro/summary";
 import { SIGN_INFO, type Sign } from "@/lib/astro/zodiac";
 import type { HouseSystem } from "@/lib/astro/houses";
@@ -26,7 +26,7 @@ import { SPREADS } from "@/lib/tarot/spreads";
 import type { DrawnCard, Locale, SpreadId, Topic } from "@/lib/tarot/types";
 import { addDays } from "@/lib/memory";
 
-export const EVAL_VERSION = "moona-eval@1";
+export const EVAL_VERSION = "moona-eval@2"; // @2: horoscope bodies are structured facts (server recomputes the sky)
 
 type Check = { name: string; pattern: string; flags?: string };
 interface Case {
@@ -120,14 +120,13 @@ function chatCase(id: string, locale: Locale, spread: SpreadId, topic: Topic, qu
 const NOON = new Date(0); // outside every test day → skyForDay uses the day's midpoint
 function horoscopeCase(id: string, locale: Locale, date: string, who: { sign: Sign } | { birth: BirthData }, covers: string[]): Case {
   const tz = "America/New_York";
-  const subject: Subject = "sign" in who ? { mode: "sign", sunSign: who.sign } : { mode: "natal", sunSign: computeChart(who.birth).positions.sun.placement.sign, natal: computeChart(who.birth) };
-  const names = "sign" in who ? { sun: SIGN_INFO[who.sign].name.en } : bigThreeNames(who.birth);
-  const h = composeHoroscope(dailyFacts(subject, skyForDay(date, tz, NOON)));
-  const facts = h.why.map((w) => w.line[locale]);
+  const d = dayHoroscope("sign" in who ? { sunSign: who.sign } : { birth: who.birth, houseSystem: "placidus" }, date, tz);
+  const body = horoscopeBody(d, date, tz, locale);
+  const lines = d.horoscope.why.map((w) => w.line[locale]);
   return {
     id, kind: "horoscope", locale, covers, endpoint: "/api/ai/horoscope",
-    body: { locale, date, tone: h.tone, subject: names, facts },
-    context: `${date} · ${JSON.stringify(names)} · tone ${h.tone}\n${facts.map((f) => `  - ${f}`).join("\n")}`,
+    body,
+    context: `${date} · ${JSON.stringify(d.wire)} · tone ${d.horoscope.tone}\n${lines.map((f) => `  - ${f}`).join("\n")}`,
   };
 }
 /** First day in [from, from+days) whose facts satisfy `pred`. */

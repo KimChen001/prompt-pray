@@ -1,6 +1,10 @@
 "use client";
+// Today (Guidance): today's card (one per local day and focus, saved so it never changes), the daily
+// horoscope from real transits, and the live sky. Sources are labelled separately: card = Library,
+// horoscope = Template / Live AI / AI · saved, sky = Live sky. The small nebula pulses only while the
+// horoscope's AI request is actually running.
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { getDaily, getDeviceId, getSettings, saveDaily, saveReading } from "@/lib/store";
 import { dailyCard } from "@/lib/tarot/daily";
@@ -15,6 +19,7 @@ import { dailyCard as dailyShareCard } from "@/lib/share/content";
 import { firstSentence } from "@/lib/tarot/engine";
 import { SkyPanel } from "@/components/SkyPanel";
 import { HoroscopePanel } from "@/components/HoroscopePanel";
+import { Nebula, type NebulaMode } from "@/components/nebula/Nebula";
 
 const TOPICS: Topic[] = ["general", "love", "work", "growth"];
 
@@ -26,6 +31,7 @@ export default function TodayPage() {
   const [topic, setTopic] = useState<Topic>("general");
   const [drawn, setDrawn] = useState<DrawnCard | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [orb, setOrb] = useState<NebulaMode>("quiet");
 
   // The local date is only known in the browser; also refresh it if the tab stays open past midnight.
   useEffect(() => {
@@ -45,6 +51,8 @@ export default function TodayPage() {
     setDrawn(saved);
     setRevealed(!!saved);
   }, [date, topic]);
+
+  const onBusy = useCallback((busy: boolean) => setOrb((o) => (busy ? "pulse" : o === "pulse" ? "settle" : o)), []);
 
   function reveal() {
     if (!date) return;
@@ -71,60 +79,68 @@ export default function TodayPage() {
 
   return (
     <div className="stack gap-32">
-      <header className="stack gap-12">
-        <h1 className="h1">{m.daily.title}</h1>
-        <p className="lede">{fmt(m.daily.subtitle, { date: formatLocalDate(date, locale) })}</p>
-        <div className="btn-row" role="group" aria-label={m.daily.topic}>
-          {TOPICS.map((t) => (
-            <button key={t} type="button" className="chip" aria-pressed={topic === t} onClick={() => setTopic(t)}>{m.topics[t]}</button>
-          ))}
+      <header className="row" style={{ gap: 18, alignItems: "center" }}>
+        <Nebula mode={orb} size="72px" />
+        <div className="stack gap-4">
+          <p className="eyebrow">{m.nav.guidance} · {formatLocalDate(date, locale)}</p>
+          <h1 className="h1">{m.daily.title}</h1>
         </div>
       </header>
 
-      <section className="reading">
-        <div className="reading-cards" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-          <TarotCard
-            id={drawn?.id}
-            reversed={drawn?.reversed}
-            revealed={revealed}
-            label={card ? pick(card.name) : m.daily.reveal}
-            onClick={drawn ? undefined : reveal}
-            style={{ ["--w" as string]: "clamp(150px, 42vw, 220px)" }}
-          />
-          {!drawn && <button type="button" className="btn btn-primary" onClick={reveal}>{m.daily.reveal}</button>}
-        </div>
-
-        {card && side && drawn ? (
-          <div className="panel stack gap-12" aria-live="polite">
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-              <h2 className="h2">
-                {pick(card.name)}{" "}
-                {drawn.reversed && <span className="badge tag-rev" style={{ verticalAlign: "middle" }}>{m.common.reversed}</span>}
-              </h2>
-              <SourceBadge source="library" />
-            </div>
-            <Link href={learnHref("card", card.id)} className="meta">{m.learn.title}: {pick(card.name)} →</Link>
-            <div className="kw">{pickList(side.keywords).map((k) => <span key={k}>{k}</span>)}</div>
-            <p style={{ margin: 0 }}>{pick(side.meaning)}</p>
-            {topic !== "general" && <p className="muted" style={{ margin: 0 }}>{pick(side[topic])}</p>}
-            <p className="quote">{pick(side.advice)}</p>
-            <p className="meta" style={{ margin: 0 }}>{m.daily.comeBack}</p>
+      <div className="today-grid">
+        <section className="panel stack gap-16" aria-labelledby="card-title">
+          <div className="row-between">
+            <h2 className="h3" id="card-title">{m.daily.cardTitle}</h2>
+            {card && <SourceBadge source="library" />}
+          </div>
+          <p className="muted small" style={{ margin: 0 }}>{fmt(m.daily.subtitle, { date: formatLocalDate(date, locale) })}</p>
+          <div className="btn-row" role="group" aria-label={m.daily.topic}>
+            {TOPICS.map((t) => (
+              <button key={t} type="button" className="chip" aria-pressed={topic === t} onClick={() => setTopic(t)}>{m.topics[t]}</button>
+            ))}
+          </div>
+          <div className="today-card">
+            <TarotCard
+              id={drawn?.id}
+              reversed={drawn?.reversed}
+              revealed={revealed}
+              label={card ? pick(card.name) : m.daily.reveal}
+              onClick={drawn ? undefined : reveal}
+              style={{ ["--w" as string]: "clamp(140px, 38vw, 190px)" }}
+            />
+            {card && side && drawn ? (
+              <div className="stack gap-12 reveal-in" aria-live="polite" style={{ minWidth: 0 }}>
+                <h3 className="h2" style={{ margin: 0 }}>
+                  {pick(card.name)} {drawn.reversed && <span className="badge tag-rev" style={{ verticalAlign: "middle" }}>{m.common.reversed}</span>}
+                </h3>
+                <div className="kw">{pickList(side.keywords).map((k) => <span key={k}>{k}</span>)}</div>
+                <p style={{ margin: 0 }}>{pick(side.meaning)}</p>
+                {topic !== "general" && <p className="muted" style={{ margin: 0 }}>{pick(side[topic])}</p>}
+                <p className="quote">{pick(side.advice)}</p>
+              </div>
+            ) : (
+              <div className="stack gap-12">
+                <p className="muted" style={{ margin: 0 }}>{m.daily.intro}</p>
+                <div><button type="button" className="btn btn-primary btn-lg" onClick={reveal}>{m.daily.reveal}</button></div>
+              </div>
+            )}
+          </div>
+          {card && side && drawn && (
             <div className="btn-row">
+              <Link href={learnHref("card", card.id)} className="btn btn-ghost">{m.daily.learnCard}</Link>
               <ShareImage
                 filename={`moona-today-${date}.png`}
-                build={() => dailyShareCard(date!, card.id, drawn.reversed, pick(card.name), firstSentence(pick(side.meaning)), m, locale)}
+                build={() => dailyShareCard(date, card.id, drawn.reversed, pick(card.name), firstSentence(pick(side.meaning)), m, locale)}
               />
+              <span className="muted small">{m.daily.comeBack}</span>
             </div>
-          </div>
-        ) : (
-          <div />
-        )}
-      </section>
+          )}
+        </section>
 
-      <section className="grid-tiles">
-        {now && <SkyPanel localDate={date} timeZone={tz} now={now} />}
-        {now && <HoroscopePanel localDate={date} timeZone={tz} now={now} />}
-      </section>
+        <HoroscopePanel localDate={date} timeZone={tz} onBusy={onBusy} />
+      </div>
+
+      {now && <SkyPanel localDate={date} timeZone={tz} now={now} />}
     </div>
   );
 }

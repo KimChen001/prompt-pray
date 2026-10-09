@@ -1,9 +1,12 @@
-// Template horoscope (source: "Template"). Every sentence is generated from a real Fact, and the
+// Template horoscope (source: "Template"). Rules version: HOROSCOPE_RULES_VERSION. Every sentence is generated from a real Fact, and the
 // "why" list shows those facts, so the text is always traceable to the sky. The AI layer rewrites
 // the same facts into prose; this module is its fallback.
 import type { L10n } from "@/lib/tarot/types";
 import { PLANET_NAME, SIGN_INFO, type Planet } from "./zodiac";
 import { ASPECT_TONE, dayTone, type Fact, type NatalPoint, type Tone } from "./transits";
+
+/** Bump when any sentence rule or fact selection here (or in transits.ts) changes: saved AI text is keyed by it. */
+export const HOROSCOPE_RULES_VERSION = "horoscope-rules@2";
 
 export const HOUSE_THEME: L10n[] = [
   { en: "self and fresh starts", zh: "自我与新开始" },
@@ -94,15 +97,22 @@ export function factLine(f: Fact): L10n {
       return line ? fill(line, { point: POINT[f.natal] }) : { en: "", zh: "" };
     }
     case "moonHouse":
-      return {
-        en: `The Moon moves through your ${ordinal(f.house)} house of ${HOUSE_THEME[f.house - 1].en} today.`,
-        zh: `今天月亮行经你的第 ${f.house} 宫（${HOUSE_THEME[f.house - 1].zh}）。`,
-      };
+      // Solar houses are counted from the Sun sign; they are never presented as birth-chart houses.
+      return f.basis === "solar"
+        ? {
+            en: `The Moon moves through your ${ordinal(f.house)} solar house (counted from your Sun sign), the area of ${HOUSE_THEME[f.house - 1].en}, today.`,
+            zh: `今天月亮行经你的第 ${f.house} 太阳宫（从太阳星座起算，${HOUSE_THEME[f.house - 1].zh}）。`,
+          }
+        : {
+            en: `The Moon moves through your ${ordinal(f.house)} house of ${HOUSE_THEME[f.house - 1].en} today.`,
+            zh: `今天月亮行经你的第 ${f.house} 宫（${HOUSE_THEME[f.house - 1].zh}）。`,
+          };
     case "retrograde":
       return RETRO_LINE[f.planet];
     case "event": {
       const e = f.event;
-      const theme = f.house ? HOUSE_THEME[f.house - 1] : { en: "this part of your life", zh: "这个生活领域" };
+      const base = f.house ? HOUSE_THEME[f.house - 1] : { en: "this part of your life", zh: "这个生活领域" };
+      const theme = f.house && f.basis === "solar" ? { en: `${base.en} (by Sun sign)`, zh: `${base.zh}（按太阳星座）` } : base;
       const sign = SIGN_INFO[e.sign].name;
       if (e.kind === "lunation") {
         const tpl: Record<typeof e.phase, L10n> = {

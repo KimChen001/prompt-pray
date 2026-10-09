@@ -188,5 +188,5 @@ describe("theme rules hold across many charts", () => {
       }
     }
     expect(checked).toBeGreaterThan(200);
-  });
+  }, 20_000); // ~5 s of chart maths; slower when the whole suite runs in parallel
 });
