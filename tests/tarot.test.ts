@@ -115,3 +115,12 @@ describe("daily card", () => {
     for (let i = 0; i < 50; i++) expect(dailyCard(`d${i}`, "2026-10-24", "love", false).reversed).toBe(false);
   });
 });
+
+import { normalizeQuestion } from "@/lib/tarot/question";
+describe("same-question detection", () => {
+  it("ignores case, spacing and punctuation in both languages", () => {
+    expect(normalizeQuestion("Should I take the offer?")).toBe(normalizeQuestion("should i take the offer"));
+    expect(normalizeQuestion("我该接受这个 offer 吗？")).toBe(normalizeQuestion("我该接受这个offer吗"));
+    expect(normalizeQuestion("Should I take the offer?")).not.toBe(normalizeQuestion("Should I decline the offer?"));
+  });
+});

@@ -280,3 +280,18 @@ input[type="date"].input, input[type="time"].input { color-scheme: dark; }
 .cusps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
 .cusps li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-1); }
 .meta-raw { text-transform: none; letter-spacing: 0.02em; } /* identifiers such as IANA zones are case-sensitive */
+
+/* ---------- layered reading + chat (functional baseline) ---------- */
+.phrases { display: grid; gap: 14px; }
+.phrase { display: grid; grid-template-columns: 84px 1fr; gap: 16px; align-items: start; }
+.phrase .tcard { --w: 84px; cursor: default; }
+.phrase-line { margin: 0; font: 500 19px/1.45 var(--font-display); color: var(--text-1); }
+@media (min-width: 900px) { .phrases { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } }
+.skeleton { height: 14px; border-radius: 7px; background: linear-gradient(90deg, var(--bg-2), rgba(255, 255, 255, 0.08), var(--bg-2)); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+.skeleton.short { width: 60%; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.chat { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.chat-turn { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); max-width: 92%; }
+.chat-user { align-self: flex-end; background: var(--bg-2); }
+.chat-assistant { align-self: flex-start; background: var(--bg-1); }
+.chat-assistant .badge { align-self: flex-start; }

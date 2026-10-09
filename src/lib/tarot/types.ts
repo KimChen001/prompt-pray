@@ -32,6 +32,28 @@ export interface DrawnCard {
   reversed: boolean;
 }
 
+/** Where and when an AI text was generated; shown so saved text is never presented as live. */
+export interface AiMeta {
+  provider: string;
+  model: string;
+  generatedAt: string; // ISO instant
+}
+
+export interface TarotAiResult {
+  cards: { position: number; insight: string }[];
+  synthesis: string;
+  action: string;
+  reflection: string;
+  meta: AiMeta;
+}
+
+export interface ChatTurn {
+  role: "user" | "assistant";
+  content: string;
+  at: string; // ISO instant
+  meta?: AiMeta; // assistant turns only
+}
+
 export interface Reading {
   id: string;
   kind: "reading" | "daily";
@@ -42,4 +64,10 @@ export interface Reading {
   question?: string;
   cards: DrawnCard[]; // in position order
   seed: string;
+  /** User chose to add their Big Three to the AI interpretation. */
+  includeChart?: boolean;
+  /** AI interpretation per language, saved once generated (never regenerated silently). */
+  ai?: Partial<Record<Locale, TarotAiResult>>;
+  /** Follow-up conversation about this reading. */
+  thread?: ChatTurn[];
 }

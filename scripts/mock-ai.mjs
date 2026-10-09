@@ -1,0 +1,45 @@
+// DEV ONLY. A fake OpenAI-compatible endpoint that returns canned, clearly marked "[MOCK]" text in
+// the shapes MOONA expects, so the UI's AI paths can be exercised without a key or spending credit.
+// It is not a model: never point a public deployment at it, and never cite its output as AI quality.
+// Usage: node scripts/mock-ai.mjs [port]   then run the app with
+//   AI_API_KEY=mock AI_BASE_URL=http://127.0.0.1:<port>/v1 AI_MODEL=mock-model
+import { createServer } from "node:http";
+
+const port = Number(process.argv[2] ?? 3999);
+
+function reply(body) {
+  const system = body.messages?.[0]?.content ?? "";
+  const user = body.messages?.filter((m) => m.role === "user").at(-1)?.content ?? "";
+  const zh = system.includes("Simplified Chinese");
+  const t = (en, cn) => `[MOCK] ${zh ? cn : en}`;
+
+  if (system.includes("tarot reader")) {
+    const cards = [...user.matchAll(/^Position (\d+) — [^:]+: (.+), (upright|reversed)$/gm)].map(([, pos, name, orient]) => ({
+      position: Number(pos),
+      insight: orient === "reversed" ? t(`Reversed, ${name} asks you to look again at what feels stuck.`, `${name}逆位，提醒你重新看看卡住的地方。`) : t(`${name} points to something already in motion.`, `${name}指向已经在发生的事。`),
+    }));
+    return { cards, synthesis: t("Together these cards describe a turning point you are already moving through.", "这几张牌合起来，描述的是你正在经历的一个转折。"), action: t("Write down one thing you want to keep.", "写下一件你想保留的事。"), reflection: t("What would change if you trusted this?", "如果你相信这一点，会有什么不同？") };
+  }
+  if (system.includes("continuing a conversation")) {
+    return { reply: t(`You said: "${user.slice(0, 60)}". The cards stay the same; that detail shifts the emphasis.`, `你说：“${user.slice(0, 40)}”。牌没有变，但这个细节改变了重点。`) };
+  }
+  if (system.includes("astrology companion")) {
+    return { overall: t("A steady day.", "平稳的一天。"), love: t("Keep it simple.", "简单一点。"), work: t("Finish one thing.", "完成一件事。") };
+  }
+  return { error: "unknown purpose" };
+}
+
+createServer((req, res) => {
+  let raw = "";
+  req.on("data", (c) => (raw += c));
+  req.on("end", () => {
+    if (req.method !== "POST" || !req.url?.endsWith("/chat/completions")) {
+      res.writeHead(404).end();
+      return;
+    }
+    const body = JSON.parse(raw || "{}");
+    const content = JSON.stringify(reply(body));
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ model: "mock-model", choices: [{ message: { content }, finish_reason: "stop" }], usage: { prompt_tokens: 500, completion_tokens: 200 } }));
+  });
+}).listen(port, "127.0.0.1", () => console.log(`mock AI listening on http://127.0.0.1:${port}/v1 (DEV ONLY)`));

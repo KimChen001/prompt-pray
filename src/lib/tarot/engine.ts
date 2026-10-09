@@ -12,6 +12,8 @@ export interface CardInsight {
   position: L10n;
   name: L10n;
   keywords: L10nList;
+  /** One-line card message shown before the full reading (first sentence of the reviewed meaning). */
+  phrase: L10n;
   meaning: L10n;
   topicLine: L10n | null;
   advice: L10n;
@@ -27,6 +29,8 @@ export interface ChoiceResult {
 
 export interface Analysis {
   perCard: CardInsight[];
+  /** Offline reflection question for the topic. */
+  reflection: L10n;
   elementCounts: Record<Element, number>;
   dominant: Element | null;
   patterns: Pattern[];
@@ -212,6 +216,19 @@ function choiceSentence(r: ChoiceResult): L10n {
   };
 }
 
+/** First sentence of a text (EN or ZH punctuation). */
+export function firstSentence(text: string): string {
+  const m = /^.*?(?:[.!?](?=\s|$)|[。！？])/s.exec(text.trim());
+  return (m ? m[0] : text).trim();
+}
+
+const REFLECTION: Record<Topic, L10n> = {
+  general: { en: "What would you do next if you trusted yourself a little more?", zh: "如果你再多相信自己一点，下一步会怎么做？" },
+  love: { en: "What do you most want the other person to understand about you?", zh: "你最希望对方明白你的哪一点？" },
+  work: { en: "Which part of this is actually within your control this week?", zh: "这件事里，哪一部分是你这周真正能掌控的？" },
+  growth: { en: "What is this situation asking you to let go of?", zh: "这件事在提醒你放下什么？" },
+};
+
 /** Which position carries the main action line for each spread. */
 const KEY_POSITION: Record<SpreadId, number> = { single: 0, triad: 1, relate: 2, choice: 3 };
 
@@ -232,6 +249,7 @@ export function analyze(spread: SpreadId, drawn: DrawnCard[], topic: Topic, look
       position: def.positions[i],
       name: card.name,
       keywords: side.keywords,
+      phrase: { en: firstSentence(side.meaning.en), zh: firstSentence(side.meaning.zh) },
       meaning: side.meaning,
       topicLine: topic === "general" ? null : side[topic],
       advice: side.advice,
@@ -259,6 +277,7 @@ export function analyze(spread: SpreadId, drawn: DrawnCard[], topic: Topic, look
 
   return {
     perCard,
+    reflection: REFLECTION[topic],
     elementCounts,
     dominant: elem.dominant,
     patterns,

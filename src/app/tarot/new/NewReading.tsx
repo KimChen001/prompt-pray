@@ -6,8 +6,9 @@ import { useI18n } from "@/lib/i18n";
 import { DECK, CARD_BACK } from "@/lib/tarot/deck";
 import { randomSeed, rngFromSeed, shuffle } from "@/lib/tarot/rng";
 import { isSpreadId, SPREAD_ORDER, SPREADS, suggestSpread } from "@/lib/tarot/spreads";
-import { getReading, getSettings, saveReading } from "@/lib/store";
+import { getBirth, getReading, getSettings, listReadings, saveReading } from "@/lib/store";
 import { detectCrisis } from "@/lib/safety";
+import { normalizeQuestion } from "@/lib/tarot/question";
 import { localDateKey } from "@/lib/time";
 import type { DrawnCard, Reading, SpreadId, Topic } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
@@ -45,6 +46,9 @@ export function NewReading() {
   const [topic, setTopic] = useState<Topic>("general");
   const [spread, setSpread] = useState<SpreadId | null>(null);
   const [crisis, setCrisis] = useState(false);
+  const [hasBirth, setHasBirth] = useState(false);
+  const [includeChart, setIncludeChart] = useState(false);
+  const [sameToday, setSameToday] = useState<Reading | null>(null);
 
   const [phase, setPhase] = useState<Phase>("shuffle");
   const [shuffling, setShuffling] = useState(false);
@@ -70,17 +74,29 @@ export function NewReading() {
     }
   }, [params]);
 
+  useEffect(() => setHasBirth(!!getBirth()), []);
+
   useEffect(() => headingRef.current?.focus(), [step, phase]);
 
   const suggested = useMemo(() => suggestSpread(question), [question]);
   const def = spread ? SPREADS[spread] : null;
 
-  function continueFromAsk(skip = false) {
+  function continueFromAsk(skip = false, allowRepeat = false) {
     const q = skip ? "" : question.trim();
     if (q && detectCrisis(q)) {
       setCrisis(true);
       return;
     }
+    // Asked the same thing today? Offer to continue instead of silently drawing again (never a hard lock).
+    if (q && !allowRepeat) {
+      const today = localDateKey();
+      const match = listReadings().find((r) => r.kind === "reading" && r.localDate === today && r.question && normalizeQuestion(r.question) === normalizeQuestion(q));
+      if (match) {
+        setSameToday(match);
+        return;
+      }
+    }
+    setSameToday(null);
     if (skip) setQuestion("");
     setSpread((s) => s ?? suggestSpread(q));
     setStep("spread");
@@ -138,6 +154,7 @@ export function NewReading() {
       question: question.trim() || undefined,
       cards: chosen,
       seed: dealt.seed,
+      includeChart: hasBirth && includeChart,
     };
     const persisted = saveReading(reading);
     router.push(`/tarot/r/${reading.id}${persisted ? "" : "?local=0"}`);
@@ -174,7 +191,10 @@ export function NewReading() {
               value={question}
               maxLength={MAX_QUESTION}
               placeholder={m.ask.placeholder}
-              onChange={(e) => setQuestion(e.target.value)}
+              onChange={(e) => {
+                setQuestion(e.target.value);
+                setSameToday(null);
+              }}
             />
             <span className="meta" style={{ alignSelf: "flex-end" }}>{fmt(m.ask.count, { n: question.length, max: MAX_QUESTION })}</span>
           </div>
@@ -194,10 +214,31 @@ export function NewReading() {
               ))}
             </div>
           </div>
-          <div className="btn-row">
-            <button type="button" className="btn btn-primary" onClick={() => continueFromAsk()} disabled={!question.trim()}>{m.ask.continue}</button>
-            <button type="button" className="btn-text" onClick={() => continueFromAsk(true)}>{m.ask.skip}</button>
-          </div>
+          {hasBirth && (
+            <label className="check">
+              <input type="checkbox" checked={includeChart} onChange={(e) => setIncludeChart(e.target.checked)} />
+              <span className="stack">
+                <span>{m.ask.includeChart}</span>
+                <span className="muted small">{m.ask.includeChartHint}</span>
+              </span>
+            </label>
+          )}
+          {sameToday ? (
+            <div className="panel stack gap-12" role="status">
+              <h2 className="h3">{m.ask.sameTitle}</h2>
+              <p className="muted" style={{ margin: 0 }}>{m.ask.sameBody}</p>
+              <div className="btn-row">
+                <button type="button" className="btn btn-primary" onClick={() => router.push(`/tarot/r/${sameToday.id}`)}>{m.ask.sameContinue}</button>
+                <button type="button" className="btn btn-ghost" onClick={() => router.push(`/tarot/r/${sameToday.id}?talk=1`)}>{m.ask.sameAdd}</button>
+                <button type="button" className="btn-text" onClick={() => continueFromAsk(false, true)}>{m.ask.sameRedraw}</button>
+              </div>
+            </div>
+          ) : (
+            <div className="btn-row">
+              <button type="button" className="btn btn-primary" onClick={() => continueFromAsk()} disabled={!question.trim()}>{m.ask.continue}</button>
+              <button type="button" className="btn-text" onClick={() => continueFromAsk(true)}>{m.ask.skip}</button>
+            </div>
+          )}
         </section>
       ))}
 
