@@ -38,14 +38,15 @@ Spend is capped by a ledger (`.data/ai-usage.json`): every request attempt reser
 
 The desktop home page has a "Try it on your phone" panel. Set `NEXT_PUBLIC_SITE_URL` to the deployed HTTPS address; without it the page's own address is used and labelled **test address** (or **this computer only** for `localhost`). The code always encodes the site root only — never a question, birth details, reading id, key or access code.
 
-## Status (2026-10-09, round 2)
+## Status (2026-10-09, round 2 + Figma prototype shell)
 
 "Built" means implemented and verified with unit tests and a production build in a headless browser (mock AI). **No real model has been called yet**; real-model quality is unverified until the eval runs on bought credit. No real-device (iPhone / Android) testing has been done yet.
 
 | Module | Route | State |
 | --- | --- | --- |
-| Home: nebula, Draw a card, chart and Talk entries, greeting from saved records, all modules, desktop QR | `/` | Built |
-| Tarot: ask → spread → shuffle (nebula gathers) → pick → turn over → one-line messages → full reading on request → Why this reading → reflection → continue with these cards → check-in | `/tarot`, `/tarot/new`, `/tarot/r/[id]` | Built (AI with offline fallback) |
+| Ask (home, from the Figma Make prototype): starfield, Ether orb, whispers, Moon badge; three prompts (real daily card, tonight's Moon calculated, a real one-card reading) and a real Talk conversation; greeting from saved records | `/` | Built (typed replies need AI; without it MOONA says so and offers a card) |
+| Shell (prototype): desktop rail (Ask · Cards · Sky · Journal + More), phone tab bar, account panel (honest: saved on this device, no sign-in), QR dialog | all pages | Built |
+| Tarot: ask → spread → shuffle (orb gathers) → pick → turn over → one-line messages → full reading on request → Why this reading → reflection → continue with these cards → check-in | `/tarot`, `/tarot/new`, `/tarot/r/[id]` | Built (AI with offline fallback) |
 | Talk with MOONA: free conversations; chart / today's sky / notes only if ticked; replies cite what they used | `/talk`, `/talk/c/[id]` | Built (needs AI to reply) |
 | Memory: suggested only from your own words, saved only on confirm; edit, pause, delete; source shown | Journal, Talk, readings | Built |
 | Today: daily card, horoscope (template or AI, facts checked on the server), live sky | `/today` | Built |
@@ -67,9 +68,15 @@ The desktop home page has a "Try it on your phone" panel. Set `NEXT_PUBLIC_SITE_
 - **One message contract** for all chats (`src/lib/chat/limits.ts`): history trimmed on whole messages, always starting with the person; replies the server accepted always fit back into the next request.
 - **Late responses can't overwrite or resurrect.** Records are changed through field-level patches on the latest copy (`patchReading`, `patchChat`); a reply is appended only if the message it answers is still the newest; clearing data or changing birth details moves a data epoch that drops older results.
 
-## Motion
+## Look and motion
 
-The nebula (`src/components/nebula/`) is one reusable WebGL component written for MOONA (after the Ether / Flowing Waves references; no third-party shader code). A static CSS orb is painted first and stays if WebGL is missing, too slow, or motion is off. States follow real product states: idle (home), gather (shuffling), pulse (an AI request is actually running), settle (a new result arrived), quiet (reading). Phones get fewer noise octaves, fewer particles, lower resolution and ~30 fps; it pauses off-screen and in background tabs and releases its GPU context when unmounted. Motion: Auto (follows the system's reduced-motion setting) · Reduced (still frame) · Off — in the footer, the phone menu and Journal → Settings.
+The interface is the team's own Figma Make prototype ([KimChen001/Moona](https://github.com/KimChen001/Moona), `src/app/App.tsx`), ported into this Next.js app rather than rebuilt: `src/components/cosmos/` (Cosmos starfield, Orb, ShaderCanvas, Whispers, MoonBadge, StateOrb) and `src/components/AppShell.tsx` (Rail, TabBar, sheets), styled with Tailwind v4 utilities plus the site's own CSS (`src/app/styles.css` layers Tailwind's theme and utilities around `globals.css`; Tailwind's preflight is not used). Fonts: Instrument Serif, Geist, Geist Mono, Cinzel, Pinyon Script.
+
+What changed from the prototype: its mocks are replaced by real features (the daily card, the calculated Moon, saved readings, Talk); its fake sign-in is replaced by an honest "saved on this device" panel; the Moon badge uses the real ephemeris; Chinese whispers and copy were added; Motion is honoured everywhere: Auto (follows the system's reduced-motion setting) · Reduced (still frames) · Off (no starfield, static orb) — in the footer, the More sheet and Journal → Settings. Everything pauses off-screen and in background tabs; phones get fewer stars and a lower pixel ratio.
+
+Inner pages use `StateOrb`, the same orb at small size, whose movement follows real product states only: idle, gather (shuffling), pulse (an AI request is actually running; a cyan ring, cyan being reserved for AI), settle (a result arrived), quiet (reading).
+
+**Licence note:** the orb's fragment shader is "Ether" by nimitz (Shadertoy MsjSW3), CC BY-NC-SA 3.0. It is used with attribution for the non-commercial hackathon demo and must be replaced or licensed before any paid version of MOONA. Changes to `src/components/cosmos/shaders.ts` stay under that licence; nothing else in the project is affected.
 
 ## Data and privacy
 
@@ -88,11 +95,14 @@ Readings, conversations, notes, check-ins, settings and birth details live only 
 | What | Source | Licence |
 | --- | --- | --- |
 | Card faces | 1909 Rider–Waite–Smith (Pamela Colman Smith), Wikimedia Commons; every card in `content/credits.json` | Public domain |
-| Card back, MOONA mark, zodiac wheel, planet icons, nebula shader | Made for MOONA | Project's own |
+| Card back, MOONA mark, zodiac wheel, planet icons | Made for MOONA | Project's own |
+| Interface, starfield, orb, whispers, Moon badge | MOONA team's Figma Make prototype ([KimChen001/Moona](https://github.com/KimChen001/Moona)) | Project's own |
+| Orb shader "Ether" | nimitz, [shadertoy.com/view/MsjSW3](https://www.shadertoy.com/view/MsjSW3) | CC BY-NC-SA 3.0 (non-commercial demo; replace before paid use) |
+| Animation, icons, styling | motion, lucide-react, Tailwind CSS | MIT, ISC, MIT |
 | Zodiac line icons, astrolabe rings, Big Three glyphs | MOONA Figma design ("Graphite Night") | Project's own |
 | Planet positions | astronomy-engine | MIT |
 | Places | GeoNames | CC BY 4.0 |
-| Fonts | Cormorant Garamond, Inter, JetBrains Mono via Fontsource | SIL OFL |
+| Fonts | Instrument Serif, Geist, Geist Mono, Cinzel, Pinyon Script via Fontsource | SIL OFL |
 | QR codes | uqr | MIT |
 
 No emoji are used anywhere: zodiac signs, planets and marks are SVG line icons (`tests/no-emoji.test.ts` guards this).
@@ -100,7 +110,7 @@ No emoji are used anywhere: zodiac signs, planets and marks are SVG line icons (
 ## Project layout
 
 ```
-src/app/               routes (pages and /api)        src/components/       shell, nebula, chat, cards, chart wheel
+src/app/               routes (pages and /api)        src/components/       shell, cosmos (prototype visuals), chat, cards, chart wheel
 src/lib/ai/            prompts, validation, claims, providers, budget
 src/lib/astro/         ephemeris, houses, birth, chart, natal facts/themes, transits, horoscope, match
 src/lib/chat/          message limits, sessions, context     src/lib/whispers/   post rules (wall not live)

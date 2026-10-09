@@ -37,8 +37,8 @@ export default function LearnPage() {
   }, [type]);
 
   return (
-    <div className="stack gap-32">
-      <header className="stack gap-12">
+    <div className="stack gap-8">
+      <header className="stack gap-3">
         <p className="eyebrow">{m.nav.learn}</p>
         <h1 className="h1">{m.learn.title}</h1>
         <p className="lede">{m.learn.subtitle}</p>
@@ -53,14 +53,14 @@ export default function LearnPage() {
       </header>
 
       {results ? (
-        <section className="stack gap-12" aria-live="polite">
+        <section className="stack gap-3" aria-live="polite">
           {results.length ? (
             <>
               <span className="meta">{fmt(m.learn.results, { n: results.length })}</span>
               <div className="grid-tiles">{results.slice(0, 60).map((e) => <EntryLink key={`${e.type}/${e.slug}`} e={e} />)}</div>
             </>
           ) : (
-            <div className="stack gap-8">
+            <div className="stack gap-2">
               <p style={{ margin: 0 }}>{fmt(m.learn.noResults, { q: query.trim() })}</p>
               <div className="btn-row">
                 <span className="muted small">{m.learn.tryThese}</span>
@@ -71,14 +71,14 @@ export default function LearnPage() {
         </section>
       ) : (
         browse.map(({ t, entries }) => (
-          <section key={t} className="stack gap-12" aria-labelledby={`learn-${t}`}>
+          <section key={t} className="stack gap-3" aria-labelledby={`learn-${t}`}>
             <h2 className="h2" id={`learn-${t}`}>{m.learn.types[t]}</h2>
             {t === "card" ? (
-              <div className="stack gap-12">
+              <div className="stack gap-3">
                 {(["major", "wands", "cups", "swords", "pentacles"] as const).map((g) => {
                   const group = entries.filter((e) => (g === "major" ? e.slug.startsWith("major-") : e.slug.startsWith(`${g}-`)));
                   return (
-                    <div key={g} className="stack gap-4">
+                    <div key={g} className="stack gap-1">
                       <span className="meta">{pick(group[0].subtitle).split(" · ")[0]}</span>
                       <p className="small" style={{ margin: 0, lineHeight: 1.9 }}>
                         {group.map((e, i) => (

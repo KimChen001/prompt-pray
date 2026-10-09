@@ -1,6 +1,6 @@
 "use client";
 // Motion preference (design supplement §7): "auto" follows the system's reduced-motion setting,
-// "reduced" shows still frames, "off" removes the animated nebula entirely (static orb only).
+// "reduced" shows still frames, "off" removes the starfield and the animated orbs (static orb only).
 // Remembered on this device. An inline script in the layout copies it to <html data-motion> before
 // first paint, so CSS can honour it without a flash.
 import { useSyncExternalStore } from "react";

@@ -23,7 +23,7 @@ interface Props {
   autoFocus?: boolean;
   /** The page already knows AI is unavailable here (503): say so up front instead of after a send. */
   aiUnavailable?: boolean;
-  /** Reports request state, so the page's nebula can pulse while MOONA is replying. */
+  /** Reports request state, so the page's orb can pulse while MOONA is replying. */
   onBusy?: (busy: boolean) => void;
 }
 
@@ -113,7 +113,7 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
   const lastIsUnanswered = thread.length > 0 && thread[thread.length - 1].role === "user";
 
   return (
-    <section className="stack gap-12" aria-label={m.reading.talk}>
+    <section className="stack gap-3" aria-label={m.reading.talk}>
       <ChatThread turns={thread} freshFrom={freshFrom} notes={notes} source={{ readingId: reading.id }} onSuggestion={(at, status, text) => setReadingSuggestion(reading.id, at, status, text)} />
 
       {state === "sending" && (
@@ -134,7 +134,7 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
       )}
 
       {state !== "needsAi" && state !== "crisis" && (
-        <div className="stack gap-8">
+        <div className="stack gap-2">
           <Composer id="reading-chat" value={draft} onChange={setDraft} onSend={submit} disabled={state === "sending"} placeholder={m.reading.chatPlaceholder} label={m.reading.chatPlaceholder} autoFocus={autoFocus} />
           <span className="muted small">{m.reading.chatNote}</span>
         </div>

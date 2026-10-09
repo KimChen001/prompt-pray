@@ -7,7 +7,7 @@ export default function OfflinePage() {
   const { m } = useI18n();
   return (
     <div className="form-page" style={{ textAlign: "center" }}>
-      <div className="nebula" style={{ ["--orb" as string]: "160px" }} aria-hidden="true"><span className="nebula-static" /></div>
+      <div className="state-orb" style={{ width: 160, height: 160 }} aria-hidden="true"><span className="orb-static" /></div>
       <header className="page-head page-head-center">
         <p className="eyebrow">{m.offline.eyebrow}</p>
         <h1 className="h1">{m.offline.title}</h1>

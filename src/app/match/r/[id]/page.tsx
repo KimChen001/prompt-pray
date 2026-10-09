@@ -38,7 +38,7 @@ function MatchResult() {
   if (match === undefined) return null;
   if (!match) {
     return (
-      <div className="stack gap-16">
+      <div className="stack gap-4">
         <h1 className="h1">{m.match.notFound}</h1>
         <div><Link href="/match" className="btn btn-ghost">{m.match.all}</Link></div>
       </div>
@@ -50,8 +50,8 @@ function MatchResult() {
   const factors = (d: Dimension) => r.factors.filter((f) => f.dimension === d);
 
   return (
-    <div className="stack gap-24" style={{ maxWidth: 760 }}>
-      <header className="stack gap-8">
+    <div className="stack gap-6" style={{ maxWidth: 760 }}>
+      <header className="stack gap-2">
         <Link href="/match" className="meta">← {m.match.all}</Link>
         <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
           <h1 className="h1">{fmt(m.match.resultTitle, { name })}</h1>
@@ -61,7 +61,7 @@ function MatchResult() {
         {params.get("local") === "0" && <p className="notice">{m.common.storageOff}</p>}
       </header>
 
-      <section className="panel stack gap-8" aria-labelledby="vibe">
+      <section className="panel stack gap-2" aria-labelledby="vibe">
         <span className="meta" id="vibe">{m.match.score}</span>
         {r.score !== null ? <span className="display" style={{ lineHeight: 1 }}>{r.score}</span> : <p style={{ margin: 0 }}>{m.match.scoreNone}</p>}
         <p className="muted small" style={{ margin: 0 }}>{m.match.disclaimer}</p>
@@ -75,7 +75,7 @@ function MatchResult() {
         {DIMS.map((d) => {
           const label = r.labels[d];
           return (
-            <section key={d} className="panel stack gap-8" aria-labelledby={`dim-${d}`}>
+            <section key={d} className="panel stack gap-2" aria-labelledby={`dim-${d}`}>
               <span className="meta">{m.match.dimBasis[d]}</span>
               <h2 className="h3" id={`dim-${d}`} style={{ margin: 0 }}>{m.match.dims[d]}</h2>
               <span className={label === "unknown" ? "badge" : "badge badge-live"} style={{ alignSelf: "flex-start" }}>{m.match.labels[label]}</span>
@@ -91,7 +91,7 @@ function MatchResult() {
         })}
       </div>
 
-      <section className="stack gap-8" aria-labelledby="dim-core">
+      <section className="stack gap-2" aria-labelledby="dim-core">
         <h2 className="h3" id="dim-core">{m.match.dims.core}</h2>
         <ul style={{ margin: 0, paddingLeft: 20, color: "var(--text-2)" }}>
           {factors("core").map((f, i) => <FactorLine key={i} f={f} name={name} />)}

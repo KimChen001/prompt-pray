@@ -3,7 +3,7 @@
 // 1. the cards and one-line messages; 2. the full interpretation when the person asks for it (AI is
 // prepared in the background as soon as the page opens; the offline reading is always there);
 // 3. "Why this reading" — exactly which inputs and rules the text came from; 4. a question to sit
-// with; 5. continue with these cards; 6. an optional check-in. The small nebula pulses only while a
+// with; 5. continue with these cards; 6. an optional check-in. The small orb pulses only while a
 // real AI request is running, brightens once when a new result arrives, and stays quiet for saved text.
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -26,7 +26,7 @@ import { CheckInPlanner } from "@/components/CheckIns";
 import { learnHref } from "@/lib/learn";
 import { ShareSheet } from "@/components/ShareImage";
 import { readingCard, readingShareText } from "@/lib/share/content";
-import { Nebula, type NebulaMode } from "@/components/nebula/Nebula";
+import { StateOrb, type OrbMode } from "@/components/cosmos/StateOrb";
 
 export default function ReadingPage() {
   return (
@@ -50,7 +50,7 @@ function ReadingView() {
   const [showOffline, setShowOffline] = useState(false);
   const [aiStatus, setAiStatus] = useState<AiStatus>("idle");
   const [attempt, setAttempt] = useState(0);
-  const [orb, setOrb] = useState<NebulaMode>("quiet");
+  const [orb, setOrb] = useState<OrbMode>("quiet");
   const requested = useRef(new Set<string>());
 
   useEffect(() => {
@@ -120,7 +120,7 @@ function ReadingView() {
   if (reading === undefined) return null;
   if (!reading || !analysis) {
     return (
-      <div className="stack gap-16" style={{ maxWidth: 560 }}>
+      <div className="stack gap-4" style={{ maxWidth: 560 }}>
         <h1 className="h1">{m.reading.notFoundTitle}</h1>
         <p className="lede">{m.reading.notFoundBody}</p>
         <div><Link href="/tarot/new" className="btn btn-primary">{m.reading.newQuestion}</Link></div>
@@ -137,7 +137,7 @@ function ReadingView() {
     aiStatus === "off" || aiStatus === "failed" ? <span className="muted small">{m.reading.offlineReady}</span> : null;
 
   const offlineBlock = (
-    <section className="stack gap-12" aria-label={m.reading.offlineTitle}>
+    <section className="stack gap-3" aria-label={m.reading.offlineTitle}>
       <div className="row-between">
         <h3 className="h3">{m.reading.offlineTitle}</h3>
         {ai && <SourceBadge source="offline" />}
@@ -166,8 +166,8 @@ function ReadingView() {
   );
 
   return (
-    <div className="stack gap-32">
-      <header className="stack gap-12" style={{ maxWidth: 820 }}>
+    <div className="stack gap-8">
+      <header className="stack gap-3" style={{ maxWidth: 820 }}>
         <span className="meta">{formatLocalDate(reading.localDate, locale)} · {m.spreads[reading.spread].name} · {m.topics[reading.topic]}</span>
         {reading.question ? (
           <>
@@ -186,7 +186,7 @@ function ReadingView() {
         {analysis.perCard.map((c, i) => (
           <article key={i} className="phrase">
             <TarotCard id={c.id} reversed={c.reversed} revealed label={`${pick(def.positions[i])}: ${pick(getCard(c.id).name)}`} />
-            <div className="stack gap-4">
+            <div className="stack gap-1">
               <span className="meta">{pick(c.position)}</span>
               <span className="h3" style={{ fontSize: 21 }}>
                 <Link href={learnHref("card", c.id)} style={{ textDecoration: "none" }}>{pick(c.name)}</Link> {c.reversed && <span className="badge tag-rev" style={{ verticalAlign: "middle" }}>{m.common.reversed}</span>}
@@ -198,7 +198,7 @@ function ReadingView() {
       </section>
 
       {!expanded ? (
-        <div className="stack gap-12">
+        <div className="stack gap-3">
           <div className="btn-row">
             <button type="button" className="btn btn-primary btn-lg" onClick={() => setExpanded(true)}>{m.reading.expand}</button>
           </div>
@@ -208,21 +208,21 @@ function ReadingView() {
         <section className="panel interp" aria-live="polite" aria-busy={aiStatus === "loading"}>
           <div className="interp-head">
             <div className="row" style={{ gap: 14 }}>
-              <Nebula mode={orb} size="56px" />
+              <StateOrb mode={orb} size="56px" />
               <h2 className="h2">{m.reading.synthesis}</h2>
             </div>
             {ai ? <SourceBadge source={aiStatus === "live" ? "live" : "saved"} time={ai.meta.generatedAt} title={ai.meta.model} /> : aiStatus !== "loading" && <SourceBadge source="offline" />}
           </div>
 
           {aiStatus === "loading" && !ai && (
-            <div className="stack gap-8">
+            <div className="stack gap-2">
               <span className="status-line"><span className="status-dot" />{m.reading.aiLoading}</span>
               <div className="skeleton" aria-hidden="true" /><div className="skeleton" aria-hidden="true" /><div className="skeleton short" aria-hidden="true" />
             </div>
           )}
 
           {ai && (
-            <div className="stack gap-16 reveal-in">
+            <div className="stack gap-4 reveal-in">
               {ai.cards.map((c) => {
                 const card = analysis.perCard[c.position];
                 return (
@@ -265,7 +265,7 @@ function ReadingView() {
             <p className="quote">{reflection}</p>
           </div>
 
-          <div className="stack gap-12">
+          <div className="stack gap-3">
             <h2 className="h3">{m.reading.talk}</h2>
             <p className="muted small" style={{ margin: 0 }}>{m.reading.talkIntro}</p>
             <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={aiStatus === "off"} onBusy={onChatBusy} />

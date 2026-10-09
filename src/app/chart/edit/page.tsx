@@ -70,7 +70,7 @@ export default function BirthFormPage() {
           {submitted && date && !dateValid && <span className="field-error">{m.birthForm.invalidDate}</span>}
         </div>
 
-        <div className="stack gap-8">
+        <div className="stack gap-2">
           <div className="field">
             <label htmlFor="btime">{m.birthForm.time}</label>
             <input id="btime" className="input" type="time" value={time} disabled={unknownTime} onChange={(e) => setTime(e.target.value)} />
@@ -89,7 +89,7 @@ export default function BirthFormPage() {
         </div>
 
         {resolution?.status === "ambiguous" && (
-          <fieldset className="stack gap-8" style={{ border: 0, padding: 0, margin: 0 }} aria-live="polite">
+          <fieldset className="stack gap-2" style={{ border: 0, padding: 0, margin: 0 }} aria-live="polite">
             <legend className="small" style={{ marginBottom: 8 }}>{m.birthForm.ambiguous}</legend>
             {resolution.options.map((o, i) => (
               <label key={o.offset} className="check">

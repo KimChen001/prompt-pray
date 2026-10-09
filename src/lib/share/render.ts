@@ -6,9 +6,9 @@ import { cardImage } from "@/lib/tarot/deck";
 import type { ShareCard } from "./content";
 
 export const SHARE_SIZE = { width: 1080, height: 1350 };
-const C = { bg0: "#0e0d16", bg1: "#171620", line: "#2b2838", text1: "#f0ede7", text2: "#b7b3c4", silver: "#bfc5d2", mist: "rgba(163, 148, 199, 0.22)" };
-const SERIF = `"Cormorant Garamond", "Noto Serif SC", "Songti SC", "SimSun", serif`;
-const SANS = `"Inter Variable", "Inter", "PingFang SC", "Microsoft YaHei", sans-serif`;
+const C = { bg0: "#07060c", bg1: "#0d0b16", line: "#24212f", text1: "#ece8f4", text2: "#b7b3c4", silver: "#bfc5d2", mist: "rgba(163, 148, 199, 0.22)" };
+const SERIF = `"Instrument Serif", "Noto Serif SC", "Songti SC", "SimSun", serif`;
+const SANS = `"Geist Variable", "Geist", "PingFang SC", "Microsoft YaHei", sans-serif`;
 
 function loadImage(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
@@ -41,7 +41,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, max
 
 export async function renderShareCard(card: ShareCard): Promise<Blob> {
   try {
-    await Promise.all([document.fonts.load(`600 64px ${SERIF}`), document.fonts.load(`400 28px ${SANS}`)]);
+    await Promise.all([document.fonts.load(`400 64px ${SERIF}`), document.fonts.load(`400 28px ${SANS}`)]);
   } catch {
     /* fall back to system fonts */
   }
@@ -75,7 +75,7 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
   y += 56;
 
   ctx.fillStyle = C.text1;
-  ctx.font = `600 76px ${SERIF}`;
+  ctx.font = `400 76px ${SERIF}`;
   for (const l of wrap(ctx, card.title, W - pad * 2, 2)) {
     ctx.fillText(l, pad, y);
     y += 84;
@@ -88,7 +88,7 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
   }
   if (card.quote) {
     ctx.fillStyle = C.silver;
-    ctx.font = `italic 500 38px ${SERIF}`;
+    ctx.font = `italic 400 38px ${SERIF}`;
     for (const l of wrap(ctx, `“${card.quote}”`, W - pad * 2, 3)) {
       ctx.fillText(l, pad, y + 12);
       y += 48;
@@ -153,7 +153,7 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
       ctx.fillText(card.bigLabel.toUpperCase(), pad, y - 36);
     }
     ctx.fillStyle = C.silver;
-    ctx.font = `600 220px ${SERIF}`;
+    ctx.font = `400 220px ${SERIF}`;
     ctx.fillText(card.big, pad, y);
     y += 240;
   }
@@ -163,7 +163,7 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
       ctx.font = `500 32px ${SANS}`;
       ctx.fillText(r.label, pad, y + 14);
       ctx.fillStyle = C.text1;
-      ctx.font = `600 56px ${SERIF}`;
+      ctx.font = `400 56px ${SERIF}`;
       const vw = ctx.measureText(r.value).width;
       ctx.fillText(r.value, W - pad - vw, y);
       y += rowH;
@@ -176,7 +176,7 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
   }
   if (card.note && y < H - 300) {
     ctx.fillStyle = C.silver;
-    ctx.font = `italic 500 34px ${SERIF}`;
+    ctx.font = `italic 400 34px ${SERIF}`;
     for (const l of wrap(ctx, card.note, W - pad * 2, 2)) {
       ctx.fillText(l, pad, y + 8);
       y += 44;
@@ -184,7 +184,7 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
   }
 
   // Footer text wraps in the space left of the wordmark, so the two never overlap.
-  ctx.font = `600 30px ${SERIF}`;
+  ctx.font = `400 30px ${SERIF}`;
   const brand = "MOONA";
   const brandW = ctx.measureText(brand).width;
   ctx.fillStyle = C.silver;

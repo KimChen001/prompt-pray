@@ -1,0 +1,9 @@
+/* Entry stylesheet. Order of cascade layers:
+   theme     – Tailwind's design tokens (no preflight: the existing pages keep their own base styles)
+   moona     – MOONA's own design system (globals.css)
+   utilities – Tailwind utilities used by the Figma prototype components; they win over moona */
+@layer theme, moona, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "./globals.css" layer(moona);
+@import "tailwindcss/utilities.css" layer(utilities);
+@source "../";

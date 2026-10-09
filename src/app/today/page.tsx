@@ -1,7 +1,7 @@
 "use client";
 // Today (Guidance): today's card (one per local day and focus, saved so it never changes), the daily
 // horoscope from real transits, and the live sky. Sources are labelled separately: card = Library,
-// horoscope = Template / Live AI / AI · saved, sky = Live sky. The small nebula pulses only while the
+// horoscope = Template / Live AI / AI · saved, sky = Live sky. The small orb pulses only while the
 // horoscope's AI request is actually running.
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -19,7 +19,7 @@ import { dailyCard as dailyShareCard } from "@/lib/share/content";
 import { firstSentence } from "@/lib/tarot/engine";
 import { SkyPanel } from "@/components/SkyPanel";
 import { HoroscopePanel } from "@/components/HoroscopePanel";
-import { Nebula, type NebulaMode } from "@/components/nebula/Nebula";
+import { StateOrb, type OrbMode } from "@/components/cosmos/StateOrb";
 
 const TOPICS: Topic[] = ["general", "love", "work", "growth"];
 
@@ -31,7 +31,7 @@ export default function TodayPage() {
   const [topic, setTopic] = useState<Topic>("general");
   const [drawn, setDrawn] = useState<DrawnCard | null>(null);
   const [revealed, setRevealed] = useState(false);
-  const [orb, setOrb] = useState<NebulaMode>("quiet");
+  const [orb, setOrb] = useState<OrbMode>("quiet");
 
   // The local date is only known in the browser; also refresh it if the tab stays open past midnight.
   useEffect(() => {
@@ -78,17 +78,17 @@ export default function TodayPage() {
   const side = card && drawn ? (drawn.reversed ? card.reversed : card.upright) : null;
 
   return (
-    <div className="stack gap-32">
+    <div className="stack gap-8">
       <header className="row" style={{ gap: 18, alignItems: "center" }}>
-        <Nebula mode={orb} size="72px" />
-        <div className="stack gap-4">
+        <StateOrb mode={orb} size="72px" />
+        <div className="stack gap-1">
           <p className="eyebrow">{m.nav.guidance} · {formatLocalDate(date, locale)}</p>
           <h1 className="h1">{m.daily.title}</h1>
         </div>
       </header>
 
       <div className="today-grid">
-        <section className="panel stack gap-16" aria-labelledby="card-title">
+        <section className="panel stack gap-4" aria-labelledby="card-title">
           <div className="row-between">
             <h2 className="h3" id="card-title">{m.daily.cardTitle}</h2>
             {card && <SourceBadge source="library" />}
@@ -109,7 +109,7 @@ export default function TodayPage() {
               style={{ ["--w" as string]: "clamp(140px, 38vw, 190px)" }}
             />
             {card && side && drawn ? (
-              <div className="stack gap-12 reveal-in" aria-live="polite" style={{ minWidth: 0 }}>
+              <div className="stack gap-3 reveal-in" aria-live="polite" style={{ minWidth: 0 }}>
                 <h3 className="h2" style={{ margin: 0 }}>
                   {pick(card.name)} {drawn.reversed && <span className="badge tag-rev" style={{ verticalAlign: "middle" }}>{m.common.reversed}</span>}
                 </h3>
@@ -119,7 +119,7 @@ export default function TodayPage() {
                 <p className="quote">{pick(side.advice)}</p>
               </div>
             ) : (
-              <div className="stack gap-12">
+              <div className="stack gap-3">
                 <p className="muted" style={{ margin: 0 }}>{m.daily.intro}</p>
                 <div><button type="button" className="btn btn-primary btn-lg" onClick={reveal}>{m.daily.reveal}</button></div>
               </div>

@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { cookies } from "next/headers";
-import "@fontsource-variable/inter";
-import "@fontsource/cormorant-garamond/500.css";
-import "@fontsource/cormorant-garamond/600.css";
-import "@fontsource/jetbrains-mono/400.css";
-import "./globals.css";
+// The prototype's type: Instrument Serif (headlines), Geist (text), Geist Mono (labels), and for the
+// whispers Cinzel (inscription) over Pinyon Script. All SIL Open Font License, served from this site.
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource-variable/geist";
+import "@fontsource/geist-mono/400.css";
+import "@fontsource/cinzel/400.css";
+import "@fontsource/pinyon-script/400.css";
+import "./styles.css";
 import { I18nProvider } from "@/lib/i18n";
 import { LOCALE_COOKIE, toLocale } from "@/lib/i18n/config";
 import { MOTION_BOOT_SCRIPT } from "@/lib/motion-boot";
@@ -21,7 +25,7 @@ export const metadata: Metadata = {
 
 // viewportFit=cover exposes the safe-area insets (tab bar, notches); resizes-content keeps the chat
 // box above the on-screen keyboard on Android Chrome (iOS scrolls the focused field into view).
-export const viewport: Viewport = { themeColor: "#0e0d16", width: "device-width", initialScale: 1, viewportFit: "cover", interactiveWidget: "resizes-content" };
+export const viewport: Viewport = { themeColor: "#07060c", width: "device-width", initialScale: 1, viewportFit: "cover", interactiveWidget: "resizes-content" };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = toLocale((await cookies()).get(LOCALE_COOKIE)?.value);

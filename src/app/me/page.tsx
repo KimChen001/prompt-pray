@@ -91,7 +91,7 @@ export default function JournalPage() {
   }
 
   return (
-    <div className="stack gap-32 journal">
+    <div className="stack gap-8 journal">
       <header className="page-head">
         <p className="eyebrow">{m.nav.journal}</p>
         <h1 className="h1">{m.journal.title}</h1>
@@ -109,7 +109,7 @@ export default function JournalPage() {
         {SECTIONS.map((s) => <a key={s} href={`#${s}`}>{m.journal.tabs[s]}</a>)}
       </nav>
 
-      <section id="chart" className="panel stack gap-12 journal-section">
+      <section id="chart" className="panel stack gap-3 journal-section">
         <h2 className="h3">{m.me.birthTitle}</h2>
         {bigThree ? <p className="row" style={{ margin: 0, gap: "4px 16px" }}>{bigThree.map((x) => <span key={x}>{x}</span>)}</p> : <p className="muted small" style={{ margin: 0 }}>{m.me.birthDev}</p>}
         <div className="btn-row">
@@ -119,7 +119,7 @@ export default function JournalPage() {
         </div>
       </section>
 
-      <section id="readings" className="stack gap-12 journal-section">
+      <section id="readings" className="stack gap-3 journal-section">
         <div className="section-head">
           <h2 className="h2">{m.me.history}</h2>
           <Link href="/tarot/new" className="btn-text">{m.home.start}</Link>
@@ -127,7 +127,7 @@ export default function JournalPage() {
         {readings.length ? <ReadingList readings={readings} onDelete={(id) => window.confirm(m.me.confirmDeleteReading) && deleteReading(id)} /> : <p className="muted">{m.me.empty}</p>}
       </section>
 
-      <section id="talks" className="stack gap-12 journal-section">
+      <section id="talks" className="stack gap-3 journal-section">
         <div className="section-head">
           <h2 className="h2">{m.talk.yourChats}</h2>
           <Link href="/talk" className="btn-text">{m.talk.newChat}</Link>
@@ -138,7 +138,7 @@ export default function JournalPage() {
               <li key={c.id}>
                 <Link href={`/talk/c/${c.id}`}>
                   <span className="ellipsis" style={{ color: "var(--text-1)" }}>{c.title}</span>
-                  <span className="muted small">{formatLocalDate(localDateKey(new Date(c.updatedAt)), locale)} · {fmt(m.talk.messages, { n: c.turns.length })}</span>
+                  <span className="muted small">{formatLocalDate(localDateKey(new Date(c.updatedAt)), locale)} · {c.turns.length === 1 ? m.talk.messagesOne : fmt(m.talk.messages, { n: c.turns.length })}</span>
                 </Link>
                 <button type="button" className="btn-text" onClick={() => window.confirm(m.talk.confirmDelete) && deleteChat(c.id)}>{m.talk.delete}</button>
               </li>
@@ -151,10 +151,10 @@ export default function JournalPage() {
 
       <div id="memory" className="journal-section"><NotesManager /></div>
 
-      <section id="checkins" className="stack gap-12 journal-section" aria-labelledby="checkins-title">
+      <section id="checkins" className="stack gap-3 journal-section" aria-labelledby="checkins-title">
         <h2 className="h2" id="checkins-title">{m.checkin.listTitle}</h2>
         {checkIns.length ? (
-          <ul className="stack gap-8" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <ul className="stack gap-2" style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {checkIns.map((c) => <CheckInItem key={c.id} c={c} showReadingLink />)}
           </ul>
         ) : (
@@ -162,7 +162,7 @@ export default function JournalPage() {
         )}
       </section>
 
-      <section id="matches" className="stack gap-12 journal-section" aria-labelledby="matches-title">
+      <section id="matches" className="stack gap-3 journal-section" aria-labelledby="matches-title">
         <div className="section-head">
           <h2 className="h2" id="matches-title">{m.match.saved}</h2>
           <Link href="/match" className="btn-text">{m.match.newMatch}</Link>
@@ -170,7 +170,7 @@ export default function JournalPage() {
         <MatchList matches={matches} />
       </section>
 
-      <section id="saved" className="stack gap-12 journal-section" aria-labelledby="favorites-title">
+      <section id="saved" className="stack gap-3 journal-section" aria-labelledby="favorites-title">
         <h2 className="h2" id="favorites-title">{m.learn.favoritesTitle}</h2>
         {favorites.length ? (
           <ul className="list">
@@ -237,7 +237,7 @@ export default function JournalPage() {
         </div>
       </section>
 
-      <section id="data" className="panel-quiet stack gap-12 journal-section">
+      <section id="data" className="panel-quiet stack gap-3 journal-section">
         <h2 className="h3">{m.journal.dataTitle}</h2>
         <p className="muted small" style={{ margin: 0 }}>{m.me.privacy}</p>
         <p className="muted small" style={{ margin: 0 }}>{m.journal.noSync}</p>

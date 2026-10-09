@@ -216,3 +216,26 @@ Brief: `outputs/MOONA完整实施交接指令.md` (with the design supplement, t
 - Production build + mock AI (1.5 s delay) in a headless Edge (throwaway profile): 11 Talk rounds (22 messages, all Live AI with basis chips), undo and delete mid-request (nothing resurrected; the conversation's note deleted with it), language switch mid-request on a reading (both languages kept, thread intact), reading deleted mid-request (stays deleted), horoscope Live AI → AI · saved → new request after a house-system change, reduced motion / Off / WebGL unavailable (static orb, buttons work), offline via the service worker (pages, shells, Talk failing honestly), slow network (400 ms, 50 KB/s, no cache: first paint 1.18 s, Draw a card usable at 1.2 s, nebula after the 7.9 s load), no console errors on 18 pages, no horizontal overflow at 320/390/430/768/landscape/1280/1440 in EN and ZH. Found and fixed during this: a hydration mismatch on /talk, a 1,298px-wide card row on phones, landscape and 320px layouts.
 - Screenshots: `outputs/screenshots-2026-10-09-round2/`.
 - **Not verified:** real models (no authorised credit used; Parley key not entered), real iPhone / Android devices, frame rate and battery on phones, QR scanning on a deployed HTTPS site, soft-keyboard behaviour on real devices.
+
+## Figma Make prototype shell and Ask home (2026-10-09)
+
+The team asked to use its own Figma Make prototype ([KimChen001/Moona](https://github.com/KimChen001/Moona)) as the site's look and motion, ported into this app (not a rebuild).
+
+**What**
+- Ported from `Moona/src/app/App.tsx` into `src/components/cosmos/`: Cosmos (warp starfield, pointer aura, whisper glow), Orb (Ether shader, aura, warm tint, shrink-and-rise when a conversation starts), ShaderCanvas, Whispers (EN as in the prototype; ZH added, phrase by phrase), MoonBadge (now fed by the real ephemeris for the local day). `AppShell` is the prototype's Rail / TabBar / sheet: Ask · Cards · Sky · Journal + More (chart, learn, match, whispers, about), QR dialog, language toggle.
+- Ask home (`src/app/page.tsx`): the prototype layout with real behaviour. Typed messages start a real Talk session (saved, continued in Talk, late replies can't overwrite, 503 says plainly that AI isn't connected and offers a card, crisis language shows support). "Draw a card for today" = the real daily card; "How is the Moon tonight?" = calculated phase, illumination, sign and next phase; "What should I let go of?" = a real one-card reading saved to the Journal.
+- Not ported: the prototype's sign-in (it signed in a sample user). Accounts don't exist, so the account entry explains that everything is saved on this device and offers Journal and data export.
+- `StateOrb` replaces the round-2 WebGL nebula on inner pages (ritual, today, readings, Talk) with the same Ether orb at small size, keeping the real-state mapping (gather / pulse with a cyan ring / settle / quiet). `src/components/nebula/` and the old home's WelcomeBack are removed.
+- Styling: Tailwind v4.1.12 (theme + utilities, no preflight) in `src/app/styles.css`, with `globals.css` in its own layer below the utilities. Prototype tokens: background #07060c, text #ece8f4, gold #c9a96e for the active line, glass panels over the starfield. Fonts: Instrument Serif, Geist, Geist Mono, Cinzel, Pinyon Script (Fontsource, OFL). Share images use the same fonts and colours.
+- Licence: the Ether fragment shader (nimitz, CC BY-NC-SA 3.0) is attributed in the file header, About and README; usable for the non-commercial demo, to be replaced or licensed before paid use.
+
+**Bugs found and fixed while porting**
+- Tailwind's spacing utilities (`gap-12` = 48px) silently overrode the site's own `gap-12` (12px), loosening every inner page. Converted all 121 legacy uses to Tailwind's scale (`gap-3` etc.) and dropped the old classes; a scan of every legacy className confirms no other Tailwind name collides. Big Three ring images renamed from `ring-0/1/2` (Tailwind ring utilities) to `astro-ring-*`.
+- Bare buttons showed the browser's grey default once preflight was skipped: added a zero-specificity button reset.
+- Basis chips squeezed their "Calculated" label into a vertical stack on phones: the label no longer shrinks.
+- Step headings that receive focus for screen readers no longer draw a focus box.
+
+**Verified**
+- 518 tests pass; TypeScript passes; production build passes.
+- Headless Edge (GPU) against `next start` with the mock AI: Ask on desktop 1440×900 and phone 390×844 (EN and ZH), the three prompts, a typed message answered by the mock model with "Continue in Talk", the tarot ritual (orb gathers while shuffling, then idle), Talk on a phone (pulse ring while the request runs, then quiet), Today, Tarot, Journal, Chart; motion Reduced (still frames) and Off (no canvas, static orb). No horizontal overflow on any page at either size. Screenshots: `outputs/screenshots-2026-10-09-prototype/`.
+- No real model calls, no real-device testing yet.

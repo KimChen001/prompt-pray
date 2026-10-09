@@ -42,10 +42,29 @@ export function QrSvg({ text, label }: { text: string; label: string }) {
   );
 }
 
-export function PhoneQr() {
+export function PhoneQr({ open = false }: { open?: boolean }) {
   const { m } = useI18n();
   const [target, setTarget] = useState<QrTarget | null>(null);
   useEffect(() => setTarget(qrTarget(CONFIGURED, window.location.origin)), []);
+
+  if (open) {
+    // Inside a dialog (the rail's "Try it on your phone"): the code and address directly.
+    return (
+      <div className="stack gap-3">
+        <h2 className="font-serif-i text-[30px] leading-[1.1]">{m.qr.title}</h2>
+        <p className="muted small" style={{ margin: 0 }}>{m.qr.teaser}</p>
+        {target && (
+          <>
+            <div className="qr-code" style={{ width: 200, height: 200, alignSelf: "center" }}><QrSvg text={target.url} label={m.qr.alt} /></div>
+            {target.status !== "public" && <span className="badge badge-dev" style={{ alignSelf: "flex-start" }}>{target.status === "local" ? m.qr.localBadge : m.qr.testBadge}</span>}
+            <p className="qr-url" style={{ margin: 0 }}>{target.url.replace(/\/$/, "")}</p>
+            <p className="muted small" style={{ margin: 0 }}>{target.status === "local" ? m.qr.localNote : target.status === "test" ? m.qr.testNote : m.qr.publicNote}</p>
+            <p className="muted small" style={{ margin: 0 }}>{m.qr.privacy}</p>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <details className="disclosure panel-quiet">
@@ -59,7 +78,7 @@ export function PhoneQr() {
       {target && (
         <div className="qr-panel" style={{ marginTop: 14 }}>
           <div className="qr-code"><QrSvg text={target.url} label={m.qr.alt} /></div>
-          <div className="stack gap-8" style={{ maxWidth: 420 }}>
+          <div className="stack gap-2" style={{ maxWidth: 420 }}>
             {target.status !== "public" && <span className="badge badge-dev" style={{ alignSelf: "flex-start" }}>{target.status === "local" ? m.qr.localBadge : m.qr.testBadge}</span>}
             <p className="qr-url" style={{ margin: 0 }}>{target.url.replace(/\/$/, "")}</p>
             <p className="muted small" style={{ margin: 0 }}>{target.status === "local" ? m.qr.localNote : target.status === "test" ? m.qr.testNote : m.qr.publicNote}</p>

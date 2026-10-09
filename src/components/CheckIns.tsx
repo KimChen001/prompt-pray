@@ -43,13 +43,13 @@ export function CheckInItem({ c, showReadingLink }: { c: CheckIn; showReadingLin
   }
 
   return (
-    <li className="panel stack gap-8">
+    <li className="panel stack gap-2">
       <span className={due ? "badge badge-live" : "badge"} style={{ alignSelf: "flex-start" }}>{when}</span>
       <p style={{ margin: 0 }}>{c.action}</p>
       {c.outcome && <p className="muted small" style={{ margin: 0 }}>{c.outcome}</p>}
       {crisis && <SupportPanel onEdit={() => setCrisis(false)} />}
       {due && !crisis && (
-        <div className="stack gap-8">
+        <div className="stack gap-2">
           <label className="meta" htmlFor={`outcome-${c.id}`}>{m.checkin.howDidItGo}</label>
           <textarea id={`outcome-${c.id}`} className="textarea" style={{ minHeight: 64 }} maxLength={CHECKIN_OUTCOME_MAX} placeholder={m.checkin.outcomePlaceholder} value={outcome} onChange={(e) => setOutcome(e.target.value)} />
           <div className="btn-row">
@@ -91,13 +91,13 @@ export function CheckInPlanner({ readingId, suggestedAction }: { readingId: stri
   }
 
   return (
-    <section className="stack gap-12" aria-labelledby="checkin-title">
+    <section className="stack gap-3" aria-labelledby="checkin-title">
       <h2 className="h3" id="checkin-title">{m.checkin.title}</h2>
-      {mine.length > 0 && <ul className="stack gap-8" style={{ listStyle: "none", padding: 0, margin: 0 }}>{mine.map((c) => <CheckInItem key={c.id} c={c} />)}</ul>}
+      {mine.length > 0 && <ul className="stack gap-2" style={{ listStyle: "none", padding: 0, margin: 0 }}>{mine.map((c) => <CheckInItem key={c.id} c={c} />)}</ul>}
       {crisis ? (
         <SupportPanel onEdit={() => setCrisis(false)} />
       ) : (
-        <div className="stack gap-8">
+        <div className="stack gap-2">
           <p className="muted small" style={{ margin: 0 }}>{m.checkin.intro}</p>
           <label className="meta" htmlFor="checkin-action">{m.checkin.action}</label>
           <textarea id="checkin-action" className="textarea" style={{ minHeight: 64 }} maxLength={CHECKIN_ACTION_MAX} value={action} onChange={(e) => setAction(e.target.value)} />
@@ -132,12 +132,12 @@ export function CheckInsDue() {
 
   if (!state || (state.due.length === 0 && state.recent.length === 0)) return null;
   return (
-    <section className="stack gap-12" aria-labelledby="due-title">
+    <section className="stack gap-3" aria-labelledby="due-title">
       <div style={{ display: "flex", gap: 12, alignItems: "baseline", flexWrap: "wrap" }}>
         <h2 className="h2" id="due-title">{m.checkin.homeTitle}</h2>
         {state.upcoming > 0 && <Link href="/me" className="muted small">{fmt(m.checkin.upcoming, { n: state.upcoming })}</Link>}
       </div>
-      <ul className="stack gap-8" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+      <ul className="stack gap-2" style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {[...state.due, ...state.recent].map((c) => <CheckInItem key={c.id} c={c} showReadingLink />)}
       </ul>
     </section>

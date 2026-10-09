@@ -77,7 +77,7 @@ export function PlacePicker({ id, value, onChange }: { id: string; value: BirthP
   }
   if (manual) {
     return (
-      <div className="stack gap-8">
+      <div className="stack gap-2">
         <div className="field-row">
           <input className="input" inputMode="decimal" placeholder={m.birthForm.lat} aria-label={m.birthForm.lat} value={mLat} onChange={(e) => setMLat(e.target.value)} />
           <input className="input" inputMode="decimal" placeholder={m.birthForm.lon} aria-label={m.birthForm.lon} value={mLon} onChange={(e) => setMLon(e.target.value)} />

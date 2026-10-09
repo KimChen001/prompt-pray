@@ -24,7 +24,7 @@ export function SupportPanel({ onEdit }: { onEdit?: () => void }) {
   useEffect(() => setRegion(effectiveHelpRegion(getSettings())), []);
 
   return (
-    <section className="panel support stack gap-12" role="alert" aria-live="assertive">
+    <section className="panel support stack gap-3" role="alert" aria-live="assertive">
       <h2 className="h2">{m.support.title}</h2>
       <p className="lede" style={{ color: "var(--text-1)" }}>{m.support.body}</p>
       {region === "US" && <p style={{ margin: 0, fontWeight: 500 }}>{m.support.us}</p>}

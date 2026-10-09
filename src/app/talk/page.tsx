@@ -15,17 +15,17 @@ export default function TalkPage() {
   useEffect(() => setChats(listChats()), [version]);
 
   return (
-    <div className="stack gap-48">
+    <div className="stack gap-12">
       <Conversation id={null} />
       {chats.length > 0 && (
-        <section className="stack gap-12" aria-labelledby="chats-title" style={{ maxWidth: 760 }}>
+        <section className="stack gap-3" aria-labelledby="chats-title" style={{ maxWidth: 760 }}>
           <h2 className="h3" id="chats-title">{m.talk.yourChats}</h2>
           <ul className="session-list">
             {chats.map((c) => (
               <li key={c.id}>
                 <Link href={`/talk/c/${c.id}`}>
                   <span className="ellipsis" style={{ color: "var(--text-1)" }}>{c.title}</span>
-                  <span className="muted small">{formatLocalDate(localDateKey(new Date(c.updatedAt)), locale)} · {fmt(m.talk.messages, { n: c.turns.length })}</span>
+                  <span className="muted small">{formatLocalDate(localDateKey(new Date(c.updatedAt)), locale)} · {c.turns.length === 1 ? m.talk.messagesOne : fmt(m.talk.messages, { n: c.turns.length })}</span>
                 </Link>
                 <button type="button" className="btn-text" onClick={() => window.confirm(m.talk.confirmDelete) && deleteChat(c.id)}>{m.talk.delete}</button>
               </li>

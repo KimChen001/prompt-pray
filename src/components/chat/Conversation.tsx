@@ -19,7 +19,7 @@ import { chartContext, chosenNotes, type TalkBody } from "@/lib/chat/context";
 import { localDateKey, userTimeZone, formatLocalDate } from "@/lib/time";
 import type { BirthData } from "@/lib/astro/birth";
 import type { AiMeta, BasisItem, ChatTurn } from "@/lib/tarot/types";
-import { Nebula, type NebulaMode } from "../nebula/Nebula";
+import { StateOrb, type OrbMode } from "../cosmos/StateOrb";
 import { SupportPanel } from "../bits";
 import { ChatThread, Composer } from "./ChatParts";
 import { ContextPanel } from "./ContextPanel";
@@ -45,7 +45,7 @@ export function Conversation({ id }: { id: string | null }) {
   const [draftContext, setDraftContext] = useState<ChatContextChoice>(DEFAULT_CONTEXT);
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [orb, setOrb] = useState<NebulaMode>("quiet");
+  const [orb, setOrb] = useState<OrbMode>("quiet");
   const [birth, setBirth] = useState<BirthData | null>(null);
   const [notes, setNotes] = useState<MemoryNote[]>([]);
   const [freshFrom, setFreshFrom] = useState(Number.POSITIVE_INFINITY);
@@ -213,7 +213,7 @@ export function Conversation({ id }: { id: string | null }) {
   if (session === undefined) return null;
   if (sessionId && !session) {
     return (
-      <div className="stack gap-16" style={{ maxWidth: 560 }}>
+      <div className="stack gap-4" style={{ maxWidth: 560 }}>
         <h1 className="h1">{m.talk.notFoundTitle}</h1>
         <p className="lede">{m.talk.notFoundBody}</p>
         <div><Link href="/talk" className="btn btn-primary">{m.talk.newChat}</Link></div>
@@ -227,8 +227,8 @@ export function Conversation({ id }: { id: string | null }) {
     <div className="talk">
       <div className="talk-main">
         <header className="row" style={{ gap: 16, alignItems: "center" }}>
-          <Nebula mode={orb} size="64px" />
-          <div className="stack gap-4" style={{ minWidth: 0, flex: 1 }}>
+          <StateOrb mode={orb} size="64px" />
+          <div className="stack gap-1" style={{ minWidth: 0, flex: 1 }}>
             <p className="eyebrow">{m.talk.eyebrow}</p>
             <h1 className="h2 ellipsis">{session ? session.title : m.talk.title}</h1>
           </div>

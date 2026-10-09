@@ -28,7 +28,7 @@ function PersonFields({ id, draft, onChange, withName }: { id: string; draft: Dr
   const { m } = useI18n();
   const today = localDateKey();
   return (
-    <div className="stack gap-12">
+    <div className="stack gap-3">
       {withName && (
         <div className="field">
           <label htmlFor={`${id}-name`}>{m.match.nickname}</label>
@@ -98,7 +98,7 @@ export default function MatchPage() {
   }
 
   return (
-    <div className="stack gap-32" style={{ maxWidth: 680 }}>
+    <div className="stack gap-8" style={{ maxWidth: 680 }}>
       <header className="page-head">
         <p className="eyebrow">{m.nav.match}</p>
         <h1 className="h1">{m.match.title}</h1>
@@ -106,7 +106,7 @@ export default function MatchPage() {
         <p className="notice-quiet" style={{ marginTop: 6 }}>{m.match.sameDeviceNote}</p>
       </header>
 
-      <section className="panel stack gap-12" aria-labelledby="match-you">
+      <section className="panel stack gap-3" aria-labelledby="match-you">
         <h2 className="h3" id="match-you">{m.match.you}</h2>
         {useProfile ? (
           <>
@@ -125,7 +125,7 @@ export default function MatchPage() {
         )}
       </section>
 
-      <section className="panel stack gap-12" aria-labelledby="match-them">
+      <section className="panel stack gap-3" aria-labelledby="match-them">
         <h2 className="h3" id="match-them">{m.match.them}</h2>
         <PersonFields id="b" draft={b} onChange={setB} withName />
         <p className="muted small" style={{ margin: 0 }}>{m.match.consent}</p>
@@ -134,7 +134,7 @@ export default function MatchPage() {
       {error && <p className="field-error" style={{ margin: 0 }}>{m.match.invalid}</p>}
       <div><button type="button" className="btn btn-primary" onClick={compare}>{m.match.compare}</button></div>
 
-      <section className="stack gap-12" aria-labelledby="match-saved">
+      <section className="stack gap-3" aria-labelledby="match-saved">
         <h2 className="h2" id="match-saved">{m.match.saved}</h2>
         <MatchList matches={matches} onDeleted={() => setMatches(listMatches())} />
       </section>

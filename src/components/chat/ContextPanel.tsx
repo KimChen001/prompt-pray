@@ -55,27 +55,27 @@ export function ContextPanel({ choice, onChange, birth, notes, idPrefix = "ctx",
   return (
     <details className="panel context-panel" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
       <summary className="row-between" style={{ listStyle: "none", cursor: "pointer" }}>
-        <span className="stack gap-4">
+        <span className="stack gap-1">
           <span className="eyebrow">{m.talk.contextTitle}</span>
           <span className="small">{count === 1 ? m.talk.contextCountOne : count ? fmt(m.talk.contextCount, { n: count }) : m.talk.contextNone}</span>
         </span>
         <span className="disclosure-summary" aria-hidden="true" />
       </summary>
 
-      <div className="stack gap-16" style={{ marginTop: 14 }}>
-        <div className="stack gap-8">
+      <div className="stack gap-4" style={{ marginTop: 14 }}>
+        <div className="stack gap-2">
           <span className="meta">{m.talk.kindCalc}</span>
           <ul className="context-list">
             <li className="context-item">
               <input type="checkbox" id={`${idPrefix}-chart`} checked={choice.chart && !!birth} disabled={!birth} onChange={(e) => onChange({ ...choice, chart: e.target.checked })} />
-              <label htmlFor={`${idPrefix}-chart`} className="stack gap-4">
+              <label htmlFor={`${idPrefix}-chart`} className="stack gap-1">
                 <span>{m.talk.ctxChart}</span>
                 {birth ? <span className="muted">{chartLine}</span> : <span className="muted">{m.talk.ctxChartNone} <Link href="/chart/edit">{m.chart.add}</Link></span>}
               </label>
             </li>
             <li className="context-item">
               <input type="checkbox" id={`${idPrefix}-today`} checked={choice.today} onChange={(e) => onChange({ ...choice, today: e.target.checked })} />
-              <label htmlFor={`${idPrefix}-today`} className="stack gap-4">
+              <label htmlFor={`${idPrefix}-today`} className="stack gap-1">
                 <span>{m.talk.ctxToday}</span>
                 <span className="muted">{skyLine}</span>
               </label>
@@ -83,7 +83,7 @@ export function ContextPanel({ choice, onChange, birth, notes, idPrefix = "ctx",
           </ul>
         </div>
 
-        <div className="stack gap-8">
+        <div className="stack gap-2">
           <span className="meta">{m.talk.kindSaid}</span>
           {usable.length ? (
             <ul className="context-list">
@@ -101,7 +101,7 @@ export function ContextPanel({ choice, onChange, birth, notes, idPrefix = "ctx",
           <Link href="/me#notes-title" className="small">{m.talk.manageNotes}</Link>
         </div>
 
-        <div className="stack gap-8">
+        <div className="stack gap-2">
           <span className="meta">{m.talk.kindReflection}</span>
           <p className="muted small" style={{ margin: 0 }}>{m.talk.reflectionNote}</p>
         </div>

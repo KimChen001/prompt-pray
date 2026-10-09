@@ -39,7 +39,7 @@ export default function BigThreeRevealPage() {
   }
 
   return (
-    <div className="stack gap-48">
+    <div className="stack gap-12">
       <header className="page-head">
         <p className="eyebrow">{m.big3.eyebrow}</p>
         <h1 className="h1">{m.big3.title}</h1>
@@ -50,7 +50,7 @@ export default function BigThreeRevealPage() {
       <BigThreeCards chart={chart} />
 
       {!chart.timeKnown && (
-        <section className="stack gap-12">
+        <section className="stack gap-3">
           <hr className="hairline" />
           <p className="eyebrow">{m.big3.unknownTitle}</p>
           <p className="muted" style={{ margin: 0, fontSize: 15 }}>{m.big3.unknownBody}</p>

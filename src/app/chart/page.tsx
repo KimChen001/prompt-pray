@@ -111,7 +111,7 @@ function ChartView({ birth, chart, system, onSystem }: { birth: BirthData; chart
   const approx = !chart.timeKnown;
 
   return (
-    <div className="stack gap-48">
+    <div className="stack gap-12">
       <header className="page-head">
         <p className="eyebrow">{m.chartPage.eyebrow}</p>
         <h1 className="h1">{m.chartPage.title}</h1>
@@ -219,7 +219,7 @@ function ChartView({ birth, chart, system, onSystem }: { birth: BirthData; chart
         </section>
       </div>
 
-      <section className="stack gap-16" aria-labelledby="interp-title">
+      <section className="stack gap-4" aria-labelledby="interp-title">
         <h2 className="eyebrow" id="interp-title">{m.chartPage.interpretations}</h2>
         <div className="interp-grid">
           <PlacementCard kind="sun" title={m.chart.sun} c={chart.bigThree.sun} />

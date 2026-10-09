@@ -101,7 +101,7 @@ export function Composer({
   }
 
   return (
-    <div className="stack gap-8">
+    <div className="stack gap-2">
       <div className="composer">
         <label htmlFor={id} className="visually-hidden">{label}</label>
         <textarea

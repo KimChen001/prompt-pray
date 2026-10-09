@@ -38,7 +38,7 @@ export function SkyPanel({ localDate, timeZone, now }: { localDate: string; time
   };
 
   return (
-    <section className="panel stack gap-16" aria-labelledby="sky-title">
+    <section className="panel stack gap-4" aria-labelledby="sky-title">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <h2 className="h3" id="sky-title">{m.sky.title}</h2>
         <SourceBadge source="sky" />
@@ -54,7 +54,7 @@ export function SkyPanel({ localDate, timeZone, now }: { localDate: string; time
         </div>
       </div>
 
-      <div className="stack gap-8">
+      <div className="stack gap-2">
         <span className="meta">{m.sky.events}</span>
         {sky.events.length ? (
           <ul className="list">
@@ -70,14 +70,14 @@ export function SkyPanel({ localDate, timeZone, now }: { localDate: string; time
         )}
       </div>
 
-      <div className="stack gap-8">
+      <div className="stack gap-2">
         <span className="meta">{m.sky.retrograde}</span>
         <p style={{ margin: 0 }}>
           {sky.retrograde.length ? sky.retrograde.map((p) => `${pick(PLANET_NAME[p])} ℞`).join(" · ") : <span className="muted">{m.sky.noneRetro}</span>}
         </p>
       </div>
 
-      <div className="stack gap-4">
+      <div className="stack gap-1">
         {sky.next.map((n) => (
           <span key={n.phase} className="muted small">
             {fmt(m.sky.next, { phase: m.sky.phases[n.phase], when: `${formatLocalDate(localDateKey(n.at, timeZone), locale)} ${timeFmt.format(n.at)}` })} · {sign(n.sign)}

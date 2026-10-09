@@ -2,7 +2,7 @@
 // Ask → Spread → Shuffle & pick → Turn over. Plan v0.2 §3.2; design supplement §5–6.
 // The ritual is rhythm, light and space, never a forced wait: shuffling takes ~1.2 s (instant with
 // reduced motion), every step can be done by touch or keyboard, and each turned card shows its
-// one-line message straight away. The nebula gathers while shuffling and brightens as cards turn.
+// one-line message straight away. The orb gathers while shuffling and brightens as cards turn.
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
@@ -19,7 +19,7 @@ import { useMotionLevel } from "@/lib/motion";
 import type { DrawnCard, Reading, SpreadId, Topic } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
 import { SupportPanel } from "@/components/bits";
-import { Nebula, type NebulaMode } from "@/components/nebula/Nebula";
+import { StateOrb, type OrbMode } from "@/components/cosmos/StateOrb";
 
 const MAX_QUESTION = 300;
 const FAN_SIZE = 22;
@@ -63,7 +63,7 @@ export function NewReading() {
   const [picks, setPicks] = useState<number[]>([]);
   const [revealed, setRevealed] = useState<boolean[]>([]);
   const [announce, setAnnounce] = useState("");
-  const [orb, setOrb] = useState<NebulaMode>("idle");
+  const [orb, setOrb] = useState<OrbMode>("idle");
   const headingRef = useRef<HTMLHeadingElement>(null);
   const timers = useRef<number[]>([]);
 
@@ -196,7 +196,7 @@ export function NewReading() {
   const allRevealed = revealed.length > 0 && revealed.every(Boolean);
 
   return (
-    <div className="stack gap-32">
+    <div className="stack gap-8">
       <nav className="steps" aria-label={m.draw.progress}>
         {(["ask", "spread", "draw"] as const).map((s, i) => (
           <span key={s} style={{ display: "contents" }}>
@@ -213,12 +213,12 @@ export function NewReading() {
       {step === "ask" && (crisis ? (
         <SupportPanel onEdit={() => setCrisis(false)} />
       ) : (
-        <section className="stack gap-24" style={{ maxWidth: 680 }}>
-          <div className="stack gap-8">
+        <section className="stack gap-6" style={{ maxWidth: 680 }}>
+          <div className="stack gap-2">
             <h1 className="h1" tabIndex={-1} ref={headingRef}>{m.ask.title}</h1>
             <p className="lede">{m.ask.subtitle}</p>
           </div>
-          <div className="stack gap-8">
+          <div className="stack gap-2">
             <label htmlFor="q" className="visually-hidden">{m.ask.title}</label>
             <textarea
               id="q"
@@ -233,7 +233,7 @@ export function NewReading() {
             />
             <span className="meta" style={{ alignSelf: "flex-end" }}>{fmt(m.ask.count, { n: question.length, max: MAX_QUESTION })}</span>
           </div>
-          <div className="stack gap-8">
+          <div className="stack gap-2">
             <span className="meta">{m.ask.examples}</span>
             <div className="btn-row">
               {m.ask.exampleList.map((ex) => (
@@ -241,7 +241,7 @@ export function NewReading() {
               ))}
             </div>
           </div>
-          <div className="stack gap-8">
+          <div className="stack gap-2">
             <span className="meta">{m.ask.topic}</span>
             <div className="btn-row" role="group" aria-label={m.ask.topic}>
               {TOPICS.map((t) => (
@@ -250,7 +250,7 @@ export function NewReading() {
             </div>
           </div>
           {(hasBirth || notes.length > 0) && (
-            <div className="panel-quiet stack gap-4">
+            <div className="panel-quiet stack gap-1">
               <span className="meta">{m.ask.contextTitle}</span>
               {hasBirth && (
                 <label className="check">
@@ -262,7 +262,7 @@ export function NewReading() {
                 </label>
               )}
               {notes.length > 0 && (
-                <div className="stack gap-8">
+                <div className="stack gap-2">
                   <label className="check">
                     <input type="checkbox" checked={includeNotes} onChange={(e) => setIncludeNotes(e.target.checked)} />
                     <span className="stack">
@@ -280,7 +280,7 @@ export function NewReading() {
             </div>
           )}
           {sameToday ? (
-            <div className="panel stack gap-12" role="status">
+            <div className="panel stack gap-3" role="status">
               <h2 className="h3">{m.ask.sameTitle}</h2>
               <p className="muted" style={{ margin: 0 }}>{m.ask.sameBody}</p>
               <div className="btn-row">
@@ -299,8 +299,8 @@ export function NewReading() {
       ))}
 
       {step === "spread" && (
-        <section className="stack gap-24">
-          <div className="stack gap-8">
+        <section className="stack gap-6">
+          <div className="stack gap-2">
             <h1 className="h1" tabIndex={-1} ref={headingRef}>{m.spreadStep.title}</h1>
             <p className="lede">{m.spreadStep.subtitle}</p>
           </div>
@@ -328,7 +328,7 @@ export function NewReading() {
         <section className="ritual" data-phase={phase}>
           {question.trim() && <p className="quote" style={{ justifySelf: "stretch", textAlign: "left" }}>{question.trim()}</p>}
 
-          <div className="stack gap-8">
+          <div className="stack gap-2">
             <h1 className="h1" tabIndex={-1} ref={headingRef}>
               {phase === "shuffle" ? m.draw.shuffleTitle : phase === "pick" ? (def.count === 1 ? m.draw.pickTitleOne : fmt(m.draw.pickTitle, { n: def.count })) : m.draw.revealTitle}
             </h1>
@@ -336,9 +336,9 @@ export function NewReading() {
             {phase === "pick" && <span className="meta">{fmt(m.draw.picked, { k: picks.length, n: def.count })}</span>}
           </div>
 
-          {/* One nebula for the whole ritual: it gathers while shuffling, then settles behind the cards. */}
+          {/* One orb for the whole ritual: it gathers while shuffling, then settles behind the cards. */}
           <div className="ritual-stage">
-            <Nebula mode={orb} size="min(64vw, 300px)" particles className="ritual-orb" />
+            <StateOrb mode={orb} size="min(64vw, 300px)" className="ritual-orb" />
 
             {phase === "shuffle" && (
               <div className="shuffle-stack" data-active={shuffling} aria-hidden="true">
@@ -347,7 +347,7 @@ export function NewReading() {
             )}
 
             {phase === "pick" && dealt && (
-              <div className="stack gap-8" style={{ width: "100%" }}>
+              <div className="stack gap-2" style={{ width: "100%" }}>
                 <div className="fan" role="group" aria-label={m.draw.deckLabel}>
                   {Array.from({ length: FAN_SIZE }, (_, i) => {
                     const angle = -32 + (64 / (FAN_SIZE - 1)) * i;

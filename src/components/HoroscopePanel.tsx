@@ -90,7 +90,7 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
 
   if (!day) {
     return (
-      <section className="panel stack gap-12" aria-labelledby="horoscope-title">
+      <section className="panel stack gap-3" aria-labelledby="horoscope-title">
         <h2 className="h3" id="horoscope-title">{m.horoscope.title}</h2>
         <p style={{ margin: 0 }}>{m.horoscope.pickSign}</p>
         <div className="btn-row" role="group" aria-label={m.horoscope.pickSign}>
@@ -116,7 +116,7 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
   const uncertainSun = subject.sunOptions && subject.sunOptions.length > 1;
 
   return (
-    <section className="panel stack gap-16" aria-labelledby="horoscope-title" aria-busy={fresh && ai.status === "loading"}>
+    <section className="panel stack gap-4" aria-labelledby="horoscope-title" aria-busy={fresh && ai.status === "loading"}>
       <div className="row-between">
         <h2 className="h3" id="horoscope-title">{m.horoscope.title}</h2>
         {aiText ? <SourceBadge source={ai.status === "live" ? "live" : "saved"} time={aiText.meta.generatedAt} title={aiText.meta.model} /> : <SourceBadge source="template" />}

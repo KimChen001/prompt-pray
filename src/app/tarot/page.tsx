@@ -15,7 +15,7 @@ export default function TarotHome() {
   useEffect(() => setRecent(listReadings().filter((r) => r.kind === "reading").slice(0, 5)), [version]);
 
   return (
-    <div className="stack gap-48">
+    <div className="stack gap-12">
       <header className="page-head">
         <p className="eyebrow">{m.nav.tarot}</p>
         <h1 className="h1">{m.tarotHome.title}</h1>
@@ -26,7 +26,7 @@ export default function TarotHome() {
         </div>
       </header>
 
-      <section className="stack gap-16" aria-labelledby="how-title">
+      <section className="stack gap-4" aria-labelledby="how-title">
         <h2 className="eyebrow" id="how-title">{m.tarotHome.howTitle}</h2>
         <ol className="how-steps">
           {m.tarotHome.how.map((line, i) => (
@@ -35,7 +35,7 @@ export default function TarotHome() {
         </ol>
       </section>
 
-      <section className="stack gap-16" aria-labelledby="spreads-title">
+      <section className="stack gap-4" aria-labelledby="spreads-title">
         <h2 className="h2" id="spreads-title">{m.tarotHome.spreadsTitle}</h2>
         <div className="spread-grid">
           {SPREAD_ORDER.map((id) => (
@@ -49,7 +49,7 @@ export default function TarotHome() {
         </div>
       </section>
 
-      <section className="stack gap-12" aria-labelledby="recent-title">
+      <section className="stack gap-3" aria-labelledby="recent-title">
         <h2 className="h2" id="recent-title">{m.tarotHome.recent}</h2>
         {recent === null ? null : recent.length ? <ReadingList readings={recent} /> : <p className="muted">{m.tarotHome.none}</p>}
       </section>

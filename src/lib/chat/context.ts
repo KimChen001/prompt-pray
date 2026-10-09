@@ -32,6 +32,27 @@ export interface TalkBody {
   notes?: { id: string; text: string }[];
 }
 
+/** The request body for one reply, from the latest copy of a conversation and the person's choices. */
+export function talkBody(
+  s: { turns: { role: "user" | "assistant"; content: string }[]; context: ChatContextChoice },
+  locale: "en" | "zh",
+  deps: { birth: BirthData | null; houseSystem: HouseSystem; notes: MemoryNote[]; today: { date: string; timeZone: string } },
+  windowed: { role: "user" | "assistant"; content: string }[],
+): TalkBody {
+  const body: TalkBody = { locale, messages: windowed };
+  if (s.context.chart && deps.birth) {
+    try {
+      body.chart = chartContext(deps.birth, deps.houseSystem);
+    } catch {
+      /* chart can't be computed: send without it */
+    }
+  }
+  if (s.context.today) body.today = deps.today;
+  const shared = chosenNotes(s.context, deps.notes);
+  if (shared.length) body.notes = shared.map((n) => ({ id: n.id, text: n.text }));
+  return body;
+}
+
 /** Notes this conversation shares: chosen ids that still exist and aren't paused, newest first. */
 export function chosenNotes(choice: ChatContextChoice, notes: MemoryNote[]): MemoryNote[] {
   return notes.filter((n) => !n.paused && choice.noteIds.includes(n.id)).slice(0, MAX_NOTES_SENT);

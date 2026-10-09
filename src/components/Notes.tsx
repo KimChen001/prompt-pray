@@ -25,7 +25,7 @@ function NoteEditor({ initial, onSave, onCancel, saveLabel }: { initial: string;
   const [crisis, setCrisis] = useState(false);
   if (crisis) return <SupportPanel onEdit={() => setCrisis(false)} />;
   return (
-    <div className="stack gap-8">
+    <div className="stack gap-2">
       <input className="input" maxLength={NOTE_MAX} value={text} aria-label={m.notes.addLabel} placeholder={m.notes.addPlaceholder} onChange={(e) => setText(e.target.value)} />
       <div className="btn-row">
         <button type="button" className="btn btn-ghost" disabled={!text.trim()} onClick={() => (detectCrisis(text) ? setCrisis(true) : onSave(text.trim()))}>
@@ -56,7 +56,7 @@ export function NoteSuggestion({ turn, source, onStatus }: { turn: ChatTurn; sou
 
   if (s.status !== "pending") return <span className="muted small">{s.status === "saved" ? m.notes.saved : m.notes.dismissed}</span>;
   return (
-    <div className="panel-quiet stack gap-8" role="group" aria-label={m.notes.suggestTitle} style={{ padding: 14 }}>
+    <div className="panel-quiet stack gap-2" role="group" aria-label={m.notes.suggestTitle} style={{ padding: 14 }}>
       <span className="meta">{m.notes.suggestTitle}</span>
       {editing ? (
         <NoteEditor initial={s.text} saveLabel={m.notes.save} onSave={confirm} onCancel={() => setEditing(false)} />
@@ -137,14 +137,14 @@ export function NotesManager() {
   }
 
   return (
-    <section className="stack gap-12" aria-labelledby="notes-title">
+    <section className="stack gap-3" aria-labelledby="notes-title">
       <h2 className="h2" id="notes-title">{m.notes.sectionTitle}</h2>
       <p className="muted small" style={{ margin: 0 }}>{m.notes.sectionIntro}</p>
       {notes.length === 0 && <p className="muted" style={{ margin: 0 }}>{m.notes.empty}</p>}
       {notes.length > 0 && (
-        <ul className="stack gap-8" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        <ul className="stack gap-2" style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {notes.map((n) => (
-            <li key={n.id} className="panel stack gap-8" data-paused={n.paused ? "true" : undefined} style={n.paused ? { opacity: 0.75 } : undefined}>
+            <li key={n.id} className="panel stack gap-2" data-paused={n.paused ? "true" : undefined} style={n.paused ? { opacity: 0.75 } : undefined}>
               {editing === n.id ? (
                 <NoteEditor
                   initial={n.text}

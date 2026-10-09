@@ -42,14 +42,14 @@ export default function WhispersPage() {
   }
 
   return (
-    <div className="stack gap-32" style={{ maxWidth: 820 }}>
+    <div className="stack gap-8" style={{ maxWidth: 820 }}>
       <header className="page-head">
         <p className="eyebrow">{m.nav.whispers}</p>
         <h1 className="h1">{m.whispers.title}</h1>
         <p className="lede">{m.whispers.intro}</p>
       </header>
 
-      <section className="panel stack gap-12" aria-labelledby="write-title">
+      <section className="panel stack gap-3" aria-labelledby="write-title">
         <div className="row-between">
           <h2 className="h3" id="write-title">{m.whispers.writeTitle}</h2>
           <span className="badge">{m.whispers.privateBadge}</span>
@@ -69,11 +69,11 @@ export default function WhispersPage() {
       </section>
 
       {entries.length > 0 && (
-        <section className="stack gap-12" aria-labelledby="entries-title">
+        <section className="stack gap-3" aria-labelledby="entries-title">
           <h2 className="h3" id="entries-title">{m.whispers.yours}</h2>
-          <ul className="stack gap-8" style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          <ul className="stack gap-2" style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {entries.map((e) => (
-              <li key={e.id} className="panel-quiet stack gap-8">
+              <li key={e.id} className="panel-quiet stack gap-2">
                 <span className="meta">{formatLocalDate(localDateKey(new Date(e.createdAt)), locale)}</span>
                 <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{e.text}</p>
                 <div className="btn-row" style={{ gap: 16 }}>
@@ -86,7 +86,7 @@ export default function WhispersPage() {
         </section>
       )}
 
-      <section className="panel-quiet stack gap-12" aria-labelledby="wall-title">
+      <section className="panel-quiet stack gap-3" aria-labelledby="wall-title">
         <div className="row-between">
           <h2 className="h3" id="wall-title">{m.whispers.wallTitle}</h2>
           <span className="badge badge-dev">{m.whispers.notLive}</span>

@@ -23,9 +23,9 @@ const STARS = Array.from({ length: 12 }, (_, i) => {
 export function Medallion({ kind }: { kind: BigThreeKind }) {
   return (
     <div className="big3-medal" aria-hidden="true">
-      <img className="ring-0" src="/design/astrolabe-ring-0.svg" alt="" width={130} height={130} />
-      <img className="ring-1" src="/design/astrolabe-ring-1.svg" alt="" width={102} height={102} />
-      <img className="ring-2" src="/design/astrolabe-ring-2.svg" alt="" width={74} height={74} />
+      <img className="astro-ring-0" src="/design/astrolabe-ring-0.svg" alt="" width={130} height={130} />
+      <img className="astro-ring-1" src="/design/astrolabe-ring-1.svg" alt="" width={102} height={102} />
+      <img className="astro-ring-2" src="/design/astrolabe-ring-2.svg" alt="" width={74} height={74} />
       {STARS.map((s, i) => (
         <img key={i} className="star" src="/design/sparkle.svg" alt="" width={7} height={7} style={{ left: s.x, top: s.y }} />
       ))}

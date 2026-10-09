@@ -40,7 +40,7 @@ function useChart(): NatalChart | null | undefined {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="stack gap-4">
+    <div className="stack gap-1">
       <span className="meta">{label}</span>
       <div>{children}</div>
     </div>
@@ -67,7 +67,7 @@ function YourChart({ children }: { children: (chart: NatalChart) => React.ReactN
   const chart = useChart();
   if (chart === undefined) return null;
   return (
-    <section className="panel stack gap-8">
+    <section className="panel stack gap-2">
       <span className="meta">{m.learn.inYourChart}</span>
       {chart ? children(chart) : <p className="muted small" style={{ margin: 0 }}><Link href="/chart/edit">{m.learn.addBirth}</Link></p>}
     </section>
@@ -77,7 +77,7 @@ function YourChart({ children }: { children: (chart: NatalChart) => React.ReactN
 function Side({ title, side }: { title: string; side: CardSide }) {
   const { m, pick, locale } = useI18n();
   return (
-    <section className="stack gap-8">
+    <section className="stack gap-2">
       <h2 className="h2">{title}</h2>
       <div className="kw">{side.keywords[locale].map((k) => <span key={k}>{k}</span>)}</div>
       <p style={{ margin: 0 }}>{pick(side.meaning)}</p>
@@ -101,7 +101,7 @@ export default function LearnDetail() {
 
   if (!entry) {
     return (
-      <div className="stack gap-16">
+      <div className="stack gap-4">
         <h1 className="h1">{m.learn.notFound}</h1>
         <div><Link href="/learn" className="btn btn-ghost">{m.learn.backToLearn}</Link></div>
       </div>
@@ -109,7 +109,7 @@ export default function LearnDetail() {
   }
 
   const header = (
-    <header className="stack gap-8">
+    <header className="stack gap-2">
       <Link href="/learn" className="meta">← {m.learn.backToLearn}</Link>
       <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
         <h1 className="h1" style={{ display: "inline-flex", alignItems: "center", gap: 14 }}><EntryIcon entry={entry} size={40} />{pick(entry.title)}</h1>
@@ -240,7 +240,7 @@ export default function LearnDetail() {
         <>
           <div className="card-block">
             <TarotCard id={card.id} reversed={false} revealed label={pick(card.name)} />
-            <div className="stack gap-8">
+            <div className="stack gap-2">
               <Row label={m.learn.arcana}>{card.suit ? `${pick(SUIT_NAME[card.suit])}${el ? ` · ${pick(ELEMENT_NAME[el])}` : ""}` : pick(entry.subtitle)}</Row>
               <Row label={m.learn.onTheCard}>{pick(card.description)}</Row>
             </div>
@@ -274,7 +274,7 @@ export default function LearnDetail() {
   }
 
   return (
-    <div className="stack gap-24" style={{ maxWidth: 760 }}>
+    <div className="stack gap-6" style={{ maxWidth: 760 }}>
       {header}
       {body}
     </div>

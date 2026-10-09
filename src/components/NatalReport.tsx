@@ -144,7 +144,7 @@ export function NatalReport({ natal }: { natal: NatalState }) {
     new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
 
   return (
-    <section className="stack gap-16" aria-labelledby="natal-title" aria-busy={gen === "loading"}>
+    <section className="stack gap-4" aria-labelledby="natal-title" aria-busy={gen === "loading"}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <h2 className="h2" id="natal-title" style={{ scrollMarginTop: 100 }}>{m.natal.title}</h2>
         {report ? (
@@ -188,7 +188,7 @@ export function NatalReport({ natal }: { natal: NatalState }) {
       )}
 
       {report && (
-        <div className="panel stack gap-8">
+        <div className="panel stack gap-2">
           <span className="meta">{m.natal.overview}</span>
           <p style={{ margin: 0 }}>{report.overview}</p>
         </div>
@@ -216,7 +216,7 @@ export function NatalReport({ natal }: { natal: NatalState }) {
 
       <details>
         <summary className="meta" style={{ cursor: "pointer" }}>{fmt(m.natal.versions, { n: saved.length })}</summary>
-        <ul className="stack gap-8" style={{ listStyle: "none", padding: 0, margin: "8px 0 0" }}>
+        <ul className="stack gap-2" style={{ listStyle: "none", padding: 0, margin: "8px 0 0" }}>
           <li style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
             <span className="small">{m.natal.libraryOption}</span>
             <button type="button" className="btn-text" style={{ minHeight: 0, padding: 0 }} aria-pressed={selected === LIBRARY} onClick={() => setSelected(LIBRARY)}>{m.natal.view}</button>
