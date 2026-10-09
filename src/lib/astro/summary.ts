@@ -1,4 +1,4 @@
-// Big Three as plain English sign names — the only chart data sent to AI services (by opt-in).
+// Big Three as plain English sign names, for the tarot chart layer (opt-in) and the daily horoscope.
 import { computeChart } from "./chart";
 import { SIGN_INFO, type Sign } from "./zodiac";
 import type { BirthData } from "./birth";

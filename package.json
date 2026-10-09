@@ -11,7 +11,10 @@
     "test": "vitest run",
     "check:content": "node scripts/check-content.mjs",
     "fetch:cards": "node scripts/fetch-cards.mjs",
-    "build:places": "node scripts/build-places.mjs"
+    "build:places": "node scripts/build-places.mjs",
+    "eval:build": "tsx eval/build.ts",
+    "eval:run": "node scripts/eval-run.mjs",
+    "eval:blind": "node scripts/eval-blind.mjs"
   },
   "engines": {
     "node": ">=20.9"
@@ -32,6 +35,7 @@
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^5.0.3"
   }

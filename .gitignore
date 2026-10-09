@@ -11,3 +11,6 @@ next-env.d.ts
 Thumbs.db
 # local AI usage/budget ledger
 .data/
+
+# blind-review keys must not reach graders
+eval/results/*-key.json
