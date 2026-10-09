@@ -3,14 +3,14 @@
 // Each fact has a stable id, typed values and an applicability condition (needs a birth time?).
 // All thresholds live in NATAL_RULES; bump `version` whenever any of them changes.
 import { birthDayRange, type NatalChart } from "./chart";
-import { longitude } from "./ephemeris";
+import { allPositions } from "./ephemeris";
 import type { BirthData } from "./birth";
 import { PLANETS, SIGN_INFO, signOf, type Modality, type Planet, type Sign } from "./zodiac";
 import { aspectBetween, type Aspect } from "./transits";
 import type { Element } from "@/lib/tarot/types";
 
 export const NATAL_RULES = {
-  version: "natal-facts@1",
+  version: "natal-facts@2",
   /** Base orbs (degrees) by aspect; widened when the Sun or Moon is involved. */
   orbs: { conjunction: 8, opposition: 8, square: 6, trine: 6, sextile: 4 } as Record<Aspect, number>,
   luminaryBonus: 2,
@@ -46,7 +46,7 @@ export type NatalFact =
   | (FactBase & { kind: "placement"; body: Planet; sign: Sign; degree: number; approximate: boolean; house: number | null; retrograde: boolean })
   | (FactBase & { kind: "uncertainPlacement"; body: "sun" | "moon"; options: [Sign, Sign]; changesAt: string })
   | (FactBase & { kind: "angle"; body: "asc" | "mc"; sign: Sign; degree: number })
-  | (FactBase & { kind: "aspect"; a: Planet; b: Planet; aspect: Aspect; orb: number; tight: boolean })
+  | (FactBase & { kind: "aspect"; a: Planet; b: Planet; aspect: Aspect; orb: number; tight: boolean; orbRange?: [number, number] })
   | (FactBase & { kind: "angular"; body: Planet; house: number; onAngle: "asc" | "mc" | "dsc" | "ic" | null })
   | (FactBase & { kind: "chartRuler"; ruler: Planet; ascSign: Sign; rulerSign: Sign; rulerHouse: number })
   | (FactBase & { kind: "stellium"; scope: "sign"; sign: Sign; bodies: Planet[] })
@@ -100,9 +100,10 @@ export function natalFacts(birth: BirthData, chart: NatalChart): NatalFacts {
     facts.push({ id: "angle.mc", kind: "angle", timeIndependent: false, body: "mc", sign: chart.mc.sign, degree: chart.mc.degree });
   }
 
-  // Aspects between planets. Without a birth time the Moon is checked at both ends of the day.
+  // Without a birth time, sample both moving bodies across the local day. Strength is ranked
+  // using the widest sampled orb, never the fortuitously tight local-noon value.
   const day = known ? null : birthDayRange(birth);
-  const moonEnds = day ? [longitude("moon", day.start), longitude("moon", day.end)] : null;
+  const samples = day ? Array.from({ length: 25 }, (_, i) => allPositions(new Date(day.start.getTime() + (day.end.getTime() - day.start.getTime()) * i / 24))) : null;
   for (let i = 0; i < PLANETS.length; i++) {
     for (let j = i + 1; j < PLANETS.length; j++) {
       const a = PLANETS[i], b = PLANETS[j];
@@ -110,12 +111,16 @@ export function natalFacts(birth: BirthData, chart: NatalChart): NatalFacts {
       const maxOrb = Math.max(...Object.values(NATAL_RULES.orbs)) + NATAL_RULES.luminaryBonus;
       const hit = aspectBetween(chart.positions[a].lon, chart.positions[b].lon, maxOrb);
       if (!hit || hit.orb > orbFor(hit.aspect, a, b)) continue;
-      if (moonEnds && (a === "moon" || b === "moon")) {
-        const other = a === "moon" ? chart.positions[b].lon : chart.positions[a].lon;
-        const holds = moonEnds.every((m) => aspectBetween(m, other, orbFor(hit.aspect, a, b))?.aspect === hit.aspect);
-        if (!holds) continue;
+      let orb = hit.orb;
+      let orbRange: [number, number] | undefined;
+      if (samples) {
+        const throughout = samples.map((positions) => aspectBetween(positions[a].lon, positions[b].lon, orbFor(hit.aspect, a, b)));
+        if (throughout.some((x) => !x || x.aspect !== hit.aspect)) continue;
+        const orbs = [hit.orb, ...throughout.map((x) => x!.orb)];
+        orbRange = [Math.min(...orbs), Math.max(...orbs)];
+        orb = orbRange[1];
       }
-      facts.push({ id: `asp.${a}.${b}.${hit.aspect}`, kind: "aspect", timeIndependent: true, a, b, aspect: hit.aspect, orb: hit.orb, tight: hit.orb <= NATAL_RULES.tightOrb });
+      facts.push({ id: `asp.${a}.${b}.${hit.aspect}`, kind: "aspect", timeIndependent: true, a, b, aspect: hit.aspect, orb, tight: orb <= NATAL_RULES.tightOrb, ...(orbRange ? { orbRange } : {}) });
     }
   }
 
@@ -190,4 +195,3 @@ export function factBodies(f: NatalFact): Body[] {
       return [];
   }
 }
-

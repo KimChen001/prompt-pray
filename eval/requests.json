@@ -15,8 +15,8 @@
       "body": {
         "locale": "en",
         "timeKnown": true,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "angle.asc",
@@ -282,8 +282,8 @@
       "body": {
         "locale": "zh",
         "timeKnown": true,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "angle.asc",
@@ -549,8 +549,8 @@
       "body": {
         "locale": "en",
         "timeKnown": true,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "angle.asc",
@@ -812,8 +812,8 @@
       "body": {
         "locale": "en",
         "timeKnown": false,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "asp.mercury.saturn.trine",
@@ -822,8 +822,12 @@
             "a": "mercury",
             "b": "saturn",
             "aspect": "trine",
-            "orb": 1.17,
-            "tight": true
+            "orb": 1.89,
+            "tight": true,
+            "orbRange": [
+              0.45,
+              1.89
+            ]
           },
           {
             "id": "asp.venus.neptune.conjunction",
@@ -832,8 +836,12 @@
             "a": "venus",
             "b": "neptune",
             "aspect": "conjunction",
-            "orb": 0.05,
-            "tight": true
+            "orb": 0.66,
+            "tight": true,
+            "orbRange": [
+              0,
+              0.66
+            ]
           },
           {
             "id": "balance.modality.cardinal.dominant",
@@ -1035,7 +1043,7 @@
           }
         ]
       },
-      "context": "Birth time unknown; house system none.\nCapricorn Sun\n  - Sun in Capricorn 14°≈\n  - Moon in Leo or Virgo (changes sign at 10:49)\nMercury trine Saturn\n  - Mercury trine Saturn (orb 1.2°)\n  - Mercury in Sagittarius 27°≈\n  - Saturn in Aries 26°≈\nVenus conjunct Neptune\n  - Venus conjunct Neptune (orb 0.1°)\n  - Venus in Aquarius 1°≈\n  - Neptune in Aquarius 1°≈\nStrong Cardinal\n  - Cardinal emphasis: 55% of weighted placements",
+      "context": "Birth time unknown; house system none.\nCapricorn Sun\n  - Sun in Capricorn 14°≈\n  - Moon in Leo or Virgo (changes sign at 10:49)\nMercury trine Saturn\n  - Mercury trine Saturn (birth time unknown; sampled daily orb ≈0.5–1.9°)\n  - Mercury in Sagittarius 27°≈\n  - Saturn in Aries 26°≈\nVenus conjunct Neptune\n  - Venus conjunct Neptune (birth time unknown; sampled daily orb ≈0.0–0.7°)\n  - Venus in Aquarius 1°≈\n  - Neptune in Aquarius 1°≈\nStrong Cardinal\n  - Cardinal emphasis: 55% of weighted placements",
       "mustNot": [
         {
           "name": "no quoted degrees",
@@ -1055,8 +1063,8 @@
       "body": {
         "locale": "zh",
         "timeKnown": false,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "asp.sun.mars.trine",
@@ -1065,8 +1073,12 @@
             "a": "sun",
             "b": "mars",
             "aspect": "trine",
-            "orb": 2.81,
-            "tight": true
+            "orb": 3.13,
+            "tight": false,
+            "orbRange": [
+              2.49,
+              3.13
+            ]
           },
           {
             "id": "balance.element.fire.dominant",
@@ -1249,7 +1261,7 @@
           }
         ]
       },
-      "context": "Birth time unknown; house system none.\n狮子座太阳\n  - 太阳在狮子座 22°≈\n  - 月亮在双子座或巨蟹座（15:54 换座）\n太阳三分相火星\n  - 太阳三分相火星（容许度 2.8°）\n  - 太阳在狮子座 22°≈\n  - 火星在射手座 19°≈\n强烈的火象\n  - 火象偏重：加权落点占 46%",
+      "context": "Birth time unknown; house system none.\n狮子座太阳\n  - 太阳在狮子座 22°≈\n  - 月亮在双子座或巨蟹座（15:54 换座）\n太阳三分相火星\n  - 太阳三分相火星（出生时间未知；全天采样容许度约 2.5–3.1°）\n  - 太阳在狮子座 22°≈\n  - 火星在射手座 19°≈\n强烈的火象\n  - 火象偏重：加权落点占 46%",
       "mustNot": [
         {
           "name": "no quoted degrees",
@@ -1268,8 +1280,8 @@
       "body": {
         "locale": "en",
         "timeKnown": true,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "angle.asc",
@@ -1525,8 +1537,8 @@
       "body": {
         "locale": "en",
         "timeKnown": true,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "angle.asc",
@@ -1784,8 +1796,8 @@
       "body": {
         "locale": "zh",
         "timeKnown": true,
-        "factsVersion": "natal-facts@1",
-        "themesVersion": "natal-themes@1",
+        "factsVersion": "natal-facts@2",
+        "themesVersion": "natal-themes@2",
         "facts": [
           {
             "id": "angle.asc",
@@ -1804,18 +1816,18 @@
             "degree": 13
           },
           {
+            "id": "angular.jupiter",
+            "kind": "angular",
+            "timeIndependent": false,
+            "body": "jupiter",
+            "house": 10,
+            "onAngle": null
+          },
+          {
             "id": "angular.mars",
             "kind": "angular",
             "timeIndependent": false,
             "body": "mars",
-            "house": 4,
-            "onAngle": null
-          },
-          {
-            "id": "angular.mercury",
-            "kind": "angular",
-            "timeIndependent": false,
-            "body": "mercury",
             "house": 4,
             "onAngle": null
           },
@@ -2005,21 +2017,21 @@
             "limitations": []
           },
           {
-            "id": "theme.angular.mercury",
+            "id": "theme.angular.jupiter",
             "kind": "angular",
             "title": {
-              "en": "Mercury in the 4th house",
-              "zh": "水星落在第 4 宫"
+              "en": "Jupiter in the 10th house",
+              "zh": "木星落在第 10 宫"
             },
             "evidenceIds": [
-              "angular.mercury",
-              "place.mercury"
+              "angular.jupiter",
+              "place.jupiter"
             ],
             "limitations": []
           }
         ]
       },
-      "context": "Birth time known; house system placidus.\n巨蟹座太阳、双鱼座月亮、白羊座上升\n  - 太阳在巨蟹座 15°，第 4 宫\n  - 月亮在双鱼座 17°，第 12 宫\n  - 上升点在白羊座 11°\n太阳落在天底\n  - 太阳落在天底（第 4 宫）\n  - 太阳在巨蟹座 15°，第 4 宫\n  - 天顶在摩羯座 13°\n月亮三分相火星\n  - 月亮三分相火星（容许度 0.6°）\n  - 月亮在双鱼座 17°，第 12 宫\n  - 火星在巨蟹座 18°，第 4 宫\n火星落在第 4 宫\n  - 火星在第 4 宫（角宫）\n  - 火星在巨蟹座 18°，第 4 宫\n水星落在第 4 宫\n  - 水星在第 4 宫（角宫）\n  - 水星在狮子座 10°，第 4 宫",
+      "context": "Birth time known; house system placidus.\n巨蟹座太阳、双鱼座月亮、白羊座上升\n  - 太阳在巨蟹座 15°，第 4 宫\n  - 月亮在双鱼座 17°，第 12 宫\n  - 上升点在白羊座 11°\n太阳落在天底\n  - 太阳落在天底（第 4 宫）\n  - 太阳在巨蟹座 15°，第 4 宫\n  - 天顶在摩羯座 13°\n月亮三分相火星\n  - 月亮三分相火星（容许度 0.6°）\n  - 月亮在双鱼座 17°，第 12 宫\n  - 火星在巨蟹座 18°，第 4 宫\n火星落在第 4 宫\n  - 火星在第 4 宫（角宫）\n  - 火星在巨蟹座 18°，第 4 宫\n木星落在第 10 宫\n  - 木星在第 10 宫（角宫）\n  - 木星在水瓶座 15°，第 10 宫，逆行",
       "mustNot": [
         {
           "name": "no quoted degrees",

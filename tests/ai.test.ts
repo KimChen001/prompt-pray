@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { modelCaps } from "@/lib/ai/capabilities";
 import { aiConfig, type AiConfig } from "@/lib/ai/config";
 import { Budget } from "@/lib/ai/budget";
-import { AiError, extractJson, generateJson } from "@/lib/ai/provider";
+import { AiError, extractJson, generateJson, requestCostBound } from "@/lib/ai/provider";
 import { HOROSCOPE_SCHEMA, horoscopePrompt, parseHoroscopeRequest, validateHoroscope } from "@/lib/ai/horoscope-prompt";
 import { resetAiLimits } from "@/lib/ai/guard";
 import { POST as horoscopePOST } from "@/app/api/ai/horoscope/route";
@@ -133,6 +133,68 @@ describe("provider request shapes (mocked network)", () => {
 });
 
 describe("persistent budget", () => {
+  it("reserves in-flight USD across independent instances and settles only the admitted request", async () => {
+    const file = tmp();
+    const small = { maxCallsPerDay: 100, maxUsdPerDay: 1, maxUsdTotal: 1 };
+    const a = new Budget({ path: file, durable: true }, small);
+    const b = new Budget({ path: file, durable: true }, small);
+    const reservations = await Promise.all([a.reserveRequest(.6), b.reserveRequest(.6), a.reserveRequest(.6)]);
+    const admitted = reservations.filter((r) => typeof r !== "string");
+    expect(admitted).toHaveLength(1);
+    expect(reservations.filter((r) => r === "total_usd")).toHaveLength(2);
+    expect(await b.snapshot()).toMatchObject({ usdTotal: 0, reservedUsdTotal: .6, callsToday: 1 });
+    await b.settle(admitted[0], .4);
+    expect(await a.snapshot()).toMatchObject({ usdTotal: .4, reservedUsdTotal: 0 });
+    expect(typeof await a.reserveRequest(.6)).toBe("object"); // exactly fits the remaining cap
+    expect(await b.reserveRequest(.001)).toBe("total_usd");
+    await expect(a.settle(admitted[0], .4)).rejects.toMatchObject({ code: "budget" }); // no double billing
+  });
+  it("serializes the call cap across independent workers sharing a ledger", async () => {
+    const file = tmp();
+    const a = new Budget({ path: file, durable: true }, { ...limits, maxCallsPerDay: 1 });
+    const b = new Budget({ path: file, durable: true }, { ...limits, maxCallsPerDay: 1 });
+    const results = await Promise.all([a.reserve(), b.reserve()]);
+    expect(results.filter((r) => r === null)).toHaveLength(1);
+    expect(results.filter((r) => r === "daily_calls")).toHaveLength(1);
+  });
+  it("keeps reservations across restart and settles against the original accounting day", async () => {
+    const file = tmp();
+    const first = new Budget({ path: file, durable: true }, limits, () => new Date("2026-10-09T23:59:00Z"));
+    const ticket = await first.reserveRequest(.6);
+    if (typeof ticket === "string") throw new Error(ticket);
+    const restarted = new Budget({ path: file, durable: true }, limits, () => new Date("2026-10-10T00:01:00Z"));
+    expect(await restarted.snapshot()).toMatchObject({ reservedUsdTotal: .6, reservedUsdToday: 0 });
+    await restarted.settle(ticket, .4);
+    expect(await restarted.snapshot()).toMatchObject({ usdTotal: .4, usdToday: 0, reservedUsdTotal: 0 });
+    expect(JSON.parse(readFileSync(file, "utf8")).days["2026-10-09"].usd).toBe(.4);
+  });
+  it.each(["{broken ledger", JSON.stringify({ totalUsd: -1, totalCalls: 0, days: {} }), JSON.stringify({ totalUsd: 0, totalCalls: 0, days: { "2026-10-09": { calls: 1, usd: "0" } } })])("fails closed without overwriting an invalid ledger: %s", async (source) => {
+    const file = tmp();
+    writeFileSync(file, source);
+    const fetchImpl = vi.fn();
+    await expect(generateJson(req, valid, { cfg: cfgFor({}), budget: new Budget({ path: file, durable: true }, limits), fetchImpl })).rejects.toMatchObject({ code: "budget" });
+    expect(fetchImpl).not.toHaveBeenCalled();
+    expect(readFileSync(file, "utf8")).toBe(source);
+  });
+  it("retains old spend when migrating a ledger that has no reservation field", async () => {
+    const file = tmp();
+    writeFileSync(file, JSON.stringify({ totalUsd: 25, totalCalls: 2, days: {} }));
+    expect(await new Budget({ path: file, durable: true }, limits).reserveRequest(.1)).toBe("total_usd");
+  });
+  it("blocks requests larger than remaining money before any network call", async () => {
+    const cfg = cfgFor({});
+    const fetchImpl = vi.fn();
+    const budget = new Budget({ path: tmp(), durable: true }, { ...limits, maxUsdTotal: requestCostBound(req, cfg) / 2 });
+    await expect(generateJson(req, valid, { cfg, budget, fetchImpl })).rejects.toMatchObject({ code: "budget" });
+    expect(fetchImpl).not.toHaveBeenCalled();
+    expect((await budget.snapshot()).callsToday).toBe(0);
+  });
+  it("retains a durable hold when upstream billing cannot be determined", async () => {
+    const cfg = cfgFor({});
+    const budget = new Budget({ path: tmp(), durable: true }, limits);
+    await expect(generateJson(req, valid, { cfg, budget, fetchImpl: vi.fn().mockRejectedValue(new Error("connection lost")) })).rejects.toMatchObject({ code: "upstream" });
+    expect(await budget.snapshot()).toMatchObject({ usdTotal: 0, reservedUsdTotal: requestCostBound(req, cfg), callsToday: 1 });
+  });
   it("survives a restart (new instance, same file) and enforces the daily call cap", async () => {
     const file = tmp();
     const small = { ...limits, maxCallsPerDay: 3 };
@@ -218,5 +280,13 @@ describe("routes", () => {
     const open = await (await statusGET(get("moona-ai-access=demo"))).json();
     expect(open).toMatchObject({ available: true, provider: "openai-compatible", budget: { callsToday: 0, durable: true } });
     expect(JSON.stringify(open)).not.toContain("k\"");
+  });
+  it("status: returns unavailable when the ledger is corrupt or its money is fully reserved", async () => {
+    vi.stubEnv("AI_API_KEY", "k");
+    const file = process.env.AI_USAGE_FILE!;
+    writeFileSync(file, "{broken ledger");
+    expect(await (await statusGET(get())).json()).toEqual({ available: false, reason: "budget" });
+    writeFileSync(file, JSON.stringify({ totalUsd: 0, totalCalls: 1, days: {}, reservations: { pending: { day: new Date().toISOString().slice(0, 10), usd: 25 } } }));
+    expect(await (await statusGET(get())).json()).toMatchObject({ available: false, reason: "budget", budget: { reservedUsdTotal: 25 } });
   });
 });

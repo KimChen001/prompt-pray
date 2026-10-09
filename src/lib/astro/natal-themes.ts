@@ -7,8 +7,8 @@ import { ANGLE_NAME, ASPECT_NAME, ELEMENT_NAME, MODALITY_NAME, houseName } from 
 import { PLANET_NAME, SIGN_INFO, type Planet } from "./zodiac";
 
 export const THEME_RULES = {
-  version: "natal-themes@1",
-  min: 3,
+  version: "natal-themes@2",
+  min: 3, // Target only: never manufacture themes when the available facts are insufficient.
   max: 5,
   /** A body may appear in at most this many selected themes (the core theme counts). */
   maxPerBody: 2,
@@ -66,6 +66,8 @@ export interface ThemeSelection {
   version: string;
   factsVersion: string;
   themes: Theme[];
+  domainsRelaxed: boolean;
+  insufficientThemes: boolean;
 }
 
 const isGenerational = (b: Body) => (NATAL_RULES.generational as readonly string[]).includes(b);
@@ -209,10 +211,11 @@ export function selectThemes(nf: NatalFacts): ThemeSelection {
   const bodyCount = new Map<Body, number>();
   const domainCount = new Map<Domain, number>();
   let generational = 0;
+  let domainsRelaxed = false;
   const add = (t: Theme) => {
     picked.push(t);
     t.bodies.forEach((b) => bodyCount.set(b, (bodyCount.get(b) ?? 0) + 1));
-    t.domains.forEach((d) => domainCount.set(d, (domainCount.get(d) ?? 0) + 1));
+    new Set(t.domains).forEach((d) => domainCount.set(d, (domainCount.get(d) ?? 0) + 1));
     if (t.generational) generational++;
   };
   core.bodies.forEach((b) => bodyCount.set(b, 1));
@@ -221,7 +224,7 @@ export function selectThemes(nf: NatalFacts): ThemeSelection {
   const fits = (t: Theme, strictDomains: boolean) =>
     t.bodies.every((b) => (bodyCount.get(b) ?? 0) < THEME_RULES.maxPerBody) &&
     (!t.generational || generational < THEME_RULES.maxGenerational) &&
-    (!strictDomains || t.domains.some((d) => (domainCount.get(d) ?? 0) < THEME_RULES.maxPerDomain));
+    (!strictDomains || t.domains.every((d) => (domainCount.get(d) ?? 0) < THEME_RULES.maxPerDomain));
 
   for (const t of rest) {
     if (picked.length >= THEME_RULES.max) break;
@@ -230,7 +233,12 @@ export function selectThemes(nf: NatalFacts): ThemeSelection {
   // Relax the domain rule only if we are short of the minimum.
   for (const t of rest) {
     if (picked.length >= THEME_RULES.min) break;
-    if (!picked.includes(t) && fits(t, false)) add(t);
+    if (!picked.includes(t) && fits(t, false)) { domainsRelaxed ||= !fits(t, true); add(t); }
   }
-  return { version: THEME_RULES.version, factsVersion: nf.version, themes: picked };
+  const insufficientThemes = picked.length < THEME_RULES.min;
+  if (insufficientThemes) picked[0] = { ...core, limitations: [...core.limitations, {
+    en: "The available facts support fewer than three distinctive themes under these rules; additional themes are not invented.",
+    zh: "现有事实不足以按这些规则选出三个突出主题，因此不会为了凑数补写。",
+  }] };
+  return { version: THEME_RULES.version, factsVersion: nf.version, themes: picked, domainsRelaxed, insufficientThemes };
 }

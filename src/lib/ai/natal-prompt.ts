@@ -69,7 +69,8 @@ function validFact(f: Record<string, unknown>): boolean {
     case "angle":
       return (f.body === "asc" || f.body === "mc") && isSign(f.sign) && Number.isInteger(f.degree);
     case "aspect":
-      return isPlanet(f.a) && isPlanet(f.b) && ASPECTS.includes(f.aspect as Aspect) && typeof f.orb === "number" && typeof f.tight === "boolean";
+      return isPlanet(f.a) && isPlanet(f.b) && ASPECTS.includes(f.aspect as Aspect) && typeof f.orb === "number" && Number.isFinite(f.orb) && f.orb >= 0 && typeof f.tight === "boolean" &&
+        (f.orbRange === undefined || (Array.isArray(f.orbRange) && f.orbRange.length === 2 && f.orbRange.every((v) => typeof v === "number" && Number.isFinite(v) && v >= 0) && f.orbRange[0] <= f.orbRange[1] && f.orb === f.orbRange[1]));
     case "angular":
       return isPlanet(f.body) && Number.isInteger(f.house) && (f.onAngle === null || ["asc", "mc", "dsc", "ic"].includes(f.onAngle as string));
     case "chartRuler":

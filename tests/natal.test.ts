@@ -5,6 +5,7 @@ import { NATAL_RULES, natalFacts } from "@/lib/astro/natal-facts";
 import { THEME_RULES, selectThemes } from "@/lib/astro/natal-themes";
 import { PLANETS, type Planet } from "@/lib/astro/zodiac";
 import type { BirthData } from "@/lib/astro/birth";
+import { factLabel } from "@/lib/astro/natal-text";
 
 const sep = (a: number, b: number) => {
   const d = Math.abs((((a - b) % 360) + 360) % 360);
@@ -113,6 +114,21 @@ describe("unknown birth time", () => {
     moonAll.forEach((f) => expect(withTime.byId.has(f.id), f.id).toBe(true));
   });
 
+  it("does not rank a noon-only tight Moon aspect as certainly tight", () => {
+    const b: BirthData = { ...birth, date: "1990-01-01" };
+    const facts = natalFacts(b, computeChart(b));
+    const aspect = facts.byId.get("asp.moon.jupiter.trine");
+    expect(aspect?.kind).toBe("aspect");
+    if (aspect?.kind !== "aspect") throw new Error("missing Moon aspect");
+    expect(aspect.tight).toBe(false);
+    expect(aspect.orbRange?.[0]).toBeLessThan(1);
+    expect(aspect.orbRange?.[1]).toBeGreaterThan(7);
+    expect(aspect.orb).toBe(aspect.orbRange![1]);
+    expect(factLabel(aspect).en).toContain("birth time unknown");
+    expect(factLabel(aspect).zh).toContain("全天采样");
+    expect(selectThemes(facts).themes.map((t) => t.id)).not.toContain(`theme.${aspect.id}`);
+  });
+
   it("never uses Rising, houses or the ruler in themes", () => {
     const sel = selectThemes(nf);
     sel.themes.forEach((t) => {
@@ -134,6 +150,14 @@ describe("unknown birth time", () => {
 });
 
 describe("theme rules hold across many charts", () => {
+  it("caps every dimension, including a multi-domain theme whose other dimension still has room", () => {
+    const birth: BirthData = { date: "1990-01-01", time: "06:15", place: { name: "Boston", country: "US", lat: 42.36, lon: -71.06, tz: "America/New_York" } };
+    const selection = selectThemes(natalFacts(birth, computeChart(birth)));
+    expect(selection.domainsRelaxed).toBe(false);
+    const counts = new Map<string, number>();
+    selection.themes.forEach((t) => new Set(t.domains).forEach((d) => counts.set(d, (counts.get(d) ?? 0) + 1)));
+    [...counts.values()].forEach((n) => expect(n).toBeLessThanOrEqual(THEME_RULES.maxPerDomain));
+  });
   it("never breaks the selection rules (2026, every 9 days, known and unknown time, 3 latitudes)", () => {
     const places = [
       { name: "Boston", country: "US", lat: 42.36, lon: -71.06, tz: "America/New_York" },
@@ -149,8 +173,14 @@ describe("theme rules hold across many charts", () => {
           const birth: BirthData = { date, time, place };
           const nf = natalFacts(birth, computeChart(birth));
           const sel = selectThemes(nf);
-          expect(sel.themes.length).toBeGreaterThanOrEqual(THEME_RULES.min);
+          expect(sel.themes.length).toBeGreaterThanOrEqual(sel.insufficientThemes ? 1 : THEME_RULES.min);
+          if (sel.insufficientThemes) expect(sel.themes[0].limitations.some((l) => l.en.includes("not invented"))).toBe(true);
           expect(sel.themes.length).toBeLessThanOrEqual(THEME_RULES.max);
+          if (!sel.domainsRelaxed) {
+            const counts = new Map<string, number>();
+            sel.themes.forEach((t) => new Set(t.domains).forEach((d) => counts.set(d, (counts.get(d) ?? 0) + 1)));
+            [...counts.values()].forEach((n) => expect(n).toBeLessThanOrEqual(THEME_RULES.maxPerDomain));
+          }
           sel.themes.forEach((t) => t.evidenceIds.forEach((id) => expect(nf.byId.has(id)).toBe(true)));
           if (!time) sel.themes.forEach((t) => t.evidenceIds.forEach((id) => expect(nf.byId.get(id)!.timeIndependent).toBe(true)));
           checked++;

@@ -12,8 +12,12 @@ export async function GET(req: NextRequest) {
   if (!configured || !access) {
     return NextResponse.json({ available: false, reason: configured ? "locked" : "unconfigured" }, { headers: { "Cache-Control": "no-store" } });
   }
-  const budget = await budgetFor(cfg).snapshot();
-  const exhausted = budget.usdTotal >= budget.limits.maxUsdTotal || budget.usdToday >= budget.limits.maxUsdPerDay || budget.callsToday >= budget.limits.maxCallsPerDay;
+  let budget;
+  try { budget = await budgetFor(cfg).snapshot(); }
+  catch {
+    return NextResponse.json({ available: false, reason: "budget" }, { headers: { "Cache-Control": "no-store" } });
+  }
+  const exhausted = budget.usdTotal + budget.reservedUsdTotal >= budget.limits.maxUsdTotal || budget.usdToday + budget.reservedUsdToday >= budget.limits.maxUsdPerDay || budget.callsToday >= budget.limits.maxCallsPerDay;
   return NextResponse.json(
     { available: !exhausted, reason: exhausted ? "budget" : null, provider: cfg.provider, model: cfg.model, budget },
     { headers: { "Cache-Control": "no-store" } },

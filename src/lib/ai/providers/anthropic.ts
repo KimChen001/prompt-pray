@@ -12,7 +12,7 @@ export async function callAnthropic(cfg: AiConfig, caps: ModelCaps, req: JsonReq
     apiKey: cfg.apiKey,
     baseURL: cfg.baseUrl,
     timeout: req.timeoutMs ?? 30_000,
-    maxRetries: 1,
+    maxRetries: 0, // One reservation covers one attempt; don't hide unaccounted SDK retries.
     ...(fetchImpl ? { fetch: fetchImpl } : {}),
   });
 

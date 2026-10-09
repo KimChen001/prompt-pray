@@ -2,6 +2,18 @@
 
 Implementation and verification notes per step, for review. Plan: `outputs/MOONA产品与AI解读综合Review.md` and `outputs/MOONA产品讨论记录与留存策略.md` §10.4 (outside this repo). Demo: 2026-10-28. No real model calls are made in tests; AI paths are verified with mocked responses unless stated otherwise.
 
+## Codex review fixes — 2026-10-09 07:24–07:35 America/New_York
+
+Claude's last completion was at 05:37, the repository was clean, and its log had not changed when Codex took over these four reproduced defects. Scope recorded first in the shared night log; Windows remained locked, so no Claude UI message was sent. This section supersedes the earlier Step 1/2 claims where noted.
+
+- Budget: reserve estimated maximum request cost before the network call, including UTF-8 input/schema/framing and maximum output; check spent + reserved money; settle known usage against the original UTC accounting day, with duplicate settlements blocked. Unknown-billing failures retain durable holds. Anthropic SDK automatic retries disabled so there is one attempt per reservation.
+- Ledger: exclusive file locking across independent instances/workers; temporary file + atomic rename; only ENOENT initializes a ledger. Corrupt JSON, invalid fields and stale locks fail closed. Existing ledgers without reservations retain their spend. Status reports held money and returns unavailable on ledger failure. Provider-dashboard caps remain necessary for actual billing / distributed serverless storage; configured prices determine our estimate.
+- Unknown-time aspects: sample both planets at 25 points across the local birth day, retain only matching aspects throughout the samples, rank with the widest sampled orb, and expose the approximate range in EN/ZH labels. A tight noon value no longer makes a Moon aspect certainly tight. `natal-facts@2`, `natal-text@2`.
+- Themes: check all distinct life domains instead of any one; count a repeated domain only once per theme; expose `domainsRelaxed` for the existing minimum-target fallback. `natal-themes@2`. If reliable facts cannot supply three themes, show fewer with an explicit limitation rather than inventing more. Saved reports remain stored and readable; eval inputs rebuilt for the new rule versions.
+- Verified: 450 tests in 17 files pass; TypeScript passes; production build passes. New regressions cover cross-instance money/call concurrency, remaining-money admission, restart/midnight settlement, corrupt/invalid ledger preservation, legacy ledger spend, unknown-billing holds, status availability, the Boston 1990-01-01 unknown-time Moon–Jupiter case, and per-domain limits over generated charts. No real model calls, purchases, push or deployment.
+
+Next: Claude should read this entry and the shared `outputs/MOONA夜间修复交接-2026-10-09.md` before repeating the previous review work. Scope/accounts/visual decisions and real-provider eval remain pending.
+
 ## Step 1 — Natal fact layer + theme rules (2026-10-09)
 
 **What**

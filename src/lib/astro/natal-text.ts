@@ -8,7 +8,7 @@ import { HOUSE_THEME } from "./horoscope";
 import { PLANET_NAME, SIGN_INFO, type Modality, type Planet, type Sign } from "./zodiac";
 import type { Aspect } from "./transits";
 
-export const NATAL_TEXT_VERSION = "natal-text@1";
+export const NATAL_TEXT_VERSION = "natal-text@2";
 
 export const SIGN_KEYWORDS: Record<Sign, L10n> = {
   aries: { en: "direct, brave, quick to start", zh: "直接、勇敢、行动快" },
@@ -82,8 +82,8 @@ export function factLabel(f: NatalFact): L10n {
       return fill(`${ANGLE_NAME[f.body].en} in ${sign(f.sign).en} ${f.degree}°`, `${ANGLE_NAME[f.body].zh}在${sign(f.sign).zh} ${f.degree}°`);
     case "aspect":
       return fill(
-        `${PLANET_NAME[f.a].en} ${ASPECT_NAME[f.aspect].en} ${PLANET_NAME[f.b].en} (orb ${f.orb.toFixed(1)}°)`,
-        `${PLANET_NAME[f.a].zh}${ASPECT_NAME[f.aspect].zh}${PLANET_NAME[f.b].zh}（容许度 ${f.orb.toFixed(1)}°）`,
+        `${PLANET_NAME[f.a].en} ${ASPECT_NAME[f.aspect].en} ${PLANET_NAME[f.b].en} (${f.orbRange ? `birth time unknown; sampled daily orb ≈${f.orbRange[0].toFixed(1)}–${f.orbRange[1].toFixed(1)}°` : `orb ${f.orb.toFixed(1)}°`})`,
+        `${PLANET_NAME[f.a].zh}${ASPECT_NAME[f.aspect].zh}${PLANET_NAME[f.b].zh}（${f.orbRange ? `出生时间未知；全天采样容许度约 ${f.orbRange[0].toFixed(1)}–${f.orbRange[1].toFixed(1)}°` : `容许度 ${f.orb.toFixed(1)}°`}）`,
       );
     case "angular":
       return f.onAngle

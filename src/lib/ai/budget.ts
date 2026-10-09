@@ -1,17 +1,23 @@
 // Persistent spend/call caps for AI requests (combined review: "持久预算上限").
-// A call reserves a slot before it runs and records its estimated cost after. State is a JSON file
+// A call reserves its estimated maximum cost before it runs and settles against reported usage.
+// Unknown-billing failures retain the reservation. State is a JSON file
 // (default .data/ai-usage.json, git-ignored). On serverless hosts the file lives in /tmp and is NOT
 // durable across instances; `durable: false` is reported so nobody mistakes it for a hard cap there.
 // The provider's own dashboard spend limit remains the real backstop.
 import "server-only";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, open, readFile, rename, unlink, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 import type { BudgetLimits } from "./config";
+import { AiError } from "./types";
+
+export interface BudgetReservation { id: string; day: string; usd: number }
 
 export interface UsageState {
   totalUsd: number;
   totalCalls: number;
   days: Record<string, { calls: number; usd: number }>;
+  reservations?: Record<string, { day: string; usd: number }>;
 }
 
 export interface BudgetSnapshot {
@@ -21,6 +27,8 @@ export interface BudgetSnapshot {
   usdTotal: number;
   limits: BudgetLimits;
   durable: boolean;
+  reservedUsdToday: number;
+  reservedUsdTotal: number;
 }
 
 export type BudgetDenial = "daily_calls" | "daily_usd" | "total_usd";
@@ -43,43 +51,107 @@ export class Budget {
 
   /** Serialize read-modify-write so concurrent requests can't overshoot. */
   private lock<T>(fn: () => Promise<T>): Promise<T> {
-    const run = this.queue.then(fn, fn);
+    const run = this.queue.then(() => this.fileLock(fn), () => this.fileLock(fn));
     this.queue = run.catch(() => undefined);
     return run;
   }
 
+  // An exclusive file lock also serializes independent Budget instances / Node workers.
+  // A lock left by a crashed process fails closed; it is never deleted on a time heuristic.
+  private async fileLock<T>(fn: () => Promise<T>): Promise<T> {
+    await mkdir(dirname(this.file.path), { recursive: true });
+    const lockPath = `${this.file.path}.lock`;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      let handle;
+      try { handle = await open(lockPath, "wx"); }
+      catch (e) {
+        if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw new AiError("budget", "usage ledger unavailable");
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        continue;
+      }
+      try { return await fn(); }
+      finally { await handle.close(); await unlink(lockPath); }
+    }
+    throw new AiError("budget", "usage ledger locked");
+  }
+
   private async load(): Promise<UsageState> {
     try {
-      return JSON.parse(await readFile(this.file.path, "utf8")) as UsageState;
-    } catch {
-      return { totalUsd: 0, totalCalls: 0, days: {} };
+      const s = JSON.parse(await readFile(this.file.path, "utf8")) as UsageState;
+      const money = (v: unknown) => typeof v === "number" && Number.isFinite(v) && v >= 0;
+      const calls = (v: unknown) => money(v) && Number.isSafeInteger(v);
+      const object = (v: unknown) => !!v && typeof v === "object" && !Array.isArray(v);
+      const day = (v: string) => /^\d{4}-\d{2}-\d{2}$/.test(v);
+      if (!object(s) || !money(s.totalUsd) || !calls(s.totalCalls) || !object(s.days) ||
+        !Object.entries(s.days).every(([d, v]) => day(d) && object(v) && calls(v.calls) && money(v.usd)) ||
+        (s.reservations !== undefined && (!object(s.reservations) || !Object.values(s.reservations).every((v) => object(v) && typeof v.day === "string" && day(v.day) && money(v.usd))))) {
+        throw new Error("invalid usage ledger");
+      }
+      s.reservations ??= {};
+      return s;
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code === "ENOENT") return { totalUsd: 0, totalCalls: 0, days: {}, reservations: {} };
+      throw new AiError("budget", "usage ledger unreadable or invalid");
     }
   }
 
   private async save(s: UsageState) {
     await mkdir(dirname(this.file.path), { recursive: true });
     // keep the last 60 days
-    s.days = Object.fromEntries(Object.entries(s.days).sort(([a], [b]) => a.localeCompare(b)).slice(-60));
-    await writeFile(this.file.path, JSON.stringify(s, null, 2));
+    const heldDays = new Set(Object.values(s.reservations ?? {}).map((r) => r.day));
+    const recentDays = new Set(Object.keys(s.days).sort().slice(-60));
+    s.days = Object.fromEntries(Object.entries(s.days).filter(([day]) => recentDays.has(day) || heldDays.has(day)));
+    const temporary = `${this.file.path}.${randomUUID()}.tmp`;
+    try {
+      await writeFile(temporary, JSON.stringify(s, null, 2), { flag: "wx" });
+      await rename(temporary, this.file.path);
+    } finally { await unlink(temporary).catch((e: NodeJS.ErrnoException) => { if (e.code !== "ENOENT") throw e; }); }
   }
 
-  /** Reserves one call; null when allowed, otherwise which cap was hit. */
+  /** Call-only accounting (no network request). Paid generation uses reserveRequest instead. */
   reserve(): Promise<BudgetDenial | null> {
+    return this.reserveRequest(0).then((r) => typeof r === "string" ? r : null);
+  }
+
+  /** Reserve the maximum estimated request cost before starting any network operation. */
+  reserveRequest(usd: number): Promise<BudgetReservation | BudgetDenial> {
+    if (!Number.isFinite(usd) || usd < 0) return Promise.reject(new AiError("budget", "invalid cost estimate"));
     return this.lock(async () => {
       const s = await this.load();
       const day = utcDay(this.now());
       const today = s.days[day] ?? { calls: 0, usd: 0 };
-      if (s.totalUsd >= this.limits.maxUsdTotal) return "total_usd";
-      if (today.usd >= this.limits.maxUsdPerDay) return "daily_usd";
+      const held = Object.values(s.reservations ?? {});
+      const total = s.totalUsd + held.reduce((sum, r) => sum + r.usd, 0);
+      const daily = today.usd + held.filter((r) => r.day === day).reduce((sum, r) => sum + r.usd, 0);
+      if (total >= this.limits.maxUsdTotal || total + usd > this.limits.maxUsdTotal) return "total_usd";
+      if (daily >= this.limits.maxUsdPerDay || daily + usd > this.limits.maxUsdPerDay) return "daily_usd";
       if (today.calls >= this.limits.maxCallsPerDay) return "daily_calls";
       s.days[day] = { calls: today.calls + 1, usd: today.usd };
       s.totalCalls += 1;
+      const reservation = { id: randomUUID(), day, usd };
+      if (usd > 0) s.reservations![reservation.id] = { day, usd };
       await this.save(s);
-      return null;
+      return reservation;
     });
   }
 
-  /** Adds the cost of a finished call (also for failed calls that were billed). */
+  /** Unknown-billing failures keep their hold. Only reported usage is settled. */
+  settle(reservation: BudgetReservation, usd: number): Promise<void> {
+    if (!Number.isFinite(usd) || usd < 0) return Promise.reject(new AiError("budget", "invalid reported cost"));
+    return this.lock(async () => {
+      const s = await this.load();
+      const held = s.reservations?.[reservation.id];
+      if (!held) throw new AiError("budget", "missing cost reservation");
+      delete s.reservations![reservation.id];
+      const today = s.days[held.day] ?? { calls: 0, usd: 0 };
+      today.usd = +(today.usd + usd).toFixed(6);
+      s.days[held.day] = today;
+      s.totalUsd = +(s.totalUsd + usd).toFixed(6);
+      await this.save(s);
+    });
+  }
+
+  /** Manual/imported spend accounting. Paid requests use settle() to remove their hold. */
   record(usd: number): Promise<void> {
     return this.lock(async () => {
       if (!(usd > 0)) return;
@@ -97,7 +169,9 @@ export class Budget {
       const s = await this.load();
       const day = utcDay(this.now());
       const today = s.days[day] ?? { calls: 0, usd: 0 };
-      return { day, callsToday: today.calls, usdToday: +today.usd.toFixed(4), usdTotal: +s.totalUsd.toFixed(4), limits: this.limits, durable: this.file.durable };
+      const held = Object.values(s.reservations ?? {});
+      return { day, callsToday: today.calls, usdToday: +today.usd.toFixed(4), usdTotal: +s.totalUsd.toFixed(4), limits: this.limits, durable: this.file.durable,
+        reservedUsdToday: held.filter((r) => r.day === day).reduce((sum, r) => sum + r.usd, 0), reservedUsdTotal: held.reduce((sum, r) => sum + r.usd, 0) };
     });
   }
 }

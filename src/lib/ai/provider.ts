@@ -37,14 +37,25 @@ export interface GenerateDeps {
   fetchImpl?: typeof fetch;
 }
 
+/** Conservative token bound: UTF-8 bytes, schema, message framing, and maximum output. */
+export function requestCostBound(req: JsonRequest, cfg: AiConfig): number {
+  const caps = modelCaps(cfg.provider, cfg.model);
+  const input = Buffer.byteLength(JSON.stringify({ system: req.system, messages: req.messages, schema: req.schema }), "utf8") + 2048;
+  const output = req.maxOutputTokens ?? caps.defaultMaxOutput;
+  if (!Number.isFinite(output) || output <= 0 || !Number.isFinite(cfg.prices.input) || cfg.prices.input <= 0 || !Number.isFinite(cfg.prices.output) || cfg.prices.output <= 0) {
+    throw new AiError("budget", "invalid token budget or prices");
+  }
+  return Math.ceil(costUsd({ inputTokens: input, outputTokens: output }, cfg.prices) * 1_000_000) / 1_000_000;
+}
+
 export async function generateJson<T>(req: JsonRequest, validate: (data: unknown) => T | null, deps: GenerateDeps = {}): Promise<{ value: T; meta: GenerationMeta }> {
   const cfg = deps.cfg ?? aiConfig();
   if (!cfg.apiKey || !cfg.model) throw new AiError("unconfigured");
   const caps = modelCaps(cfg.provider, cfg.model);
   const budget = deps.budget ?? budgetFor(cfg);
 
-  const denied = await budget.reserve();
-  if (denied) throw new AiError("budget", denied);
+  const reservation = await budget.reserveRequest(requestCostBound(req, cfg));
+  if (typeof reservation === "string") throw new AiError("budget", reservation);
 
   let result: ProviderResult;
   try {
@@ -53,11 +64,13 @@ export async function generateJson<T>(req: JsonRequest, validate: (data: unknown
       cfg.provider === "openai" ? await callOpenAi(cfg, caps, req, deps.fetchImpl) :
       await callOpenAiCompatible(cfg, caps, req, deps.fetchImpl);
   } catch (e) {
-    if (e instanceof AiError && e.usage) await budget.record(costUsd(e.usage, cfg.prices)); // billed even though unusable
+    if (e instanceof AiError && e.usage && e.usage.inputTokens + e.usage.outputTokens > 0) {
+      await budget.settle(reservation, costUsd(e.usage, cfg.prices)); // billed even though unusable
+    } // A timeout / unknown usage keeps its durable hold rather than restoring spend capacity.
     throw e;
   }
   const cost = costUsd(result.usage, cfg.prices);
-  await budget.record(cost);
+  if (result.usage.inputTokens + result.usage.outputTokens > 0) await budget.settle(reservation, cost);
 
   const data = caps.structured === "none" ? extractJson(result.text) : parseStrict(result.text);
   const value = validate(data);
