@@ -1,5 +1,13 @@
 // Prompt + validation for the AI horoscope. Pure functions so they are unit-testable.
 import { detectCrisis } from "@/lib/safety";
+import type { JsonSchema } from "./types";
+
+export const HOROSCOPE_SCHEMA: JsonSchema = {
+  type: "object",
+  properties: { overall: { type: "string" }, love: { type: "string" }, work: { type: "string" } },
+  required: ["overall", "love", "work"],
+  additionalProperties: false,
+};
 
 export interface HoroscopeRequest {
   locale: "en" | "zh";
@@ -40,7 +48,7 @@ export function horoscopePrompt(r: HoroscopeRequest): { system: string; user: st
     "Each section is 2–3 sentences, in the second person, reflective and practical. Mention at least one concrete fact per section.",
     "Never be fatalistic. Never give medical, legal or financial instructions. Never predict illness, death or pregnancy.",
     `Write in ${language}.`,
-    'Reply with JSON only, no prose and no code fences: {"overall": string, "love": string, "work": string}',
+    "Return the three sections as JSON fields overall, love and work.",
   ].join("\n");
   const who = [r.subject.sun && `Sun ${r.subject.sun}`, r.subject.moon && `Moon ${r.subject.moon}`, r.subject.rising && `Rising ${r.subject.rising}`]
     .filter(Boolean)

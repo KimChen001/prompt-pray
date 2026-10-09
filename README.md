@@ -20,27 +20,11 @@ Open http://localhost:3000. No environment variables are needed: without them, A
 
 ### Turning on AI (optional)
 
-Copy `.env.example` to `.env.local` and paste your own key into `AI_API_KEY` (defaults point at MIT Parley, `claude-haiku-4-5`). Restart `npm run dev`. The key stays on the server; the browser never sees it.
+Copy `.env.example` to `.env.local`, set `AI_PROVIDER` and paste your own key into `AI_API_KEY`, then restart `npm run dev`. The key stays on the server; the browser never sees it. Each provider has its own adapter (`src/lib/ai/providers/`) and its own parameters (`src/lib/ai/capabilities.ts`): for example Claude 5.x models get no `temperature`, and OpenAI reasoning models get `max_completion_tokens`. Pick the demo provider with the shared eval set, not by assumption.
 
-**Public deployments:** set `AI_ACCESS_CODE` as well. Then only devices that entered that code on the Me page use AI; everyone else gets the template text. Parley runs on MIT credits tied to a personal MIT identity, and its use on a site reachable from outside MIT is not confirmed yet, so keep it gated until it is.
+Spend is capped by a ledger in `.data/ai-usage.json` (calls per day, USD per day, USD total; see `.env.example`). `GET /api/ai/status` shows usage to the demo device. On serverless hosts that file is not durable, so also set a spend limit in the provider's dashboard.
 
-Checks:
-
-```bash
-npm test
-```
-
-```bash
-npm run typecheck
-```
-
-```bash
-npm run check:content
-```
-
-```bash
-npm run build
-```
+**Public deployments:** set `AI_ACCESS_CODE`. Then only devices that entered that code on the Me page use AI; everyone else gets the template text. MIT Parley runs on credit tied to a personal MIT identity and is not cleared for public use, so the demo uses a separately bought key.
 
 ## Status (day 2 · 2026-10-09)
 

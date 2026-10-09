@@ -27,6 +27,7 @@ const zh: Messages = {
     sky: "实时天象",
     dev: "开发中",
     calc: "本地计算",
+    saved: "AI · 已保存 {time}",
   },
   disclaimer: "仅供自我觉察与娱乐，不构成医疗、法律或财务建议。",
   home: {

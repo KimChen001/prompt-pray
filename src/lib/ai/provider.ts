@@ -1,28 +1,15 @@
-// Server-only LLM access through an OpenAI-compatible endpoint (default: MIT Parley).
-// The key lives in server env vars and never reaches the browser.
+// Single entry point for AI generation: config → budget reservation → provider adapter (params
+// from the capability table) → cost recording → JSON parse → caller's validation.
 import "server-only";
+import { modelCaps } from "./capabilities";
+import { aiConfig, type AiConfig } from "./config";
+import { Budget, costUsd, usageFilePath } from "./budget";
+import { callAnthropic } from "./providers/anthropic";
+import { callOpenAi } from "./providers/openai";
+import { callOpenAiCompatible } from "./providers/openai-compatible";
+import { AiError, type GenerationMeta, type JsonRequest, type ProviderResult } from "./types";
 
-export interface AiConfig {
-  baseUrl: string;
-  apiKey: string;
-  model: string;
-  accessCode: string; // when set, only clients that present this code may use AI
-}
-
-export function aiConfig(): AiConfig {
-  return {
-    baseUrl: (process.env.AI_BASE_URL || "https://parley.api.mit.edu/v1").replace(/\/+$/, ""),
-    apiKey: process.env.AI_API_KEY || "",
-    model: process.env.AI_MODEL || "claude-haiku-4-5",
-    accessCode: process.env.AI_ACCESS_CODE || "",
-  };
-}
-
-export class AiError extends Error {
-  constructor(public code: "unconfigured" | "timeout" | "upstream" | "bad_output", message?: string) {
-    super(message ?? code);
-  }
-}
+export { AiError } from "./types";
 
 /** Pulls the first JSON object out of a model reply (models sometimes wrap JSON in prose or fences). */
 export function extractJson(text: string): unknown {
@@ -36,34 +23,52 @@ export function extractJson(text: string): unknown {
   }
 }
 
-export async function chatJson(opts: { system: string; user: string; maxTokens?: number; timeoutMs?: number }, cfg: AiConfig = aiConfig()): Promise<{ data: unknown; model: string }> {
-  if (!cfg.apiKey) throw new AiError("unconfigured");
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), opts.timeoutMs ?? 15_000);
+const budgets = new Map<string, Budget>();
+export function budgetFor(cfg: AiConfig): Budget {
+  const file = usageFilePath();
+  const key = `${file.path}|${JSON.stringify(cfg.limits)}`;
+  if (!budgets.has(key)) budgets.set(key, new Budget(file, cfg.limits));
+  return budgets.get(key)!;
+}
+
+export interface GenerateDeps {
+  cfg?: AiConfig;
+  budget?: Budget;
+  fetchImpl?: typeof fetch;
+}
+
+export async function generateJson<T>(req: JsonRequest, validate: (data: unknown) => T | null, deps: GenerateDeps = {}): Promise<{ value: T; meta: GenerationMeta }> {
+  const cfg = deps.cfg ?? aiConfig();
+  if (!cfg.apiKey || !cfg.model) throw new AiError("unconfigured");
+  const caps = modelCaps(cfg.provider, cfg.model);
+  const budget = deps.budget ?? budgetFor(cfg);
+
+  const denied = await budget.reserve();
+  if (denied) throw new AiError("budget", denied);
+
+  let result: ProviderResult;
   try {
-    const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
-      method: "POST",
-      signal: ctrl.signal,
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${cfg.apiKey}` },
-      body: JSON.stringify({
-        model: cfg.model,
-        max_tokens: opts.maxTokens ?? 700,
-        temperature: 0.7,
-        messages: [
-          { role: "system", content: opts.system },
-          { role: "user", content: opts.user },
-        ],
-      }),
-    });
-    if (!res.ok) throw new AiError("upstream", `HTTP ${res.status}`);
-    const body = (await res.json()) as { choices?: { message?: { content?: string } }[]; model?: string };
-    const content = body.choices?.[0]?.message?.content ?? "";
-    return { data: extractJson(content), model: cfg.model };
+    result =
+      cfg.provider === "anthropic" ? await callAnthropic(cfg, caps, req, deps.fetchImpl) :
+      cfg.provider === "openai" ? await callOpenAi(cfg, caps, req, deps.fetchImpl) :
+      await callOpenAiCompatible(cfg, caps, req, deps.fetchImpl);
   } catch (e) {
-    if (e instanceof AiError) throw e;
-    if ((e as Error).name === "AbortError") throw new AiError("timeout");
-    throw new AiError("upstream", (e as Error).message);
-  } finally {
-    clearTimeout(timer);
+    if (e instanceof AiError && e.usage) await budget.record(costUsd(e.usage, cfg.prices)); // billed even though unusable
+    throw e;
+  }
+  const cost = costUsd(result.usage, cfg.prices);
+  await budget.record(cost);
+
+  const data = caps.structured === "none" ? extractJson(result.text) : parseStrict(result.text);
+  const value = validate(data);
+  if (value === null) throw new AiError("bad_output", "reply failed validation");
+  return { value, meta: { provider: cfg.provider, model: result.model, generatedAt: new Date().toISOString(), costUsd: +cost.toFixed(6) } };
+}
+
+function parseStrict(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return extractJson(text); // schema mode should give clean JSON; fall back defensively
   }
 }

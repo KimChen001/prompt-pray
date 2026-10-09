@@ -15,7 +15,7 @@ const KEYS = {
   readings: "moona.readings.v1",
   daily: "moona.daily.v1",
   birth: "moona.birth.v1",
-  horoscope: "moona.horoscope.v1",
+  horoscope: "moona.horoscope.v2", // v2 adds generation metadata; v1 entries are ignored
 } as const;
 
 const MAX_READINGS = 100;
@@ -151,7 +151,13 @@ export function clearBirth(): void {
 }
 
 // ---- AI horoscope cache (one day's text per subject + language) ----
-export interface CachedText { overall: string; love: string; work: string }
+export interface CachedText {
+  overall: string;
+  love: string;
+  work: string;
+  /** When and by what the text was generated — shown so saved text is never labeled "live". */
+  meta: { generatedAt: string; model: string; provider: string };
+}
 export function getCachedHoroscope(key: string): CachedText | null {
   return read<Record<string, CachedText>>(KEYS.horoscope, {})[key] ?? null;
 }

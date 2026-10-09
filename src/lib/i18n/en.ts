@@ -25,6 +25,7 @@ const en = {
     sky: "Live sky",
     dev: "In development",
     calc: "Calculated",
+    saved: "AI · saved {time}",
   },
   disclaimer: "For reflection and entertainment. Not medical, legal, or financial advice.",
   home: {

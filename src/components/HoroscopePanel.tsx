@@ -13,7 +13,8 @@ import { SIGNS, SIGN_INFO, type Sign } from "@/lib/astro/zodiac";
 import type { BirthData } from "@/lib/astro/birth";
 import { SourceBadge } from "./bits";
 
-type AiState = { status: "idle" | "loading" | "live" | "failed" | "off"; text?: CachedText };
+// "live" = generated for this view just now; "saved" = read back from this device's cache.
+type AiState = { status: "idle" | "loading" | "live" | "saved" | "failed" | "off"; text?: CachedText };
 
 export function HoroscopePanel({ localDate, timeZone, now }: { localDate: string; timeZone: string; now: Date }) {
   const { m, fmt, pick, locale } = useI18n();
@@ -63,7 +64,7 @@ export function HoroscopePanel({ localDate, timeZone, now }: { localDate: string
   const askAi = useCallback(async () => {
     if (!result || !cacheKey) return;
     const cached = getCachedHoroscope(cacheKey);
-    if (cached) return setAi({ status: "live", text: cached });
+    if (cached) return setAi({ status: "saved", text: cached });
     setAi({ status: "loading" });
     try {
       const res = await fetch("/api/ai/horoscope", {
@@ -80,8 +81,9 @@ export function HoroscopePanel({ localDate, timeZone, now }: { localDate: string
       if (res.status === 503) return setAi({ status: "off" }); // not configured or locked: template only, no warning
       if (!res.ok) return setAi({ status: "failed" });
       const body = (await res.json()) as CachedText;
-      cacheHoroscope(cacheKey, { overall: body.overall, love: body.love, work: body.work });
-      setAi({ status: "live", text: body });
+      const text: CachedText = { overall: body.overall, love: body.love, work: body.work, meta: body.meta };
+      cacheHoroscope(cacheKey, text);
+      setAi({ status: "live", text });
     } catch {
       setAi({ status: "failed" });
     }
@@ -113,14 +115,18 @@ export function HoroscopePanel({ localDate, timeZone, now }: { localDate: string
   }
 
   const h = result.horoscope;
-  const live = ai.status === "live" && ai.text;
-  const text = live ? ai.text! : { overall: pick(h.overall), love: pick(h.love), work: pick(h.work) };
+  const aiText = (ai.status === "live" || ai.status === "saved") && ai.text ? ai.text : null;
+  const text = aiText ?? { overall: pick(h.overall), love: pick(h.love), work: pick(h.work) };
 
   return (
     <section className="panel stack gap-16" aria-labelledby="horoscope-title" aria-busy={ai.status === "loading"}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <h2 className="h3" id="horoscope-title">{m.horoscope.title}</h2>
-        <SourceBadge source={live ? "live" : "template"} />
+        {aiText ? (
+          <SourceBadge source={ai.status === "live" ? "live" : "saved"} time={aiText.meta.generatedAt} title={aiText.meta.model} />
+        ) : (
+          <SourceBadge source="template" />
+        )}
       </div>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
         <span className="badge">{m.horoscope.tones[h.tone]}</span>

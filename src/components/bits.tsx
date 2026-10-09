@@ -5,12 +5,17 @@ import { useI18n } from "@/lib/i18n";
 import { effectiveHelpRegion, getSettings } from "@/lib/store";
 import type { HelpRegion } from "@/lib/safety";
 
-export type Source = "offline" | "live" | "template" | "library" | "sky" | "dev" | "calc";
+export type Source = "offline" | "live" | "template" | "library" | "sky" | "dev" | "calc" | "saved";
 
-export function SourceBadge({ source }: { source: Source }) {
-  const { m } = useI18n();
+/** `time` (ISO instant) is required for "saved"; `title` shows e.g. the model on hover. */
+export function SourceBadge({ source, time, title }: { source: Source; time?: string; title?: string }) {
+  const { m, fmt, locale } = useI18n();
   const cls = source === "live" || source === "sky" ? "badge badge-live" : source === "dev" ? "badge badge-dev" : "badge";
-  return <span className={cls}>{m.badge[source]}</span>;
+  const label =
+    source === "saved"
+      ? fmt(m.badge.saved, { time: time ? new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(time)) : "" })
+      : m.badge[source];
+  return <span className={cls} title={title}>{label}</span>;
 }
 
 export function SupportPanel({ onEdit }: { onEdit?: () => void }) {

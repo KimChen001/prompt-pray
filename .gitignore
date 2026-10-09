@@ -9,3 +9,5 @@ next-env.d.ts
 .vercel
 .DS_Store
 Thumbs.db
+# local AI usage/budget ledger
+.data/
