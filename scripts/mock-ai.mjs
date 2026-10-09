@@ -21,7 +21,12 @@ function reply(body) {
     return { cards, synthesis: t("Together these cards describe a turning point you are already moving through.", "这几张牌合起来，描述的是你正在经历的一个转折。"), action: t("Write down one thing you want to keep.", "写下一件你想保留的事。"), reflection: t("What would change if you trusted this?", "如果你相信这一点，会有什么不同？") };
   }
   if (system.includes("continuing a conversation")) {
-    return { reply: t(`You said: "${user.slice(0, 60)}". The cards stay the same; that detail shifts the emphasis.`, `你说：“${user.slice(0, 40)}”。牌没有变，但这个细节改变了重点。`) };
+    // Offers to remember the start of the person's message (a real substring, as the server requires).
+    const quote = user.slice(0, 40).trim();
+    return {
+      reply: t(`You said: "${user.slice(0, 60)}". The cards stay the same; that detail shifts the emphasis.`, `你说：“${user.slice(0, 40)}”。牌没有变，但这个细节改变了重点。`),
+      remember: quote.length >= 4 ? [{ text: t(`Note: ${quote}`, `笔记：${quote}`), quote }] : [],
+    };
   }
   if (system.includes("birth-chart reading")) {
     const themes = user.split("\n\n").filter((b) => b.startsWith("Theme ")).map((block) => ({

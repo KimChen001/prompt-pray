@@ -2,16 +2,15 @@ import { NextResponse, type NextRequest } from "next/server";
 import { AiError, generateJson } from "@/lib/ai/provider";
 import { checkAiAccess } from "@/lib/ai/guard";
 import { aiErrorResponse } from "@/lib/ai/http";
-import { TAROT_SCHEMA, parseTarotRequest, tarotPrompt, validateTarot } from "@/lib/ai/tarot-prompt";
-import { detectCrisis } from "@/lib/safety";
+import { TAROT_SCHEMA, parseTarotRequest, tarotNeedsSupport, tarotPrompt, validateTarot } from "@/lib/ai/tarot-prompt";
 
-// The question and card ids are used only for this request; nothing is logged or stored server-side.
+// The question, card ids and shared notes are used only for this request; nothing is logged or stored server-side.
 export async function POST(req: NextRequest) {
   const denied = checkAiAccess(req);
   if (denied) return NextResponse.json({ code: denied }, { status: denied === "rate_limited" ? 429 : 503 });
   const parsed = parseTarotRequest(await req.json().catch(() => null));
   if (!parsed) return NextResponse.json({ code: "bad_request" }, { status: 400 });
-  if (parsed.question && detectCrisis(parsed.question)) return NextResponse.json({ code: "crisis" }, { status: 200 });
+  if (tarotNeedsSupport(parsed)) return NextResponse.json({ code: "crisis" }, { status: 200 });
 
   try {
     const { system, user } = tarotPrompt(parsed);

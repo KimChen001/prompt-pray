@@ -3,11 +3,13 @@
 // the thread is saved on the reading in this browser. Functional build; visual design pending.
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
-import { saveReading } from "@/lib/store";
+import { listNotes, saveReading } from "@/lib/store";
+import { hasSimilarNote } from "@/lib/memory";
 import { detectCrisis } from "@/lib/safety";
 import type { ChatTurn, Reading } from "@/lib/tarot/types";
 import type { BigThreeNames } from "@/lib/astro/summary";
 import { SourceBadge, SupportPanel } from "./bits";
+import { NoteSuggestion, sharedNotes } from "./Notes";
 
 const MAX_LEN = 800;
 const MAX_SENT_TURNS = 12;
@@ -53,7 +55,11 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onC
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          reading: { locale, spread: reading.spread, topic: reading.topic, question: reading.question, cards: reading.cards, chart: reading.includeChart ? chart : undefined },
+          reading: {
+            locale, spread: reading.spread, topic: reading.topic, question: reading.question, cards: reading.cards,
+            chart: reading.includeChart ? chart : undefined,
+            notes: sharedNotes(reading).map((n) => n.text),
+          },
           shown,
           messages: turns.slice(-MAX_SENT_TURNS).map((t) => ({ role: t.role, content: t.content })),
         }),
@@ -62,7 +68,10 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onC
       const body = await res.json();
       if (body.code === "crisis") return setState("crisis");
       if (!res.ok) return setState("failed");
-      update([...turns, { role: "assistant", content: body.reply, at: new Date().toISOString(), meta: body.meta }]);
+      // A suggestion is only offered; it becomes a note if the person saves it.
+      const r = body.remember as { text: string; quote: string } | null | undefined;
+      const suggestion = r && !hasSimilarNote(listNotes(), r.text) ? { text: r.text, quote: r.quote, status: "pending" as const } : undefined;
+      update([...turns, { role: "assistant", content: body.reply, at: new Date().toISOString(), meta: body.meta, ...(suggestion ? { suggestion } : {}) }]);
       setState("idle");
     } catch {
       setState("failed");
@@ -90,6 +99,7 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onC
               <span className="meta">{t.role === "user" ? m.reading.you : "MOONA"}</span>
               <p style={{ margin: 0 }}>{t.content}</p>
               {t.role === "assistant" && t.meta && <SourceBadge source={i >= freshFrom ? "live" : "saved"} time={t.meta.generatedAt} title={t.meta.model} />}
+              {t.role === "assistant" && t.suggestion && <NoteSuggestion reading={reading} turnIndex={i} onChange={onChange} />}
             </li>
           ))}
         </ol>

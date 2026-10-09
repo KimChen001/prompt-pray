@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import {
-  clearBirth, clearLocalData, deleteReading, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
+  clearBirth, clearLocalData, deleteReading, listCheckIns, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
 } from "@/lib/store";
 import { computeChart } from "@/lib/astro/chart";
 import { SIGN_INFO } from "@/lib/astro/zodiac";
@@ -12,12 +12,16 @@ import { guessHelpRegion } from "@/lib/safety";
 import { userTimeZone } from "@/lib/time";
 import type { Reading } from "@/lib/tarot/types";
 import { ReadingList } from "@/components/ReadingList";
+import { NotesManager } from "@/components/Notes";
+import { CheckInItem } from "@/components/CheckIns";
+import type { CheckIn } from "@/lib/memory";
 
 export default function MePage() {
   const { m, fmt, pick, locale, setLocale } = useI18n();
   const version = useStoreVersion();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [readings, setReadings] = useState<Reading[]>([]);
+  const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [storageOk, setStorageOk] = useState(true);
   const [guess, setGuess] = useState<"US" | "other">("other");
   const [birth, setBirth] = useState<BirthData | null>(null);
@@ -27,6 +31,7 @@ export default function MePage() {
   useEffect(() => {
     setSettings(getSettings());
     setReadings(listReadings());
+    setCheckIns(listCheckIns());
     setStorageOk(storageAvailable());
     setGuess(guessHelpRegion(userTimeZone()));
     setBirth(getBirth());
@@ -133,7 +138,20 @@ export default function MePage() {
 
       <section className="stack gap-12">
         <h2 className="h2">{m.me.history}</h2>
-        {readings.length ? <ReadingList readings={readings} onDelete={deleteReading} /> : <p className="muted">{m.me.empty}</p>}
+        {readings.length ? <ReadingList readings={readings} onDelete={(id) => window.confirm(m.me.confirmDeleteReading) && deleteReading(id)} /> : <p className="muted">{m.me.empty}</p>}
+      </section>
+
+      <NotesManager />
+
+      <section className="stack gap-12" aria-labelledby="checkins-title">
+        <h2 className="h2" id="checkins-title">{m.checkin.listTitle}</h2>
+        {checkIns.length ? (
+          <ul className="stack gap-8" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {checkIns.map((c) => <CheckInItem key={c.id} c={c} showReadingLink />)}
+          </ul>
+        ) : (
+          <p className="muted" style={{ margin: 0 }}>{m.checkin.none}</p>
+        )}
       </section>
 
       <section className="stack gap-12">

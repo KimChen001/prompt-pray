@@ -6,7 +6,8 @@ import { useI18n } from "@/lib/i18n";
 import { DECK, CARD_BACK } from "@/lib/tarot/deck";
 import { randomSeed, rngFromSeed, shuffle } from "@/lib/tarot/rng";
 import { isSpreadId, SPREAD_ORDER, SPREADS, suggestSpread } from "@/lib/tarot/spreads";
-import { getBirth, getReading, getSettings, listReadings, saveReading } from "@/lib/store";
+import { getBirth, getReading, getSettings, listNotes, listReadings, saveReading } from "@/lib/store";
+import { MAX_NOTES_SENT, type MemoryNote } from "@/lib/memory";
 import { detectCrisis } from "@/lib/safety";
 import { normalizeQuestion } from "@/lib/tarot/question";
 import { localDateKey } from "@/lib/time";
@@ -48,6 +49,8 @@ export function NewReading() {
   const [crisis, setCrisis] = useState(false);
   const [hasBirth, setHasBirth] = useState(false);
   const [includeChart, setIncludeChart] = useState(false);
+  const [notes, setNotes] = useState<MemoryNote[]>([]);
+  const [includeNotes, setIncludeNotes] = useState(false); // off by default: the person chooses per reading
   const [sameToday, setSameToday] = useState<Reading | null>(null);
 
   const [phase, setPhase] = useState<Phase>("shuffle");
@@ -69,12 +72,17 @@ export function NewReading() {
         setQuestion(prev.question ?? "");
         setTopic(prev.topic);
         setSpread(prev.spread);
+        setIncludeChart(!!prev.includeChart);
+        setIncludeNotes(!!prev.noteIds?.length);
         setStep("draw");
       }
     }
   }, [params]);
 
-  useEffect(() => setHasBirth(!!getBirth()), []);
+  useEffect(() => {
+    setHasBirth(!!getBirth());
+    setNotes(listNotes().slice(0, MAX_NOTES_SENT));
+  }, []);
 
   useEffect(() => headingRef.current?.focus(), [step, phase]);
 
@@ -155,6 +163,7 @@ export function NewReading() {
       cards: chosen,
       seed: dealt.seed,
       includeChart: hasBirth && includeChart,
+      noteIds: includeNotes && notes.length ? notes.map((n) => n.id) : undefined,
     };
     const persisted = saveReading(reading);
     router.push(`/tarot/r/${reading.id}${persisted ? "" : "?local=0"}`);
@@ -222,6 +231,22 @@ export function NewReading() {
                 <span className="muted small">{m.ask.includeChartHint}</span>
               </span>
             </label>
+          )}
+          {notes.length > 0 && (
+            <div className="stack gap-8">
+              <label className="check">
+                <input type="checkbox" checked={includeNotes} onChange={(e) => setIncludeNotes(e.target.checked)} />
+                <span className="stack">
+                  <span>{fmt(m.notes.shareLabel, { n: notes.length })}</span>
+                  <span className="muted small">{m.notes.shareHint}</span>
+                </span>
+              </label>
+              {includeNotes && (
+                <ul className="small" style={{ margin: 0, paddingLeft: 44, color: "var(--text-2)" }}>
+                  {notes.map((n) => <li key={n.id}>{n.text}</li>)}
+                </ul>
+              )}
+            </div>
           )}
           {sameToday ? (
             <div className="panel stack gap-12" role="status">

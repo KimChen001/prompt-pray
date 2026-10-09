@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
+import { CheckInsDue } from "@/components/CheckIns";
 
 const TILES = [
   { key: "tarot", href: "/tarot", ready: true },
@@ -27,6 +28,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <CheckInsDue />
 
       <section className="stack gap-16">
         <h2 className="h2">{m.home.modules}</h2>

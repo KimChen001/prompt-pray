@@ -52,6 +52,8 @@ export interface ChatTurn {
   content: string;
   at: string; // ISO instant
   meta?: AiMeta; // assistant turns only
+  /** Assistant turns: a note MOONA offered to remember, from the person's own words. Saved only if they confirm. */
+  suggestion?: { text: string; quote: string; status: "pending" | "saved" | "dismissed" };
 }
 
 export interface Reading {
@@ -70,4 +72,6 @@ export interface Reading {
   ai?: Partial<Record<Locale, TarotAiResult>>;
   /** Follow-up conversation about this reading. */
   thread?: ChatTurn[];
+  /** Saved notes the person chose to share with the AI for this reading (ids into the note store). */
+  noteIds?: string[];
 }

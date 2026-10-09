@@ -9,6 +9,7 @@ import type { BirthData } from "@/lib/astro/birth";
 import type { HouseSystem } from "@/lib/astro/houses";
 import type { Sign } from "@/lib/astro/zodiac";
 import { keyString, type SavedNatalReport } from "@/lib/astro/natal-report";
+import { MAX_NOTES, type CheckIn, type MemoryNote } from "@/lib/memory";
 
 const KEYS = {
   settings: "moona.settings.v1",
@@ -18,6 +19,8 @@ const KEYS = {
   birth: "moona.birth.v1",
   horoscope: "moona.horoscope.v2", // v2 adds generation metadata; v1 entries are ignored
   natal: "moona.natal.v1", // saved natal report versions (derived from birth details)
+  notes: "moona.notes.v1", // notes the person confirmed ("what MOONA remembers")
+  checkins: "moona.checkins.v1", // in-site check-ins
 } as const;
 
 const MAX_READINGS = 100;
@@ -120,8 +123,12 @@ export function saveReading(reading: Reading): boolean {
   const rest = listReadings().filter((r) => r.id !== reading.id);
   return write(KEYS.readings, [reading, ...rest].slice(0, MAX_READINGS));
 }
+/** Deleting a reading also deletes the notes and check-ins that came from it. */
 export function deleteReading(id: string): void {
+  memoryReadings.delete(id);
   write(KEYS.readings, listReadings().filter((r) => r.id !== id));
+  write(KEYS.notes, listNotes().filter((n) => n.readingId !== id));
+  write(KEYS.checkins, listCheckIns().filter((c) => c.readingId !== id));
 }
 
 // ---- daily card (stored so a seen card never changes) ----
@@ -185,10 +192,39 @@ export function deleteNatalReport(createdAt: string): void {
   write(KEYS.natal, listNatalReports().filter((r) => r.createdAt !== createdAt));
 }
 
+// ---- notes the person confirmed (newest first) ----
+export function listNotes(): MemoryNote[] {
+  return read<MemoryNote[]>(KEYS.notes, []);
+}
+export function saveNote(note: MemoryNote): boolean {
+  const list = listNotes();
+  return write(KEYS.notes, list.some((n) => n.id === note.id) ? list.map((n) => (n.id === note.id ? note : n)) : [note, ...list].slice(0, MAX_NOTES));
+}
+/** Deleting a note also removes it from every reading that shared it. */
+export function deleteNote(id: string): void {
+  write(KEYS.notes, listNotes().filter((n) => n.id !== id));
+  const readings = listReadings();
+  if (readings.some((r) => r.noteIds?.includes(id))) {
+    write(KEYS.readings, readings.map((r) => (r.noteIds?.includes(id) ? { ...r, noteIds: r.noteIds.filter((x) => x !== id) } : r)));
+  }
+}
+
+// ---- check-ins ----
+export function listCheckIns(): CheckIn[] {
+  return read<CheckIn[]>(KEYS.checkins, []);
+}
+export function saveCheckIn(c: CheckIn): boolean {
+  const list = listCheckIns();
+  return write(KEYS.checkins, list.some((x) => x.id === c.id) ? list.map((x) => (x.id === c.id ? c : x)) : [c, ...list].slice(0, 100));
+}
+export function deleteCheckIn(id: string): void {
+  write(KEYS.checkins, listCheckIns().filter((c) => c.id !== id));
+}
+
 // ---- export / wipe ----
 export function exportLocalData(): string {
   return JSON.stringify(
-    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}), natalReports: listNatalReports() },
+    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}), natalReports: listNatalReports(), notes: listNotes(), checkIns: listCheckIns() },
     null,
     2,
   );

@@ -18,6 +18,8 @@ import type { Messages } from "@/lib/i18n/en";
 import { TarotCard } from "@/components/TarotCard";
 import { SourceBadge } from "@/components/bits";
 import { TarotChat } from "@/components/TarotChat";
+import { SharedNotes, sharedNotes } from "@/components/Notes";
+import { CheckInPlanner } from "@/components/CheckIns";
 
 export default function ReadingPage() {
   return (
@@ -77,7 +79,11 @@ function ReadingView() {
       const res = await fetch("/api/ai/tarot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards, chart: r.includeChart ? chart : undefined }),
+        body: JSON.stringify({
+          locale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
+          chart: r.includeChart ? chart : undefined,
+          notes: sharedNotes(r).map((n) => n.text),
+        }),
       });
       if (res.status === 503) return setAiStatus("off");
       if (!res.ok) return setAiStatus("failed");
@@ -174,6 +180,7 @@ function ReadingView() {
           <h1 className="h1">{m.reading.noQuestion}</h1>
         )}
         {params.get("local") === "0" && <p className="notice">{m.common.storageOff}</p>}
+        <SharedNotes reading={reading} onChange={setReading} />
       </header>
 
       {/* Layer 1: cards + one-line phrases */}
@@ -254,6 +261,8 @@ function ReadingView() {
 
           <h2 className="h3">{m.reading.talk}</h2>
           <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={aiStatus === "off"} onChange={setReading} />
+
+          <CheckInPlanner readingId={reading.id} suggestedAction={ai ? ai.action : pick(analysis.action)} />
 
           <button type="button" className="btn-text" style={{ alignSelf: "flex-start", padding: 0 }} onClick={() => setExpanded(false)}>{m.reading.collapse}</button>
         </section>

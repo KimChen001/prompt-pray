@@ -5,6 +5,7 @@ import { DECK, getCard, hasCard } from "@/lib/tarot/deck";
 import { SPREADS, isSpreadId } from "@/lib/tarot/spreads";
 import type { CardData, DrawnCard, Locale, SpreadId, Topic } from "@/lib/tarot/types";
 import { detectCrisis } from "@/lib/safety";
+import { MAX_NOTES_SENT, NOTE_MAX } from "@/lib/memory";
 import type { JsonSchema } from "./types";
 
 const TOPICS: Topic[] = ["general", "love", "work", "growth"];
@@ -23,6 +24,8 @@ export interface TarotRequest {
   question?: string;
   cards: DrawnCard[];
   chart?: ChartLayer;
+  /** Notes the person saved earlier and chose to share for this reading. */
+  notes?: string[];
 }
 
 export interface TarotText {
@@ -61,6 +64,23 @@ export function parseChartLayer(v: unknown): ChartLayer | undefined {
   return layer.sun || layer.moon || layer.rising ? layer : undefined;
 }
 
+/** undefined = no notes; null = malformed (reject the request). */
+export function parseNotes(v: unknown): string[] | undefined | null {
+  if (v === undefined || v === null) return undefined;
+  if (!Array.isArray(v) || v.length > MAX_NOTES_SENT) return null;
+  const notes: string[] = [];
+  for (const n of v) {
+    if (typeof n !== "string" || !n.trim() || n.length > NOTE_MAX) return null;
+    notes.push(n.trim());
+  }
+  return notes.length ? notes : undefined;
+}
+
+/** Any user-provided text in the request (question, shared notes) signals a crisis. */
+export function tarotNeedsSupport(r: TarotRequest): boolean {
+  return [r.question, ...(r.notes ?? [])].some((t) => !!t && detectCrisis(t));
+}
+
 export function parseTarotRequest(body: unknown): TarotRequest | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
@@ -80,7 +100,9 @@ export function parseTarotRequest(body: unknown): TarotRequest | null {
     if (typeof b.question !== "string" || b.question.length > MAX_QUESTION) return null;
     question = b.question.trim() || undefined;
   }
-  return { locale, spread: b.spread, topic, question, cards, chart: parseChartLayer(b.chart) };
+  const notes = parseNotes(b.notes);
+  if (notes === null) return null;
+  return { locale, spread: b.spread, topic, question, cards, chart: parseChartLayer(b.chart), notes };
 }
 
 function cardFacts(r: TarotRequest): string[] {
@@ -106,6 +128,7 @@ export function tarotPrompt(r: TarotRequest): { system: string; user: string } {
     "Use the given meanings as the basis; you may phrase freshly and connect the cards to each other and to the question.",
     "If there is a question, speak to it directly. Do not invent facts about the person's life; if you assume something, say it is a possibility.",
     "If a chart layer is given, you may refer to it lightly; never compute or invent placements.",
+    "Saved notes, if any, are things the person told MOONA earlier and confirmed. They may be out of date: use them only where relevant, never present them as something the cards revealed, and if the question contradicts a note, trust the question (you may ask once whether the note still holds).",
     "Never give medical, legal or financial instructions. Never predict illness, death or pregnancy. Never be fatalistic.",
     "Per card: 2–3 sentences. synthesis: 3–4 sentences. action: one small thing to do today. reflection: one open question for the person.",
     `Write in ${language}. Return JSON with cards (one entry per position, with its position number), synthesis, action and reflection.`,
@@ -115,6 +138,7 @@ export function tarotPrompt(r: TarotRequest): { system: string; user: string } {
     `Topic: ${r.topic}`,
     r.question ? `Question: ${r.question}` : "Question: none (give general guidance)",
     r.chart ? `Chart layer (user opted in): ${[r.chart.sun && `Sun ${r.chart.sun}`, r.chart.moon && `Moon ${r.chart.moon}`, r.chart.rising && `Rising ${r.chart.rising}`].filter(Boolean).join(", ")}` : "",
+    r.notes ? ["Saved notes (confirmed by the person earlier; may be out of date):", ...r.notes.map((n) => `- ${n}`)].join("\n") : "",
     "Cards:",
     ...cardFacts(r),
   ].filter(Boolean).join("\n");
