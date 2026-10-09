@@ -185,3 +185,34 @@ Rule from the user: MOONA's assets never use emoji — above all for zodiac sign
 
 **Verified**
 - 453 tests pass; `next build` clean. Headless Edge screenshots (throwaway profile, stopped afterwards): the chart wheel and planet table, the Learn sign and planet lists and the horoscope sign buttons all show the SVG icons; the rendered `/today` text contains 0 emoji-capable characters.
+
+## Round 2: nebula home, Talk, tarot flow, review fixes, every page (2026-10-09)
+
+Brief: `outputs/MOONA完整实施交接指令.md` (with the design supplement, the overall repo review and the visual review). Commits `d96a138` → `03d961b`.
+
+**Visual system and motion**
+- Tokens recoloured to the confirmed moonlight palette (bg #0E0D16, surface #171620, text #F0EDE7, silver #BFC5D2, mist #A394C7, cyan #5EE6D0 for real AI states only); every text/surface pair checked (text-3 ≥ 5.1:1).
+- `components/nebula/`: one WebGL program pair on one canvas — a soft violet–blue band around a dark eye with silver filaments (written for MOONA after the Ether / Flowing Waves references; the reference repo's Ether shader is CC BY-NC-SA and was not used), plus an optional star-dust field orbiting in tilted rings that parts around the pointer, bursts on a tap and flows into the orb while shuffling. Static CSS orb first; lite mode on phones (3 octaves, 90 motes, 0.75× resolution, ~30 fps, slow-device guard); pauses off-screen / in the background; releases its context on unmount; reduced motion = one still frame; Motion: Auto / Reduced / Off.
+- Shell: phone tab bar (Home · Today · Tarot · Chart · Journal), full menu sheet with every module and the motion setting, safe areas, `viewport-fit=cover`, `interactive-widget=resizes-content`, tab bar hidden while typing, compact chrome on landscape phones, x-overflow clipped at the shell.
+
+**Features**
+- Home: nebula hero, Draw a card / Explore your chart / Talk with MOONA, greeting built only from saved records (visit time, due check-in, last reading or conversation), every module, desktop QR (site root only; `NEXT_PUBLIC_SITE_URL`, honest test/local labels).
+- Tarot: one nebula through the ritual (gather while shuffling), phone snap row / desktop fan, one-line message as each card turns, reading page with layered reveal, "Why this reading" (inputs by kind and how the text was written), continue-with-these-cards chat with undo, unified share sheet (image + text, question off by default), original card back.
+- Talk (`/talk`, `/talk/c/[id]`, `/api/ai/talk`): free conversations; context only if ticked (chart facts — never birth data; today's date + zone, sky recomputed on the server; chosen notes); SAID / CALCULATED / reflection kept apart in the prompt; server keeps only basis ids it provided and rejects contradicting claims; undo send; delete; offline-safe.
+- Memory: notes record their source (reading or conversation) and can be edited, paused or deleted; deleting a conversation deletes its notes.
+- Today, Journal, Learn, Match, About, Whispers (private writing; shared wall marked not live with its open decisions), offline and 404 pages redesigned; chart gets the house-cusp list; Aries icon centred, Moon glyph stray line removed; generated zodiac wheel (each sign once, in order) and new icons replace the old logo.
+
+**Review fixes** (overall review §1–§7)
+1. Shared claim checker (`lib/ai/claims.ts`) for natal, horoscope and Talk: copulas ("Your Sun is in …", "sits in", "which is in", "sign is"), ingress verbs, Chinese 是/为/处于/坐落 and sign names without 座; negations not flagged. Horoscope output is checked against server-verified facts.
+2. One message contract (`lib/chat/limits.ts`): trimmed on whole messages, always starting with the person; merged retries; separate user/reply limits so accepted replies always fit back.
+3. Unknown birth time in the horoscope: hourly natal samples (aspects only if they hold all day), solar houses labelled, both Sun signs on change days with no house facts.
+4. Deletes clear storage, memory copies (kept only when storage is blocked) and derived data (matches, horoscopes, chart context in conversations).
+5. Field-level patches on the latest copy; replies appended only if their message is still newest; data epoch drops results after clear / birth changes; per-language AI merges; stale horoscope / natal responses dropped.
+6. Horoscope cache key = rules/prompt versions + local date + zone + fingerprint of every input (date, time, DST choice, zone, place, house system) + language; fixed reference moment; saved text shown with its fact sentences.
+7. Text share uses the same preview and "include my question" default (off) as the image.
+
+**Verified**
+- 518 tests (store deletes and late writes, 12-round chats through both routes in EN/ZH, Talk context and claims, unknown-time horoscope, DST cache keys, server fact checks, share defaults, greeting, QR, Whispers rules), typecheck, content check, `next build` clean.
+- Production build + mock AI (1.5 s delay) in a headless Edge (throwaway profile): 11 Talk rounds (22 messages, all Live AI with basis chips), undo and delete mid-request (nothing resurrected; the conversation's note deleted with it), language switch mid-request on a reading (both languages kept, thread intact), reading deleted mid-request (stays deleted), horoscope Live AI → AI · saved → new request after a house-system change, reduced motion / Off / WebGL unavailable (static orb, buttons work), offline via the service worker (pages, shells, Talk failing honestly), slow network (400 ms, 50 KB/s, no cache: first paint 1.18 s, Draw a card usable at 1.2 s, nebula after the 7.9 s load), no console errors on 18 pages, no horizontal overflow at 320/390/430/768/landscape/1280/1440 in EN and ZH. Found and fixed during this: a hydration mismatch on /talk, a 1,298px-wide card row on phones, landscape and 320px layouts.
+- Screenshots: `outputs/screenshots-2026-10-09-round2/`.
+- **Not verified:** real models (no authorised credit used; Parley key not entered), real iPhone / Android devices, frame rate and battery on phones, QR scanning on a deployed HTTPS site, soft-keyboard behaviour on real devices.

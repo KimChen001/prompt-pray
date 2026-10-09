@@ -1,6 +1,6 @@
 # MOONA · Prompt & Pray
 
-A cyber-mystic tarot and astrology companion, rebuilt for the web from the 2025 MOONA WeChat mini-program. Bilingual (English default, 中文), mobile and desktop.
+A reflective tarot and astrology companion for the web: draw your own cards, see your real birth chart, and talk it through with MOONA. One responsive site for desktop (demo screen) and phones (visitors scan a QR code; no app, no sign-up). English by default, 中文 everywhere.
 
 > For reflection and entertainment. Not medical, legal, or financial advice.
 
@@ -16,88 +16,96 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. No environment variables are needed: without them, AI features show the offline/template text.
+Open http://localhost:3000. No environment variables are needed: without an AI key every AI feature shows its offline / template / library text, labelled as such.
 
-### Turning on AI (optional)
+| Command | What it does |
+| --- | --- |
+| `npm run build` then `npm start` | Production build (needed to test the service worker / offline mode) |
+| `npm test` | Vitest (518 tests) |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run check:content` | 78 cards × 2 sides × 2 languages, images and credits, Learn entries |
+| `node scripts/mock-ai.mjs 3999` | **Dev only.** Fake OpenAI-compatible endpoint returning `[MOCK]` text in every shape MOONA expects; `MOCK_DELAY_MS=1500` simulates a slow model. Run the app with `AI_API_KEY=mock AI_BASE_URL=http://127.0.0.1:3999/v1 AI_MODEL=mock-model`. Never cite its output as AI quality. |
+| `node scripts/make-brand.mjs` | Regenerates the zodiac wheel and app icons from the project's SVGs |
+| `npm run eval:build` / `eval:run` / `eval:blind` | Evaluation set (28 cases) for comparing real providers — see `eval/README.md` |
 
-Copy `.env.example` to `.env.local`, set `AI_PROVIDER` and paste your own key into `AI_API_KEY`, then restart `npm run dev`. The key stays on the server; the browser never sees it. Each provider has its own adapter (`src/lib/ai/providers/`) and its own parameters (`src/lib/ai/capabilities.ts`): for example Claude 5.x models get no `temperature`, and OpenAI reasoning models get `max_completion_tokens`. Pick the demo provider with the shared eval set, not by assumption.
+### AI (optional)
 
-Estimated spend is capped by a ledger in `.data/ai-usage.json` (calls per day, USD per day, USD total; see `.env.example`). A request reserves its maximum estimated cost before calling the provider, then settles against reported usage; in-flight reservations count against the caps. Unknown-billing failures keep their reservations until billing is reconciled. `GET /api/ai/status` shows both spend and reservations to the demo device. Corrupt ledgers or leftover process locks block calls rather than reset spend: preserve the ledger, stop its writers, and reconcile against provider usage before repairing it. The estimate uses configured token prices; it is not a guarantee of the provider's actual bill. On serverless hosts that file is not durable, so also set a spend limit in the provider's dashboard.
+Copy `.env.example` to `.env.local`, set `AI_PROVIDER` and paste your own key into `AI_API_KEY`, then restart. The key stays on the server. Each provider has its own adapter (`src/lib/ai/providers/`) and parameters (`src/lib/ai/capabilities.ts`). MIT Parley is for development only; the demo uses a separately bought key.
 
-**Public deployments:** set `AI_ACCESS_CODE`. Then only devices that entered that code on the Me page use AI; everyone else gets the template text. MIT Parley runs on credit tied to a personal MIT identity and is not cleared for public use, so the demo uses a separately bought key.
+Spend is capped by a ledger (`.data/ai-usage.json`): every request attempt reserves its maximum estimated cost before calling the provider and settles against reported usage; unknown-billing failures keep their reservation. SDK retries are off (`maxRetries: 0`) so no attempt goes unaccounted. Public deployments should set `AI_ACCESS_CODE` (only devices that entered it in Journal → Settings use AI) and a spend limit in the provider dashboard.
 
-## Status (day 2 · 2026-10-09)
+### QR code for the demo
+
+The desktop home page has a "Try it on your phone" panel. Set `NEXT_PUBLIC_SITE_URL` to the deployed HTTPS address; without it the page's own address is used and labelled **test address** (or **this computer only** for `localhost`). The code always encodes the site root only — never a question, birth details, reading id, key or access code.
+
+## Status (2026-10-09, round 2)
+
+"Built" means implemented and verified with unit tests and a production build in a headless browser (mock AI). **No real model has been called yet**; real-model quality is unverified until the eval runs on bought credit. No real-device (iPhone / Android) testing has been done yet.
 
 | Module | Route | State |
 | --- | --- | --- |
-| Tarot: ask → spread → shuffle → pick from fan → reveal → reading | `/tarot`, `/tarot/new`, `/tarot/r/[id]` | **Working**, offline engine |
-| Daily card + Today's sky (Moon sign/phase, sign changes, stations, lunations, retrogrades) | `/today` | **Working** — sky checked against Swiss Ephemeris for all of 2026 |
-| Daily horoscope (natal or Sun-sign mode) | `/today`, `/api/ai/horoscope` | **Working** — template text from real transits; AI rewrite when configured |
-| History, settings, export, clear data | `/me` | **Working** (local only) |
-| Crisis detection on the question | `/tarot/new` | **Working**, keyword layer (AI layer Oct 13) |
-| EN / 中文 switch | everywhere | **Working** — switching never changes cards or state |
-| Birth chart: birth form, place search, Big Three, planets, angles, houses | `/chart`, `/chart/edit`, `/api/places` | **Working** — real calculation, unknown-time rules; wheel + interpretations pending (UI design from the team, content Oct 16) |
-| Learn | `/learn` | Scheduled Oct 16 |
-| Match | `/match` | Scheduled Oct 17 |
-| Whispers (community) | `/whispers` | Scheduled Oct 18–19 |
-| AI layer (MIT Parley, OpenAI-compatible) | `/api/ai/*` | **Working** for the horoscope; tarot AI readings Oct 11–12 |
-| Share snapshots | — | Oct 20 (needs Supabase); today: copy text and the native share sheet |
+| Home: nebula, Draw a card, chart and Talk entries, greeting from saved records, all modules, desktop QR | `/` | Built |
+| Tarot: ask → spread → shuffle (nebula gathers) → pick → turn over → one-line messages → full reading on request → Why this reading → reflection → continue with these cards → check-in | `/tarot`, `/tarot/new`, `/tarot/r/[id]` | Built (AI with offline fallback) |
+| Talk with MOONA: free conversations; chart / today's sky / notes only if ticked; replies cite what they used | `/talk`, `/talk/c/[id]` | Built (needs AI to reply) |
+| Memory: suggested only from your own words, saved only on confirm; edit, pause, delete; source shown | Journal, Talk, readings | Built |
+| Today: daily card, horoscope (template or AI, facts checked on the server), live sky | `/today` | Built |
+| Birth chart: birth details, Big Three, wheel, planets, house cusps, AI report with versions | `/chart`, `/chart/edit`, `/chart/reveal` | Built |
+| Journal: readings, conversations, memory, check-ins, matches, saved, settings, export / clear | `/me` | Built (device only, no sync) |
+| Learn: 121 entries, EN/ZH search, favourites, "in your chart" | `/learn` | Built |
+| Match (two people on one device) | `/match`, `/match/r/[id]` | Built; **invite links need a server — planned** |
+| Sharing (image + text, same preview and defaults) | readings, today, chart, match | Built on device; **revocable share links need a server — planned** |
+| Whispers: private writing on the device | `/whispers` | Built; **shared wall not live** (needs server, moderation, decisions) |
+| Offline / install (PWA) | `public/sw.js`, `/offline` | Built; installing is optional |
+| Accounts and sync | — | **Not built.** Records stay on the device where they were made |
 
-Nothing in the app is mock data. Unbuilt modules show an "In development" page with their date. Every reading shows where its text came from (`Offline engine` today; `Live AI` once AI ships).
+## How the AI is kept honest
 
-## Daily horoscope
+- **Facts first.** Charts, transits and card meanings are computed or looked up by MOONA; the model only puts them into words.
+- **Checked output.** Every reply is validated before it is shown or saved: tarot (only the drawn cards, orientation kept), natal report (each theme cites only its own facts), horoscope (the server recomputes the day's sky from date + time zone, refuses facts that don't match, writes the prompt sentences itself), Talk (basis ids must be ones it was given). A shared checker (`src/lib/ai/claims.ts`) rejects sign / house / aspect / Rising claims that contradict the facts, in English and Chinese, including phrasings like "Your Sun is in …" and "太阳是…". It is a backstop for common phrasings, not a proof of every sentence.
+- **Labels.** Live AI · AI · saved (with time) · Offline engine · Template · Library · Calculated · Live sky · You said. Saved text is never shown as live and is never silently regenerated.
+- **Unknown birth time** carries through everything: no Rising, no houses; Sun / Moon show both signs on a sign-change day; horoscope aspects to the natal Moon/Sun count only if they hold all day; houses become solar houses and say so.
+- **One message contract** for all chats (`src/lib/chat/limits.ts`): history trimmed on whole messages, always starting with the person; replies the server accepted always fit back into the next request.
+- **Late responses can't overwrite or resurrect.** Records are changed through field-level patches on the latest copy (`patchReading`, `patchChat`); a reply is appended only if the message it answers is still the newest; clearing data or changing birth details moves a data epoch that drops older results.
 
-`src/lib/astro/transits.ts` turns today's real sky into ranked *facts*: aspects from the transiting Sun, Moon, Mercury, Venus and Mars to the natal Sun, Moon and Ascendant (or whole-sign aspects to the Sun sign), the Moon's house, today's ingresses, stations and lunations, and current retrogrades. `src/lib/astro/horoscope.ts` writes one sentence per fact (EN/ZH) and assembles Overall / Love / Work; the "Why" list shows the facts. `/api/ai/horoscope` sends only those localized facts and sign names to the model, which must use only them; output is length- and safety-checked, and any failure keeps the template. AI text is cached per day, subject and language on the device.
+## Motion
+
+The nebula (`src/components/nebula/`) is one reusable WebGL component written for MOONA (after the Ether / Flowing Waves references; no third-party shader code). A static CSS orb is painted first and stays if WebGL is missing, too slow, or motion is off. States follow real product states: idle (home), gather (shuffling), pulse (an AI request is actually running), settle (a new result arrived), quiet (reading). Phones get fewer noise octaves, fewer particles, lower resolution and ~30 fps; it pauses off-screen and in background tabs and releases its GPU context when unmounted. Motion: Auto (follows the system's reduced-motion setting) · Reduced (still frame) · Off — in the footer, the phone menu and Journal → Settings.
+
+## Data and privacy
+
+Readings, conversations, notes, check-ins, settings and birth details live only in this browser (`localStorage`). There is no account and no analytics. What reaches our server: the city name in the birthplace search, and — only for AI features — what each request needs (listed exactly on the About page). Birth date, time and place are never sent; the chart and Talk send computed placements only. The server passes AI requests to the provider and keeps no content, only call counts and cost for the cap. Deleting a reading or conversation also deletes the notes and check-ins that came from it; removing birth details removes everything derived from them.
 
 ## Astrology engine
 
-- Positions: [astronomy-engine](https://github.com/cosinekitty/astronomy) (MIT), computed in the browser (`src/lib/astro/ephemeris.ts`).
-- Ascendant, Midheaven, Placidus and Whole Sign houses: `src/lib/astro/houses.ts`. Placidus falls back to Whole Sign above ~66.6° latitude, with a notice.
-- Birth time → UTC: `src/lib/astro/birth.ts`, using the browser's IANA history (DST, pre-1970 rules, half-hour zones). Times that happened twice (fall back) ask the user; times that never happened (spring forward) are flagged with the shifted time.
-- Unknown birth time (`src/lib/astro/chart.ts`): no Rising, no houses; Sun/Moon show both signs and the local change time when they change sign that day.
-- **Today's sky** (`src/lib/astro/sky.ts`): events are assigned to the user's local day. `tests/fixtures/sky-2026.sweph.json` covers every 2026 new/full moon (< 5 min), Sun ingress (< 5 min) and Mercury/Venus station (< 3 h; stations are inherently soft).
-- **Accuracy check:** `tests/fixtures/charts.sweph.json` holds 8 reference charts (US east/west, Shanghai, Kolkata, Sydney, London 1965, Reykjavik, Cambridge 2026) generated with Swiss Ephemeris 2.10 outside this repo (`scripts/oracle/` regenerates them). Swiss Ephemeris is not a dependency (AGPL); it is only the test oracle. Current tolerances: planets and angles < 0.02°, Placidus cusps < 0.05°.
-- Places: GeoNames cities5000 (CC BY 4.0), 69,780 places with IANA zones and Chinese aliases, built by `npm run build:places` into `data/places.json` and searched server-side by `/api/places` (the query is not logged).
-- **Installable / offline (PWA):** `src/app/manifest.ts`, icons from `node scripts/make-icons.mjs`, and `public/sw.js` (registered only in production builds as `/sw.js?v=<build id>`). It pre-caches the main pages, their build files and all 78 card images, so drawing and reading cards works offline; `/api/*` is never cached. No push notifications. The service worker can't be tested in the Claude desktop in-app browser (it refuses service workers); use a normal browser against `npm run build && npm start`.
-- **Evaluation:** `eval/README.md` (28 fixed cases, runner, blind A/B sheet).
+- Positions: [astronomy-engine](https://github.com/cosinekitty/astronomy) (MIT), in the browser (`src/lib/astro/ephemeris.ts`), checked against Swiss Ephemeris fixtures (planets and angles < 0.02°, Placidus cusps < 0.05°). Swiss Ephemeris is only the test oracle (AGPL), not a dependency.
+- Houses: Placidus and Whole Sign (`src/lib/astro/houses.ts`); Placidus falls back to Whole Sign near the poles, with a notice.
+- Birth time → UTC with the browser's IANA history (`src/lib/astro/birth.ts`): repeated (fall-back) times ask which one; skipped times are flagged.
+- Today's sky (`src/lib/astro/sky.ts`): events assigned to the user's local day; the daily horoscope uses the day's midpoint as a fixed reference moment.
+- Places: GeoNames cities5000 (CC BY 4.0) in `data/places.json`, searched by `/api/places`.
 
-## What was reused from the mini-program
+## Sources and licences
 
-| From (`xuanxue0817/xuanxue`) | To | Change |
+| What | Source | Licence |
 | --- | --- | --- |
-| `packageB/pages/tarot/tarot.js` — FNV-1a hash, mulberry32, shuffle | `src/lib/tarot/rng.ts` | Typed; live draws now seed from `crypto.getRandomValues` |
-| `tarot.js` — 4 spreads and positions | `src/lib/tarot/spreads.ts` | Bilingual positions; spread suggestion from the question |
-| `utils/tarotPro.js` — elements, majors ratio, patterns, A/B scoring | `src/lib/tarot/engine.ts` | Rewritten to bilingual natural language (no `火∧风` codes); A/B scoring now uses all 4 cards (plan v0.2 §3.2); deterministic (no random template picks) |
-| `packageB/tarot/meanings.zh.js` (7 cards) | `content/tarot/*.json` (78 cards) | All 78 cards written fresh in EN + ZH: keywords, meaning, advice, love/work/growth, upright and reversed |
-| `images/logo1.png` (actually WebP) | `public/brand/moona-logo.webp` | Renamed to its real format |
-| `packageB/tarot/thumbs/card-back.jpg` | `public/cards/back.jpg` | Unchanged, **placeholder** — the team will decide the card back |
-| `app.wxss` starfield | `src/app/globals.css` | Toned down for readability |
-| `services/astro.js` (random Moon/Rising) | — | **Not reused.** Replaced by real calculation in `src/lib/astro/` |
-| `data/zodiac-signs.js` | `src/lib/astro/zodiac.ts` | Rebuilt bilingual sign table |
+| Card faces | 1909 Rider–Waite–Smith (Pamela Colman Smith), Wikimedia Commons; every card in `content/credits.json` | Public domain |
+| Card back, MOONA mark, zodiac wheel, planet icons, nebula shader | Made for MOONA | Project's own |
+| Zodiac line icons, astrolabe rings, Big Three glyphs | MOONA Figma design ("Graphite Night") | Project's own |
+| Planet positions | astronomy-engine | MIT |
+| Places | GeoNames | CC BY 4.0 |
+| Fonts | Cormorant Garamond, Inter, JetBrains Mono via Fontsource | SIL OFL |
+| QR codes | uqr | MIT |
 
-## What changed on purpose
-
-- **Card faces** are the 1909 Rider–Waite–Smith "Roses & Lilies" scans from Wikimedia Commons (public domain, Pamela Colman Smith), fetched by `npm run fetch:cards`, resized to 400px. Every card's source URL and license is in `content/credits.json`. The mini-program's card images are not used.
-- **Dates**: "today" is the user's local calendar day (`src/lib/time.ts`), never `toISOString().slice(0,10)`. Tests cover LA/NY around midnight and both US DST changeovers.
-- **Daily card** is seeded per device + local date + topic, and saved once drawn, so it never changes during the day and switching language never redraws it.
-- **Reversals** are a user setting (on by default, 50%).
-- **The question never goes in a URL.** "Same question, new draw" passes the reading id instead.
-- No API keys exist in this repo. The old Coze key from the mini-program is not carried over.
+No emoji are used anywhere: zodiac signs, planets and marks are SVG line icons (`tests/no-emoji.test.ts` guards this).
 
 ## Project layout
 
 ```
-content/tarot/*.json     78 cards, EN + ZH         content/credits.json   image provenance
-public/cards/            78 faces + back            scripts/               fetch-cards, check-content
-src/lib/tarot/           deck, rng, spreads, engine, daily
-src/lib/                 time.ts (date semantics), safety.ts (crisis), store.ts (localStorage)
-src/lib/astro/           ephemeris, houses, birth (time zones), chart (Big Three), places (search)
-data/places.json         GeoNames places (generated)
-src/lib/i18n/            en.ts (source of truth), zh.ts (type-checked against en)
-src/app/                 routes                     src/components/        shell, card, badges
-tests/                   vitest
+src/app/               routes (pages and /api)        src/components/       shell, nebula, chat, cards, chart wheel
+src/lib/ai/            prompts, validation, claims, providers, budget
+src/lib/astro/         ephemeris, houses, birth, chart, natal facts/themes, transits, horoscope, match
+src/lib/chat/          message limits, sessions, context     src/lib/whispers/   post rules (wall not live)
+src/lib/store.ts       device storage (patches, deletes, epoch)   src/lib/motion.ts   motion preference
+src/lib/i18n/          en.ts (source of truth), zh.ts (type-checked against en)
+content/               tarot cards, Learn entries, credits      public/            cards, design SVGs, brand, sw.js
+eval/                  evaluation set                           tests/             vitest
 ```
-
-## Data and privacy (this build)
-
-Questions, readings, settings and birth details live in this browser's `localStorage` only. The chart is calculated in the browser. The only server call is the birthplace search (`/api/places`), which receives the typed city name and nothing else. No accounts or analytics. If storage is blocked, readings still work for the current tab and the UI says history is off.

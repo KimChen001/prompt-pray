@@ -1,12 +1,12 @@
 "use client";
 // Draws a ShareCard onto a 1080×1350 canvas (portrait, fits most feeds) and returns a PNG.
 // Runs entirely in the browser; card art comes from this site's own public-domain images.
-// Visual design is a placeholder until the team's UI lands.
+// Moonlight palette (same tokens as the site), a soft nebula glow and the MOONA mark.
 import { cardImage } from "@/lib/tarot/deck";
 import type { ShareCard } from "./content";
 
 export const SHARE_SIZE = { width: 1080, height: 1350 };
-const C = { bg0: "#0b0c10", bg1: "#14161c", line: "#2a2e37", text1: "#eceef2", text2: "#b9bec9", silver: "#d7dbe3" };
+const C = { bg0: "#0e0d16", bg1: "#171620", line: "#2b2838", text1: "#f0ede7", text2: "#b7b3c4", silver: "#bfc5d2", mist: "rgba(163, 148, 199, 0.22)" };
 const SERIF = `"Cormorant Garamond", "Noto Serif SC", "Songti SC", "SimSun", serif`;
 const SANS = `"Inter Variable", "Inter", "PingFang SC", "Microsoft YaHei", sans-serif`;
 
@@ -56,6 +56,12 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
   g.addColorStop(0, C.bg1);
   g.addColorStop(1, C.bg0);
   ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  // a soft misty-violet glow at the top right, like the nebula on the home page
+  const glow = ctx.createRadialGradient(W * 0.86, H * 0.08, 0, W * 0.86, H * 0.08, W * 0.75);
+  glow.addColorStop(0, C.mist);
+  glow.addColorStop(1, "rgba(163, 148, 199, 0)");
+  ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
   ctx.strokeStyle = C.line;
   ctx.lineWidth = 2;
@@ -183,9 +189,11 @@ export async function renderShareCard(card: ShareCard): Promise<Blob> {
   const brandW = ctx.measureText(brand).width;
   ctx.fillStyle = C.silver;
   ctx.fillText(brand, W - pad - brandW, H - pad - 34);
+  const mark = await loadImage("/brand/moona-mark.svg");
+  if (mark) ctx.drawImage(mark, W - pad - brandW - 48, H - pad - 40, 38, 38);
   ctx.fillStyle = C.text2;
   ctx.font = `400 22px ${SANS}`;
-  const foot = wrap(ctx, card.footer, W - pad * 2 - brandW - 32, 2);
+  const foot = wrap(ctx, card.footer, W - pad * 2 - brandW - 80, 2);
   foot.forEach((l, i) => ctx.fillText(l, pad, H - pad - 30 - (foot.length - 1 - i) * 30));
 
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png"));
