@@ -1,0 +1,33 @@
+{
+  "name": "prompt-pray",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MOONA — a cyber-mystic tarot and astrology companion (Prompt & Pray, Harvard hackathon)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check:content": "node scripts/check-content.mjs",
+    "fetch:cards": "node scripts/fetch-cards.mjs"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "next": "16.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

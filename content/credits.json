@@ -1,0 +1,555 @@
+[
+  {
+    "id": "major-00",
+    "file": "public/cards/major-00.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_00_Fool.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-01",
+    "file": "public/cards/major-01.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_01_Magician.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-02",
+    "file": "public/cards/major-02.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_02_High_Priestess.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-03",
+    "file": "public/cards/major-03.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_03_Empress.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-04",
+    "file": "public/cards/major-04.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_04_Emperor.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-05",
+    "file": "public/cards/major-05.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_05_Hierophant.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-06",
+    "file": "public/cards/major-06.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_06_Lovers.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-07",
+    "file": "public/cards/major-07.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_07_Chariot.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-08",
+    "file": "public/cards/major-08.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_08_Strength.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-09",
+    "file": "public/cards/major-09.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_09_Hermit.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-10",
+    "file": "public/cards/major-10.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_10_Wheel_of_Fortune.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-11",
+    "file": "public/cards/major-11.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_11_Justice.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-12",
+    "file": "public/cards/major-12.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_12_Hanged_Man.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-13",
+    "file": "public/cards/major-13.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_13_Death.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-14",
+    "file": "public/cards/major-14.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_14_Temperance.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-15",
+    "file": "public/cards/major-15.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_15_Devil.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-16",
+    "file": "public/cards/major-16.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_16_Tower.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-17",
+    "file": "public/cards/major-17.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_17_Star.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-18",
+    "file": "public/cards/major-18.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_18_Moon.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-19",
+    "file": "public/cards/major-19.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_19_Sun.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-20",
+    "file": "public/cards/major-20.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_20_Judgement.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "major-21",
+    "file": "public/cards/major-21.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_21_World.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-01",
+    "file": "public/cards/wands-01.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_01.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-02",
+    "file": "public/cards/wands-02.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_02.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-03",
+    "file": "public/cards/wands-03.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_03.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-04",
+    "file": "public/cards/wands-04.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_04.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-05",
+    "file": "public/cards/wands-05.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_05.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-06",
+    "file": "public/cards/wands-06.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_06.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-07",
+    "file": "public/cards/wands-07.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_07.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-08",
+    "file": "public/cards/wands-08.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_08.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-09",
+    "file": "public/cards/wands-09.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_09.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-10",
+    "file": "public/cards/wands-10.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_10.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-11",
+    "file": "public/cards/wands-11.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_11.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-12",
+    "file": "public/cards/wands-12.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_12.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-13",
+    "file": "public/cards/wands-13.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_13.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "wands-14",
+    "file": "public/cards/wands-14.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Wands_14.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-01",
+    "file": "public/cards/cups-01.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_01.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-02",
+    "file": "public/cards/cups-02.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_02.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-03",
+    "file": "public/cards/cups-03.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_03.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-04",
+    "file": "public/cards/cups-04.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_04.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-05",
+    "file": "public/cards/cups-05.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_05.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-06",
+    "file": "public/cards/cups-06.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_06.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-07",
+    "file": "public/cards/cups-07.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_07.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-08",
+    "file": "public/cards/cups-08.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_08.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-09",
+    "file": "public/cards/cups-09.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_09.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-10",
+    "file": "public/cards/cups-10.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_10.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-11",
+    "file": "public/cards/cups-11.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_11.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-12",
+    "file": "public/cards/cups-12.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_12.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-13",
+    "file": "public/cards/cups-13.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_13.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "cups-14",
+    "file": "public/cards/cups-14.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Cups_14.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-01",
+    "file": "public/cards/swords-01.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_01.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-02",
+    "file": "public/cards/swords-02.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_02.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-03",
+    "file": "public/cards/swords-03.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_03.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-04",
+    "file": "public/cards/swords-04.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_04.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-05",
+    "file": "public/cards/swords-05.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_05.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-06",
+    "file": "public/cards/swords-06.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_06.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-07",
+    "file": "public/cards/swords-07.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_07.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-08",
+    "file": "public/cards/swords-08.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_08.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-09",
+    "file": "public/cards/swords-09.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_09.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-10",
+    "file": "public/cards/swords-10.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_10.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-11",
+    "file": "public/cards/swords-11.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_11.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-12",
+    "file": "public/cards/swords-12.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_12.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-13",
+    "file": "public/cards/swords-13.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_13.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "swords-14",
+    "file": "public/cards/swords-14.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Swords_14.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-01",
+    "file": "public/cards/pentacles-01.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_01.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-02",
+    "file": "public/cards/pentacles-02.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_02.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-03",
+    "file": "public/cards/pentacles-03.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_03.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-04",
+    "file": "public/cards/pentacles-04.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_04.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-05",
+    "file": "public/cards/pentacles-05.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_05.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-06",
+    "file": "public/cards/pentacles-06.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_06.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-07",
+    "file": "public/cards/pentacles-07.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_07.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-08",
+    "file": "public/cards/pentacles-08.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_08.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-09",
+    "file": "public/cards/pentacles-09.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_09.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-10",
+    "file": "public/cards/pentacles-10.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_10.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-11",
+    "file": "public/cards/pentacles-11.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_11.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-12",
+    "file": "public/cards/pentacles-12.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_12.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-13",
+    "file": "public/cards/pentacles-13.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_13.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "pentacles-14",
+    "file": "public/cards/pentacles-14.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:RWS1909_-_Pentacles_14.jpeg",
+    "license": "Public domain",
+    "artist": "Pamela Colman Smith"
+  },
+  {
+    "id": "back",
+    "file": "public/cards/back.jpg",
+    "source": "Carried over from the MOONA WeChat mini-program; original source not yet documented",
+    "license": "UNVERIFIED — pending team decision on the card back",
+    "artist": "Unknown"
+  }
+]

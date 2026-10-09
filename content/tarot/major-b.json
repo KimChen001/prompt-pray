@@ -1,0 +1,695 @@
+[
+  {
+    "id": "major-11",
+    "arcana": "major",
+    "suit": null,
+    "number": 11,
+    "name": { "en": "Justice", "zh": "正义" },
+    "description": {
+      "en": "A crowned figure in a red robe sits between two stone pillars, raising an upright sword in one hand and holding balanced golden scales in the other. A purple curtain hangs behind, and a single white shoe peeks out from beneath the robe.",
+      "zh": "一位头戴王冠、身披红袍的人端坐在两根石柱之间，一手高举直立的宝剑，一手托着平衡的金色天秤。身后垂着紫色帷幕，袍子下方露出一只白色的鞋尖。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Fairness", "Truth", "Accountability", "Clear decisions"],
+        "zh": ["公平", "真相", "担当", "明断"]
+      },
+      "meaning": {
+        "en": "Justice asks you to look at a situation exactly as it is, without flattering yourself or anyone else. Choices made now carry real weight, and their effects will ripple outward. When you act with honesty and take ownership of your part, the outcome tends to settle into something balanced and right.",
+        "zh": "正义牌请你如实看待眼前的局面，不替自己开脱，也不替别人粉饰。此刻做出的选择分量不轻，影响会一圈圈扩散开去。只要你诚实行事、承认自己的那一份责任，事情往往会落到一个公道而平衡的位置。"
+      },
+      "advice": {
+        "en": "Before you decide, write down the facts on both sides and choose the option you could explain openly to anyone involved.",
+        "zh": "做决定之前，把双方的事实都写下来，选择那个你能坦然向所有相关的人解释的方案。"
+      },
+      "love": {
+        "en": "Healthy love needs an even exchange of effort, honesty and respect. Notice whether both of you are giving and receiving in a way that feels fair, and name it kindly if not.",
+        "zh": "健康的感情需要付出、坦诚与尊重的对等交换。留意你们双方的给予和接受是否公平，如果失衡，就温和地把它说出来。"
+      },
+      "work": {
+        "en": "Your work is being weighed on its merits, so let clarity and integrity guide your next move. Clean agreements and transparent communication will serve you better than shortcuts.",
+        "zh": "你的工作正在被按实际表现衡量，让清晰与正直引导你的下一步。把约定讲清楚、沟通透明，比任何捷径都更可靠。"
+      },
+      "growth": {
+        "en": "Growth here means owning the consequences of your past choices without drowning in guilt. Accountability is not punishment; it is how you reclaim your power to choose differently.",
+        "zh": "此刻的成长，是坦然承担过去选择带来的结果，却不被愧疚淹没。担当不是惩罚，而是你重新拿回选择权的方式。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Imbalance", "Avoidance", "Bias", "Self-judgment"],
+        "zh": ["失衡", "逃避", "偏见", "自我苛责"]
+      },
+      "meaning": {
+        "en": "Reversed, Justice points to a scale that has tipped. You may be avoiding responsibility, judging yourself too harshly, or sensing that something around you is unfair. The invitation is to stop rationalizing, look honestly at your role, and restore balance where you can rather than waiting for others to do it.",
+        "zh": "逆位的正义意味着天秤已经倾斜。你也许在回避某些责任，也许对自己过于严苛，又或者感到身边有不公平的事。它邀请你别再为自己找理由，诚实看清自己的角色，在力所能及处先把平衡找回来，而不是等别人动手。"
+      },
+      "advice": {
+        "en": "Name one place where you have been bending the truth, even slightly, and set it straight this week.",
+        "zh": "找出一处你曾稍稍扭曲事实的地方，这周就把它摆正。"
+      },
+      "love": {
+        "en": "One person may be carrying more than their share, or old grievances are being kept like a scorecard. Fairness returns when you both stop keeping score and start speaking plainly.",
+        "zh": "关系里可能有一方承担得太多，或者旧账一直被默默记着。当你们都放下计分板、开始直白地沟通，公平才会回来。"
+      },
+      "work": {
+        "en": "You may feel overlooked or caught in a decision that seems biased. Document what you can, stay level-headed, and avoid cutting corners just because others seem to.",
+        "zh": "你可能觉得自己被忽视，或卷入一个看似有偏颇的决定。尽量把事实记录清楚，保持冷静，也别因为别人走捷径就跟着降低标准。"
+      },
+      "growth": {
+        "en": "Check whether you are being harder on yourself than you would ever be on a friend. Real accountability includes compassion, and balance includes forgiving your own mistakes.",
+        "zh": "看看你对自己是否比对任何朋友都更苛刻。真正的担当包含慈悲，真正的平衡也包括原谅自己的过错。"
+      }
+    }
+  },
+  {
+    "id": "major-12",
+    "arcana": "major",
+    "suit": null,
+    "number": 12,
+    "name": { "en": "The Hanged Man", "zh": "倒吊人" },
+    "description": {
+      "en": "A man hangs upside down by one foot from a living T-shaped tree, his other leg bent behind the knee and his hands tucked behind his back. Despite the position, his face is calm and a golden halo glows around his head.",
+      "zh": "一个男人单脚倒挂在一棵长着新叶的T形树上，另一条腿弯曲搭在膝后，双手背在身后。尽管姿势颠倒，他的神情却很平静，头部周围还闪着金色的光环。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Pause", "Surrender", "New perspective", "Letting go"],
+        "zh": ["暂停", "臣服", "换个视角", "放下"]
+      },
+      "meaning": {
+        "en": "The Hanged Man suspends you between what was and what comes next. Pushing harder will not move things right now; stillness will. By willingly pausing and turning the situation upside down in your mind, you notice what you could not see while rushing, and a quiet insight arrives.",
+        "zh": "倒吊人把你悬在过去与未来之间。此刻用力推进并不会让事情前进，静下来反而会。当你甘愿停顿，在心里把局面整个倒过来看，就能发现匆忙时看不见的东西，一份安静的领悟也随之而来。"
+      },
+      "advice": {
+        "en": "Choose one thing you have been forcing and deliberately leave it alone for a few days to see what shifts.",
+        "zh": "挑一件你一直在硬推的事，刻意放手几天，看看会有什么变化。"
+      },
+      "love": {
+        "en": "A relationship may feel suspended, neither moving forward nor ending. Instead of demanding answers, use this pause to understand what you truly want and how your partner sees things.",
+        "zh": "一段关系也许正处于悬而未决的状态，既不前进也没有结束。与其急着要答案，不如借这段停顿弄清自己真正想要什么，也试着站在对方的角度看一看。"
+      },
+      "work": {
+        "en": "A project or decision is on hold, and that delay may be quietly useful. Step back from the details and question the assumptions everyone has stopped noticing.",
+        "zh": "某个项目或决定暂时搁置，这段延迟也许正悄悄发挥作用。从细节里抽身，去质疑那些大家早已习以为常的前提。"
+      },
+      "growth": {
+        "en": "Surrender here is not giving up; it is releasing the need to control every outcome. Meditation, journaling or simply doing nothing on purpose can open a new angle.",
+        "zh": "这里的臣服不是认输，而是放下掌控一切结果的执念。冥想、写日记，或刻意什么都不做，都可能为你打开一个新角度。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Stalling", "Resistance", "Indecision", "Restlessness"],
+        "zh": ["停滞", "抗拒", "犹豫不决", "焦躁"]
+      },
+      "meaning": {
+        "en": "Reversed, The Hanged Man suggests a pause that has outstayed its purpose, or one you keep fighting. You may be waiting for a perfect moment, sacrificing too much without return, or resisting the shift in perspective that would free you. Notice where waiting has quietly become avoidance.",
+        "zh": "逆位的倒吊人暗示这段停顿已经拖得太久，或者你一直在和它较劲。你也许在等待一个完美时机，也许付出了太多却没有回报，又或者在抗拒那个能让你解脱的新视角。留意一下，等待是否已悄悄变成了逃避。"
+      },
+      "advice": {
+        "en": "Set a gentle deadline for the decision you keep postponing, and take one small step before it arrives.",
+        "zh": "给那个一拖再拖的决定定一个温和的期限，并在期限到来前先迈出一小步。"
+      },
+      "love": {
+        "en": "You might be giving endlessly while waiting for someone to change, or staying stuck out of fear of choosing. Ask yourself whether this patience is still love or has become self-erasure.",
+        "zh": "你也许一直在付出，等着对方改变，或者因为害怕做选择而原地不动。问问自己，这份耐心还是爱，还是已经变成了对自我的消磨。"
+      },
+      "work": {
+        "en": "Delays may be frustrating you, yet pushing harder keeps producing the same result. Try a completely different approach rather than repeating what has already stalled.",
+        "zh": "接连的延误也许让你焦躁，但越用力，结果越是一样。与其重复已经卡住的做法，不如换一种完全不同的思路。"
+      },
+      "growth": {
+        "en": "If you feel restless and stuck, the lesson may be to stop martyring yourself. Release the role of the one who always waits, and let yourself move.",
+        "zh": "如果你感到焦躁又困顿，功课也许是停止自我牺牲。放下那个永远在等待的角色，允许自己动起来。"
+      }
+    }
+  },
+  {
+    "id": "major-13",
+    "arcana": "major",
+    "suit": null,
+    "number": 13,
+    "name": { "en": "Death", "zh": "死神" },
+    "description": {
+      "en": "A skeleton in black armor rides a white horse, carrying a black banner marked with a white rose. Before it a king lies fallen while a bishop, a maiden and a child react, and on the far horizon a sun rises between two towers.",
+      "zh": "一具身披黑色铠甲的骷髅骑着白马，手持绣有白玫瑰的黑色旗帜。马前一位国王倒在地上，主教、少女和孩童各有反应；远方地平线上，一轮太阳正从两座塔楼之间升起。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Endings", "Transformation", "Release", "Renewal"],
+        "zh": ["终结", "蜕变", "释放", "新生"]
+      },
+      "meaning": {
+        "en": "Death is the card of endings that make room for something new, not of literal loss. A chapter, habit or identity has run its course, and clinging to it only prolongs the ache. When you let it close with respect, the space it leaves becomes fertile ground for renewal.",
+        "zh": "死神牌讲的是为新事物腾出空间的结束，而不是字面意义上的失去。某个阶段、某种习惯或某个身份已经走到尽头，紧抓不放只会让难受拖得更久。当你带着敬意让它落幕，它留下的空白就会成为重生的沃土。"
+      },
+      "advice": {
+        "en": "Identify one thing you have outgrown and give it a deliberate, respectful goodbye.",
+        "zh": "找出一件你已经超越的事物，郑重而体面地和它告别。"
+      },
+      "love": {
+        "en": "An old pattern in how you love, or a relationship in its current form, is coming to a natural close. Whether you stay together or part, something must change for both of you to grow.",
+        "zh": "你在爱里的某种旧模式，或一段关系的现有形态，正在自然地走向尾声。无论你们继续还是分开，总有些东西必须改变，双方才能成长。"
+      },
+      "work": {
+        "en": "A role, project or way of working is ending to make space for what fits you now. Let the transition happen instead of propping up something that has already finished.",
+        "zh": "某个职位、项目或工作方式正在结束，为更适合现在的你腾出位置。让转变自然发生，不要硬撑一件已经完成使命的事。"
+      },
+      "growth": {
+        "en": "You are shedding an old skin. Grieve what you are leaving if you need to, then turn toward the version of yourself that is waiting to emerge.",
+        "zh": "你正在蜕去一层旧皮。如果需要，就为告别的东西难过一会儿，然后转身迎向那个正等待破茧而出的自己。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Resisting change", "Stagnation", "Lingering", "Slow transition"],
+        "zh": ["抗拒改变", "停滞", "恋恋不舍", "缓慢过渡"]
+      },
+      "meaning": {
+        "en": "Reversed, Death shows a transformation you are holding back. Fear of the unknown may keep you tied to something that has already ended, leaving you in a limbo that feels heavier than change itself. The shift is still coming; the question is whether you meet it or keep postponing it.",
+        "zh": "逆位的死神表示一场蜕变被你按住了。对未知的恐惧，可能让你继续拴在一件早已结束的事情上，困在一种比改变本身更沉重的悬置状态里。转变终究会来，关键在于你是迎上去，还是一再推迟。"
+      },
+      "advice": {
+        "en": "Loosen your grip on one small thing this week to practice trusting what comes after an ending.",
+        "zh": "这周试着松开一件小事，练习信任结束之后会到来的东西。"
+      },
+      "love": {
+        "en": "You may be holding on to a dynamic, or a memory of someone, long after it stopped nourishing you. Honest reflection about what is truly alive between you can free you both.",
+        "zh": "某种相处模式或对某个人的回忆，也许早已不再滋养你，你却还抓着不放。诚实地看看你们之间还有什么是真正鲜活的，这能让双方都得到释放。"
+      },
+      "work": {
+        "en": "Staying in a familiar role out of fear may be costing you energy and enthusiasm. Explore what change could look like, even if you take it slowly.",
+        "zh": "出于害怕而守在熟悉的位置上，也许正在消耗你的精力与热情。哪怕慢慢来，也去探索一下改变可能是什么样子。"
+      },
+      "growth": {
+        "en": "Old habits are trying to survive past their season. Be patient but honest with yourself: what are you afraid you will lose if you let go?",
+        "zh": "一些旧习惯正试图撑过它们的季节。对自己耐心，也对自己诚实：如果放手，你害怕失去的究竟是什么？"
+      }
+    }
+  },
+  {
+    "id": "major-14",
+    "arcana": "major",
+    "suit": null,
+    "number": 14,
+    "name": { "en": "Temperance", "zh": "节制" },
+    "description": {
+      "en": "A winged angel in a white robe stands with one foot on land and one in a pool, pouring water between two golden cups. A path winds from the water toward distant mountains where a soft light glows, and yellow irises bloom nearby.",
+      "zh": "一位身着白袍、展开双翼的天使一脚踏在岸上，一脚踩在水中，正将水在两只金杯之间来回倾倒。一条小路从水边蜿蜒通向远山，山间泛着柔光，近旁开着黄色的鸢尾花。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Balance", "Moderation", "Patience", "Harmony"],
+        "zh": ["平衡", "节制", "耐心", "调和"]
+      },
+      "meaning": {
+        "en": "Temperance is the art of blending opposites into something steady and whole. Rather than swinging between extremes, you are invited to find the middle path and let things develop at their natural pace. Small, consistent adjustments are quietly creating a calm that will last.",
+        "zh": "节制是一门把对立面融合成稳定整体的艺术。与其在两个极端之间来回摇摆，不如找到中间的那条路，让事情按自己的节奏慢慢成形。那些细小而持续的调整，正在悄悄酝酿一份长久的平静。"
+      },
+      "advice": {
+        "en": "Pick one area where you tend to overdo or underdo things, and aim for a steady middle amount this week.",
+        "zh": "挑一个你容易过度或不足的方面，这周试着保持一个稳定适中的量。"
+      },
+      "love": {
+        "en": "Love grows through patience and mutual adjustment now. Meeting each other halfway, and letting your different rhythms blend, creates a connection that feels easy and safe.",
+        "zh": "此刻的爱在耐心和彼此调适中生长。各退一步、让不同的节奏融合在一起，会带来一份轻松又安心的联结。"
+      },
+      "work": {
+        "en": "Collaboration and a measured pace serve you better than a dramatic push. Combine different skills or viewpoints, and trust that steady progress will add up.",
+        "zh": "合作与稳健的节奏比猛冲一把更有用。把不同的技能或观点结合起来，相信稳定的进展终会积少成多。"
+      },
+      "growth": {
+        "en": "Your growth comes from integrating parts of yourself that seem to pull in different directions. Gentle routines that restore your sense of center are especially powerful now.",
+        "zh": "你的成长来自整合那些看似朝不同方向拉扯的自我。能帮你找回重心的温和日常习惯，此刻格外有力量。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Excess", "Imbalance", "Impatience", "Discord"],
+        "zh": ["过度", "失调", "急躁", "不和"]
+      },
+      "meaning": {
+        "en": "Reversed, Temperance signals that something in your life has fallen out of proportion. You may be overcommitting, rushing results, or swinging between all and nothing. This is a cue to step back, notice where the mix has gone wrong, and gently recalibrate before frustration builds.",
+        "zh": "逆位的节制提醒你，生活中的某个部分已经失了分寸。你可能承诺得太多、急于求成，或者在全力以赴和彻底放弃之间来回摆荡。这是一个信号：退后一步，看看配比在哪里出了问题，趁挫败感堆积之前温柔地重新校准。"
+      },
+      "advice": {
+        "en": "Remove one commitment or habit that tips you into excess, and notice how your energy changes.",
+        "zh": "去掉一项让你失衡过度的承诺或习惯，留意自己的精力会有什么变化。"
+      },
+      "love": {
+        "en": "Clashing needs or mismatched rhythms may be creating friction. Instead of pushing for your way, look for the blend that honors both of you.",
+        "zh": "需求的冲突或节奏的错位，可能正在制造摩擦。与其坚持按自己的方式来，不如寻找一种能同时照顾到双方的调和。"
+      },
+      "work": {
+        "en": "You might be juggling too much or forcing a timeline that does not fit. Rebalancing priorities will do more than working longer hours.",
+        "zh": "你可能同时揽下了太多事，或在硬套一个不合适的时间表。重新梳理优先级，比加班加点更有效。"
+      },
+      "growth": {
+        "en": "Look honestly at where you seek quick relief instead of lasting balance. Healing comes through moderation and patience, not dramatic fixes.",
+        "zh": "诚实地看看，你在哪些地方追求的是一时的解脱，而非长久的平衡。疗愈来自适度与耐心，而不是猛烈的改变。"
+      }
+    }
+  },
+  {
+    "id": "major-15",
+    "arcana": "major",
+    "suit": null,
+    "number": 15,
+    "name": { "en": "The Devil", "zh": "恶魔" },
+    "description": {
+      "en": "A horned, bat-winged figure crouches on a dark pedestal, one hand raised and the other holding a downturned torch, with an inverted pentagram above its head. Below, a naked man and woman with small horns and tails stand loosely chained to the pedestal.",
+      "zh": "一个长着犄角和蝙蝠翅膀的身影蹲踞在黑色台座上，一手高举，一手握着朝下的火把，头顶悬着倒立的五芒星。台座下，一男一女赤身而立，头上长出小角、身后拖着尾巴，脖子上松松地套着锁链。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Attachment", "Temptation", "Shadow self", "Restriction"],
+        "zh": ["执念", "诱惑", "阴影自我", "束缚"]
+      },
+      "meaning": {
+        "en": "The Devil reveals the ties that hold you more tightly than you realize: a habit, a craving, a fear or a dynamic you keep returning to. Notice that the chains in the image are loose. Seeing the pattern clearly, without shame, is the first step toward lifting it off.",
+        "zh": "恶魔牌揭示了那些比你以为的更紧地捆住你的东西：一个习惯、一种渴求、一份恐惧，或一段你总是重复陷入的相处模式。留意画面中的锁链其实很松。不带羞耻地看清这个模式，就是把它摘下来的第一步。"
+      },
+      "advice": {
+        "en": "Name one pattern that leaves you feeling drained or small, and observe without judgment what it gives you in return.",
+        "zh": "说出一个让你感到被消耗或变得渺小的模式，不加评判地观察它给了你什么作为交换。"
+      },
+      "love": {
+        "en": "Intense attraction or a familiar pull may be mixed with jealousy, control or dependence. Ask whether this bond makes you freer or smaller, and be honest about the answer.",
+        "zh": "强烈的吸引或熟悉的牵引，可能夹杂着嫉妒、控制或依赖。问问自己，这段关系让你更自由还是更渺小，并诚实面对答案。"
+      },
+      "work": {
+        "en": "You may feel tied to a role by comfort, status or the fear of starting over. Recognizing what truly keeps you there gives you back a sense of choice.",
+        "zh": "你可能被安逸、身份地位或从头再来的恐惧拴在某个位置上。看清真正让你留下的是什么，就能找回选择的感觉。"
+      },
+      "growth": {
+        "en": "Your shadow side is asking to be seen, not punished. Meeting your cravings and fears with curiosity weakens their hold on you.",
+        "zh": "你的阴影面要的是被看见，而不是被惩罚。用好奇心去面对自己的渴望与恐惧，它们对你的控制就会减弱。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Breaking free", "Awareness", "Detachment", "Reclaiming power"],
+        "zh": ["挣脱", "觉察", "抽离", "找回力量"]
+      },
+      "meaning": {
+        "en": "Reversed, The Devil often marks the moment you start slipping out of the chains. You are noticing what has been controlling you and finding the will to step away. Progress may be uneven, and old temptations may test you, but the balance of power is shifting back toward you.",
+        "zh": "逆位的恶魔常常标志着你开始从锁链中挣脱的时刻。你正在察觉一直控制着你的是什么，也找到了离开的意志。过程或许反反复复，旧的诱惑也可能来试探你，但主动权正在一点点回到你手中。"
+      },
+      "advice": {
+        "en": "Celebrate each small act of freedom, and set up one practical boundary that makes slipping back harder.",
+        "zh": "为每一次小小的自主庆祝一下，再设一条实际的界线，让自己不那么容易滑回旧路。"
+      },
+      "love": {
+        "en": "You may be stepping away from a controlling dynamic or a pattern of dependence. Give yourself room to define what healthy closeness feels like on your own terms.",
+        "zh": "你也许正在远离一段带有控制感的关系或依赖的模式。给自己一些空间，用自己的方式去定义健康的亲密是什么样子。"
+      },
+      "work": {
+        "en": "You are seeing through the pressures that kept you overworking or people-pleasing. Reclaiming even a little autonomy can restore your motivation.",
+        "zh": "你正在看穿那些让你过度工作或一味讨好的压力。哪怕只拿回一点自主权，也能让你重新找回动力。"
+      },
+      "growth": {
+        "en": "Awareness is loosening an old grip. If a familiar pattern resurfaces, treat it as a reminder of how far you have come rather than a failure.",
+        "zh": "觉察正在松开一只旧日的手。如果熟悉的模式再次出现，把它当作提醒你已走了多远的标记，而不是一次失败。"
+      }
+    }
+  },
+  {
+    "id": "major-16",
+    "arcana": "major",
+    "suit": null,
+    "number": 16,
+    "name": { "en": "The Tower", "zh": "高塔" },
+    "description": {
+      "en": "A bolt of lightning strikes a tall stone tower perched on a rocky peak, knocking off its crown-shaped top. Flames burst from the windows as two figures tumble headfirst through a dark sky scattered with falling sparks.",
+      "zh": "一道闪电劈中矗立在嶙峋山巅的高塔，把塔顶的王冠击落。火焰从窗口喷涌而出，两个人头朝下坠入漆黑的夜空，周围飘落着点点火星。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Sudden change", "Revelation", "Breakthrough", "Liberation"],
+        "zh": ["骤变", "揭示", "突破", "解放"]
+      },
+      "meaning": {
+        "en": "The Tower brings a sudden shake-up that clears away what was built on shaky ground. It can feel jarring, yet what falls was never as solid as it looked. In the space it leaves, a truth is revealed, and you gain the chance to rebuild on honest foundations.",
+        "zh": "高塔带来一场突如其来的震荡，把建在不稳地基上的东西一扫而空。这也许让人措手不及，但倒下的本来就没有看上去那么牢固。在它留下的空地上，真相浮出水面，你也得到了在真实地基上重建的机会。"
+      },
+      "advice": {
+        "en": "When something shifts unexpectedly, pause and ask what truth it is showing you before you rush to rebuild.",
+        "zh": "当事情出乎意料地变动时，先停下来问问它让你看见了什么真相，再着手重建。"
+      },
+      "love": {
+        "en": "A sudden revelation or honest conversation may shake up your love life. Though uncomfortable, it clears away illusions so something more genuine can take shape.",
+        "zh": "一次突如其来的发现或坦诚的对话，可能会撼动你的感情。虽然不好受，但它扫除了幻象，让更真实的东西得以成形。"
+      },
+      "work": {
+        "en": "An unexpected change in plans, structure or direction may disrupt your routine. Stay flexible; this shake-up can reveal what was not working and open a better path.",
+        "zh": "计划、架构或方向上的意外变化，可能会打乱你的节奏。保持灵活，这次震荡能暴露出原本行不通的地方，并开出一条更好的路。"
+      },
+      "growth": {
+        "en": "A belief you held about yourself or the world is cracking open. Let it, because the insight on the other side is a breakthrough, not a breakdown.",
+        "zh": "你对自己或世界的某个信念正在裂开。让它裂吧，因为另一边等着你的是突破，而不是崩溃。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Avoided upheaval", "Inner shift", "Delayed change", "Fear of collapse"],
+        "zh": ["回避动荡", "内在转变", "迟来变革", "害怕崩塌"]
+      },
+      "meaning": {
+        "en": "Reversed, The Tower suggests an upheaval happening inwardly, or one you are trying hard to prevent. You may sense cracks but keep patching them, delaying a change that wants to come. Sometimes the gentlest path is to let the outdated structure come down on your own terms.",
+        "zh": "逆位的高塔暗示一场正在内心发生的动荡，或是一场你极力阻止的变故。你或许已经察觉到裂缝，却一直在修修补补，把注定要来的改变往后推。有时候，最温和的方式是主动让那座过时的建筑按你的节奏倒下。"
+      },
+      "advice": {
+        "en": "Look at the crack you keep patching and ask what would happen if you chose to change it deliberately.",
+        "zh": "看看那道你一直在修补的裂缝，问问自己：如果主动去改变它，会发生什么？"
+      },
+      "love": {
+        "en": "Tension you have been smoothing over may be building beneath the surface. Addressing it gently now can prevent a bigger rupture later.",
+        "zh": "你一直在抚平的矛盾，可能正在表面之下累积。现在温和地把它摊开来谈，可以避免日后更大的裂痕。"
+      },
+      "work": {
+        "en": "You might be holding together a plan or structure that no longer serves you or your team. Proactive change will feel easier than waiting for it to give way.",
+        "zh": "你也许在勉力维持一个已经不再适合你或团队的计划或架构。主动做出调整，会比等着它自行垮掉轻松得多。"
+      },
+      "growth": {
+        "en": "A powerful inner awakening is unfolding quietly. Let your old certainties fall at a pace you can handle, and be kind to yourself through the process.",
+        "zh": "一场有力的内在觉醒正在悄然展开。让旧有的确定感以你能承受的速度瓦解，并在这个过程中善待自己。"
+      }
+    }
+  },
+  {
+    "id": "major-17",
+    "arcana": "major",
+    "suit": null,
+    "number": 17,
+    "name": { "en": "The Star", "zh": "星星" },
+    "description": {
+      "en": "Beneath a night sky with one large eight-pointed star and seven smaller ones, a naked woman kneels at the edge of a pool. She pours water from one jug into the pool and from another onto the land, while a bird perches in a tree behind her.",
+      "zh": "夜空中闪耀着一颗巨大的八角星和七颗小星，一位赤裸的女子跪在水池边。她一手将罐中的水倒入池里，一手将另一罐水洒向大地，身后的树上栖着一只鸟。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Hope", "Healing", "Inspiration", "Serenity"],
+        "zh": ["希望", "疗愈", "灵感", "宁静"]
+      },
+      "meaning": {
+        "en": "The Star arrives like clear night air after a storm. You are being reminded that you can heal, that your hopes are worth holding, and that you are guided by something larger than your fears. Let yourself rest, open up, and trust that the way forward will become clearer.",
+        "zh": "星星像暴风雨过后清澈的夜空。它提醒你：你有能力疗愈，你的希望值得守护，而指引你的力量远比恐惧更大。允许自己休息、敞开心扉，相信前方的路会慢慢清晰起来。"
+      },
+      "advice": {
+        "en": "Write down one hope you have been afraid to say out loud, and do one tiny thing this week that honors it.",
+        "zh": "写下一个你一直不敢说出口的愿望，这周为它做一件小小的事。"
+      },
+      "love": {
+        "en": "Love feels tender and sincere, with room for vulnerability and genuine connection. If you are healing from the past, this card signals that your heart is opening again.",
+        "zh": "此刻的爱温柔而真诚，有展露脆弱的空间，也有真正的联结。如果你正从过去的伤中复原，这张牌意味着你的心正在重新打开。"
+      },
+      "work": {
+        "en": "Inspiration and a sense of purpose are returning. Share your vision openly, because your authentic ideas have the power to move others.",
+        "zh": "灵感和使命感正在回归。大方地分享你的愿景，因为你真诚的想法有打动他人的力量。"
+      },
+      "growth": {
+        "en": "This is a season of quiet restoration and spiritual renewal. Practices that make you feel calm and connected, like time outdoors or creative play, refill your inner well.",
+        "zh": "这是一段安静修复、心灵复苏的时光。那些让你平静而有联结感的事，比如到户外走走或自由地创作，都能重新注满你内心的泉水。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Discouragement", "Disconnection", "Self-doubt", "Faded hope"],
+        "zh": ["气馁", "疏离", "自我怀疑", "希望黯淡"]
+      },
+      "meaning": {
+        "en": "Reversed, The Star suggests your light has dimmed for a while. You may feel discouraged, disconnected from your purpose, or doubtful that things can improve. The hope has not disappeared; it is waiting for you to tend it with small acts of care and reconnection.",
+        "zh": "逆位的星星暗示你的光芒暂时黯淡了。你可能感到气馁，与自己的目标失去联结，或怀疑事情还能不能变好。希望并没有消失，它在等你用一些细小的关怀和重新联结，把它慢慢照料回来。"
+      },
+      "advice": {
+        "en": "Do one small thing today that once brought you joy, without asking it to fix everything.",
+        "zh": "今天做一件曾经让你快乐的小事，不必指望它解决所有问题。"
+      },
+      "love": {
+        "en": "Past hurts may be making it hard to trust or open up. Be patient with your heart, and let small, steady signs of care rebuild your faith in love.",
+        "zh": "过去的伤痛可能让你难以信任或敞开心扉。对自己的心多一点耐心，让那些细小而稳定的关心，慢慢重建你对爱的信心。"
+      },
+      "work": {
+        "en": "Your motivation may feel low, or you may doubt whether your efforts matter. Reconnect with why you started, and seek out people who reignite your enthusiasm.",
+        "zh": "你的动力可能有些低落，或者怀疑自己的努力是否有意义。回想一下当初为什么出发，多接近那些能重新点燃你热情的人。"
+      },
+      "growth": {
+        "en": "Self-doubt is clouding your view of your own worth. Gentle self-kindness and reaching out for support can help your inner light return.",
+        "zh": "自我怀疑正遮蔽你对自身价值的看见。温柔地善待自己，并向身边的人寻求支持，能帮你内在的光重新亮起来。"
+      }
+    }
+  },
+  {
+    "id": "major-18",
+    "arcana": "major",
+    "suit": null,
+    "number": 18,
+    "name": { "en": "The Moon", "zh": "月亮" },
+    "description": {
+      "en": "A moon with a face glows above a winding path that runs between two towers toward distant hills. A dog and a wolf howl up at it, while a crayfish crawls out of a pool in the foreground.",
+      "zh": "一轮带着人脸的月亮悬在夜空，下方一条蜿蜒的小路从两座塔楼之间穿过，伸向远方的山丘。一只狗和一匹狼对着月亮嚎叫，前景的水池里，一只小龙虾正爬上岸来。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Intuition", "Uncertainty", "Dreams", "Hidden fears"],
+        "zh": ["直觉", "迷惘", "梦境", "隐忧"]
+      },
+      "meaning": {
+        "en": "The Moon lights the path only partially, so things may look stranger or scarier than they are. Feelings, dreams and old fears rise to the surface, blurring what is real. Instead of forcing certainty, move slowly, listen to your intuition, and let clarity come in its own time.",
+        "zh": "月光只照亮了小路的一部分，所以眼前的事物可能显得比实际更奇怪、更吓人。情绪、梦境和旧日的恐惧纷纷浮上水面，模糊了真实的边界。与其强求确定，不如放慢脚步，倾听直觉，让答案在合适的时候自己显现。"
+      },
+      "advice": {
+        "en": "Before reacting to a vague worry, separate what you actually know from what you are imagining.",
+        "zh": "在对一个模糊的担忧做出反应之前，先把你确实知道的和你想象出来的分开。"
+      },
+      "love": {
+        "en": "Mixed signals or unspoken feelings may be creating confusion. Trust your intuition, but check your assumptions gently before drawing conclusions.",
+        "zh": "暧昧的信号或没说出口的感受，可能正在制造困惑。相信你的直觉，但在下结论之前，温和地核实一下自己的猜测。"
+      },
+      "work": {
+        "en": "Not all the information is available yet, and things may not be what they seem. Proceed carefully, ask clarifying questions, and hold off on commitments you do not fully understand.",
+        "zh": "信息还没有完全浮现，事情也未必如表面所见。谨慎前行，多问几个澄清的问题，对尚未完全理解的事情先别急着答应。"
+      },
+      "growth": {
+        "en": "Your subconscious is speaking through dreams, moods and symbols. Journaling or creative expression can help you understand what is stirring beneath the surface.",
+        "zh": "你的潜意识正通过梦境、情绪和象征向你说话。写日记或用创作来表达，能帮你理解水面之下正在翻涌的东西。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Clarity returning", "Released fear", "Truth surfacing", "Inner confusion"],
+        "zh": ["渐趋明朗", "释放恐惧", "真相浮现", "内心困惑"]
+      },
+      "meaning": {
+        "en": "Reversed, The Moon suggests the fog is beginning to lift, though some confusion may linger inside. Fears that once loomed large are losing their grip, and hidden truths may come to light. Stay honest with yourself as you sort illusion from reality, and avoid suppressing what your intuition is telling you.",
+        "zh": "逆位的月亮表示迷雾开始散去，尽管内心或许还残留着些许困惑。曾经显得巨大的恐惧正在失去力量，被隐藏的真相也可能浮出水面。在分辨幻象与现实的过程中，对自己保持诚实，别压下直觉想告诉你的东西。"
+      },
+      "advice": {
+        "en": "Name one fear out loud or on paper, and notice how much smaller it looks once it is seen.",
+        "zh": "把一个恐惧说出来或写在纸上，留意它被看见之后变小了多少。"
+      },
+      "love": {
+        "en": "Misunderstandings may start to clear as feelings come into the open. If something felt off, a calm, honest conversation can now bring relief.",
+        "zh": "随着感受被摊开，误会可能开始消散。如果之前有什么让你觉得不对劲，现在一次平静而坦诚的谈话就能带来释然。"
+      },
+      "work": {
+        "en": "Confusing details are falling into place, and you can see the situation more clearly. Use this clarity to revisit decisions you made while things were murky.",
+        "zh": "那些令人困惑的细节正逐渐归位，你能更清楚地看清局面。借这份清晰，重新审视在混沌时期做出的决定。"
+      },
+      "growth": {
+        "en": "You are learning to tell the difference between intuition and anxiety. Honor your inner voice, and release the stories fear has been telling you.",
+        "zh": "你正在学着分辨直觉与焦虑的不同。尊重内心的声音，放下恐惧一直在讲给你听的那些故事。"
+      }
+    }
+  },
+  {
+    "id": "major-19",
+    "arcana": "major",
+    "suit": null,
+    "number": 19,
+    "name": { "en": "The Sun", "zh": "太阳" },
+    "description": {
+      "en": "A radiant sun with a face shines over a smiling, naked child riding a white horse and holding a large red banner. Behind a low stone wall, tall sunflowers turn toward the light.",
+      "zh": "一轮带着人脸的太阳光芒四射，下方一个赤身微笑的孩童骑在白马上，手中举着一面宽大的红色旗帜。身后低矮的石墙上方，高高的向日葵朝着阳光绽放。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Joy", "Vitality", "Success", "Confidence"],
+        "zh": ["喜悦", "活力", "成功", "自信"]
+      },
+      "meaning": {
+        "en": "The Sun is pure warmth and openness, the most cheerful card in the deck. Things are coming into the light: your efforts show results, your relationships feel easy, and you feel at home in yourself. Let yourself enjoy it fully and share the brightness with the people around you.",
+        "zh": "太阳是整副牌里最明媚的一张，充满温暖与坦荡。一切正走到阳光下：你的努力开始见效，人际关系轻松自在，你也能安然地做自己。尽情享受这份美好，并把这份光亮分享给身边的人。"
+      },
+      "advice": {
+        "en": "Say yes to something that makes you feel playful and alive, and let others see you enjoying it.",
+        "zh": "答应一件让你觉得好玩又充满活力的事，并大方地让别人看到你乐在其中。"
+      },
+      "love": {
+        "en": "Love feels warm, honest and light-hearted. Whether single or partnered, your natural openness makes it easy for others to feel close to you.",
+        "zh": "此刻的爱温暖、坦诚又轻快。无论单身还是有伴，你自然流露的真诚都让别人很容易亲近你。"
+      },
+      "work": {
+        "en": "Your efforts are being noticed, and confidence comes easily. This is a good time to step forward, share your achievements and take on visible roles.",
+        "zh": "你的努力正在被看见，自信也来得自然。这是向前一步、展示成果、承担更受瞩目角色的好时机。"
+      },
+      "growth": {
+        "en": "You are reconnecting with your inner child and natural sense of wonder. Let joy be a guide, not a reward you have to earn.",
+        "zh": "你正在重新连接内在的小孩和与生俱来的好奇心。让快乐成为指引，而不是一份必须挣来的奖赏。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Dimmed joy", "Overconfidence", "Delayed success", "Hidden inner child"],
+        "zh": ["喜悦黯淡", "过度自信", "成功延迟", "童心受抑"]
+      },
+      "meaning": {
+        "en": "Reversed, The Sun is still shining, just behind some clouds. Your joy may feel muted, success may be slower than hoped, or you may be overestimating how smoothly things are going. Look for the simple pleasures available now, and stay realistic without losing your optimism.",
+        "zh": "逆位的太阳依然在发光，只是被云层挡住了一些。你的喜悦可能有些低沉，成功来得比预期慢，或者你高估了事情的顺利程度。去寻找眼下就能拥有的简单快乐，保持务实，也别丢掉乐观。"
+      },
+      "advice": {
+        "en": "Spend a few minutes outside or doing something purely for fun, and let that small warmth reset your mood.",
+        "zh": "花几分钟到户外走走，或者做一件纯粹为了好玩的事，让这点小小的温暖帮你调整心情。"
+      },
+      "love": {
+        "en": "Small clouds such as stress or unspoken expectations may be dimming the warmth between you. Bring back lightness through shared fun and honest appreciation.",
+        "zh": "压力或没说出口的期待，像小片的云遮住了你们之间的温度。用一起玩乐和真诚的欣赏，把轻松感找回来。"
+      },
+      "work": {
+        "en": "Progress may be slower than you want, or you might be overpromising. Celebrate what is working while being honest about what still needs effort.",
+        "zh": "进展可能比你希望的慢，或者你承诺得有点多。为已经奏效的部分庆祝，同时坦诚面对仍需努力的地方。"
+      },
+      "growth": {
+        "en": "You may be hiding your playful side or waiting to feel happy until conditions are perfect. Let your inner child out, even in small, imperfect moments.",
+        "zh": "你也许把自己顽皮的一面藏了起来，或者非要等到条件完美才肯快乐。哪怕只是一些微小、不完美的时刻，也让内在的小孩出来透透气。"
+      }
+    }
+  },
+  {
+    "id": "major-20",
+    "arcana": "major",
+    "suit": null,
+    "number": 20,
+    "name": { "en": "Judgement", "zh": "审判" },
+    "description": {
+      "en": "An angel bursts from the clouds blowing a trumpet hung with a cross-marked banner. Below, men, women and children rise from open coffins floating on water, lifting their arms toward the call.",
+      "zh": "一位天使从云层中现身，吹响一支挂着十字旗帜的号角。下方，男人、女人和孩子们从漂浮在水面的敞开棺木中起身，向着号声高举双臂。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Awakening", "Calling", "Self-evaluation", "Fresh start"],
+        "zh": ["觉醒", "召唤", "自我审视", "重新出发"]
+      },
+      "meaning": {
+        "en": "Judgement sounds a wake-up call that asks you to rise into a fuller version of yourself. Looking back with honesty and compassion, you can see how far you have come and what you are truly called to do. Answer that call, forgive the past, and step into your next chapter.",
+        "zh": "审判吹响了一声唤醒的号角，邀请你成为更完整的自己。带着诚实与慈悲回望过去，你会看见自己已经走了多远，也会明白内心真正的召唤是什么。回应它，与过去和解，然后走进人生的下一个篇章。"
+      },
+      "advice": {
+        "en": "Reflect on a lesson from the past year, then make one decision that reflects the person you have become.",
+        "zh": "回顾过去一年学到的一课，然后做一个能体现如今的你的决定。"
+      },
+      "love": {
+        "en": "You may see a relationship, or your own patterns in love, with fresh clarity. Honest reflection now can lead to forgiveness, renewal, or a clear decision about what comes next.",
+        "zh": "你可能会以全新的清醒看待一段关系，或自己在爱中的模式。此刻诚实的反思，可能带来原谅、重燃，或对未来的明确决定。"
+      },
+      "work": {
+        "en": "A sense of vocation is calling you toward work that feels more meaningful. Evaluate your path honestly and be ready to answer when an opportunity aligns with your purpose.",
+        "zh": "一种使命感正召唤你走向更有意义的工作。诚实地审视自己的道路，当机会与你的初心契合时，准备好去回应。"
+      },
+      "growth": {
+        "en": "This is a moment of spiritual awakening and self-acceptance. Release old guilt and let your past experiences become wisdom rather than weight.",
+        "zh": "这是心灵觉醒与自我接纳的时刻。放下旧日的愧疚，让过去的经历成为智慧，而不是负担。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Inner critic", "Ignored calling", "Hesitation", "Lingering regret"],
+        "zh": ["内在批判", "忽视召唤", "迟疑", "旧日悔憾"]
+      },
+      "meaning": {
+        "en": "Reversed, Judgement suggests you hear the call but hesitate to answer it. A harsh inner critic or lingering regret may be keeping you from moving on. Rather than judging yourself for the past, treat it as material for growth, and give yourself permission to begin again.",
+        "zh": "逆位的审判表示你听见了召唤，却迟迟不敢回应。严厉的内在批判或挥之不去的遗憾，可能让你难以向前。与其为过去审判自己，不如把它当作成长的养分，允许自己重新开始。"
+      },
+      "advice": {
+        "en": "Write yourself a short note of forgiveness for one past mistake, and read it whenever your inner critic gets loud.",
+        "zh": "为一个过去的错误给自己写一张简短的原谅字条，每当内心的批判声变大时，就拿出来读一读。"
+      },
+      "love": {
+        "en": "Old regrets or fear of repeating past mistakes may be holding you back in love. Learning from the past is wise, but living in it keeps your heart closed.",
+        "zh": "旧日的遗憾或害怕重蹈覆辙，可能让你在感情里畏缩不前。从过去中学习是智慧，但活在过去只会让心门紧闭。"
+      },
+      "work": {
+        "en": "You may be ignoring a strong pull toward different work, or doubting your readiness. Listen to what keeps resurfacing, and explore it through low-pressure experiments.",
+        "zh": "你也许在忽视一股想换个方向的强烈拉力，或怀疑自己是否准备好了。倾听那个一再浮现的声音，用一些没有压力的小尝试去探索它。"
+      },
+      "growth": {
+        "en": "Self-judgment is louder than self-understanding right now. Remember that the person who made those choices knew less than you do today, and let that softness open the way forward.",
+        "zh": "此刻，自我评判的声音盖过了自我理解。记住，当初做出那些选择的你，知道的远没有今天多；带着这份体谅，前方的路会慢慢打开。"
+      }
+    }
+  },
+  {
+    "id": "major-21",
+    "arcana": "major",
+    "suit": null,
+    "number": 21,
+    "name": { "en": "The World", "zh": "世界" },
+    "description": {
+      "en": "A dancing figure wrapped in a flowing purple sash holds a wand in each hand inside a large oval laurel wreath tied with red ribbons. In the four corners, the heads of an angel, an eagle, a bull and a lion look on from the clouds.",
+      "zh": "一位舞者身缠飘逸的紫色绸带，双手各握一根短杖，在一个系着红丝带的巨大椭圆形月桂花环中起舞。四个角落的云中，分别探出天使、老鹰、公牛和狮子的头像。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Completion", "Wholeness", "Achievement", "Celebration"],
+        "zh": ["圆满", "完整", "成就", "庆祝"]
+      },
+      "meaning": {
+        "en": "The World marks the satisfying close of a major cycle. Lessons have been learned, effort has borne fruit, and you feel a rare sense of wholeness and belonging. Take time to celebrate and honor the journey, knowing that this completion is also the doorway to your next adventure.",
+        "zh": "世界标志着一个重要循环圆满落幕。该学的功课已经学会，付出的努力也结出了果实，你感受到一种难得的完整与归属。花些时间庆祝、致敬这段旅程，要知道，这份圆满也是通往下一段冒险的大门。"
+      },
+      "advice": {
+        "en": "Mark a recent accomplishment with a small ritual of celebration before rushing into the next goal.",
+        "zh": "在奔向下一个目标之前，用一个小小的仪式庆祝一下最近的成就。"
+      },
+      "love": {
+        "en": "A relationship may reach a meaningful milestone, or you may feel deeply at peace with who you are in love. There is a sense of wholeness that does not depend on anyone completing you.",
+        "zh": "一段关系也许迎来有意义的里程碑，或者你在爱里与自己达成了深深的和解。这份完整感并不依赖任何人来补全你。"
+      },
+      "work": {
+        "en": "A project or chapter is reaching successful completion. Acknowledge what you have achieved, and consider how to carry this experience onto a broader stage.",
+        "zh": "某个项目或阶段正迎来圆满完成。肯定自己取得的成绩，也想想如何把这段经验带到更广阔的舞台上。"
+      },
+      "growth": {
+        "en": "You are integrating everything you have learned into a fuller sense of self. Pause to feel the peace of having grown, before the next cycle begins.",
+        "zh": "你正把一路所学融汇成更完整的自我。在新的循环开始之前，停下来感受一下成长带来的安宁。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Incompletion", "Loose ends", "Seeking closure", "Shortcuts"],
+        "zh": ["未竟", "遗留问题", "寻求了结", "抄捷径"]
+      },
+      "meaning": {
+        "en": "Reversed, The World suggests you are close to completion but something remains unfinished. Loose ends, unresolved feelings, or a reluctance to let one chapter close may be keeping you from full satisfaction. Rather than rushing ahead, tie up what is left so you can move on feeling truly whole.",
+        "zh": "逆位的世界表示你已接近终点，却还有些事没有完成。悬而未决的细节、没理清的情绪，或不愿让某个篇章落幕的心情，都可能让你无法真正感到满足。与其急着往前冲，不如先把剩下的收好尾，再带着完整的自己出发。"
+      },
+      "advice": {
+        "en": "List the loose ends of a chapter you want to close, and finish the smallest one first.",
+        "zh": "列出某个你想结束的阶段里还没收尾的事，先完成最小的那一件。"
+      },
+      "love": {
+        "en": "Unfinished emotional business may be keeping a relationship, or your heart, from feeling settled. Gentle closure, whether through conversation or reflection, allows you to move forward.",
+        "zh": "没有处理完的情感课题，可能让一段关系或你的心无法真正安定。通过一次对话或一段沉思温和地画上句号，你才能继续前行。"
+      },
+      "work": {
+        "en": "A goal may feel just out of reach, or you might be tempted to skip the final steps. Finishing thoroughly now will make your next move much stronger.",
+        "zh": "某个目标似乎近在咫尺却又够不着，或者你想跳过最后几步。现在踏实收尾，会让你的下一步走得更稳。"
+      },
+      "growth": {
+        "en": "You may sense that a lesson has not fully landed yet. Return to it with patience, because true completion comes from understanding, not just from crossing the finish line.",
+        "zh": "你也许感觉到某一课还没有真正学透。耐心地回头再看看，因为真正的圆满来自理解，而不只是冲过终点线。"
+      }
+    }
+  }
+]

@@ -1,0 +1,884 @@
+[
+  {
+    "id": "pentacles-01",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 1,
+    "name": { "en": "Ace of Pentacles", "zh": "星币王牌" },
+    "description": {
+      "en": "A hand reaches out of a cloud holding a large golden pentacle above a blooming garden. In the background, a hedge archway opens onto a path leading toward distant mountains.",
+      "zh": "一只手从云中伸出，托着一枚硕大的金色星币，下方是繁花盛开的花园。远处的树篱拱门敞开着，一条小路通向远山。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["New opportunity", "Tangible start", "Prosperity seed", "Grounding"],
+        "zh": ["新机会", "落地开端", "丰盛种子", "扎根"]
+      },
+      "meaning": {
+        "en": "A real, touchable opportunity is being placed in your hands, a seed of stability you can actually plant. This is the moment an idea starts to have weight: a project, a skill, a home, a steadier daily rhythm. Its promise is quiet, but it grows when you tend it patiently.",
+        "zh": "一个真实可触的机会正被放到你手中，像一颗等你亲手种下的种子。想法在这一刻开始有了分量：也许是一个项目、一门手艺、一个家，或一种更踏实的生活节奏。它的承诺很安静，但只要耐心照料，就会慢慢长大。"
+      },
+      "advice": {
+        "en": "Take one concrete step this week that turns your idea into something you can hold.",
+        "zh": "这周迈出一个具体的小步子，让想法变成可以握在手里的东西。"
+      },
+      "love": {
+        "en": "Affection shows up in practical, reliable ways, like a shared meal or a kept promise. A connection with real staying power may be starting, or an existing one is ready for firmer ground.",
+        "zh": "爱意通过实在的方式出现：一起吃的一顿饭，一个兑现了的承诺。一段经得起时间的关系可能正在开始，或者现有的感情准备好站上更坚实的地面。"
+      },
+      "work": {
+        "en": "A fresh opening, whether a role, a client, or a project, carries genuine potential. Treat it as a foundation to build on rather than a quick win.",
+        "zh": "一个新机会正在出现，可能是职位、客户或项目，它有真实的潜力。把它当作可以往上搭建的地基，而不是一次性的速胜。"
+      },
+      "growth": {
+        "en": "You're being invited back into your body and your everyday life. Growth right now looks like small, embodied habits that help you feel at home in yourself.",
+        "zh": "这张牌邀请你回到身体、回到日常。此刻的成长，就藏在那些让你更安心、更像自己的小习惯里。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Missed timing", "Hesitation", "Shaky footing", "Unplanted seed"],
+        "zh": ["错过时机", "犹豫不前", "根基不稳", "种子未播"]
+      },
+      "meaning": {
+        "en": "The opportunity is there, but something keeps it from taking root: doubt, awkward timing, or a plan that hasn't touched the ground yet. You may be waiting for a perfect moment that never arrives. This is a nudge to check whether your foundation is ready, not a sign the door has closed.",
+        "zh": "机会就在那里，却迟迟扎不下根：也许是怀疑，也许是时机不巧，也许计划还悬在半空。你可能在等一个永远不会出现的完美时刻。这并不代表门已经关上，而是提醒你先看看自己的地基是否稳固。"
+      },
+      "advice": {
+        "en": "Name the one practical thing holding your plan back, and address it before reaching for anything new.",
+        "zh": "找出拖住计划的那一个现实问题，先把它处理好，再去追求新的东西。"
+      },
+      "love": {
+        "en": "Good intentions may not be turning into consistent action, leaving one or both of you unsure where you stand. Ask what steadiness would actually look like between you.",
+        "zh": "心意或许是真的，却没有化作稳定的行动，让彼此都有点摸不清状况。问问自己：你们之间的踏实感，具体应该是什么样子？"
+      },
+      "work": {
+        "en": "A promising lead may stall or feel less solid than it first looked. Slow down, review the details, and make sure the ground is firm before committing more energy.",
+        "zh": "看起来不错的机会可能停滞，或者没有想象中那么可靠。放慢脚步，核对细节，确认地面结实了，再投入更多精力。"
+      },
+      "growth": {
+        "en": "You might be living mostly in your head, planning instead of doing. Reconnect with something physical, such as your hands, your space, or your senses, to get unstuck.",
+        "zh": "你可能太多时间待在脑子里，计划多于行动。用双手做点什么，整理一下房间，打开感官，让自己重新动起来。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-02",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 2,
+    "name": { "en": "Two of Pentacles", "zh": "星币二" },
+    "description": {
+      "en": "A young man in a tall hat dances as he juggles two pentacles linked by a looping, figure-eight ribbon. Behind him, two ships rise and fall on rolling waves.",
+      "zh": "一位戴着高帽的年轻人一边起舞，一边抛接两枚星币，一条绕成“∞”形的丝带把它们连在一起。他身后，两艘船在起伏的海浪上颠簸。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Balance", "Adaptability", "Juggling priorities", "Flow"],
+        "zh": ["平衡", "灵活应变", "多线并行", "顺势而为"]
+      },
+      "meaning": {
+        "en": "You're keeping several things in motion at once, and somehow it's working. This card celebrates rhythm over rigid control: the ability to shift your weight, adjust, and stay light on your feet as conditions change. The waves won't stop, but you're learning to move with them.",
+        "zh": "你同时让好几件事保持运转，而且居然还挺顺。这张牌看重的是节奏，而不是死板的掌控：随时调整重心，灵活应对，在变化中保持轻快的步伐。海浪不会停下，但你正在学会跟着它一起起伏。"
+      },
+      "advice": {
+        "en": "Pick the two things that matter most today and let the rest move to tomorrow without guilt.",
+        "zh": "今天只挑出最重要的两件事，其余的放心挪到明天。"
+      },
+      "love": {
+        "en": "Your relationships ask for flexibility right now, balancing time together with everything else on your plate. Playfulness will help more than perfect scheduling.",
+        "zh": "感情此刻需要一点弹性，要在相处时间和生活里的其他事情之间找到平衡。比起完美的时间表，一点轻松和玩心更管用。"
+      },
+      "work": {
+        "en": "Multiple tasks, deadlines, or roles are competing for your attention. You can handle it, as long as you keep checking what deserves priority each day.",
+        "zh": "好几项任务、截止日期或不同角色都在争夺你的注意力。你应付得来，只要每天重新确认一下什么最值得优先。"
+      },
+      "growth": {
+        "en": "You're discovering that stability isn't the same as stillness. Real steadiness comes from adjusting gracefully, not from freezing everything in place.",
+        "zh": "你正在发现，稳定并不等于静止。真正的安稳来自从容地调整，而不是把一切都定死。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Overcommitted", "Dropped balls", "Scattered energy", "Reprioritize"],
+        "zh": ["应接不暇", "顾此失彼", "精力分散", "重排优先"]
+      },
+      "meaning": {
+        "en": "The juggling act has become too much, and something is starting to slip. You may be saying yes to everything, or switching tasks so often that nothing gets your full attention. This isn't failure. It's a signal that your load needs to be lighter or better organized.",
+        "zh": "要同时抛接的东西太多了，有些已经开始往下掉。你可能对什么都说好，或者在任务之间频繁切换，结果没有一件事得到完整的专注。这不是失败，而是一个信号：你肩上的担子需要减轻，或者重新安排。"
+      },
+      "advice": {
+        "en": "Write down everything you're carrying, then choose one thing to pause, hand off, or decline.",
+        "zh": "把你手上扛着的事情全部写下来，然后挑一件暂停、交给别人，或者婉拒。"
+      },
+      "love": {
+        "en": "Someone close to you may feel they're getting only the leftovers of your energy. Being honest about your limits is kinder than stretching yourself thin.",
+        "zh": "身边的人可能觉得自己只分到了你剩下的一点精力。坦白说出你的极限，比硬撑着四处分身更体贴。"
+      },
+      "work": {
+        "en": "Overload is affecting the quality of your work or your sense of control. A clear conversation about scope or deadlines could restore a workable rhythm.",
+        "zh": "工作量过大，正在影响你的工作质量和掌控感。就工作范围或时间节点好好沟通一次，也许就能找回可行的节奏。"
+      },
+      "growth": {
+        "en": "Notice where you equate being busy with being valuable. Your worth doesn't depend on how many things you can keep in the air.",
+        "zh": "留意自己是不是把忙碌和价值画上了等号。你的价值，并不取决于你能同时抛接多少东西。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-03",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 3,
+    "name": { "en": "Three of Pentacles", "zh": "星币三" },
+    "description": {
+      "en": "Inside a cathedral, a stonemason stands on a bench carving an archway marked with three pentacles. A monk and a cloaked figure holding building plans stand beside him, discussing the work.",
+      "zh": "在一座教堂里，一位石匠站在长凳上雕刻拱门，拱门上刻着三枚星币。一位修士和一位手持设计图、身披斗篷的人站在一旁，与他商讨工程。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Collaboration", "Craftsmanship", "Shared vision", "Recognition"],
+        "zh": ["协作", "匠心", "共同愿景", "获得认可"]
+      },
+      "meaning": {
+        "en": "Good work is getting better because it's being shared. This card points to teamwork where each person brings a different strength, such as skill, vision, or resources, and respects what the others contribute. Your effort is being noticed, and what you're building together is sturdier than anything you'd make alone.",
+        "zh": "好作品正因为被共同打磨而变得更好。这张牌指向一种合作：有人出手艺，有人出构想，有人出资源，彼此尊重各自的贡献。你的努力正在被看见，你们一起搭建的东西，比任何一个人单打独斗都更牢固。"
+      },
+      "advice": {
+        "en": "Ask for feedback from someone whose skill you respect, and genuinely let it shape your next draft.",
+        "zh": "向一位你欣赏其能力的人请教意见，并真正让它影响你的下一版。"
+      },
+      "love": {
+        "en": "Your bond grows through building something together, whether a routine, a home, or a shared goal. Listening closely to each other's ideas makes it feel like a true partnership.",
+        "zh": "感情在共同建设中成长，可能是一种生活节奏、一个家，或一个共同的目标。认真倾听彼此的想法，会让这段关系更像真正的伙伴。"
+      },
+      "work": {
+        "en": "Collaboration is your advantage now. Clarify roles, share credit generously, and let each person's expertise do its part.",
+        "zh": "此刻，合作就是你的优势。把分工说清楚，大方地分享功劳，让每个人的专长都发挥作用。"
+      },
+      "growth": {
+        "en": "You're learning that mastery isn't a solo journey. Being teachable and being generous with what you know both deepen your craft.",
+        "zh": "你正在体会到，精进从来不是一个人的事。愿意受教，也乐于分享所知，都会让你的功夫更深。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Misalignment", "Poor teamwork", "Uncredited effort", "Cutting corners"],
+        "zh": ["方向不一", "配合失调", "无人认可", "敷衍了事"]
+      },
+      "meaning": {
+        "en": "The team isn't quite working as a team. Goals may be unclear, communication patchy, or someone's contribution overlooked, possibly yours. There can also be a temptation to rush the details. Getting everyone back to the same blueprint will save more time than pushing ahead in different directions.",
+        "zh": "团队还没真正拧成一股绳。目标可能不清楚，沟通断断续续，或者有人的付出被忽略了，说不定就是你的。也可能有人想在细节上偷工减料。让大家回到同一张蓝图上，比各自朝不同方向猛冲更省时间。"
+      },
+      "advice": {
+        "en": "Call a short check-in to agree on the goal, the roles, and what 'done well' actually means.",
+        "zh": "召集一次简短的沟通，对齐目标、分工，以及“做好”到底是什么标准。"
+      },
+      "love": {
+        "en": "You may be working toward different pictures of the future without realizing it. Talk openly about what each of you wants the relationship to become.",
+        "zh": "你们可能在不知不觉中朝着不同的未来图景努力。坦诚聊一聊，各自希望这段关系走向哪里。"
+      },
+      "work": {
+        "en": "Friction, unclear expectations, or unrecognized effort may be slowing a project down. Raise it directly and kindly rather than quietly carrying the extra weight.",
+        "zh": "摩擦、模糊的期待或不被认可的付出，可能正在拖慢项目。直接而友善地提出来，而不是默默多扛一份重担。"
+      },
+      "growth": {
+        "en": "Check whether you resist input because it feels like criticism. Your work can stay yours while still growing from other perspectives.",
+        "zh": "看看自己是否因为把建议当成批评而抗拒它。作品依然是你的，同时也可以从别人的视角中长出新的东西。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-04",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 4,
+    "name": { "en": "Four of Pentacles", "zh": "星币四" },
+    "description": {
+      "en": "A crowned figure sits on a low seat, hugging one pentacle tightly to his chest, with another balanced on his crown and two pinned beneath his feet. A city stretches out behind him.",
+      "zh": "一位戴王冠的人坐在矮凳上，双臂紧紧抱着一枚星币，王冠上还顶着一枚，双脚各踩住一枚。他身后是一片城镇。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Security", "Holding on", "Control", "Boundaries"],
+        "zh": ["安全感", "紧握不放", "掌控", "守住边界"]
+      },
+      "meaning": {
+        "en": "You've worked hard for what you have, and you want to protect it. That instinct is healthy, because boundaries and stability matter. But this card also asks whether your grip has become so tight that nothing new can come in. Security can quietly turn into a fortress without you noticing.",
+        "zh": "你为现在拥有的一切付出过很多，想守护它们再自然不过，边界和稳定都很重要。但这张牌也在问：你是不是握得太紧，紧到新的东西再也进不来？安全感有时会在不知不觉中变成一座堡垒。"
+      },
+      "advice": {
+        "en": "Loosen your grip on one thing, whether a plan, a habit, or a fear, and see what space opens up.",
+        "zh": "试着松开一样东西，可能是一个计划、一个习惯，或一份担忧，看看会腾出怎样的空间。"
+      },
+      "love": {
+        "en": "Protecting your heart is understandable, but guardedness can keep closeness at arm's length. Notice where you hold back out of fear of losing something.",
+        "zh": "想保护自己的心可以理解，但过度防备也会把亲密推远。留意自己在哪些地方因为害怕失去而有所保留。"
+      },
+      "work": {
+        "en": "You may be guarding your role, ideas, or territory closely. Stability is valuable, but sharing what you know could strengthen your position rather than weaken it.",
+        "zh": "你可能把自己的职位、想法或地盘守得很紧。稳定固然可贵，但分享你所知道的，反而可能让你的位置更稳。"
+      },
+      "growth": {
+        "en": "Explore where your need for control comes from. Real security tends to grow once you trust that you can handle change.",
+        "zh": "探索一下，你对掌控的需要从何而来。当你相信自己应付得了变化，真正的安全感才会慢慢生长。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Letting go", "Loosening control", "Overextending", "Insecurity"],
+        "zh": ["学会放手", "松开控制", "过度消耗", "内心不安"]
+      },
+      "meaning": {
+        "en": "Your relationship with control is shifting. You might finally be loosening a grip that kept you stuck, which can feel both freeing and unsettling. Or the pendulum may swing too far, leaving you careless with your time, energy, or resources. The real question is how to feel safe without clutching or scattering.",
+        "zh": "你与“掌控”的关系正在变化。也许你终于松开了一直困住你的那只手，感觉既轻松又不安；也许钟摆荡得太远，让你对时间、精力或资源变得随意。真正的课题是：如何既不死死攥紧，也不四处挥洒，依然感到安心。"
+      },
+      "advice": {
+        "en": "Find a middle path: keep what truly sustains you and release what you're holding only out of fear.",
+        "zh": "走一条中间的路：留下真正滋养你的，放下那些只是出于恐惧才抓着的。"
+      },
+      "love": {
+        "en": "Walls may be coming down, making room for more openness and generosity. If old insecurities flare up, name them gently instead of retreating.",
+        "zh": "心墙可能正在松动，为更多坦诚与付出腾出空间。如果旧的不安又冒出来，温柔地把它说出来，而不是退回壳里。"
+      },
+      "work": {
+        "en": "You may be ready to share responsibility or let go of a rigid way of working. Just make sure flexibility doesn't slide into losing track of what matters.",
+        "zh": "你可能准备好分担责任，或放下某种僵硬的做事方式了。只是要留意，灵活不要变成对重要事情失去把握。"
+      },
+      "growth": {
+        "en": "Insecurity is asking to be looked at directly. Ask yourself what 'enough' really means to you, beyond what you own or control.",
+        "zh": "不安全感正在等你正面看它一眼。问问自己，抛开拥有什么、掌控什么，“足够”对你来说究竟意味着什么。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-05",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 5,
+    "name": { "en": "Five of Pentacles", "zh": "星币五" },
+    "description": {
+      "en": "Two figures in ragged clothes make their way through falling snow, one leaning on crutches. Behind them glows a stained-glass window showing five pentacles, but neither of them looks up at it.",
+      "zh": "两个衣衫褴褛的人在纷飞的大雪中艰难前行，其中一人拄着拐杖。他们身后是一扇透着光的彩绘玻璃窗，窗上有五枚星币，但两人都没有抬头去看。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Hardship", "Feeling left out", "Scarcity mindset", "Hidden support"],
+        "zh": ["困境", "被排斥感", "匮乏心态", "援手在侧"]
+      },
+      "meaning": {
+        "en": "This is a cold stretch, a time when you may feel short on resources, recognition, or belonging. It's real, and it's hard. Yet the lit window behind the figures matters: help, warmth, or community may be closer than it seems. The card asks you to lift your eyes, even a little.",
+        "zh": "这是一段寒冷的日子，你可能觉得资源不够、不被看见，或者找不到归属。这种感受是真实的，也确实不好受。但画面里那扇亮着的窗很重要：帮助、温暖或同伴，也许比你以为的更近。请抬起头来，哪怕只抬一点点。"
+      },
+      "advice": {
+        "en": "Reach out to one person or community today and let them know what you're going through.",
+        "zh": "今天主动联系一个人或一个群体，让他们知道你正在经历什么。"
+      },
+      "love": {
+        "en": "You might feel unseen or emotionally left out in the cold. Loneliness can convince you that no one cares, so test that story by letting someone in.",
+        "zh": "你可能觉得自己不被看见，像被关在门外受冻。孤单会让人以为没人在乎，不妨让一个人走近，验证一下这个想法是否属实。"
+      },
+      "work": {
+        "en": "A setback or a sense of exclusion may be weighing on you. Look for mentors, peers, or networks that can offer guidance; you don't have to solve this alone.",
+        "zh": "一次挫折或被排除在外的感觉，可能正压在你心上。去找找导师、同行或可以求助的圈子，这件事你不必一个人扛。"
+      },
+      "growth": {
+        "en": "Hard seasons can show you what truly sustains you. Notice the difference between what you lack and what you simply aren't seeing yet.",
+        "zh": "艰难的时节会让你看清，什么才真正撑着你。分辨一下：哪些是你真的缺少的，哪些只是你还没看到的。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Recovery", "Accepting help", "Turning point", "Warmth returning"],
+        "zh": ["渐渐复原", "接受帮助", "转机", "回暖"]
+      },
+      "meaning": {
+        "en": "The worst of the cold may be easing. You're starting to find your footing again, often because you finally let someone help or stopped believing you had to struggle alone. Rebuilding takes time, but the door that seemed shut is opening, and your sense of belonging is slowly coming back.",
+        "zh": "最冷的时候也许正在过去。你开始重新站稳脚跟，往往是因为终于愿意让别人帮忙，或者不再认定自己只能独自硬撑。重建需要时间，但那扇看似紧闭的门正在打开，你的归属感也在一点点回来。"
+      },
+      "advice": {
+        "en": "Accept the help that's offered without apologizing for needing it.",
+        "zh": "坦然接受别人递来的帮助，不必为自己需要它而道歉。"
+      },
+      "love": {
+        "en": "Warmth is returning, whether through reconnecting with someone or feeling more worthy of care. Let yourself receive affection without bracing for it to disappear.",
+        "zh": "温暖正在回来，可能是与某人重新联结，也可能是你开始觉得自己值得被照顾。允许自己接受爱意，不用时刻提防它会消失。"
+      },
+      "work": {
+        "en": "After a difficult period, things are stabilizing and new support may appear. Build steadily from here rather than rushing to make up for lost ground.",
+        "zh": "熬过一段艰难之后，局面正在稳定下来，新的支持也可能出现。从这里稳稳地往上建，不必急着把失去的一下子补回来。"
+      },
+      "growth": {
+        "en": "If part of you still clings to the identity of the one left outside, gently question it. You're allowed to come in from the snow.",
+        "zh": "如果你心里还有一部分认定自己就是那个被关在门外的人，温柔地质疑它吧。你可以走出风雪，进到屋里来。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-06",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 6,
+    "name": { "en": "Six of Pentacles", "zh": "星币六" },
+    "description": {
+      "en": "A merchant in a red cloak holds balanced scales in one hand while dropping coins into the open palm of a kneeling figure. A second figure kneels beside them, waiting, as six pentacles hover above.",
+      "zh": "一位披着红斗篷的商人一手提着平衡的天平，另一只手把钱币放进跪地者摊开的掌心。旁边还有一人跪着等待，六枚星币悬在上方。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Generosity", "Fair exchange", "Giving and receiving", "Support"],
+        "zh": ["慷慨", "公平交换", "施与受", "扶持"]
+      },
+      "meaning": {
+        "en": "Resources, time, and kindness are flowing in a way that feels fair. You may be in a position to give, or you may be on the receiving end, and both are part of a healthy cycle. The scales remind you that generosity works best when it's balanced and offered without strings attached.",
+        "zh": "资源、时间与善意正以一种公平的方式流动。你也许正处在可以给予的位置，也许正是接受的一方，两者都是健康循环的一部分。画面中的天平提醒你：慷慨在保持平衡、不附带条件时，才最有力量。"
+      },
+      "advice": {
+        "en": "Offer something you can genuinely spare, like your time, skill, or attention, with no expectation of return.",
+        "zh": "拿出你真正给得起的东西，比如时间、技能或关注，不求回报地给出去。"
+      },
+      "love": {
+        "en": "Care is flowing both ways, and each of you feels supported. Keep the giving mutual so neither person slips into always being the helper.",
+        "zh": "关心在双向流动，你们都感到被支持。留意让付出保持相互，别让其中一方总是扮演照顾者的角色。"
+      },
+      "work": {
+        "en": "Mentorship, sponsorship, or a fair arrangement may come into play. Share what you know generously, and don't hesitate to accept guidance when it's offered.",
+        "zh": "带教、引荐或一份公平的安排可能会出现。大方分享你的经验，别人愿意指点时，也不要犹豫接受。"
+      },
+      "growth": {
+        "en": "Reflect on how comfortable you are on each side of the scale. Learning to receive gracefully is as much a skill as learning to give.",
+        "zh": "想一想，你站在天平哪一边时更自在。学会体面地接受，和学会给予一样，都是一门功课。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Imbalance", "Strings attached", "One-sided giving", "Power dynamics"],
+        "zh": ["失衡", "附带条件", "单向付出", "权力落差"]
+      },
+      "meaning": {
+        "en": "The exchange has tipped out of balance. Help may come with hidden conditions, or you may be giving far more than you receive until resentment builds. Sometimes generosity becomes a way to hold power over others. This card asks you to look honestly at who holds the scales, and why.",
+        "zh": "这场交换已经失去平衡。帮助背后可能藏着条件，或者你给出的远比得到的多，委屈越积越深。有时候，慷慨也会悄悄变成拿捏别人的方式。这张牌请你诚实地看一看：是谁握着天平，又是为什么。"
+      },
+      "advice": {
+        "en": "Notice one relationship where giving feels heavy, and gently renegotiate what's fair.",
+        "zh": "找出一段让付出变得沉重的关系，温和地重新商量什么才算公平。"
+      },
+      "love": {
+        "en": "One person may be doing most of the giving, or affection might feel conditional. Talk about needs openly so care doesn't turn into a ledger.",
+        "zh": "可能有一方承担了大部分付出，或者爱意让人觉得是有条件的。坦率谈谈彼此的需要，别让关心变成一本记账簿。"
+      },
+      "work": {
+        "en": "Watch for arrangements where credit, effort, or reward isn't shared fairly. Clarify expectations before saying yes to favors that may carry unspoken obligations.",
+        "zh": "留意那些功劳、付出或回报分配不公的安排。在答应可能附带隐性义务的人情之前，先把期待说清楚。"
+      },
+      "growth": {
+        "en": "Examine whether you give in order to feel needed, or receive while feeling small. Healthy exchange lets everyone keep their dignity.",
+        "zh": "检视一下，你是否为了被需要而给予，或者在接受时总觉得自己矮人一截。健康的交换，让每个人都保有尊严。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-07",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 7,
+    "name": { "en": "Seven of Pentacles", "zh": "星币七" },
+    "description": {
+      "en": "A young farmer leans on a long-handled hoe, gazing at six pentacles growing among the leaves of a lush bush. A seventh pentacle lies at his feet.",
+      "zh": "一位年轻的农人倚着长柄锄头，凝视着茂密枝叶间结出的六枚星币，第七枚则落在他的脚边。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Patience", "Assessment", "Long-term growth", "Pause to reflect"],
+        "zh": ["耐心", "盘点评估", "长线耕耘", "驻足反思"]
+      },
+      "meaning": {
+        "en": "You've put in real effort, and now you're standing back to see what it's yielding. Progress may feel slower than you hoped, but growth is happening beneath the surface. This is a natural moment to evaluate what's thriving, what needs adjustment, and whether this harvest is still the one you want.",
+        "zh": "你已经实实在在地付出过，现在正退后一步，看看收成如何。进展也许比预期慢，但成长正在地面之下悄悄发生。这是一个适合盘点的时刻：什么长势正好，什么需要调整，这份收成是否仍是你真正想要的。"
+      },
+      "advice": {
+        "en": "Set aside an hour to review your progress honestly, then adjust one thing rather than starting over.",
+        "zh": "留出一个小时诚实地回顾进展，然后只调整一处，而不是推倒重来。"
+      },
+      "love": {
+        "en": "A relationship you've invested in is growing at its own pace. Appreciate what has already taken root instead of measuring it against an imagined timeline.",
+        "zh": "你用心经营的感情正以自己的节奏生长。珍惜已经扎下的根，而不是拿它去和想象中的时间表比较。"
+      },
+      "work": {
+        "en": "Long-term efforts are building, even if results aren't dramatic yet. Track what's working and keep tending the projects that align with your goals.",
+        "zh": "长期的努力正在累积，即使成果还不显眼。记下哪些做法有效，继续照料那些与目标一致的项目。"
+      },
+      "growth": {
+        "en": "Patience is your practice right now. Trust that consistent care adds up, even on days when nothing seems to change.",
+        "zh": "此刻要修的功课是耐心。相信持续的照料终会积少成多，哪怕某些日子看起来毫无变化。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Impatience", "Misplaced effort", "Self-doubt", "Rethinking direction"],
+        "zh": ["急于求成", "事倍功半", "自我怀疑", "调整方向"]
+      },
+      "meaning": {
+        "en": "Frustration may be creeping in because the results don't seem to match the work. You might be tempted to abandon something too early, or you might be pouring energy into a field that won't yield what you need. Either way, it's time to look clearly at where your effort is actually going.",
+        "zh": "收获似乎配不上付出，挫败感可能正在悄悄蔓延。你也许想过早放弃某件事，也许正把力气倾注在一块长不出你所需之物的田地里。不管是哪一种，都该好好看清，你的努力究竟流向了哪里。"
+      },
+      "advice": {
+        "en": "Ask whether you need more patience or a different plan, and answer honestly before acting.",
+        "zh": "问问自己，需要的是更多耐心，还是另一套计划；诚实回答之后再行动。"
+      },
+      "love": {
+        "en": "You may feel you're giving a lot without seeing the relationship grow. Consider whether you need more time together or a clearer conversation about where things are headed.",
+        "zh": "你可能觉得付出了很多，却看不到感情有什么进展。想一想，你们需要的是更多相处的时间，还是一次关于未来方向的坦率对话。"
+      },
+      "work": {
+        "en": "Effort may be scattered across too many fields, or a project isn't returning what it costs you. Re-evaluate priorities rather than simply working harder.",
+        "zh": "精力可能分散在太多地方，或者某个项目的回报配不上它消耗的心力。重新评估优先级，而不是一味更拼命。"
+      },
+      "growth": {
+        "en": "Impatience often hides a fear of falling behind. Release the comparison and reconnect with why you planted this in the first place.",
+        "zh": "急躁背后，常常藏着害怕落后的恐惧。放下比较，重新想起你当初为什么播下这颗种子。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-08",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 8,
+    "name": { "en": "Eight of Pentacles", "zh": "星币八" },
+    "description": {
+      "en": "A craftsman sits at a wooden bench, carefully chiseling a design into a pentacle. Six finished pentacles hang on a post beside him, another rests near his feet, and a small town sits far off in the distance.",
+      "zh": "一位工匠坐在木凳上，专注地在一枚星币上雕刻图案。身旁的木柱上挂着六枚已完成的星币，脚边还放着一枚，远处是一座小镇。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Diligence", "Skill building", "Focus", "Mastery"],
+        "zh": ["勤勉", "磨练技艺", "专注", "精益求精"]
+      },
+      "meaning": {
+        "en": "This is the card of quiet, devoted practice. You're refining a skill through repetition, one careful piece at a time, and the results are getting steadily better. The satisfaction here doesn't depend on applause; it comes from the deep pleasure of getting good at something that matters to you.",
+        "zh": "这是一张关于安静而投入的练习的牌。你在一次次重复中打磨技艺，一件一件细心完成，成果也在稳步变好。这里的满足感不靠掌声，而是来自把一件对你重要的事情越做越好的那份踏实与喜悦。"
+      },
+      "advice": {
+        "en": "Choose one skill and give it focused, uninterrupted practice today, even if only for twenty minutes.",
+        "zh": "今天挑一项技能，给它一段不被打扰的专注练习，哪怕只有二十分钟。"
+      },
+      "love": {
+        "en": "Love grows through consistent effort and small daily gestures. Treat your relationship as something you keep learning, not something you've already figured out.",
+        "zh": "爱在持续的经营和日常的小举动中生长。把这段关系当成一门一直在学的手艺，而不是早就摸透了的东西。"
+      },
+      "work": {
+        "en": "Your dedication and attention to detail are paying off. Training, study, or deep work sessions will move you forward more than shortcuts will.",
+        "zh": "你的投入和对细节的用心正在得到回报。培训、学习或深度工作，比任何捷径都更能推你向前。"
+      },
+      "growth": {
+        "en": "Discipline is becoming a form of self-respect. Each repetition is a quiet promise to the person you're becoming.",
+        "zh": "自律正在变成一种对自己的尊重。每一次重复，都是对未来那个自己的一个安静承诺。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Perfectionism", "Burnout", "Lack of focus", "Going through motions"],
+        "zh": ["完美主义", "身心倦怠", "心不在焉", "机械重复"]
+      },
+      "meaning": {
+        "en": "The workbench has lost its spark. You may be repeating tasks mechanically without growing, or polishing one detail endlessly out of perfectionism. Sometimes the problem is simply tiredness. Whatever the cause, effort has drifted away from meaning, and it's worth reconnecting with why this craft matters to you.",
+        "zh": "工作台前的那份热情不见了。你可能只是机械地重复，没有长进；也可能出于完美主义，没完没了地打磨同一个细节；有时候，问题只是太累了。不管原因是什么，努力已经和意义脱了节，值得重新想想这份手艺为何对你重要。"
+      },
+      "advice": {
+        "en": "Decide what 'good enough' looks like for one task, finish it, and give yourself a real break.",
+        "zh": "给一件事定下“足够好”的标准，完成它，然后让自己真正歇一歇。"
+      },
+      "love": {
+        "en": "Routine may have replaced attention, or you might be trying too hard to get everything right. Bring curiosity back instead of aiming for a flawless performance.",
+        "zh": "例行公事可能取代了用心，或者你太想把每件事都做对。找回一点好奇心，而不是追求一场完美的表演。"
+      },
+      "work": {
+        "en": "Quality may slip from fatigue, boredom, or overthinking. Consider whether you need a fresh challenge, better rest, or permission to stop perfecting.",
+        "zh": "疲惫、厌倦或想得太多，都可能让工作质量下滑。想想你需要的是新的挑战、更好的休息，还是允许自己别再追求完美。"
+      },
+      "growth": {
+        "en": "Mastery isn't the same as never making mistakes. Let your practice become a place of learning again rather than self-judgment.",
+        "zh": "精通并不等于从不犯错。让练习重新成为学习的地方，而不是审判自己的地方。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-09",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 9,
+    "name": { "en": "Nine of Pentacles", "zh": "星币九" },
+    "description": {
+      "en": "A woman in an elegant robe embroidered with flowers stands in a lush vineyard, a hooded falcon perched on her gloved hand. Nine pentacles gather among the grapevines, and a manor house rises behind her.",
+      "zh": "一位身穿绣花长袍的女子站在葡萄繁茂的园中，戴着手套的手上停着一只戴头罩的猎鹰。九枚星币散落在葡萄藤间，她身后是一座庄园。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Self-sufficiency", "Earned comfort", "Refinement", "Independence"],
+        "zh": ["自给自足", "安享成果", "从容优雅", "独立"]
+      },
+      "meaning": {
+        "en": "You're enjoying the fruits of your own discipline. This card speaks of independence and a life arranged on your own terms, a comfort you built rather than borrowed. It invites you to savor what you've cultivated, feel at ease in your own company, and trust your capacity to provide for yourself.",
+        "zh": "你正在品尝自律结出的果实。这张牌讲的是独立，是按照自己的心意安排生活：这份舒适是你亲手建起的，而不是借来的。好好享受自己培育的一切，安然地与自己相处，并相信自己有能力照顾好自己。"
+      },
+      "advice": {
+        "en": "Do something today purely for your own enjoyment, and let yourself fully savor it.",
+        "zh": "今天做一件纯粹让自己开心的事，并且全心享受它。"
+      },
+      "love": {
+        "en": "You're whole on your own, which makes you a more grounded partner. Choose love from a place of fullness rather than need, and keep your standards high.",
+        "zh": "你一个人也很完整，这让你在感情里更踏实。从丰盈而不是匮乏出发去选择爱，也不必降低自己的标准。"
+      },
+      "work": {
+        "en": "Your expertise and reliability have earned you a degree of freedom. Enjoy the independence, and recognize how far your persistence has carried you.",
+        "zh": "你的专业和可靠为你赢得了一定的自由。享受这份独立，也认可自己的坚持带你走了多远。"
+      },
+      "growth": {
+        "en": "Your self-worth is settling into something steady and quiet. Notice the pleasure of being someone who can take good care of their own life.",
+        "zh": "自我价值感正在沉淀为一种安静而稳定的力量。好好体会，能把自己的生活照顾妥当，本身就是一种快乐。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Overworking", "Hollow success", "Dependence", "Shaky self-worth"],
+        "zh": ["过度工作", "虚有其表", "依赖他人", "价值动摇"]
+      },
+      "meaning": {
+        "en": "The garden is there, but you may not feel free to enjoy it. Perhaps you're working so hard to maintain your comfort that there's no time to rest in it, or your sense of security leans too heavily on someone else. The card asks what real independence would feel like from the inside.",
+        "zh": "花园就在那里，你却未必觉得可以安心享受。也许你为了维持眼前的舒适拼命工作，反而没空歇下来享受它；也许你的安全感太依赖别人。这张牌在问：发自内心的独立，究竟是什么感觉？"
+      },
+      "advice": {
+        "en": "Ask what you're really working toward, and take one small step to enjoy what you already have.",
+        "zh": "问问自己究竟在为什么而忙，然后迈出一小步，去享受已经拥有的东西。"
+      },
+      "love": {
+        "en": "You might lean on a partner for a sense of worth, or keep people at a distance to prove you don't need anyone. Look for the balance between closeness and self-reliance.",
+        "zh": "你可能依靠伴侣来确认自己的价值，也可能刻意和人保持距离，好证明自己谁也不需要。试着在亲密与自立之间找到平衡。"
+      },
+      "work": {
+        "en": "Success may look good on paper but feel empty, or you might be overextending to keep up appearances. Revisit what fulfillment means to you beyond status.",
+        "zh": "成就也许看上去很漂亮，内心却空落落的；或者你为了撑住体面而透支自己。重新想想，抛开身份地位，对你来说什么才叫满足。"
+      },
+      "growth": {
+        "en": "Your sense of worth may be tied to achievement or approval. Practice valuing yourself for who you are, not only for what you've built.",
+        "zh": "你的价值感可能和成就或别人的认可绑在了一起。练习因为你本身而珍视自己，而不只是因为你建起了什么。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-10",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 10,
+    "name": { "en": "Ten of Pentacles", "zh": "星币十" },
+    "description": {
+      "en": "Beneath a stone archway, an elderly man in a patterned robe sits with two dogs, while a young couple and a child stand in the courtyard beyond. Ten pentacles are arranged across the scene, and family crests decorate the walls.",
+      "zh": "石拱门下，一位身穿花纹长袍的老人坐着，身边有两只狗；拱门内的庭院里，站着一对年轻男女和一个孩子。十枚星币分布在整个画面中，墙上装饰着家族纹章。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Legacy", "Family roots", "Lasting stability", "Belonging"],
+        "zh": ["传承", "家族根基", "长久安稳", "归属"]
+      },
+      "meaning": {
+        "en": "This card looks beyond personal success toward something that lasts: family, community, traditions, and the foundations you share with others. Stability here is woven across generations and relationships. You're invited to appreciate what has been passed down to you and to consider what you hope to pass on.",
+        "zh": "这张牌的目光越过个人成就，投向更长久的东西：家庭、社群、传统，以及你与他人共同拥有的根基。这里的安稳跨越世代，织进一段段关系之中。珍惜你所承接的一切，也想一想，你希望把什么传递下去。"
+      },
+      "advice": {
+        "en": "Spend time with the people or traditions that root you, and notice what you want to carry forward.",
+        "zh": "花些时间陪伴那些给你根的人或传统，留意哪些东西是你想延续下去的。"
+      },
+      "love": {
+        "en": "Commitment, shared values, and long-term building are highlighted. A relationship may be deepening into something that feels like home and family.",
+        "zh": "承诺、共同的价值观和长远的经营是此刻的重点。一段关系可能正在加深，渐渐有了家的感觉。"
+      },
+      "work": {
+        "en": "Work that creates lasting value for a team, an organization, or a community is favored. Think about the long arc of what you're building, not just this quarter.",
+        "zh": "能为团队、组织或社群创造长久价值的工作，此刻更受眷顾。想想你正在建造之物的长远走向，而不只是眼前这一季。"
+      },
+      "growth": {
+        "en": "You're part of a larger story. Reflect on which family patterns and values you want to honor, and which you're ready to reshape.",
+        "zh": "你是一个更大故事的一部分。想一想，哪些家族模式和价值观你愿意珍视，哪些你已准备好重新塑造。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Family tension", "Unstable foundations", "Inherited burdens", "Breaking patterns"],
+        "zh": ["家庭摩擦", "根基动摇", "代际包袱", "打破旧习"]
+      },
+      "meaning": {
+        "en": "The structures meant to hold you, such as family, tradition, or long-term security, may feel strained or limiting. There could be disagreements about shared resources or expectations, or a sense that old patterns no longer fit. This isn't collapse; it's an invitation to decide which foundations you'll keep and which you'll rebuild.",
+        "zh": "本该托住你的那些结构，比如家庭、传统和长远的保障，此刻可能显得紧绷或拘束。围绕共同资源或彼此期待也许有分歧，旧有的模式也不再合身。这并不是崩塌，而是邀请你决定：哪些根基要保留，哪些要重建。"
+      },
+      "advice": {
+        "en": "Name one inherited expectation you've been carrying, and decide consciously whether it still belongs to you.",
+        "zh": "说出一个你一直背负着的、从家里承接来的期待，然后清醒地决定它是否仍属于你。"
+      },
+      "love": {
+        "en": "Family opinions or differing visions of the future may put pressure on your relationship. Create your own shared values instead of simply inheriting someone else's.",
+        "zh": "家人的意见或对未来的不同设想，可能给感情带来压力。一起建立属于你们自己的价值观，而不是照搬别人的。"
+      },
+      "work": {
+        "en": "Long-term plans may feel uncertain, or an organization's culture might seem rigid and outdated. Focus on what you can build that reflects your own values.",
+        "zh": "长期规划可能显得不确定，或者组织文化让你觉得僵化过时。把注意力放在你能建造、又符合自己价值观的东西上。"
+      },
+      "growth": {
+        "en": "You may be ready to break a pattern that has been handed down for too long. Mending old dynamics is its own kind of legacy.",
+        "zh": "你也许已准备好打破一个传了太久的旧模式。修复旧有的相处方式，本身就是一种传承。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-11",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 11,
+    "name": { "en": "Page of Pentacles", "zh": "星币侍从" },
+    "description": {
+      "en": "A young figure stands in a green, flowering meadow, holding a pentacle up with both hands and studying it with complete absorption. Freshly ploughed fields and a small grove of trees stretch out behind.",
+      "zh": "一位年轻人站在开满小花的绿色草地上，双手托起一枚星币，全神贯注地端详着它。身后是刚翻耕过的田地和一小片树林。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Curiosity", "Study", "New skill", "Practical dreams"],
+        "zh": ["好奇", "勤学", "新技能", "务实梦想"]
+      },
+      "meaning": {
+        "en": "A student's energy is stirring in you: eager, focused, and ready to learn something real. This card often marks the beginning of a practical path, such as a course, a craft, or a plan you can actually carry out. Your enthusiasm is grounded, and small, steady steps will turn curiosity into competence.",
+        "zh": "一股学生般的能量正在你身上萌动：热切、专注，想学点实实在在的东西。这张牌常常标志着一条务实道路的开端，比如一门课、一项手艺，或一个真能落地的计划。一小步一小步走下去，好奇心就会变成真本事。"
+      },
+      "advice": {
+        "en": "Begin the first lesson of something you've been curious about, however small it is.",
+        "zh": "从你好奇已久的事情里，开始第一课，哪怕再小也好。"
+      },
+      "love": {
+        "en": "Feelings develop slowly and sincerely, through attention and follow-through. A new connection may be shy but genuine, built on getting to know each other properly.",
+        "zh": "感情慢慢地、真诚地发展，靠的是用心和说到做到。一段新的缘分也许有些羞涩，却很真诚，建立在好好认识彼此的基础上。"
+      },
+      "work": {
+        "en": "A learning opportunity, apprenticeship, or entry-level step could open new doors. Approach it with humility and diligence, and you'll lay a solid foundation.",
+        "zh": "一个学习机会、学徒式的历练或入门的起点，可能为你打开新的大门。带着谦逊和勤奋去面对，你会打下扎实的基础。"
+      },
+      "growth": {
+        "en": "You're rediscovering the joy of being a beginner. Let yourself learn without needing to be good at it right away.",
+        "zh": "你正在重新找回当新手的乐趣。允许自己去学，不必一开始就做得很好。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Procrastination", "Distraction", "Unfinished plans", "Lack of follow-through"],
+        "zh": ["拖延", "分心", "计划搁浅", "虎头蛇尾"]
+      },
+      "meaning": {
+        "en": "The interest is there, but the follow-through isn't. You might be collecting ideas, courses, or plans without committing to any of them, or drifting off before the real learning begins. Sometimes it's a fear of being bad at something new. Progress will come from choosing one thing and staying with it.",
+        "zh": "兴趣是有的，坚持却跟不上。你可能收藏了一堆想法、课程或计划，却一样也没真正投入；或者还没开始深入，就被别的事分了心。有时候，背后是害怕自己在新事物上显得笨拙。选定一件事并坚持下去，进步才会到来。"
+      },
+      "advice": {
+        "en": "Pick the single project you're most curious about and give it fifteen minutes every day this week.",
+        "zh": "选出你最感兴趣的那一个项目，这周每天给它十五分钟。"
+      },
+      "love": {
+        "en": "Mixed signals or slow replies may leave things feeling uncertain. If you're interested, show it through consistent small actions rather than waiting for perfect clarity.",
+        "zh": "忽冷忽热的信号或迟迟的回应，可能让一切显得不太确定。如果你有意，就用持续的小行动表现出来，而不是等一切完全明朗。"
+      },
+      "work": {
+        "en": "Scattered focus or weak follow-through may be slowing your progress. Break goals into concrete steps and track them so momentum can build.",
+        "zh": "注意力分散或执行不到位，可能拖慢了你的进度。把目标拆成具体步骤并记录下来，让势头慢慢积累起来。"
+      },
+      "growth": {
+        "en": "Notice whether perfectionism is disguising itself as procrastination. Being a clumsy beginner is part of every real skill.",
+        "zh": "留意完美主义是否正伪装成拖延。笨拙的新手阶段，是每一项真本事的必经之路。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-12",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 12,
+    "name": { "en": "Knight of Pentacles", "zh": "星币骑士" },
+    "description": {
+      "en": "A knight in dark armor sits perfectly still on a heavy black workhorse, holding a pentacle out before him. He looks over a freshly ploughed field, unhurried and watchful.",
+      "zh": "一位身穿深色盔甲的骑士端坐在一匹壮实的黑马上，纹丝不动，手里托着一枚星币。他望着一片刚翻耕过的田地，从容而专注。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Reliability", "Routine", "Persistence", "Steady progress"],
+        "zh": ["可靠", "按部就班", "坚持不懈", "稳步前进"]
+      },
+      "meaning": {
+        "en": "Slow and steady is exactly right now. This knight doesn't charge ahead; he shows up, does the work, and keeps his promises. Your strength lies in consistency, patience, and careful planning. It may not look dramatic, but your dependable effort is building something that will hold.",
+        "zh": "此刻，慢而稳正是最好的节奏。这位骑士从不横冲直撞，他准时出现、把活干完、说话算数。你的力量在于始终如一、耐心和周密的计划。它看起来也许并不惊艳，但你可靠的付出，正在建起一样经得住考验的东西。"
+      },
+      "advice": {
+        "en": "Stick to your routine today, and finish what you started before adding anything new.",
+        "zh": "今天按自己的节奏来，先把开了头的事做完，再添新的。"
+      },
+      "love": {
+        "en": "Love shows up as loyalty and dependability rather than grand gestures. Someone who keeps showing up is offering you something precious.",
+        "zh": "爱表现为忠诚与可靠，而不是轰轰烈烈的表白。一个始终如一出现在你身边的人，给你的是非常珍贵的东西。"
+      },
+      "work": {
+        "en": "Methodical effort and attention to detail will carry you further than bold leaps. Your reliability is being noticed, even if recognition arrives slowly.",
+        "zh": "有条不紊的努力和对细节的关注，比大胆的跳跃更能让你走远。你的可靠正在被看见，即使认可来得慢一些。"
+      },
+      "growth": {
+        "en": "Consistency is a quiet superpower. Honor the small, repeated choices that are shaping your character.",
+        "zh": "坚持是一种低调的超能力。珍视那些一次次重复的小选择，它们正在塑造你的品格。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Stagnation", "Rigidity", "Boredom", "Stuck in routine"],
+        "zh": ["停滞", "固执", "乏味", "困于惯性"]
+      },
+      "meaning": {
+        "en": "Steadiness has slowed to a standstill. You may be so attached to routine that you've stopped asking whether it still serves you, or caution has quietly become avoidance. Alternatively, you might feel restless and tempted to throw out all structure. Movement, even slow movement, is what's needed now.",
+        "zh": "稳当慢慢变成了原地不动。你可能太依恋固定的节奏，不再追问它是否还适合自己；或者谨慎已悄悄变成了逃避。反过来，你也可能焦躁不安，想把所有规矩统统扔掉。此刻需要的是动起来，哪怕慢一点也好。"
+      },
+      "advice": {
+        "en": "Change one small part of your routine this week and notice what fresh energy it brings.",
+        "zh": "这周改变日常中的一个小环节，看看会带来什么新的活力。"
+      },
+      "love": {
+        "en": "Comfort may have slipped into predictability or emotional distance. Try something new together without throwing away the stability you've built.",
+        "zh": "安稳可能已经滑向一成不变，或是情感上的疏离。一起尝试点新鲜的事，同时不必丢掉你们建立起来的稳定。"
+      },
+      "work": {
+        "en": "Progress may feel stalled by excessive caution, perfectionism, or monotony. Look for one area where a considered change could get things moving again.",
+        "zh": "过度谨慎、完美主义或单调乏味，可能让进展停滞。找一个地方，做一个经过考量的改变，让事情重新动起来。"
+      },
+      "growth": {
+        "en": "Ask whether your routines are supporting you or simply shielding you from change. Growth sometimes requires stepping off a familiar path.",
+        "zh": "问问自己，这些习惯是在支撑你，还是只是在替你挡住变化。成长有时需要你走下那条熟悉的路。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-13",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 13,
+    "name": { "en": "Queen of Pentacles", "zh": "星币王后" },
+    "description": {
+      "en": "A queen sits on a carved stone throne in a blossoming garden, cradling a pentacle in her lap and gazing at it tenderly. Roses arch overhead, and a small rabbit appears in the lower corner.",
+      "zh": "一位王后坐在雕花石座上，身处繁花盛开的花园，她把一枚星币捧在膝上，温柔地凝视着它。头顶有玫瑰枝叶环绕，画面一角还有一只小兔子。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Nurturing", "Practical care", "Abundance", "Groundedness"],
+        "zh": ["滋养", "务实关怀", "丰饶", "沉稳"]
+      },
+      "meaning": {
+        "en": "This queen tends to life with warmth and good sense. She creates comfort for herself and others: a welcoming home, a nourishing meal, a steady presence. You're being asked to embody that same practical care, attending to your own needs and responsibilities with both generosity and wisdom.",
+        "zh": "这位王后用温暖和务实打理生活。她为自己、也为他人营造安适：一个让人愿意回来的家，一顿暖胃的饭，一份让人安心的陪伴。这张牌请你也活出这种实在的关怀，既慷慨又明智地照看自己的需要与责任。"
+      },
+      "advice": {
+        "en": "Make your space or routine a little more nourishing today, starting with how you treat yourself.",
+        "zh": "今天让你的空间或日常多一分滋养，先从好好对待自己开始。"
+      },
+      "love": {
+        "en": "You offer warmth that feels safe and real. Love thrives through everyday care, and you deserve to receive the same nurturing you give.",
+        "zh": "你给出的温暖让人安心又真实。爱在日常的照顾中滋长，而你也值得得到同样的呵护。"
+      },
+      "work": {
+        "en": "You balance competence with kindness, and people trust you for it. Your knack for managing resources and supporting others makes you quietly indispensable.",
+        "zh": "你兼具能力与善意，人们因此信任你。你调配资源、扶持他人的本事，让你成为团队里低调却不可或缺的人。"
+      },
+      "growth": {
+        "en": "Groundedness comes from tending your body, your home, and your rhythms. Treat self-care as a practical foundation, not an indulgence.",
+        "zh": "沉稳来自对身体、居所和生活节奏的照料。把照顾自己当成实际的地基，而不是一种奢侈。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Self-neglect", "Overgiving", "Smothering", "Home imbalance"],
+        "zh": ["忽视自己", "过度付出", "过度操心", "家庭失衡"]
+      },
+      "meaning": {
+        "en": "Your caretaking energy may be pouring outward until there's little left for you. Or care is turning into control, worry, or overmanaging other people's lives. Home and work could be pulling against each other. The invitation is to rebalance: nurture yourself with the same devotion you offer everyone else.",
+        "zh": "你照顾人的能量可能一直向外倾泻，留给自己的已所剩无几；又或者，关心正在变成控制、焦虑，或对别人生活的过度插手。家庭和工作也可能在互相拉扯。请重新找回平衡：用你对待别人的那份用心，同样来照顾自己。"
+      },
+      "advice": {
+        "en": "Before helping anyone else today, meet one of your own basic needs first.",
+        "zh": "今天在帮助别人之前，先满足自己的一项基本需要。"
+      },
+      "love": {
+        "en": "Giving too much can quietly breed resentment or dependence. Let your partner meet you halfway, and allow yourself to be cared for.",
+        "zh": "付出太多，可能悄悄滋生委屈或依赖。让对方也向你走近一半，也允许自己被照顾。"
+      },
+      "work": {
+        "en": "You may be stretched between responsibilities or setting aside your own needs for other people's deadlines. Set clearer limits so your reliability doesn't turn into exhaustion.",
+        "zh": "你可能在多重责任之间被拉扯，或者为了别人的截止日期把自己的需要放在一边。划清界限，别让你的可靠变成透支。"
+      },
+      "growth": {
+        "en": "Rest isn't a reward you earn only after everyone else is taken care of. Tending your own garden is what keeps you able to tend others.",
+        "zh": "休息不是等所有人都被照顾好之后才配得到的奖赏。先打理好自己的花园，你才有余力照料别人。"
+      }
+    }
+  },
+  {
+    "id": "pentacles-14",
+    "arcana": "minor",
+    "suit": "pentacles",
+    "number": 14,
+    "name": { "en": "King of Pentacles", "zh": "星币国王" },
+    "description": {
+      "en": "A king in a robe covered with grapevines sits on a throne carved with bull heads, holding a scepter in one hand and a pentacle in the other. A castle rises behind him, and vines and flowers grow all around.",
+      "zh": "一位国王身穿缀满葡萄藤图案的长袍，坐在雕有牛头的王座上，一手持权杖，一手托星币。他身后矗立着城堡，四周藤蔓与花朵繁茂生长。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Stewardship", "Abundance", "Leadership", "Steady success"],
+        "zh": ["稳健经营", "富足", "领导力", "事业有成"]
+      },
+      "meaning": {
+        "en": "This king has built something real through discipline and patience, and now he stewards it wisely. He represents mature, grounded success, the kind that supports others and not just its owner. Step into that steady authority: make decisions with care, share your stability, and enjoy what you've built.",
+        "zh": "这位国王凭着自律与耐心建起了实在的基业，如今又以智慧加以经营。他代表一种成熟、踏实的成功，不只成就自己，也能托住身边的人。走进这份沉稳的权威吧：用心做决定，分享你的安稳，也好好享受你一手建起的一切。"
+      },
+      "advice": {
+        "en": "Make your next decision from a long-term view, asking what will still feel solid a year from now.",
+        "zh": "下一个决定，请从长远出发，问问自己：一年后，什么依然站得住？"
+      },
+      "love": {
+        "en": "You bring security, loyalty, and generosity to your relationships. Show affection through presence and attention, not only through providing.",
+        "zh": "你为感情带来安全感、忠诚与慷慨。除了为对方张罗生活，也要用陪伴和关注来表达爱。"
+      },
+      "work": {
+        "en": "Leadership, sound judgment, and practical expertise are your strengths. Others look to you for steadiness, so mentor them as generously as you manage the work.",
+        "zh": "领导力、可靠的判断和实战经验是你的长处。别人指望你带来稳定，所以带人也要像经营事业一样用心。"
+      },
+      "growth": {
+        "en": "You've reached a place of earned confidence. True abundance includes rest, gratitude, and the freedom to enjoy the life you've built.",
+        "zh": "你已走到一个凭实力赢得自信的位置。真正的富足，也包括休息、感恩，以及享受自己一手建起的生活的自由。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Possessiveness", "Materialism", "Overcontrol", "Status anxiety"],
+        "zh": ["占有欲", "物质至上", "控制欲", "身份焦虑"]
+      },
+      "meaning": {
+        "en": "The drive for stability may have hardened into stubbornness or an excessive focus on status and control. You might measure success only in tangible results, or feel pressure to appear secure while worrying underneath. This card invites you to reconnect with the purpose behind your ambition and lead with more flexibility.",
+        "zh": "对稳定的追求，可能已经僵化成固执，或是过分看重身份与掌控。你也许只用看得见的成果衡量成功，又或者表面上必须显得稳如泰山，心里却暗暗发愁。重新找回野心背后的初衷，用更有弹性的方式去引领吧。"
+      },
+      "advice": {
+        "en": "Ask what your ambition is really for, and let that answer guide one decision this week.",
+        "zh": "问问自己，这份野心究竟为了什么，再让这个答案引导你这周的一个决定。"
+      },
+      "love": {
+        "en": "Providing may be standing in for emotional presence, or control may be creeping into the relationship. Lead with openness and let your partner share in decisions.",
+        "zh": "物质上的付出可能取代了情感上的陪伴，或者控制欲正悄悄渗进关系里。用开放的态度相处，让对方也参与决定。"
+      },
+      "work": {
+        "en": "A rigid or overly cautious approach may be limiting progress or straining your team. Stay open to new ideas, and remember that people matter as much as results.",
+        "zh": "过于僵硬或保守的做法，可能限制了进展，也让团队承受压力。对新想法保持开放，记住人和成果同样重要。"
+      },
+      "growth": {
+        "en": "Ambition without rest can quietly harden you. Let some of your energy flow toward play, people, and the parts of life that can't be measured.",
+        "zh": "没有停歇的野心，会悄悄让人变得僵硬。分一些精力给玩乐、给身边的人，也给生活中那些无法衡量的部分。"
+      }
+    }
+  }
+]

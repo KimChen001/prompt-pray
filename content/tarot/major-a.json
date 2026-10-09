@@ -1,0 +1,695 @@
+[
+  {
+    "id": "major-00",
+    "arcana": "major",
+    "suit": null,
+    "number": 0,
+    "name": { "en": "The Fool", "zh": "愚者" },
+    "description": {
+      "en": "A young traveler in bright, patterned clothes strolls toward a cliff edge under a yellow sky, a white rose in one hand and a small bundle tied to a staff over his shoulder. A little white dog leaps at his heels, and snowy peaks rise behind him.",
+      "zh": "身着鲜艳花纹衣裳的年轻旅人在金黄的天空下走向悬崖边，一手拈着白玫瑰，肩上扛着挂有小包袱的手杖。一只小白狗在他脚边雀跃，身后是覆雪的山峰。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Fresh start", "Spontaneity", "Leap of faith", "Open heart"],
+        "zh": ["新的开始", "率性而为", "信念一跃", "赤子之心"]
+      },
+      "meaning": {
+        "en": "The Fool marks the first step of a journey you can't fully map yet. It invites you to meet the unknown with curiosity instead of a checklist, trusting that you'll learn the path by walking it. There's a lightness here, a willingness to begin before you feel completely ready.",
+        "zh": "愚者象征一段尚无法完全规划的旅程的起点。它邀请你带着好奇而不是清单去迎接未知，相信路会在走的过程中慢慢显现。这里有一种轻盈——还没完全准备好，就愿意先迈出脚步。"
+      },
+      "advice": {
+        "en": "Take one small, concrete step toward the thing that excites you before you talk yourself out of it.",
+        "zh": "趁自己还没打退堂鼓，先朝那件让你心动的事迈出具体的一小步。"
+      },
+      "love": {
+        "en": "Romance feels playful and unscripted right now, so let connection grow without forcing it onto a timeline. If you're single, say yes to the unexpected invitation.",
+        "zh": "此刻的感情轻松而不按剧本走，让关系自然生长，不必急着给它定下时间表。如果你单身，不妨对意料之外的邀约说声好。"
+      },
+      "work": {
+        "en": "A new project, role or idea is calling for beginner's energy. Your fresh eyes are an asset, so ask the questions others stopped asking long ago.",
+        "zh": "新的项目、角色或点子正需要一份新手的冲劲。你的新鲜视角就是优势，去问那些别人早已不再问的问题。"
+      },
+      "growth": {
+        "en": "Growth comes from letting yourself be a beginner again. Notice where the fear of looking foolish is keeping you small.",
+        "zh": "允许自己重新成为初学者，成长就从这里开始。留意一下，是不是怕出丑的心情让你一直缩手缩脚。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Recklessness", "Hesitation", "Missed signals", "Scattered energy"],
+        "zh": ["鲁莽冲动", "犹豫不前", "忽视信号", "心神涣散"]
+      },
+      "meaning": {
+        "en": "Reversed, the Fool's free spirit gets tangled: either rushing ahead without looking or freezing at the edge. You may be ignoring obvious signals, or letting worry stall a beginning that wants to happen. The invitation is to find the balance point between courage and care.",
+        "zh": "逆位的愚者让自由的灵魂有些打结：要么不看路就往前冲，要么在悬崖边僵住不动。你也许忽略了明显的信号，或让担忧挡住了本该开始的事。此刻要找的，是勇气与谨慎之间的平衡。"
+      },
+      "advice": {
+        "en": "Pause long enough to check your footing, then decide whether to leap or wait on purpose rather than by default.",
+        "zh": "停下来看清脚下的路，再有意识地决定是跳还是等，而不是随波逐流。"
+      },
+      "love": {
+        "en": "You might be rushing into intensity or holding back out of fear of getting hurt. Ask whether you're choosing freely or simply reacting.",
+        "zh": "你可能正急于投入一段热烈的感情，或因为怕受伤而迟迟不敢靠近。问问自己：这是自由的选择，还是只是本能的反应？"
+      },
+      "work": {
+        "en": "An idea may need more groundwork before launch, or you may be over-planning something that just needs a start. Check which side you're leaning toward.",
+        "zh": "某个想法可能需要再打些基础才能推出，也可能你对一件只需要开始的事规划过了头。看看自己偏向了哪一边。"
+      },
+      "growth": {
+        "en": "Real freedom includes responsibility. Imagine what it would look like to stay adventurous while honoring your own limits.",
+        "zh": "真正的自由也包含责任。想一想，怎样才能在保持冒险精神的同时，也尊重自己的界限。"
+      }
+    }
+  },
+  {
+    "id": "major-01",
+    "arcana": "major",
+    "suit": null,
+    "number": 1,
+    "name": { "en": "The Magician", "zh": "魔术师" },
+    "description": {
+      "en": "A figure in a white tunic and red robe stands at a table, one hand raising a wand toward the sky and the other pointing to the earth. A cup, a sword, a pentacle and a wand lie on the table, with an infinity sign above his head and roses and lilies blooming around him.",
+      "zh": "身穿白色内袍、外披红袍的人站在桌前，一手高举魔杖指向天空，另一手指向大地。桌上摆着圣杯、宝剑、星币与权杖，他头顶浮现无限符号，四周开满玫瑰与百合。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Manifestation", "Skill", "Focus", "Resourcefulness"],
+        "zh": ["显化成真", "技艺纯熟", "专注意志", "善用资源"]
+      },
+      "meaning": {
+        "en": "The Magician says you already hold the tools you need; you just have to put them on the table and use them together. This is a card of focused intention turning into action. When your thoughts, words and effort point in the same direction, things start to move.",
+        "zh": "魔术师告诉你，所需的工具其实早已在手，只需把它们摆上桌面、一起用起来。这张牌关乎专注的意念化为行动。当你的想法、言语和努力指向同一个方向，事情就会开始转动。"
+      },
+      "advice": {
+        "en": "Name one clear goal for this week and line up every resource you have behind it.",
+        "zh": "为这一周定下一个清晰的目标，把手上所有资源都调动起来为它服务。"
+      },
+      "love": {
+        "en": "You have the charm and clarity to create the connection you want. Say what you mean, and let your actions match your words.",
+        "zh": "你有足够的魅力与清晰，去创造自己想要的关系。把心里话说出来，并让行动与言语保持一致。"
+      },
+      "work": {
+        "en": "Your skills are lined up for a breakthrough: pitch the idea, build the prototype, make the call. Initiative counts for more than perfection here.",
+        "zh": "你的能力已经就位，正适合突破：去提案、去做原型、去打那通电话。此刻主动出击比追求完美更重要。"
+      },
+      "growth": {
+        "en": "Pay attention to how much power lives in deliberate focus. Practice turning a vague wish into a specific intention, and then into a specific act.",
+        "zh": "留意专注本身蕴含的力量。练习把模糊的愿望变成具体的意图，再把意图变成具体的行动。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Scattered focus", "Untapped talent", "Manipulation", "Self-doubt"],
+        "zh": ["分心散漫", "才华未展", "操控算计", "自我怀疑"]
+      },
+      "meaning": {
+        "en": "Reversed, the Magician's tools are present but not working together. Your energy might be spread too thin, your talent left on the shelf, or your persuasion drifting toward spin. It's a prompt to reconnect intention with integrity and bring your focus back home.",
+        "zh": "逆位的魔术师意味着工具都在，却没能协同运作。你的精力可能过于分散，才华被搁置一旁，或者说服力渐渐变成了包装与话术。这是在提醒你，让意图重新与真诚对齐，把注意力收回来。"
+      },
+      "advice": {
+        "en": "Choose one priority, drop two distractions, and check that your methods match your values.",
+        "zh": "选定一件最重要的事，放下两件让你分心的事，并确认你的做法与价值观一致。"
+      },
+      "love": {
+        "en": "Watch for mixed signals, whether yours or someone else's. Charm without follow-through can leave both people unsure where they stand.",
+        "zh": "留意那些忽冷忽热的信号，不论来自你还是对方。只有魅力而没有行动跟进，会让两个人都摸不清彼此的位置。"
+      },
+      "work": {
+        "en": "You may be juggling too many projects to finish any of them well, or underselling what you can actually do. Narrow the scope and show your work.",
+        "zh": "你可能同时揽了太多项目，结果哪个都做不好；也可能低估了自己真正的能力。缩小范围，把成果拿出来。"
+      },
+      "growth": {
+        "en": "Self-doubt may be disguising itself as busyness. Ask what you would create if you fully trusted your own skill.",
+        "zh": "自我怀疑可能正伪装成忙碌。问问自己：如果完全相信自己的能力，你会去创造什么？"
+      }
+    }
+  },
+  {
+    "id": "major-02",
+    "arcana": "major",
+    "suit": null,
+    "number": 2,
+    "name": { "en": "The High Priestess", "zh": "女祭司" },
+    "description": {
+      "en": "A serene woman in flowing blue robes sits between a black pillar marked B and a white pillar marked J, a crescent moon at her feet and a partly hidden scroll labeled TORA in her lap. Behind her hangs a veil embroidered with pomegranates.",
+      "zh": "一位神情沉静、身着蓝色长袍的女子坐在标有B的黑柱与标有J的白柱之间，脚边有一弯新月，膝上半掩着写有TORA的卷轴。她身后垂着绣满石榴的帷幕。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Intuition", "Inner knowing", "Mystery", "Stillness"],
+        "zh": ["直觉", "内在智慧", "神秘", "静观"]
+      },
+      "meaning": {
+        "en": "The High Priestess asks you to listen beneath the noise. Not every answer comes from research or debate; some arrive quietly, as a feeling you can't yet explain. Give your inner voice room, and let what's hidden reveal itself in its own time.",
+        "zh": "女祭司请你在喧嚣之下倾听。并非所有答案都来自查证或争论，有些会悄然而至，像一种还说不清的感觉。给内心的声音留出空间，让隐藏的东西按自己的节奏浮现。"
+      },
+      "advice": {
+        "en": "Before deciding, sit in silence for ten minutes and notice what your body already seems to know.",
+        "zh": "做决定之前，先安静地坐十分钟，感受一下身体似乎早已知道的答案。"
+      },
+      "love": {
+        "en": "There's more beneath the surface than either of you has said. Trust the subtle cues and let intimacy unfold without pushing for answers.",
+        "zh": "你们之间还有许多尚未说出口的东西。相信那些细微的感受，让亲密慢慢展开，不必急着追问答案。"
+      },
+      "work": {
+        "en": "Keep your cards close for now and observe before you act. Your read on the room is likely more accurate than the official story.",
+        "zh": "暂时别急着亮出底牌，先观察再行动。你对局势的直觉判断，很可能比表面上的说法更准确。"
+      },
+      "growth": {
+        "en": "This is a season for journaling, dreams and quiet reflection. Your inner life is a source of wisdom, not just a place you pass through.",
+        "zh": "这是适合写日记、留意梦境和静心反思的时节。你的内心世界是智慧的源泉，而不只是匆匆路过的地方。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Ignored intuition", "Secrets", "Disconnection", "Overthinking"],
+        "zh": ["忽视直觉", "秘而不宣", "与心疏离", "思虑过度"]
+      },
+      "meaning": {
+        "en": "Reversed, the High Priestess suggests your inner voice is being drowned out by other people's opinions, constant input, or your own overthinking. Something may also be withheld, either by you or from you. Turning down the volume outside helps you hear what's true inside.",
+        "zh": "逆位的女祭司暗示你内心的声音被淹没了：可能是别人的意见、源源不断的信息，或是你自己的过度思虑。也可能有些事被隐瞒着，无论是你瞒着别人，还是别人瞒着你。把外界的音量调低，才听得见内在的真相。"
+      },
+      "advice": {
+        "en": "Take a break from asking others what they think, and write down what you think first.",
+        "zh": "暂时别再四处征求意见，先把你自己的想法写下来。"
+      },
+      "love": {
+        "en": "Unspoken feelings or hidden agendas may be creating distance. Gently bring what's been avoided out into the open.",
+        "zh": "未说出口的情绪或隐藏的心思，可能正在拉开你们的距离。温和地把一直回避的话题摊开来谈。"
+      },
+      "work": {
+        "en": "You might be second-guessing a solid instinct, or missing information that isn't being shared. Ask clarifying questions before you commit.",
+        "zh": "你可能在反复质疑一个本来可靠的直觉，或者有些信息没有被分享出来。在做出承诺之前，先把问题问清楚。"
+      },
+      "growth": {
+        "en": "Return to the practices that quiet your mind. Intuition is a muscle that weakens when ignored and strengthens when trusted.",
+        "zh": "重新拾起那些能让心静下来的习惯。直觉像肌肉，被忽视就会变弱，被信任就会变强。"
+      }
+    }
+  },
+  {
+    "id": "major-03",
+    "arcana": "major",
+    "suit": null,
+    "number": 3,
+    "name": { "en": "The Empress", "zh": "皇后" },
+    "description": {
+      "en": "A woman crowned with twelve stars reclines on plush cushions in a lush garden, wearing a gown patterned with pomegranates and holding a scepter. A heart-shaped shield bearing the symbol of Venus rests beside her, ripe wheat grows at her feet, and a stream falls through the trees behind.",
+      "zh": "头戴十二星冠的女子斜倚在柔软的靠垫上，置身繁茂的花园，长袍上绣着石榴，手持权杖。身旁立着刻有金星符号的心形盾牌，脚下麦穗成熟，身后林间有溪水流淌。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Abundance", "Nurturing", "Creativity", "Sensuality"],
+        "zh": ["丰盛", "滋养", "创造力", "感官享受"]
+      },
+      "meaning": {
+        "en": "The Empress is life in full bloom: creative, generous and deeply connected to the body and the senses. She reminds you that growth often comes from tending rather than pushing. Whatever you've been nurturing, from a project to a relationship to yourself, is ready to flourish.",
+        "zh": "皇后是生命盛放的样子：富有创造力、慷慨，与身体和感官紧密相连。她提醒你，成长往往来自用心照料，而非用力推动。无论你一直在培育的是一个项目、一段关系，还是你自己，此刻都已准备好开花结果。"
+      },
+      "advice": {
+        "en": "Do one thing today purely because it nourishes you: cook something good, step outside, or make something with your hands.",
+        "zh": "今天做一件纯粹滋养自己的事：好好做顿饭、出门走走，或亲手做点什么。"
+      },
+      "love": {
+        "en": "Affection flows easily now, so show care through warmth, touch and attention. Relationships thrive when both people feel nurtured.",
+        "zh": "此刻感情流动自然，用温暖、拥抱和关注去表达你的在乎。当双方都感到被滋养，关系便会茁壮成长。"
+      },
+      "work": {
+        "en": "Creative work is especially fertile, whether you design, write, build or cultivate. Projects grow best with steady care rather than last-minute sprints.",
+        "zh": "创意类的工作此刻格外丰沛，适合设计、写作、搭建与耕耘。项目需要的是持续的照料，而非临时冲刺。"
+      },
+      "growth": {
+        "en": "Let pleasure and rest count as part of your growth, not a reward after it. Being gentle with yourself is a creative act.",
+        "zh": "让享受与休息成为成长的一部分，而不只是成长之后的奖励。温柔对待自己，本身就是一种创造。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Depletion", "Creative block", "Overgiving", "Self-neglect"],
+        "zh": ["精力耗竭", "灵感受阻", "过度付出", "忽视自我"]
+      },
+      "meaning": {
+        "en": "Reversed, the Empress points to a well that's running low. You may be pouring care into everyone but yourself, or feeling creatively stuck because there's no room left to play. Abundance returns when you refill your own cup and let things grow at their natural pace.",
+        "zh": "逆位的皇后意味着内在的泉水快要见底。你也许把关怀都给了别人，唯独漏掉了自己；或因为没有玩耍的空间而灵感枯竭。当你先把自己的杯子斟满，让事物按自然的节奏生长，丰盛便会回来。"
+      },
+      "advice": {
+        "en": "Identify one place where you're overgiving, and let it be a little less perfect this week.",
+        "zh": "找出一个你过度付出的地方，这周允许它不那么完美。"
+      },
+      "love": {
+        "en": "Caretaking may have tipped into smothering, or you may feel unappreciated for all you give. Balance returns when care flows both ways.",
+        "zh": "照顾可能已经变成了过度干涉，或者你觉得自己的付出没有被看见。只有关爱双向流动，关系才会重新平衡。"
+      },
+      "work": {
+        "en": "A creative dry spell is a signal to rest and gather input, not to force output. Step away briefly and come back curious.",
+        "zh": "创作上的低潮是在提醒你休息、吸收养分，而不是硬逼自己产出。暂时抽离一下，再带着好奇回来。"
+      },
+      "growth": {
+        "en": "Your body and simple pleasures are a way back to yourself. Your worth isn't measured by how much you produce or provide.",
+        "zh": "身体与简单的快乐，是你回到自己的路。你的价值，不取决于你产出或付出了多少。"
+      }
+    }
+  },
+  {
+    "id": "major-04",
+    "arcana": "major",
+    "suit": null,
+    "number": 4,
+    "name": { "en": "The Emperor", "zh": "皇帝" },
+    "description": {
+      "en": "A bearded ruler in a red robe worn over armor sits on a stone throne carved with ram heads, holding an ankh-topped scepter and a golden orb. Stark orange mountains rise behind him.",
+      "zh": "一位蓄着长须的统治者身披红袍、内着铠甲，端坐在雕有公羊头的石制王座上，手持顶端为安卡十字的权杖和金色宝球。他身后是陡峭荒凉的橙色山脉。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Structure", "Leadership", "Stability", "Discipline"],
+        "zh": ["秩序", "领导力", "稳定", "自律"]
+      },
+      "meaning": {
+        "en": "The Emperor brings order to chaos. He represents the frameworks, like routines, boundaries and plans, that let your ideas stand up in the real world. This card asks you to step into steady, responsible leadership, whether you're guiding a team or simply taking charge of your own life.",
+        "zh": "皇帝为混乱带来秩序。他代表那些让想法在现实中站稳的框架：日常规律、边界与计划。这张牌请你承担起稳健而负责的领导角色，无论是带领团队，还是单纯地掌握自己的人生。"
+      },
+      "advice": {
+        "en": "Build one simple system, such as a schedule, a checklist or a boundary, that protects what matters most to you.",
+        "zh": "建立一个简单的系统，比如一张日程表、一份清单或一条界线，守护对你最重要的东西。"
+      },
+      "love": {
+        "en": "Stability and reliability are the love language here. Show up consistently, and be clear about what you need and what you won't accept.",
+        "zh": "此刻最动人的情话是稳定与可靠。持续地出现，并清楚表达你需要什么、不能接受什么。"
+      },
+      "work": {
+        "en": "It's a good moment to take ownership, set clear expectations and organize the chaos. People respond well to calm, decisive direction.",
+        "zh": "现在适合主动担责、明确期待，把混乱理出头绪。冷静而果断的方向感，会让周围的人更有安全感。"
+      },
+      "growth": {
+        "en": "Discipline can be a form of self-respect. Watch how keeping small promises to yourself builds a quiet, durable confidence.",
+        "zh": "自律也可以是一种自我尊重。留意那些对自己守住的小承诺，如何慢慢累积成一份安静而持久的自信。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Rigidity", "Overcontrol", "Disorder", "Power struggle"],
+        "zh": ["僵化固执", "控制过度", "秩序失衡", "权力拉锯"]
+      },
+      "meaning": {
+        "en": "Reversed, the Emperor's structure either hardens into control or collapses into disorder. You might be clinging to rules that no longer serve, clashing with authority, or missing the boundaries that would make life feel manageable. Look for leadership that's firm without being rigid.",
+        "zh": "逆位的皇帝，结构要么僵化成控制，要么瓦解为失序。你可能死守着已不再适用的规则，与权威发生冲突，或者缺少能让生活变得可控的界限。试着寻找一种坚定而不僵硬的领导方式。"
+      },
+      "advice": {
+        "en": "Loosen your grip on one thing you're trying to control, and firm up one boundary you've let slide.",
+        "zh": "对一件你试图掌控的事松一松手，同时把一条被你放任的界限重新立起来。"
+      },
+      "love": {
+        "en": "Watch for dynamics where one person makes all the decisions. A partnership needs shared power, not a chain of command.",
+        "zh": "留意关系中是否总由一个人说了算。伴侣之间需要的是共享的力量，而不是上下级关系。"
+      },
+      "work": {
+        "en": "Friction with a boss or rigid processes may be draining you, or your own approach may feel heavy-handed to others. Seek structure that supports people instead of boxing them in.",
+        "zh": "与上级的摩擦或僵化的流程可能正消耗着你，也可能你自己的作风让别人觉得太过强硬。去寻找能支持人、而不是束缚人的结构。"
+      },
+      "growth": {
+        "en": "Examine your relationship with authority, including your inner critic. Real strength can bend without breaking.",
+        "zh": "审视你与权威的关系，包括你内心那个严厉的批评者。真正的力量能够弯曲而不折断。"
+      }
+    }
+  },
+  {
+    "id": "major-05",
+    "arcana": "major",
+    "suit": null,
+    "number": 5,
+    "name": { "en": "The Hierophant", "zh": "教皇" },
+    "description": {
+      "en": "A religious figure in red robes and a triple crown sits between two gray pillars, raising one hand in blessing and holding a triple cross in the other. Two crossed keys lie at his feet, where two tonsured acolytes kneel before him.",
+      "zh": "身着红袍、头戴三重冠的宗教人物端坐于两根灰色石柱之间，一手举起作赐福状，另一手握着三重十字杖。他脚下放着两把交叉的钥匙，两位剃发的修士跪在他面前。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Tradition", "Mentorship", "Shared values", "Learning"],
+        "zh": ["传统", "良师引领", "共同信念", "求知受教"]
+      },
+      "meaning": {
+        "en": "The Hierophant represents the wisdom carried by traditions, teachers and communities. It suggests there's value in learning from those who have walked this road before, or in grounding yourself in a practice with deep roots. Belonging to something larger can steady you and give your choices meaning.",
+        "zh": "教皇代表由传统、师长和群体所承载的智慧。它提示你，向走过这条路的人学习是有价值的，或者让自己扎根在一种源远流长的修习之中。归属于某个更大的整体，能让你更安稳，也让你的选择更有意义。"
+      },
+      "advice": {
+        "en": "Seek out a mentor, a class or a community whose values you respect, and let yourself be a student.",
+        "zh": "找一位你敬重其价值观的导师、一门课程或一个社群，安心做一名学生。"
+      },
+      "love": {
+        "en": "Shared values and commitment take center stage, through conversations about what you both believe in or by meeting each other's families and traditions.",
+        "zh": "共同的价值观与承诺成为焦点：聊聊你们各自相信什么，或去认识彼此的家人与传统。"
+      },
+      "work": {
+        "en": "Established methods and institutions work in your favor right now. Learn the system thoroughly before you try to change it.",
+        "zh": "成熟的方法和体制此刻对你有利。先把规则吃透，再考虑如何改变它。"
+      },
+      "growth": {
+        "en": "Look at the beliefs you inherited with curiosity. Some may be treasures worth keeping; your work is to make them your own consciously.",
+        "zh": "带着好奇心审视那些你继承来的信念。有些也许值得珍藏，关键在于有意识地让它们真正成为你自己的。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Nonconformity", "Questioning rules", "Dogma", "Personal beliefs"],
+        "zh": ["打破常规", "质疑规则", "教条束缚", "自我信念"]
+      },
+      "meaning": {
+        "en": "Reversed, the Hierophant signals tension with convention. You may feel boxed in by expectations, or ready to question rules that never quite fit. This can be healthy rebellion, or a reminder not to discard useful wisdom just because it's old. Find your own path with discernment.",
+        "zh": "逆位的教皇显示你与常规之间的张力。你可能觉得被各种期待框住了，或已准备好去质疑那些从来不太适合你的规则。这可以是健康的反叛，也是在提醒你：别只因为某些智慧老旧就全盘丢弃。带着判断力走出自己的路。"
+      },
+      "advice": {
+        "en": "Write down one rule you live by and ask honestly whether you chose it or simply absorbed it.",
+        "zh": "写下一条你奉行的规则，诚实地问自己：这是你选择的，还是只是被动接受的？"
+      },
+      "love": {
+        "en": "Your relationship may not fit the conventional script, and that's okay. Define commitment on terms that feel true to both of you.",
+        "zh": "你们的关系也许不符合常规剧本，这没关系。用你们双方都觉得真实的方式，去定义彼此的承诺。"
+      },
+      "work": {
+        "en": "Rigid hierarchies or outdated processes may frustrate you. Innovation is welcome, but bring allies along rather than going it alone.",
+        "zh": "僵化的层级或过时的流程可能让你感到挫败。创新是好事，但要争取同伴支持，而不是孤军奋战。"
+      },
+      "growth": {
+        "en": "Your spiritual or personal path may be moving beyond what you were taught. Trust your own experience as a valid teacher.",
+        "zh": "你的心灵或个人道路，可能正在超越你曾被教导的一切。相信你自己的经历，它同样是一位值得信赖的老师。"
+      }
+    }
+  },
+  {
+    "id": "major-06",
+    "arcana": "major",
+    "suit": null,
+    "number": 6,
+    "name": { "en": "The Lovers", "zh": "恋人" },
+    "description": {
+      "en": "A nude man and woman stand in a garden beneath a radiant angel with outstretched arms and a blazing sun. Behind the woman grows a fruit tree with a coiled serpent, behind the man a tree of flames, and a single mountain rises between them.",
+      "zh": "一对赤裸的男女站在花园中，上方是张开双臂、光芒四射的天使与炽烈的太阳。女子身后是结着果实、缠着蛇的树，男子身后是燃着火焰的树，两人之间耸立着一座山峰。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Connection", "Alignment", "Choice", "Harmony"],
+        "zh": ["心灵契合", "价值一致", "重要抉择", "和谐"]
+      },
+      "meaning": {
+        "en": "The Lovers is about deep connection and the choices that shape it. Beyond romance, it speaks to aligning with what you truly value, choosing people, paths and commitments that reflect who you are. When your heart and your principles agree, decisions feel clear and right.",
+        "zh": "恋人牌关乎深刻的连结，以及塑造这份连结的选择。它不止于爱情，更关乎与你真正重视的东西对齐：选择能映照出你本来面目的人、道路与承诺。当内心与原则彼此认同，决定就会变得清晰而踏实。"
+      },
+      "advice": {
+        "en": "When facing a choice, ask which option you could stand behind fully, not just which one feels easiest.",
+        "zh": "面对抉择时，问问自己哪个选项能让你全心全意地站在它身后，而不只是看哪个最轻松。"
+      },
+      "love": {
+        "en": "A meaningful bond deepens through honesty and mutual respect. This is a card of genuine attraction and of choosing each other on purpose.",
+        "zh": "一段有意义的关系会在坦诚与相互尊重中加深。这张牌代表真挚的吸引，以及双方有意识地选择彼此。"
+      },
+      "work": {
+        "en": "Partnerships and collaborations are favored, especially with people who share your values. A decision may hinge on whether a role truly fits who you are.",
+        "zh": "合作与搭档关系此刻受到眷顾，尤其是和价值观相近的人。某个决定的关键，可能在于这个角色是否真正适合你。"
+      },
+      "growth": {
+        "en": "Get clear on your core values, because they're the compass for every big choice. Integrity means letting your actions and beliefs meet.",
+        "zh": "弄清楚自己的核心价值，它们是每个重大选择的指南针。所谓正直，就是让行动与信念相遇。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Misalignment", "Disconnection", "Indecision", "Inner conflict"],
+        "zh": ["价值错位", "关系疏离", "摇摆不定", "内心矛盾"]
+      },
+      "meaning": {
+        "en": "Reversed, the Lovers points to a gap, either between you and someone else or between what you want and how you're living. You might be avoiding a decision, or choosing in a way that doesn't reflect your values. Closing that gap starts with honesty about what matters to you.",
+        "zh": "逆位的恋人指向一道缝隙：可能在你与他人之间，也可能在你想要的与你正在过的生活之间。你或许在回避某个决定，或做出了与自身价值不符的选择。要弥合这道缝隙，先从诚实面对自己真正在乎什么开始。"
+      },
+      "advice": {
+        "en": "Name the value you've been compromising lately, and choose one small way to honor it again.",
+        "zh": "说出最近你一直在妥协的那个价值，然后选一个小小的方式重新守护它。"
+      },
+      "love": {
+        "en": "Communication may have frayed, or you may want different things. A frank, kind conversation about needs can reveal whether you're still on the same path.",
+        "zh": "沟通可能出现了裂痕，或你们想要的东西已不再相同。一场坦率而温和的需求对话，能让你们看清彼此是否仍在同一条路上。"
+      },
+      "work": {
+        "en": "A collaboration may feel out of sync, or a role may clash with your values. Clarify expectations before resentment builds.",
+        "zh": "某段合作可能步调不一，或某个角色与你的价值观相冲突。在怨气积累之前，先把彼此的期待说清楚。"
+      },
+      "growth": {
+        "en": "Inner conflict is information, not failure. Ask which part of you wants what, and look for a choice that honors both.",
+        "zh": "内心的矛盾是一种讯息，而不是失败。分辨一下你的哪一部分想要什么，再寻找一个能同时照顾双方的选择。"
+      }
+    }
+  },
+  {
+    "id": "major-07",
+    "arcana": "major",
+    "suit": null,
+    "number": 7,
+    "name": { "en": "The Chariot", "zh": "战车" },
+    "description": {
+      "en": "An armored charioteer stands in a chariot beneath a star-covered canopy, holding a wand but no reins. Two sphinxes, one black and one white, rest in front of the chariot, with a walled city behind.",
+      "zh": "身披铠甲的驭者站在饰满星辰的华盖战车中，手持权杖，却没有握住任何缰绳。车前卧着一黑一白两只斯芬克斯，身后是一座城墙环绕的城市。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Determination", "Willpower", "Momentum", "Victory"],
+        "zh": ["坚定意志", "自我驾驭", "勇往直前", "胜利"]
+      },
+      "meaning": {
+        "en": "The Chariot is focused willpower in motion. It shows you steering opposing forces, like doubt and drive or logic and emotion, toward a single goal. Success here comes not from luck but from commitment, discipline and the confidence to keep moving even when the road gets bumpy.",
+        "zh": "战车是专注的意志付诸行动。它展现你如何驾驭彼此拉扯的力量，比如怀疑与冲劲、理性与情感，让它们朝同一个目标前进。这里的成功并非靠运气，而是靠投入、自律，以及在颠簸路上依然前行的自信。"
+      },
+      "advice": {
+        "en": "Pick your destination, set a deadline, and let every choice this week be a step toward it.",
+        "zh": "选定目的地，定下期限，让这一周的每个选择都成为朝它迈进的一步。"
+      },
+      "love": {
+        "en": "Pursue what you want in love with confidence and clarity. Relationships move forward when both people steer in the same direction.",
+        "zh": "在感情中自信而清晰地追求你想要的。当两个人朝同一个方向掌舵，关系才会向前推进。"
+      },
+      "work": {
+        "en": "Ambition and focus carry you past obstacles, and a goal that seemed distant is within reach if you stay the course. Competitive situations tend to favor you.",
+        "zh": "雄心与专注能带你越过障碍，只要坚持航向，原本遥远的目标也触手可及。在竞争局面中，你往往占据优势。"
+      },
+      "growth": {
+        "en": "Self-mastery is the real victory. Practice harnessing conflicting impulses instead of letting them pull you apart.",
+        "zh": "真正的胜利是驾驭自己。练习统合内心彼此冲突的冲动，而不是任由它们把你撕扯开来。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Lack of direction", "Scattered drive", "Forcing outcomes", "Stalled progress"],
+        "zh": ["方向迷失", "力量分散", "强求结果", "停滞不前"]
+      },
+      "meaning": {
+        "en": "Reversed, the Chariot's twin forces pull in different directions. You may feel stuck, unsure where you're headed, or pushing so hard that you're running on empty. Sometimes the way forward is to stop forcing, recalibrate your route, and reclaim control from within rather than through sheer effort.",
+        "zh": "逆位的战车，拉车的两股力量各朝一边使劲。你可能感到停滞、不确定方向，或用力过猛而心力交瘁。有时，前进的方式恰恰是停止硬推，重新校准路线，从内在找回掌控，而不是单靠蛮力。"
+      },
+      "advice": {
+        "en": "Stop and ask where you're actually trying to go before adding more speed.",
+        "zh": "在继续加速之前，先停下来问问自己：你究竟想去哪里？"
+      },
+      "love": {
+        "en": "A power struggle or a mismatched pace may be causing friction. Slow down and agree on a shared direction before pushing forward.",
+        "zh": "权力拉扯或步调不一致，可能正引发摩擦。先放慢脚步，就共同的方向达成共识，再一起往前走。"
+      },
+      "work": {
+        "en": "Progress may stall because of scattered priorities or outside obstacles. Regroup, simplify the plan, and put your energy where it counts.",
+        "zh": "优先事项分散或外部阻碍，可能让进展停滞。重新整顿、简化计划，把力气用在关键之处。"
+      },
+      "growth": {
+        "en": "Consider whether you're driven by your own goals or by pressure to prove something. Gentle discipline often outlasts aggressive force.",
+        "zh": "不妨分辨一下，驱动你的究竟是自己的目标，还是想证明什么的压力。温和的自律，往往比强硬的蛮力走得更远。"
+      }
+    }
+  },
+  {
+    "id": "major-08",
+    "arcana": "major",
+    "suit": null,
+    "number": 8,
+    "name": { "en": "Strength", "zh": "力量" },
+    "description": {
+      "en": "A woman in a white gown, garlanded with flowers and with an infinity sign above her head, gently holds the jaws of a lion. The scene is calm and tender, set against a yellow sky and a distant blue mountain.",
+      "zh": "一位身着白袍、头戴花环的女子，头顶浮现无限符号，正以双手温柔地抚住一头狮子的嘴。画面平和而温情，背景是金黄的天空与远方的蓝色山峦。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Inner strength", "Courage", "Compassion", "Patience"],
+        "zh": ["内在力量", "勇气", "慈悲", "耐心"]
+      },
+      "meaning": {
+        "en": "Strength shows that real power is quiet. It's the courage to meet fear, anger or impulse with patience instead of force, and to treat the wild parts of yourself with kindness. You're more resilient than you think, and gentleness is part of that resilience.",
+        "zh": "力量牌告诉你，真正的力量是安静的。那是用耐心而非蛮力去面对恐惧、愤怒或冲动的勇气，也是善待自己内心野性一面的温柔。你比自己以为的更坚韧，而温柔正是这份坚韧的一部分。"
+      },
+      "advice": {
+        "en": "Meet today's hardest moment with a slow breath and a softer response than your first impulse.",
+        "zh": "面对今天最难熬的时刻，先慢慢吸一口气，用比第一反应更柔和的方式回应。"
+      },
+      "love": {
+        "en": "Patience and compassion strengthen your bond. Being gentle with each other's rough edges builds lasting trust.",
+        "zh": "耐心与慈悲会让你们的连结更牢固。温柔地包容彼此的棱角，能建立起长久的信任。"
+      },
+      "work": {
+        "en": "Calm persistence wins over aggressive tactics. You can handle difficult people or pressure with grace and quiet confidence.",
+        "zh": "冷静的坚持胜过咄咄逼人的手段。你能以从容与沉稳的自信，应对难缠的人和各种压力。"
+      },
+      "growth": {
+        "en": "Befriend the parts of yourself you've tried to suppress. Self-compassion is what makes lasting change possible.",
+        "zh": "与那些你一直试图压抑的自我部分做朋友。自我关怀，才是让改变得以持久的关键。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Shaken confidence", "Low energy", "Inner turmoil", "Raw impulses"],
+        "zh": ["信心动摇", "精力低落", "内心翻涌", "冲动失控"]
+      },
+      "meaning": {
+        "en": "Reversed, Strength suggests your inner reserves are running low. Fear or self-doubt might be louder than usual, or emotions may spill out in ways you later regret. This isn't weakness; it's a signal to rest, reconnect with your courage, and offer yourself the patience you'd give a friend.",
+        "zh": "逆位的力量暗示你的内在储备有些不足。恐惧或自我怀疑可能比平时更响亮，情绪也许会以事后令你懊悔的方式倾泻而出。这并非软弱，而是在提醒你休息、重新找回勇气，并像对待朋友那样对自己多一点耐心。"
+      },
+      "advice": {
+        "en": "Recall one past challenge you came through, and let it remind you what you're capable of.",
+        "zh": "回想一次你曾挺过的难关，让它提醒你自己有多大的能耐。"
+      },
+      "love": {
+        "en": "Insecurity or quick tempers may be testing the relationship. Pause before reacting, and speak to the fear underneath the frustration.",
+        "zh": "不安全感或急躁的脾气，可能正考验着这段关系。回应之前先停一停，说出挫败感底下真正的担忧。"
+      },
+      "work": {
+        "en": "You might doubt your ability to handle a challenge, or feel drained by constant pressure. Pace yourself and lean on your proven strengths.",
+        "zh": "你可能怀疑自己能否应付某个挑战，或被持续的压力耗得精疲力尽。调整节奏，依靠那些已被证明过的长处。"
+      },
+      "growth": {
+        "en": "Courage can be as small as getting up and trying again. Treat setbacks as part of building strength, not proof that you lack it.",
+        "zh": "勇气可以小到只是站起来再试一次。把挫折看作积蓄力量的过程，而不是你缺乏力量的证明。"
+      }
+    }
+  },
+  {
+    "id": "major-09",
+    "arcana": "major",
+    "suit": null,
+    "number": 9,
+    "name": { "en": "The Hermit", "zh": "隐士" },
+    "description": {
+      "en": "An elderly figure in a hooded gray cloak stands alone on a snowy peak, holding up a lantern with a six-pointed star inside and leaning on a long staff. His head is bowed as he lights the way through the dark.",
+      "zh": "一位身披灰色兜帽斗篷的老者独自站在雪峰之巅，一手提着内有六芒星的提灯，一手拄着长杖。他低着头，在黑暗中照亮前路。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Solitude", "Reflection", "Inner guidance", "Wisdom"],
+        "zh": ["独处", "内省", "内在指引", "智慧"]
+      },
+      "meaning": {
+        "en": "The Hermit invites you to step back from the crowd and turn your attention inward. This isn't loneliness but chosen solitude, time to sort out what you think away from outside noise. The light you're looking for is the one you carry, and it grows brighter in the quiet.",
+        "zh": "隐士邀请你从人群中退后一步，将注意力转向内在。这不是孤单，而是主动选择的独处：远离外界杂音，理清自己的想法。你寻找的光，就是你手中提着的那盏灯，在寂静中会愈发明亮。"
+      },
+      "advice": {
+        "en": "Block out some unhurried time alone this week, with no feeds and no agenda, and see what surfaces.",
+        "zh": "这周给自己留出一段从容的独处时光，不刷信息、不排日程，看看会浮现什么。"
+      },
+      "love": {
+        "en": "You may need some space to understand what you truly want before giving more of yourself. Healthy love makes room for each person's inner world.",
+        "zh": "在付出更多之前，你可能需要一些空间，弄清自己真正想要什么。健康的爱，会为彼此的内心世界留出位置。"
+      },
+      "work": {
+        "en": "Deep, focused work done away from distractions pays off now. You may also find yourself in the role of quiet mentor, sharing hard-won insight.",
+        "zh": "远离干扰、深度专注的工作此刻会带来回报。你也可能成为一位低调的引路人，分享自己来之不易的洞见。"
+      },
+      "growth": {
+        "en": "Introspection is your teacher right now. Journaling, long walks or meditation can help you hear your own guidance clearly.",
+        "zh": "此刻，内省就是你的老师。写日记、长时间散步或冥想，都能帮你更清楚地听见内心的指引。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Isolation", "Withdrawal", "Avoidance", "Reconnecting"],
+        "zh": ["自我孤立", "封闭退缩", "逃避内省", "重新连结"]
+      },
+      "meaning": {
+        "en": "Reversed, the Hermit's solitude may have tipped into isolation. You might be hiding from people or problems rather than reflecting on them, or avoiding the inner work altogether by staying busy. It may be time to bring your light back to others and let connection support your growth.",
+        "zh": "逆位的隐士意味着独处可能已变成孤立。你也许是在躲避人群或问题，而不是沉淀思考；又或者用忙碌来逃避内在的功课。也许是时候带着你的光回到人群中，让连结来支持你的成长。"
+      },
+      "advice": {
+        "en": "Reach out to one person you trust and share something you've been carrying alone.",
+        "zh": "联系一位你信任的人，把一直独自承担的心事说给对方听。"
+      },
+      "love": {
+        "en": "Withdrawing to protect yourself may be creating distance you don't actually want. Let someone see where you really are right now.",
+        "zh": "为了保护自己而退缩，可能正制造出你并不想要的距离。让对方看见你此刻真实的状态。"
+      },
+      "work": {
+        "en": "Working in isolation may be narrowing your perspective. Ask for feedback or collaborate, since others can light up your blind spots.",
+        "zh": "闭门造车可能限制了你的视野。去寻求反馈或与人协作，别人能照亮你的盲区。"
+      },
+      "growth": {
+        "en": "Reflection matters, but so does integration. Look for ways your insights can live in your daily relationships, not just in your head.",
+        "zh": "反思很重要，融会贯通也同样重要。想想如何让你的领悟落实在日常的人际关系中，而不只停留在脑海里。"
+      }
+    }
+  },
+  {
+    "id": "major-10",
+    "arcana": "major",
+    "suit": null,
+    "number": 10,
+    "name": { "en": "Wheel of Fortune", "zh": "命运之轮" },
+    "description": {
+      "en": "A great wheel inscribed with letters and alchemical symbols turns among the clouds, with a sphinx perched on top, a snake sliding down one side and a jackal-headed figure rising on the other. In each corner, a winged creature reads an open book.",
+      "zh": "一个刻有字母与炼金符号的巨轮在云端转动，顶端坐着斯芬克斯，一侧有蛇向下滑落，另一侧有胡狼头的人物向上攀升。四个角落里，各有一只带翼的生灵正在翻阅书本。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Cycles", "Turning point", "Good fortune", "Change"],
+        "zh": ["循环", "转折点", "时来运转", "顺势而变"]
+      },
+      "meaning": {
+        "en": "The Wheel of Fortune reminds you that life moves in cycles. A turning point is arriving, often bringing luck, momentum or a shift you didn't fully plan. You can't control the wheel, but you can choose how you ride it: staying open, adaptable and ready to meet the moment.",
+        "zh": "命运之轮提醒你，人生是循环流转的。一个转折点正在到来，常常伴随着好运、动能，或某个你未曾完全计划的转变。你无法掌控轮子的转动，却可以选择如何乘着它前行：保持开放、灵活应变，准备好迎接这一刻。"
+      },
+      "advice": {
+        "en": "Stay alert for an unexpected opening this week, and give it a real chance before you overthink it.",
+        "zh": "留意这周可能出现的意外契机，在想太多之前，先认真给它一个机会。"
+      },
+      "love": {
+        "en": "Fate seems to be nudging things along, through a chance meeting, a renewed spark, or a relationship entering a new chapter. Let yourself go with the flow.",
+        "zh": "命运似乎在轻轻推动：一次偶遇、重新燃起的火花，或一段关系步入新的篇章。顺势而为就好。"
+      },
+      "work": {
+        "en": "Timing works in your favor, and doors that were closed before may open. Stay flexible enough to catch opportunities as they turn up.",
+        "zh": "时机站在你这边，过去关着的门可能会打开。保持灵活，才能在机会出现时及时抓住。"
+      },
+      "growth": {
+        "en": "Notice the patterns that keep repeating in your life. Understanding the cycle is the first step to working with it.",
+        "zh": "留意生活中不断重复的模式。理解这个循环，是与它合作的第一步。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Setbacks", "Resisting change", "Repeating patterns", "Off timing"],
+        "zh": ["时运不济", "抗拒变化", "重蹈覆辙", "时机未到"]
+      },
+      "meaning": {
+        "en": "Reversed, the Wheel can feel like it's turning against you, or not turning at all. Delays, setbacks or old patterns may resurface, often asking you to learn what you missed last time. Remember that every low point is part of a cycle, and resisting change only makes the ride rougher.",
+        "zh": "逆位的命运之轮，可能让你觉得轮子在与你作对，甚至停滞不前。延误、挫折或旧有模式也许会再次出现，常常是在提醒你补上上次错过的功课。记住，每个低谷都是循环的一部分，抗拒变化只会让旅程更颠簸。"
+      },
+      "advice": {
+        "en": "Focus on what you can influence today, and let the rest unfold without a fight.",
+        "zh": "把注意力放在今天你能影响的事情上，其余的就顺其自然，不必硬碰。"
+      },
+      "love": {
+        "en": "An old relationship pattern may be repeating itself. Ask what this cycle is trying to teach you before choosing differently.",
+        "zh": "某种旧有的感情模式可能正在重演。在做出不同的选择之前，先问问这个循环想教会你什么。"
+      },
+      "work": {
+        "en": "Plans may hit unexpected delays or shifts beyond your control. Adapt where you can, and use the slower period to strengthen your foundation.",
+        "zh": "计划可能遇到意外的延误或你无法掌控的变动。能调整的地方就调整，把放缓的时期用来夯实基础。"
+      },
+      "growth": {
+        "en": "Where are you clinging to how things used to be? Accepting impermanence can turn a setback into a reset.",
+        "zh": "你在哪些地方还执着于过去的样子？接纳无常，能让一次挫折变成一次重启。"
+      }
+    }
+  }
+]

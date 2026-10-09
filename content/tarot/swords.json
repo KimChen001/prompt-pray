@@ -1,0 +1,800 @@
+[
+  {
+    "id": "swords-01",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 1,
+    "name": { "en": "Ace of Swords", "zh": "宝剑王牌" },
+    "description": {
+      "en": "A hand emerges from a cloud gripping an upright sword whose tip passes through a golden crown hung with olive and palm. Small flames of light drift down around it above a range of bare, pale mountains.",
+      "zh": "一只手从云中伸出，紧握一柄直立的长剑，剑尖穿过一顶挂着橄榄枝与棕榈叶的金冠。剑旁飘落着细小的光焰，下方是一片荒凉苍白的山峦。"
+    },
+    "upright": {
+      "keywords": { "en": ["Clarity", "Breakthrough", "Truth", "New idea"], "zh": ["清晰", "突破", "真相", "新想法"] },
+      "meaning": {
+        "en": "A single clean thought cuts through the fog. This card marks the moment an idea clicks, a truth becomes undeniable, or you finally find the words for what you've been circling. Your mind is sharp and ready, and what you see clearly now can become the foundation for everything that follows.",
+        "zh": "一个干净利落的念头划破迷雾。这张牌象征灵光乍现的时刻：想法豁然开朗，真相不再模糊，你终于找到了一直在心里打转的那句话。此刻头脑敏锐，你看清的东西，将成为接下来一切的基础。"
+      },
+      "advice": {
+        "en": "Put the clearest version of what you now know into a single sentence before doubt has a chance to blur it.",
+        "zh": "趁怀疑还没来得及把它弄模糊，用一句话写下你此刻最确定的认知。"
+      },
+      "love": {
+        "en": "An honest conversation clears the air and shows you exactly where you stand. Saying what you truly mean, kindly but plainly, opens the door to a fresh start.",
+        "zh": "一次坦诚的对话让空气变得清爽，也让你看清彼此的位置。温和而直白地说出真心话，会带来新的开始。"
+      },
+      "work": {
+        "en": "A sharp idea or a clear decision gives your project new direction. This is a good moment to pitch, to define the problem precisely, or to set one crisp goal.",
+        "zh": "一个犀利的点子或明确的决定为项目指明了新方向。适合提出方案、精准定义问题，或设定一个清晰的目标。"
+      },
+      "growth": {
+        "en": "You're ready to see yourself without the usual stories. Let one honest insight about your patterns become the starting point for change.",
+        "zh": "你已准备好放下惯常的自我叙事，直面真实的自己。让一个关于自身模式的诚实洞见，成为改变的起点。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Confusion", "Mixed signals", "Overthinking", "Clouded judgment"], "zh": ["迷惑", "信号混乱", "想太多", "判断失准"] },
+      "meaning": {
+        "en": "The blade is there, but the grip is unsteady. Ideas may be scattered, information incomplete, or a truth you half-know is being kept at arm's length. Rather than forcing a verdict, give yourself time to gather facts and let the mental static settle before you cut.",
+        "zh": "剑仍在手，只是握得不稳。思绪可能零散，信息尚不完整，或者某个你隐约知道的真相正被刻意推远。与其急着下结论，不如先收集事实，等脑中的杂音沉淀下来，再果断出手。"
+      },
+      "advice": {
+        "en": "Hold off on the big decision until you've separated what you know from what you're assuming.",
+        "zh": "在分清“已知”与“猜测”之前，先别做重大决定。"
+      },
+      "love": {
+        "en": "Mixed messages or unspoken assumptions may be creating distance. Ask the direct question instead of decoding hints.",
+        "zh": "混杂的信号或未说出口的假设，可能正在拉开你们的距离。与其揣摩暗示，不如直接问出口。"
+      },
+      "work": {
+        "en": "A plan may feel fuzzy, or the brief keeps shifting. Pause to clarify scope and expectations before pouring in more energy.",
+        "zh": "计划可能有些模糊，需求也在不断变化。投入更多精力之前，先停下来厘清范围和预期。"
+      },
+      "growth": {
+        "en": "Your mind may be running in loops. Journaling, a walk, or simply sleeping on it can help the real insight surface.",
+        "zh": "思绪可能在原地打转。写写日记、散散步，或者干脆睡一觉，真正的领悟会自己浮上来。"
+      }
+    }
+  },
+  {
+    "id": "swords-02",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 2,
+    "name": { "en": "Two of Swords", "zh": "宝剑二" },
+    "description": {
+      "en": "A blindfolded woman in a pale robe sits on a stone bench with her back to the sea, arms crossed over her chest, balancing two long swords. A crescent moon hangs above the rocky water behind her.",
+      "zh": "一位身着素袍、蒙着双眼的女子背对大海坐在石凳上，双臂交叉于胸前，各执一柄长剑保持平衡。她身后的海面礁石嶙峋，空中挂着一弯新月。"
+    },
+    "upright": {
+      "keywords": { "en": ["Stalemate", "Indecision", "Guarded heart", "Difficult choice"], "zh": ["僵局", "犹豫不决", "心防", "两难"] },
+      "meaning": {
+        "en": "You're holding two options perfectly still so you don't have to feel the weight of either. The calm is real, but it's a held breath, not peace. Avoiding the choice keeps things balanced for now, yet clarity will only come once you lower the blindfold and look at what you've been refusing to see.",
+        "zh": "你让两个选项保持静止，好让自己不必承受任何一方的重量。这份平静是真实的，却更像屏住的呼吸，而非真正的安宁。回避选择能暂时维持平衡，但只有摘下眼罩，直视你一直不愿看的东西，答案才会出现。"
+      },
+      "advice": {
+        "en": "List what each path would honestly cost you, then notice which loss you can live with.",
+        "zh": "诚实地写下每条路要付出的代价，然后留意哪一种失去是你承受得起的。"
+      },
+      "love": {
+        "en": "You or someone close may be keeping feelings behind crossed arms to avoid conflict. Gentle openness will move things further than a careful truce.",
+        "zh": "你或身边的人可能为了避免冲突，把感受藏在交叉的双臂之后。温柔地敞开心扉，比小心翼翼的休战更能推动关系。"
+      },
+      "work": {
+        "en": "A decision is stalled, perhaps between two projects or two people's priorities. Gather the missing information so you're choosing, not just waiting.",
+        "zh": "某个决定陷入停滞，也许卡在两个项目或两方的优先级之间。补齐缺失的信息，让自己是在选择，而不只是等待。"
+      },
+      "growth": {
+        "en": "Notice where neutrality has become a hiding place. Admitting your preference, even before acting on it, is a quiet act of courage.",
+        "zh": "留意“保持中立”在哪些地方变成了你的藏身之处。哪怕暂时不行动，先承认自己的倾向，本身就是一种安静的勇气。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Overwhelm", "Information overload", "Lifting the blindfold", "Inner tug-of-war"], "zh": ["不堪重负", "信息过载", "揭开蒙眼", "内心拉扯"] },
+      "meaning": {
+        "en": "The balancing act is wobbling. You may feel pulled in too many directions, flooded with opinions, or tired of pretending not to know what you want. That discomfort is useful: the stalemate is breaking, and the truth you've been shielding yourself from is ready to be faced.",
+        "zh": "勉强维持的平衡开始摇晃。你也许被拉向太多方向，被各种意见淹没，或者已经厌倦了假装不知道自己想要什么。这种不适其实有用：僵局正在松动，你一直回避的真相，已经可以面对了。"
+      },
+      "advice": {
+        "en": "Turn down the volume on other people's input and ask what you'd choose if no one were watching.",
+        "zh": "把别人的声音调小一点，问问自己：如果没人看着，你会怎么选。"
+      },
+      "love": {
+        "en": "Suppressed feelings may surface all at once. Let the honest conversation happen, even if it's messier than the silence was.",
+        "zh": "压抑的情绪可能会一下子涌出来。让那场坦诚的对话发生吧，即使它比沉默更凌乱。"
+      },
+      "work": {
+        "en": "Too many inputs can paralyze you. Narrow the decision down to the two or three facts that matter most, then move.",
+        "zh": "过多的信息会让人动弹不得。把决定缩小到最关键的两三个事实，然后行动。"
+      },
+      "growth": {
+        "en": "The part of you that has been avoiding a choice is asking to be heard. Listen to its fear without letting it hold the pen.",
+        "zh": "你内心回避选择的那部分，正希望被听见。倾听它的恐惧，但别让它替你做决定。"
+      }
+    }
+  },
+  {
+    "id": "swords-03",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 3,
+    "name": { "en": "Three of Swords", "zh": "宝剑三" },
+    "description": {
+      "en": "A bright red heart floats against a gray, storm-filled sky, pierced through by three swords. Rain falls in slanted lines all around it.",
+      "zh": "一颗鲜红的心悬浮在灰暗的暴雨天空中，被三柄长剑贯穿。四周斜斜落下绵密的雨丝。"
+    },
+    "upright": {
+      "keywords": { "en": ["Heartache", "Grief", "Painful truth", "Catharsis"], "zh": ["心碎", "悲伤", "痛苦真相", "宣泄"] },
+      "meaning": {
+        "en": "Something has hurt, and this card doesn't ask you to pretend otherwise. A disappointment, a hard word, or a loss has landed close to the heart. Like rain, sadness needs to fall rather than be held back; letting yourself feel it is how the sky eventually clears.",
+        "zh": "有些事确实让你受伤了，这张牌不要求你假装没事。一次失望、一句伤人的话，或一段失去，正落在心口。悲伤就像雨，需要落下而不是憋着；允许自己去感受，天空才会慢慢放晴。"
+      },
+      "advice": {
+        "en": "Give your sadness a time and a place, whether a long walk, a good cry, or a trusted friend, instead of carrying it silently everywhere.",
+        "zh": "给悲伤一个时间和出口——一次长长的散步、一场痛快的哭泣、一位信任的朋友，而不是默默把它带到每个角落。"
+      },
+      "love": {
+        "en": "A painful truth, a disagreement, or growing distance may be weighing on your heart. Be gentle with yourself as you sort out what this hurt is telling you.",
+        "zh": "一个痛苦的真相、一场争执或渐渐拉开的距离，正压在你心上。在理清这份伤痛想告诉你什么时，请温柔对待自己。"
+      },
+      "work": {
+        "en": "Criticism or a setback may sting more than expected. Separate the useful feedback from the hurt, and let yourself recover before responding.",
+        "zh": "批评或挫折可能比预想中更刺痛。把有用的反馈和受伤的感觉分开，先让自己缓一缓，再做回应。"
+      },
+      "growth": {
+        "en": "Heartache can sharpen your understanding of what you truly value. Honor the grief; it is proof of how much you cared.",
+        "zh": "心痛能让你更清楚自己真正珍视什么。尊重这份悲伤，它恰恰证明了你曾多么用心。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Healing", "Forgiveness", "Lingering hurt", "Suppressed grief"], "zh": ["疗愈", "原谅", "余痛", "压抑悲伤"] },
+      "meaning": {
+        "en": "The storm is passing, though its traces remain. You may be starting to heal, ready to forgive or simply to breathe again. Or you may be holding sorrow inside, replaying the moment instead of releasing it. Either way, recovery becomes possible when you stop bracing against the feeling.",
+        "zh": "风暴正在过去，痕迹却还留着。你可能已开始疗愈，准备原谅，或只是重新能够呼吸。也可能你仍把悲伤闷在心里，一遍遍回放那个瞬间而不愿放下。无论哪种，当你不再与感受对抗，复原就会到来。"
+      },
+      "advice": {
+        "en": "Notice which memory you keep replaying, and ask what it would take to set it down for just one day.",
+        "zh": "留意自己一直在回放的是哪段记忆，问问自己怎样才能先把它放下一天。"
+      },
+      "love": {
+        "en": "Old wounds are ready to mend, whether through a healing talk or quiet acceptance. There's no need to reopen the hurt just to prove it was real.",
+        "zh": "旧伤正准备愈合，也许通过一次疗愈性的谈话，也许通过安静的接纳。不必为了证明伤痛真实存在而反复揭开它。"
+      },
+      "work": {
+        "en": "You're bouncing back from a disappointment. Keep the lesson, release the sting, and rebuild trust step by step.",
+        "zh": "你正从一次失望中恢复过来。留下教训，放下刺痛，一步步重建信任。"
+      },
+      "growth": {
+        "en": "Grief you haven't expressed may be quietly shaping your mood. Giving it words, on paper or aloud, helps it soften.",
+        "zh": "尚未表达的悲伤可能正悄悄影响你的情绪。把它说出来或写下来，它就会慢慢柔软。"
+      }
+    }
+  },
+  {
+    "id": "swords-04",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 4,
+    "name": { "en": "Four of Swords", "zh": "宝剑四" },
+    "description": {
+      "en": "The stone effigy of a knight lies on a tomb inside a quiet church, hands joined in prayer. Three swords hang on the wall above him, a fourth rests along the tomb, and a stained-glass window glows in the corner.",
+      "zh": "一座安静的教堂里，一尊骑士石像双手合十，平躺在石棺上。他上方的墙上悬挂着三柄剑，第四柄横放在石棺侧面，角落里一扇彩色玻璃窗透着微光。"
+    },
+    "upright": {
+      "keywords": { "en": ["Rest", "Recovery", "Contemplation", "Pause"], "zh": ["休息", "复原", "沉思", "暂停"] },
+      "meaning": {
+        "en": "Your mind has been on duty for too long, and this card calls for a deliberate pause. Rest here isn't giving up; it's how strength returns. Step back from the noise, let your thoughts settle, and trust that answers will come more easily once you've recovered.",
+        "zh": "你的大脑已经连续值班太久，这张牌在提醒你主动按下暂停键。休息不是放弃，而是力量回归的方式。从喧嚣中退后一步，让思绪沉淀下来，恢复之后，答案会来得更轻松。"
+      },
+      "advice": {
+        "en": "Schedule real downtime, with screens off and no problem-solving, and protect it like an important meeting.",
+        "zh": "安排一段真正的休息时间——关掉屏幕，不解决任何问题——像对待重要会议一样守护它。"
+      },
+      "love": {
+        "en": "A little space can be healthy. Quiet time together, or apart, helps you both return with a calmer heart.",
+        "zh": "适当的空间是健康的。无论是安静地相处还是暂时各自独处，都能让彼此带着更平和的心回来。"
+      },
+      "work": {
+        "en": "This is a recharge phase, not a sprint. Plan, reflect, and rebuild your energy before the next push.",
+        "zh": "现在是充电期，不是冲刺期。在下一轮发力前，先规划、复盘、恢复精力。"
+      },
+      "growth": {
+        "en": "Stillness is a skill. Meditation, slow breathing, or simple quiet can reveal what your busy mind has been drowning out.",
+        "zh": "静下来是一种能力。冥想、慢慢呼吸，或只是安静地待着，都能让你听见忙碌头脑一直盖过的声音。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Restlessness", "Burnout", "Reawakening", "Resisting rest"], "zh": ["焦躁", "倦怠", "重新振作", "抗拒休息"] },
+      "meaning": {
+        "en": "You may be pushing on when your body and mind are asking you to stop, or you may be stirring after a long pause, ready to re-enter the world. Notice which is true. Running on empty leads to burnout, while returning too early can cut a healing season short.",
+        "zh": "身心都在请求你停下，你却可能还在硬撑；又或者，你在漫长的停顿后渐渐苏醒，准备重新出发。看清是哪一种。透支会导致倦怠，而过早归来，则可能打断正在进行的疗愈。"
+      },
+      "advice": {
+        "en": "Check your energy honestly before saying yes to the next thing; tiredness is information, not weakness.",
+        "zh": "答应下一件事之前，诚实地检查一下自己的能量；疲惫是一种信号，而不是软弱。"
+      },
+      "love": {
+        "en": "Restlessness can make you push for answers too soon. Or, after a quiet period, you may feel ready to reconnect, so go gently.",
+        "zh": "焦躁可能让你过早地追问答案。又或者，在一段沉寂之后，你已准备好重新靠近——慢慢来就好。"
+      },
+      "work": {
+        "en": "Signs of burnout deserve your attention. Alternatively, you're ready to come back from a break with a fresh perspective.",
+        "zh": "倦怠的迹象值得重视。另一方面，你也可能已休整完毕，带着新的视角准备回归。"
+      },
+      "growth": {
+        "en": "Ask why rest feels uncomfortable. Learning to stop without guilt may be the very growth this season is asking for.",
+        "zh": "问问自己为什么休息会让你不安。学会毫无愧疚地停下来，或许正是这个阶段要你成长的地方。"
+      }
+    }
+  },
+  {
+    "id": "swords-05",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 5,
+    "name": { "en": "Five of Swords", "zh": "宝剑五" },
+    "description": {
+      "en": "A smirking young man gathers up three swords while two more lie at his feet, watching two defeated figures walk away toward the water. Jagged clouds tear across a windswept sky.",
+      "zh": "一个面带得意笑容的年轻人收拢着三柄剑，脚边还躺着两柄，目送两个落败的人朝水边走去。天空被狂风撕扯，云层参差破碎。"
+    },
+    "upright": {
+      "keywords": { "en": ["Hollow victory", "Conflict", "Ego", "Tension"], "zh": ["空洞胜利", "冲突", "自负", "紧张关系"] },
+      "meaning": {
+        "en": "Someone may have won the argument, but at what cost? This card points to conflict where the scoreboard matters more than the relationship. Whether you're the one collecting swords or the one walking away, ask whether being right is worth the distance it creates.",
+        "zh": "也许有人赢了这场争论，但代价是什么？这张牌指向一种只在乎输赢、不在乎关系的冲突。无论你是收剑的那一方还是转身离开的那一方，都请问问自己：争个对错，值得换来这样的距离吗？"
+      },
+      "advice": {
+        "en": "Before your next reply, decide whether you want to win the point or keep the connection.",
+        "zh": "在下一次回应之前，先想清楚：你想赢下这个论点，还是想保住这段关系。"
+      },
+      "love": {
+        "en": "Arguments may be turning into contests. Drop the need to have the last word and focus on what you both actually need.",
+        "zh": "争吵可能正在变成一场较量。放下非要说最后一句的执念，关注你们真正需要的是什么。"
+      },
+      "work": {
+        "en": "Office politics or competitive tension may be in play. Choose your battles carefully and keep your integrity intact.",
+        "zh": "职场中可能存在办公室政治或竞争压力。挑选值得的战场，守住自己的原则。"
+      },
+      "growth": {
+        "en": "Look at what drives your urge to win. Sometimes walking away from a pointless fight is the strongest move you can make.",
+        "zh": "看看是什么驱使你非赢不可。有时候，从一场无谓的争斗中抽身，才是最有力量的一步。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Reconciliation", "Moving on", "Lingering resentment", "Letting go"], "zh": ["和解", "向前走", "积怨", "放下"] },
+      "meaning": {
+        "en": "The fight is losing its charge. You may be ready to make peace, admit your part, or simply leave the battlefield behind. If resentment still lingers, notice how much energy it takes to keep it alive. Letting go here isn't losing; it's choosing your own peace.",
+        "zh": "这场争斗的火药味正在消散。你也许准备好讲和、承认自己的责任，或干脆离开这片战场。若怨气仍在，留意维持它需要耗费多少能量。在这里放下不是认输，而是选择自己的平静。"
+      },
+      "advice": {
+        "en": "Offer one small gesture of repair, or quietly release a grudge you've been carrying.",
+        "zh": "做一个小小的修复姿态，或者悄悄放下一直背着的那份怨气。"
+      },
+      "love": {
+        "en": "There's an opening to apologize, forgive, or reset after a tense stretch. Old wounds heal faster when no one is keeping score.",
+        "zh": "紧张过后，出现了道歉、原谅或重新开始的契机。当没人再记分时，旧伤会好得更快。"
+      },
+      "work": {
+        "en": "A conflict is ready to be resolved or left behind. Put your focus back on the work rather than old rivalries.",
+        "zh": "一场冲突已经可以化解或翻篇了。把注意力放回工作本身，而非过去的较劲。"
+      },
+      "growth": {
+        "en": "Reflect on what this conflict taught you about your boundaries and values, then let the rest go.",
+        "zh": "想想这场冲突教会了你哪些关于边界和价值观的事，然后把其余的都放下。"
+      }
+    }
+  },
+  {
+    "id": "swords-06",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 6,
+    "name": { "en": "Six of Swords", "zh": "宝剑六" },
+    "description": {
+      "en": "A ferryman poles a small boat across the water carrying a cloaked woman and a child, with six swords standing upright in the bow. The water is choppy on one side and smooth on the other, and a calm shore waits ahead.",
+      "zh": "一位船夫撑着小船渡水，船上坐着一位披着斗篷的妇人和一个孩子，六柄剑直立在船头。船的一侧水波起伏，另一侧平静如镜，前方是宁静的彼岸。"
+    },
+    "upright": {
+      "keywords": { "en": ["Transition", "Passage", "Calmer waters", "Healing journey"], "zh": ["过渡", "启程", "风平浪静", "疗愈之旅"] },
+      "meaning": {
+        "en": "You're crossing from rough water toward somewhere quieter. This is a slow, steady transition rather than a dramatic escape: leaving behind what no longer works and carrying only what you need. The journey may feel bittersweet, but each push of the pole takes you further from the storm.",
+        "zh": "你正从风浪中驶向更宁静的地方。这是一场缓慢而稳定的过渡，而非戏剧性的逃离——留下不再适合的，只带上真正需要的。旅途或许五味杂陈，但每一次撑篙，都让你离风暴更远一点。"
+      },
+      "advice": {
+        "en": "Decide what you're bringing into the next chapter, and what you're ready to leave on the old shore.",
+        "zh": "想清楚你要带进下一章的东西，以及准备留在旧岸边的东西。"
+      },
+      "love": {
+        "en": "A relationship may be moving through a rough patch toward steadier ground, or you're healing as you leave something behind.",
+        "zh": "一段关系也许正穿过低谷，驶向更稳定的阶段；或者你在告别某些东西的同时，慢慢疗愈。"
+      },
+      "work": {
+        "en": "A transition is underway, whether a new role, a shift in process, or a change of environment. Steady progress beats rushing.",
+        "zh": "过渡正在进行——新的职位、流程的调整或环境的改变。稳步前进胜过匆忙赶路。"
+      },
+      "growth": {
+        "en": "Accept help along the way. Like the passengers in the boat, you don't have to make this crossing alone.",
+        "zh": "在路上接受他人的帮助吧。就像船上的乘客一样，这段水路你不必独自渡过。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Stuck", "Resisting change", "Unfinished business", "Turbulent crossing"], "zh": ["停滞", "抗拒改变", "未了之事", "过渡受阻"] },
+      "meaning": {
+        "en": "The boat seems to be stalling mid-crossing. Something unresolved may be pulling you back, or fear of the unknown keeps you clinging to familiar trouble. Before pushing forward, look at what you're still carrying; some of that weight may need to be set down before you can move.",
+        "zh": "小船仿佛在半途停了下来。某件悬而未决的事也许正把你往回拉，或者对未知的恐惧，让你宁愿抓着熟悉的麻烦不放。继续前行之前，看看自己还背着什么——有些重量必须先放下，你才能动起来。"
+      },
+      "advice": {
+        "en": "Name the one unfinished thing that keeps pulling you back, and take a small step toward closing it.",
+        "zh": "说出那件一直拉你回头的未了之事，然后迈出一小步去了结它。"
+      },
+      "love": {
+        "en": "Old patterns may follow you into a new relationship, or a needed change keeps being postponed. Address the baggage directly.",
+        "zh": "旧的模式可能跟着你进入新的关系，或者某个必要的改变一再被推迟。直面这些包袱吧。"
+      },
+      "work": {
+        "en": "A transition may be delayed or bumpier than planned. Stay flexible and tie up loose ends before moving on.",
+        "zh": "转变可能会延迟，或比预期更颠簸。保持弹性，先处理好收尾工作，再继续前进。"
+      },
+      "growth": {
+        "en": "Resistance to change often hides grief for what you're leaving. Acknowledging it is what lets you keep moving.",
+        "zh": "对改变的抗拒，往往藏着对离开之物的不舍。承认这份不舍，你才能继续前行。"
+      }
+    }
+  },
+  {
+    "id": "swords-07",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 7,
+    "name": { "en": "Seven of Swords", "zh": "宝剑七" },
+    "description": {
+      "en": "A man tiptoes away from a military camp with five swords bundled in his arms, glancing back over his shoulder with a sly grin. Two swords remain stuck in the ground behind him, and colorful tents stand in the distance.",
+      "zh": "一名男子抱着五柄剑，踮着脚尖从营地溜走，回头张望时嘴角带着狡黠的笑。他身后的地上还插着两柄剑，远处是几顶彩色帐篷。"
+    },
+    "upright": {
+      "keywords": { "en": ["Strategy", "Secrecy", "Cunning", "Going solo"], "zh": ["策略", "隐秘", "机巧", "独自行动"] },
+      "meaning": {
+        "en": "Not everything is out in the open. This card can point to clever strategy and working around obstacles, or to secrets, shortcuts and half-truths, whether your own or someone else's. Ask whether your tactics match your values, and whether anything important is being quietly carried off.",
+        "zh": "并非所有事都摆在明面上。这张牌可能指向巧妙的策略和绕开障碍的智慧，也可能指向秘密、捷径与半真半假——来自你，或来自他人。问问自己，手段是否与价值观相符，是否有重要的东西正被悄悄带走。"
+      },
+      "advice": {
+        "en": "Before taking the shortcut, ask whether you'd be comfortable explaining it out loud.",
+        "zh": "走捷径之前，问问自己：能否坦然地把它讲出来。"
+      },
+      "love": {
+        "en": "Something may be going unsaid. Gently invite transparency, and be honest with yourself about what you're keeping private and why.",
+        "zh": "也许有些话没有说出口。温和地邀请彼此坦诚，也诚实地面对自己隐瞒了什么、为什么隐瞒。"
+      },
+      "work": {
+        "en": "Smart strategy can help you navigate a tricky situation, but keep your methods above board and watch for others cutting corners.",
+        "zh": "聪明的策略能帮你应对棘手局面，但要确保手段光明正大，也留意他人是否在偷工减料。"
+      },
+      "growth": {
+        "en": "Look at where you rely on getting away with things rather than facing them. Integrity can be its own kind of freedom.",
+        "zh": "看看自己在哪些地方习惯“蒙混过关”而不是直面问题。正直本身，也可以是一种自由。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Coming clean", "Conscience", "Exposed secrets", "Self-deception"], "zh": ["坦白", "良知", "秘密曝光", "自欺"] },
+      "meaning": {
+        "en": "Hidden things are surfacing. You may feel ready to confess, drop a strategy that no longer sits right, or finally admit something you've been telling yourself isn't true. You might also be fooling yourself more than anyone else. Clarity begins with an honest inventory.",
+        "zh": "被隐藏的东西正在浮出水面。你也许准备好坦白，放弃一个让你心里不踏实的做法，或终于承认一件你一直对自己说“不是真的”的事。也可能，你骗得最深的其实是自己。清醒，始于一次诚实的盘点。"
+      },
+      "advice": {
+        "en": "Tell one truth you've been avoiding, even if the first person you tell is yourself.",
+        "zh": "说出一个你一直回避的真相，哪怕先只对自己说。"
+      },
+      "love": {
+        "en": "Honesty is returning to the relationship. A confession or a frank talk could rebuild trust if it's handled with care.",
+        "zh": "坦诚正在回到这段关系中。一次真心的坦白或直率的交谈，若处理得当，便能重建信任。"
+      },
+      "work": {
+        "en": "A hidden issue may come to light. Address it directly; transparency will serve you better than damage control.",
+        "zh": "某个隐藏的问题可能会曝光。直接处理它；比起危机公关，透明更能帮到你。"
+      },
+      "growth": {
+        "en": "Notice the stories you tell to protect your self-image. Letting them go makes room for real self-respect.",
+        "zh": "留意那些为了维护自我形象而讲的故事。放下它们，才能为真正的自尊腾出空间。"
+      }
+    }
+  },
+  {
+    "id": "swords-08",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 8,
+    "name": { "en": "Eight of Swords", "zh": "宝剑八" },
+    "description": {
+      "en": "A woman stands bound and blindfolded on marshy ground, ringed by eight swords planted in the earth, though the circle is open in front of her. A castle sits high on a cliff in the distance.",
+      "zh": "一位女子被蒙住双眼、缚住身体，站在泥泞的沼地上，身边插着八柄剑——但剑阵在她面前留有缺口。远处的悬崖上矗立着一座城堡。"
+    },
+    "upright": {
+      "keywords": { "en": ["Feeling trapped", "Limiting beliefs", "Powerlessness", "Hidden exits"], "zh": ["受困", "自我设限", "无力感", "隐藏出口"] },
+      "meaning": {
+        "en": "You may feel boxed in, as if every option is blocked. Look closer: much of what holds you is made of thought, such as assumptions, fears, and old rules you never questioned. The bindings are looser than they seem, and the first step out often begins by simply changing how you see the situation.",
+        "zh": "你可能觉得四面受困，每条路都被堵死了。再仔细看看：困住你的，很多是念头本身——假设、恐惧、从未质疑过的旧规则。绳索比看上去松，而走出去的第一步，往往只是换一个角度看待处境。"
+      },
+      "advice": {
+        "en": "Name the belief that makes you feel stuck, then find three reasons it might not be entirely true.",
+        "zh": "写下让你觉得被困住的那个信念，再找出三条理由，说明它可能并不完全成立。"
+      },
+      "love": {
+        "en": "Fear or old hurts may be convincing you that you have no choices in love. You have more freedom to ask, to speak, or to leave than you think.",
+        "zh": "恐惧或旧伤可能让你相信，自己在感情里别无选择。其实你比想象中更有自由去提出、去表达，或去离开。"
+      },
+      "work": {
+        "en": "You may feel stuck in a role or situation. Instead of staring at the walls, look for the small openings: a skill, an ally, a conversation.",
+        "zh": "你可能觉得被困在某个职位或局面里。与其盯着高墙，不如寻找那些小小的缺口——一项技能、一位盟友、一次谈话。"
+      },
+      "growth": {
+        "en": "Your inner critic may be the one holding the rope. Answering it kindly is the beginning of release.",
+        "zh": "握着绳子的人，也许正是你内心的批评者。温和地回应它，便是松绑的开始。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Release", "Fresh perspective", "Self-trust", "Breaking free"], "zh": ["解脱", "新视角", "自我信任", "挣脱束缚"] },
+      "meaning": {
+        "en": "The blindfold is slipping. You're beginning to see that the trap was never as solid as it felt, and you're reclaiming your ability to choose. Old fears may still whisper, but you're learning to answer them. Freedom comes one step at a time, and you're already moving.",
+        "zh": "蒙眼布正在滑落。你开始发现，那个陷阱从来不像感觉中那么牢固，你也正在找回选择的能力。旧的恐惧或许还会低语，但你已学会回应它。自由是一步一步来的，而你已经在路上。"
+      },
+      "advice": {
+        "en": "Take one concrete action this week that your trapped self once believed was impossible.",
+        "zh": "这周做一件具体的事——一件曾经受困的你认为不可能做到的事。"
+      },
+      "love": {
+        "en": "You're ready to stop seeing yourself as powerless in love. Speaking up for what you need is getting easier now.",
+        "zh": "你已准备好不再把自己视为感情中无能为力的一方。现在，说出自己的需求会变得更容易。"
+      },
+      "work": {
+        "en": "A way out of a stuck situation is appearing. Trust your growing confidence and explore options you once dismissed.",
+        "zh": "走出僵局的路正在浮现。相信自己日渐增长的信心，去探索那些曾被你否定的可能。"
+      },
+      "growth": {
+        "en": "You're dismantling beliefs that kept you small. Celebrate each little proof that you're more capable than your fears claimed.",
+        "zh": "你正在拆除那些让你变得渺小的信念。为每一个小小的证据庆祝吧——它们证明你比恐惧所说的更有能力。"
+      }
+    }
+  },
+  {
+    "id": "swords-09",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 9,
+    "name": { "en": "Nine of Swords", "zh": "宝剑九" },
+    "description": {
+      "en": "A figure sits up in bed in the dark, face buried in their hands, while nine swords hang in horizontal rows on the black wall behind. The quilt is patterned with roses and astrological symbols.",
+      "zh": "黑暗中，一个人从床上坐起，双手掩面，身后漆黑的墙上横挂着九柄剑。被子上绣着玫瑰与星座符号。"
+    },
+    "upright": {
+      "keywords": { "en": ["Anxiety", "Worry", "3 a.m. thoughts", "Heavy mind"], "zh": ["焦虑", "忧虑", "深夜思绪", "心事重重"] },
+      "meaning": {
+        "en": "Your thoughts are louder than your reality right now. Worries that feel enormous in the dark often shrink in daylight, but in the moment they can be exhausting. This card asks you to notice the gap between what you fear and what is actually happening, and to stop facing the night alone.",
+        "zh": "此刻，你脑中的声音比现实还要响亮。那些在黑暗中显得无比巨大的担忧，到了白天常常会缩小，但当下它们确实让人疲惫。这张牌请你看清“害怕的事”与“正在发生的事”之间的差距，也别再独自熬过漫漫长夜。"
+      },
+      "advice": {
+        "en": "When a worry loops, write it down and finish the sentence “What I actually know is…” as honestly as you can.",
+        "zh": "当某个担忧反复打转时，把它写下来，用“我真正确定的是……”开头，诚实地补完这句话。"
+      },
+      "love": {
+        "en": "Worry or insecurity may be magnifying small issues. Share your fears with your partner or a friend instead of letting them grow in silence.",
+        "zh": "担忧或不安可能正在放大一些小问题。与其让它们在沉默中发酵，不如向伴侣或朋友说出你的恐惧。"
+      },
+      "work": {
+        "en": "Stress may be keeping your mind in overdrive. Break the problem into concrete steps; action is a reliable antidote to dread.",
+        "zh": "压力可能让你的大脑一直超速运转。把问题拆成具体的步骤；行动是对抗恐惧最可靠的解药。"
+      },
+      "growth": {
+        "en": "Treat anxious thoughts as visitors, not verdicts. Kindness toward your own mind loosens worry's grip.",
+        "zh": "把焦虑的念头当作访客，而不是判决。善待自己的头脑，担忧的力量就会松动。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Easing worry", "Hope returning", "Hidden stress", "Reaching out"], "zh": ["忧虑缓解", "希望重燃", "隐性压力", "寻求支持"] },
+      "meaning": {
+        "en": "The night may be loosening its hold. You might be finding perspective, asking for support, or realizing your worst fears were exaggerated. Yet this card can also point to anxiety pushed out of sight rather than resolved. Gently check whether you truly feel lighter or are just carrying the weight more quietly.",
+        "zh": "长夜正在松开它的手。你也许正在找回分寸，开始寻求支持，或发现最坏的担忧其实被放大了。但这张牌也可能意味着焦虑只是被藏了起来，并未真正化解。温和地问问自己：你是真的轻松了，还是只是更安静地扛着重量。"
+      },
+      "advice": {
+        "en": "Tell one trusted person what has been keeping you up at night.",
+        "zh": "向一位信任的人说说，最近是什么让你夜不能寐。"
+      },
+      "love": {
+        "en": "Fears about the relationship may be easing as you talk them through. Keep the conversation going rather than retreating into private worry.",
+        "zh": "随着把担忧说开，对这段关系的恐惧正在减轻。继续沟通下去，别再退回独自担心的状态。"
+      },
+      "work": {
+        "en": "Pressure is lifting, or you're learning to manage it better. Notice which stressors you've been quietly absorbing and start addressing them.",
+        "zh": "压力正在减轻，或者你正学会更好地应对它。留意那些你一直默默承受的压力源，着手处理。"
+      },
+      "growth": {
+        "en": "Recovering from worry is often gradual. Every night you meet your thoughts with more compassion counts as progress.",
+        "zh": "从忧虑中复原往往是渐进的。每一个你以更多慈悲面对念头的夜晚，都算是进步。"
+      }
+    }
+  },
+  {
+    "id": "swords-10",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 10,
+    "name": { "en": "Ten of Swords", "zh": "宝剑十" },
+    "description": {
+      "en": "A figure lies face down at the water's edge beneath ten upright swords, under a heavy black sky. On the horizon, a band of golden dawn is already breaking over calm water.",
+      "zh": "一个人俯卧在水边，十柄剑立在其上，头顶压着沉沉的黑色天空。而在地平线上，一道金色的曙光已经在平静的水面上破晓。"
+    },
+    "upright": {
+      "keywords": { "en": ["Rock bottom", "Ending", "Exhaustion", "Dawn after dark"], "zh": ["谷底", "终结", "精疲力竭", "黎明将至"] },
+      "meaning": {
+        "en": "A painful chapter has reached its end, and there's nothing left to hold onto. As heavy as this feels, it also means the worst has already happened, so you no longer have to brace for it. Notice the light on the horizon: when one story closes completely, a new one can finally begin.",
+        "zh": "一段痛苦的篇章走到了尽头，再也没有可以抓住的东西。尽管这份感受沉重，它也意味着最糟的已经过去——你不必再紧绷着等待它。看看地平线上的光：当一个故事彻底结束，新的故事才能真正开始。"
+      },
+      "advice": {
+        "en": "Let this be the line you draw: name what is over, and allow yourself to stop fighting it.",
+        "zh": "就让这里成为分界线：说出什么已经结束，允许自己不再与它抗争。"
+      },
+      "love": {
+        "en": "A relationship pattern or chapter may be ending for good. Painful as it is, clarity about the ending makes room for genuine renewal.",
+        "zh": "一种相处模式或一段感情篇章可能就此画上句号。虽然痛，但看清结局，才能为真正的新生腾出空间。"
+      },
+      "work": {
+        "en": "A project, role or approach may have run its course. Acknowledge the loss, rest, and gather the lessons before starting again.",
+        "zh": "某个项目、职位或做法可能已走到尽头。承认这份失去，好好休息，整理经验，再重新出发。"
+      },
+      "growth": {
+        "en": "Hitting a low point can strip away pretenses. Ask what you've learned about your limits and what you never want to repeat.",
+        "zh": "跌到低谷，反而能剥去伪装。问问自己，从中看清了哪些极限，又有哪些事再也不想重演。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Regeneration", "Getting back up", "Clinging on", "Hard-won wisdom"], "zh": ["重生", "重新站起", "不肯放手", "淬炼智慧"] },
+      "meaning": {
+        "en": "The hardest part is behind you, and you're slowly getting back on your feet. Recovery may be gradual, and you might feel tender for a while. If you're still clinging to something that has clearly ended, notice how that keeps the wound open. Release makes room for renewal.",
+        "zh": "最艰难的部分已经过去，你正慢慢重新站起来。复原或许是缓慢的，你也可能还会脆弱一阵子。如果你仍抓着某个早已结束的东西不放，留意这如何让伤口迟迟无法愈合。放手，才能迎来新生。"
+      },
+      "advice": {
+        "en": "Take one small, nourishing step toward rebuilding today, and let that be enough.",
+        "zh": "今天为重建自己做一件小小的、滋养身心的事，这样就足够了。"
+      },
+      "love": {
+        "en": "You're healing from a painful ending. Resist the pull back toward what hurt you, and let new trust form slowly.",
+        "zh": "你正在从一段痛苦的结束中疗愈。抵抗那股想回到伤害之处的拉力，让新的信任慢慢生长。"
+      },
+      "work": {
+        "en": "After a setback, you're regaining your footing. Rebuild with what you've learned instead of repeating the old approach.",
+        "zh": "经历挫折之后，你正在重新站稳脚跟。带着学到的经验重建，而不是重复旧的做法。"
+      },
+      "growth": {
+        "en": "Your resilience is showing. Honor how far you've come, even if you're not yet where you want to be.",
+        "zh": "你的韧性正在显现。即使还没到达想去的地方，也请肯定自己已经走了多远。"
+      }
+    }
+  },
+  {
+    "id": "swords-11",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 11,
+    "name": { "en": "Page of Swords", "zh": "宝剑侍从" },
+    "description": {
+      "en": "A young figure stands on a rough, windy hilltop holding a sword upright with both hands, glancing alertly over one shoulder. Clouds race across the sky and a flock of birds wheels overhead.",
+      "zh": "一位年轻人站在多风的崎岖山丘上，双手竖握长剑，警觉地回头张望。天上云朵疾驰，一群飞鸟在头顶盘旋。"
+    },
+    "upright": {
+      "keywords": { "en": ["Curiosity", "Questions", "Alertness", "Eager learning"], "zh": ["好奇心", "提问", "警觉", "求知若渴"] },
+      "meaning": {
+        "en": "Your mind is wide awake and hungry. The Page brings restless curiosity, a love of questions, and the urge to learn how things really work. You may be testing new ideas or voicing opinions for the first time. Stay open and observant; your enthusiasm becomes a strength when paired with patience.",
+        "zh": "你的头脑清醒而饥渴。侍从带来躁动的好奇心、对提问的热爱，以及想弄清事物如何运作的冲动。你也许正在尝试新想法，或第一次说出自己的观点。保持开放与敏锐——热情若配上耐心，便是一种力量。"
+      },
+      "advice": {
+        "en": "Ask one more question than feels comfortable, and listen fully to the answer.",
+        "zh": "比平时多问一个问题，然后认真听完答案。"
+      },
+      "love": {
+        "en": "Lively conversation and playful banter spark connection. Be curious about the other person rather than quick to judge.",
+        "zh": "生动的交谈和俏皮的斗嘴能点燃火花。对对方保持好奇，而不是急于评判。"
+      },
+      "work": {
+        "en": "This is a great phase for research, learning a new skill, or proposing bold ideas. Do your homework so your voice carries weight.",
+        "zh": "这是适合做调研、学习新技能或提出大胆想法的阶段。做足功课，你的声音才会有分量。"
+      },
+      "growth": {
+        "en": "Treat your own mind as territory to explore. Read, ask, debate, and stay willing to change your mind.",
+        "zh": "把自己的头脑当作一片可以探索的领域。阅读、提问、辩论，并愿意改变自己的想法。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Scattered focus", "Hasty words", "Gossip", "All talk"], "zh": ["心神涣散", "口不择言", "闲言碎语", "光说不做"] },
+      "meaning": {
+        "en": "Curiosity can tip into restlessness, and sharp words can slip out before they're fully thought through. You may be jumping between ideas without finishing any, or getting pulled into gossip and defensiveness. Slow your pace: a few well-chosen words and one finished task will serve you better than a flurry.",
+        "zh": "好奇心可能变成坐立不安，锋利的话也可能未经思考就脱口而出。你也许在各种想法之间跳来跳去，却一个也没完成，或被卷入闲话与防御之中。放慢节奏：几句斟酌过的话、一件完成的事，胜过一阵慌乱的忙碌。"
+      },
+      "advice": {
+        "en": "Pause for three breaths before you hit send or speak up in a heated moment.",
+        "zh": "在情绪激动时，按下发送键或开口之前，先深呼吸三次。"
+      },
+      "love": {
+        "en": "Careless comments or mixed signals may cause friction. Think about how your words land, not just what you mean by them.",
+        "zh": "随口的评论或混乱的信号可能引发摩擦。想想你的话会如何被接收，而不只是你想表达什么。"
+      },
+      "work": {
+        "en": "Avoid overpromising or spreading yourself across too many ideas. Follow through on one before pitching the next.",
+        "zh": "避免过度承诺，或把精力分散在太多想法上。先把一个落实，再提出下一个。"
+      },
+      "growth": {
+        "en": "Notice when talking about growth starts to replace actually doing it. Small, consistent practice beats big declarations.",
+        "zh": "留意“谈论成长”什么时候取代了“真正成长”。小而持续的练习，胜过宏大的宣言。"
+      }
+    }
+  },
+  {
+    "id": "swords-12",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 12,
+    "name": { "en": "Knight of Swords", "zh": "宝剑骑士" },
+    "description": {
+      "en": "An armored knight charges forward at full gallop on a white horse, sword raised high. Wind-torn clouds streak the sky and trees bend sharply behind him.",
+      "zh": "一位身披铠甲的骑士骑着白马全速冲锋，高举长剑。天空中云絮被狂风撕扯，身后的树木被吹得弯下了腰。"
+    },
+    "upright": {
+      "keywords": { "en": ["Drive", "Ambition", "Fast action", "Bold speech"], "zh": ["冲劲", "雄心", "迅速行动", "直言不讳"] },
+      "meaning": {
+        "en": "Your thoughts have become a charge. The Knight brings fierce focus, quick decisions and the courage to say what others won't. This energy can cut through hesitation and get things moving fast. Just keep an eye on what you might trample in your hurry to reach the finish line.",
+        "zh": "你的思想化作了一场冲锋。骑士带来强烈的专注、果断的决定，以及说出别人不敢说的话的勇气。这股能量能斩断犹豫，让事情迅速推进。只是别忘了留意，急着冲向终点时，你可能踩过了什么。"
+      },
+      "advice": {
+        "en": "Aim your momentum at one clear target, and check in with others before you ride past them.",
+        "zh": "把冲劲集中在一个明确的目标上，在冲过别人身边之前，先停下来和他们确认一下。"
+      },
+      "love": {
+        "en": "Passion and directness are running high. Say what you feel, but leave room for the other person's pace and perspective.",
+        "zh": "热情与直率都处于高点。说出你的感受，但也给对方的节奏与视角留出空间。"
+      },
+      "work": {
+        "en": "You're primed to tackle challenges head-on and push a project forward. Speed is an asset, especially when paired with a quick reality check.",
+        "zh": "你已准备好正面迎击挑战，推动项目前进。速度是你的优势——再配上一次快速的现实检验就更好了。"
+      },
+      "growth": {
+        "en": "Your determination is inspiring. The growth lies in learning when to charge and when to listen.",
+        "zh": "你的决心令人振奋。成长在于学会分辨，何时该冲锋，何时该倾听。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Recklessness", "Impatience", "Rushing ahead", "Bulldozing"], "zh": ["鲁莽", "急躁", "操之过急", "强势压人"] },
+      "meaning": {
+        "en": "The charge has lost its direction. You may be acting before thinking, pushing opinions too hard, or racing from one plan to the next without a clear aim. Frustration can make you sharp with others. Rein in the horse long enough to ask where you're actually trying to go.",
+        "zh": "冲锋失去了方向。你可能先行动后思考，过于强硬地推销观点，或在没有明确目标的情况下从一个计划奔向另一个。挫败感也可能让你对人言辞尖锐。勒住缰绳片刻，问问自己究竟想去哪里。"
+      },
+      "advice": {
+        "en": "Before your next big move, spell out the outcome you want and the people it will affect.",
+        "zh": "在下一个重大举动之前，写清楚你想要的结果，以及它会影响到的人。"
+      },
+      "love": {
+        "en": "Impulsive words or rushing things may cause hurt. Slow down and make sure you're both moving at the same pace.",
+        "zh": "冲动的言语或操之过急可能带来伤害。放慢脚步，确认你们是否步调一致。"
+      },
+      "work": {
+        "en": "Pushing too hard or skipping steps could backfire. Revisit the plan and bring your team along rather than racing ahead alone.",
+        "zh": "用力过猛或跳过步骤可能适得其反。重新审视计划，带上团队一起走，而不是独自冲在前面。"
+      },
+      "growth": {
+        "en": "Restless urgency may be masking anxiety. Ask what you're running toward, and what you might be running from.",
+        "zh": "躁动的紧迫感可能掩盖着焦虑。问问自己，你究竟在奔向什么，又在逃离什么。"
+      }
+    }
+  },
+  {
+    "id": "swords-13",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 13,
+    "name": { "en": "Queen of Swords", "zh": "宝剑王后" },
+    "description": {
+      "en": "A queen sits in profile on a stone throne carved with butterflies and a winged cherub, holding a sword upright in her right hand. Her left hand is raised as if in welcome, and a single bird flies high above the clouds.",
+      "zh": "一位王后侧身坐在雕有蝴蝶与小天使的石座上，右手竖握长剑，左手抬起，仿佛在示意来者。高空的云层之上，一只孤鸟飞翔。"
+    },
+    "upright": {
+      "keywords": { "en": ["Discernment", "Honesty", "Independence", "Clear boundaries"], "zh": ["洞察力", "坦率", "独立", "清晰边界"] },
+      "meaning": {
+        "en": "Clear-sighted and fair, the Queen speaks the truth with grace. She has known sorrow and turned it into wisdom, so she isn't easily fooled or swayed. This card invites you to trust your perception, set boundaries without apology, and offer honesty that is direct yet never cruel.",
+        "zh": "王后目光清明、处事公正，以优雅的方式说出真话。她经历过悲伤，并将其化为智慧，因此不易被蒙蔽，也不轻易动摇。这张牌邀请你相信自己的判断，毫无愧疚地设立边界，给出直接却从不残忍的诚实。"
+      },
+      "advice": {
+        "en": "Say the honest thing simply, without over-explaining or softening it into something else.",
+        "zh": "简单地说出真话，不过度解释，也不把它稀释成别的意思。"
+      },
+      "love": {
+        "en": "You value honesty and respect over drama. Clear communication about your needs strengthens the connection.",
+        "zh": "比起戏剧化的情节，你更看重坦诚与尊重。清楚地表达自己的需求，会让关系更牢固。"
+      },
+      "work": {
+        "en": "Your sharp judgment and objectivity are real assets. You're well suited to editing, negotiating, or giving fair feedback right now.",
+        "zh": "你敏锐的判断力和客观态度是宝贵的资产。此刻你很适合做编辑、谈判，或给出公正的反馈。"
+      },
+      "growth": {
+        "en": "Past pain has given you insight. Let it make you wise and discerning rather than guarded or cold.",
+        "zh": "过去的伤痛赋予了你洞见。让它使你变得睿智而明辨，而不是戒备或冷漠。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Coldness", "Bitterness", "Overcritical", "Emotional distance"], "zh": ["冷漠", "尖刻", "过度挑剔", "情感疏离"] },
+      "meaning": {
+        "en": "When the Queen's clarity turns sharp or inward, it can become judgment, coldness, or words that cut deeper than intended. You might be shielding old hurt behind a wall of logic, or doubting your own perception. Reconnect your mind with your heart so that honesty can be kind again.",
+        "zh": "当王后的清明变得尖锐或转向内心，就可能化为评判、冷漠，或比本意更伤人的话语。你也许正用逻辑筑起高墙，挡住旧日的伤痛；也可能在怀疑自己的判断。让头脑与内心重新连接，诚实才能再次变得温柔。"
+      },
+      "advice": {
+        "en": "Before delivering criticism, add one sentence that acknowledges the other person's effort or feelings.",
+        "zh": "提出批评之前，先加一句话，肯定对方的付出或感受。"
+      },
+      "love": {
+        "en": "Guardedness or sharp remarks may be pushing people away. Let someone see the softer feelings beneath the armor.",
+        "zh": "戒备心或尖锐的话可能正在把人推开。让对方看见盔甲下那些柔软的感受吧。"
+      },
+      "work": {
+        "en": "Perfectionism or harsh critique could strain teamwork. Balance your high standards with some warmth.",
+        "zh": "完美主义或严厉的批评可能会让团队关系紧张。在高标准之外，也加入一些温度。"
+      },
+      "growth": {
+        "en": "Notice whether you're as harsh with yourself as you are with others. Self-compassion sharpens wisdom rather than dulling it.",
+        "zh": "留意你对自己是否和对别人一样严苛。自我关怀不会磨钝智慧，反而让它更锋利。"
+      }
+    }
+  },
+  {
+    "id": "swords-14",
+    "arcana": "minor",
+    "suit": "swords",
+    "number": 14,
+    "name": { "en": "King of Swords", "zh": "宝剑国王" },
+    "description": {
+      "en": "A king sits facing forward on a high throne decorated with butterflies and crescent moons, holding an upright sword tilted slightly to one side. Tall trees and drifting clouds rise behind him, with two birds in flight.",
+      "zh": "一位国王正面端坐于高高的王座上，王座饰有蝴蝶与新月，他手中的长剑直立而略微倾斜。身后是高大的树木与飘动的云朵，两只鸟在空中飞翔。"
+    },
+    "upright": {
+      "keywords": { "en": ["Authority", "Intellect", "Fairness", "Principled decisions"], "zh": ["权威", "智识", "公正", "原则决断"] },
+      "meaning": {
+        "en": "The King has mastered his own mind. He makes decisions based on principle and evidence, not mood or pressure, and he takes responsibility for them. This card asks you to step into that steady authority: think things through, speak with precision, and lead with fairness even when it's unpopular.",
+        "zh": "国王已掌握了自己的心智。他依据原则与证据而非情绪或压力做决定，并为此承担责任。这张牌请你走进那份沉稳的权威：深思熟虑，言辞精准，即使不受欢迎，也坚持以公正来引领。"
+      },
+      "advice": {
+        "en": "Base your next decision on a principle you could explain to anyone, then stand by it.",
+        "zh": "以一条能向任何人解释清楚的原则作为下一个决定的依据，然后坚持到底。"
+      },
+      "love": {
+        "en": "Mutual respect and honest talk form the backbone of the relationship. Logic helps, but remember to voice affection as clearly as you voice opinions.",
+        "zh": "相互尊重与坦诚交流是这段关系的支柱。理性固然有帮助，但也别忘了，像表达观点一样清楚地表达爱意。"
+      },
+      "work": {
+        "en": "Your expertise and objectivity make you a natural leader or advisor. Set clear standards and communicate them plainly.",
+        "zh": "你的专业能力与客观态度，让你天然适合担任领导者或顾问。设立清晰的标准，并直截了当地传达出去。"
+      },
+      "growth": {
+        "en": "You're learning to trust your own reasoning. Keep refining it by staying open to evidence that challenges you.",
+        "zh": "你正在学会信任自己的推理。对挑战你的证据保持开放，才能不断打磨它。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Rigidity", "Misused power", "Manipulation", "Cold logic"], "zh": ["固执", "滥用权力", "操控", "冷酷理性"] },
+      "meaning": {
+        "en": "Intellect without heart can turn rigid or controlling. You may be encountering someone, or a part of yourself, that uses logic to dominate, refuses other viewpoints, or bends the truth to win. Reconnect with your sense of fairness, and remember that true authority listens as carefully as it speaks.",
+        "zh": "缺少温度的智识，可能变得僵化或控制欲强。你也许正遇到某个人——或自己的某一面——用逻辑压制他人、拒绝不同观点，或为了赢而歪曲事实。重新找回公正之心，并记住：真正的权威，倾听与表达同样用心。"
+      },
+      "advice": {
+        "en": "Invite one dissenting view before finalizing your decision, and genuinely weigh it.",
+        "zh": "在敲定决定之前，主动听取一个反对意见，并认真权衡它。"
+      },
+      "love": {
+        "en": "Power struggles or a cold, analytical tone may be creating distance. Lead with understanding instead of trying to win the debate.",
+        "zh": "权力之争或冷冰冰的分析口吻，可能正在制造距离。用理解来引领，而不是执着于赢下辩论。"
+      },
+      "work": {
+        "en": "Watch for rigid rules or authority used unfairly, whether yours or someone else's. Transparent reasoning rebuilds trust.",
+        "zh": "警惕僵化的规则或不公正地使用权力，无论来自你还是他人。透明的推理过程能重建信任。"
+      },
+      "growth": {
+        "en": "Expertise grows stale when it stops listening. Practice holding your convictions with a little more humility.",
+        "zh": "不再倾听的专业会渐渐僵化。练习以多一点谦逊，来持守你的信念。"
+      }
+    }
+  }
+]

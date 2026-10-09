@@ -1,0 +1,884 @@
+[
+  {
+    "id": "cups-01",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 1,
+    "name": { "en": "Ace of Cups", "zh": "圣杯王牌" },
+    "description": {
+      "en": "A hand emerges from a cloud holding a golden chalice that spills five streams of water into a pond of water lilies. A white dove descends toward the cup carrying a small wafer marked with a cross.",
+      "zh": "一只手从云中伸出，托着一只金色圣杯，五道水流从杯中倾泻而下，落入开满睡莲的池塘。一只白鸽衔着印有十字的圣饼，正俯冲向杯口。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["New feelings", "Open heart", "Overflowing love", "Emotional renewal"],
+        "zh": ["新的情愫", "敞开心扉", "爱意满溢", "情感复苏"]
+      },
+      "meaning": {
+        "en": "Something tender is beginning to fill you up — a fresh wave of love, creativity, or simple gratitude. The Ace of Cups marks the moment your heart has room again, and what flows in is meant to flow outward too. Let yourself receive without bracing for a catch.",
+        "zh": "一股柔软的力量正在注满你的内心——也许是新的爱意、灵感，或只是单纯的感恩。圣杯王牌意味着你的心重新腾出了空间，流进来的情感也注定要流向他人。放心去接受吧，不必提防背后藏着什么代价。"
+      },
+      "advice": {
+        "en": "Say yes to one small moment of connection today, and notice how it feels to let it in.",
+        "zh": "今天对一次小小的连结说“好”，留意让它走进心里是什么感觉。"
+      },
+      "love": {
+        "en": "A new spark, or renewed warmth in a bond you already have, is available if you meet it with openness instead of caution.",
+        "zh": "无论是新的心动，还是旧关系里重燃的温度，只要你以开放代替戒备，它就会到来。"
+      },
+      "work": {
+        "en": "Projects that carry real meaning for you are calling. A creative idea or a kinder team culture could start with you.",
+        "zh": "真正让你在意的项目正在召唤你。一个创意的萌芽，或更有温度的团队氛围，都可以从你开始。"
+      },
+      "growth": {
+        "en": "Your sensitivity is a source, not a flaw. Treat your feelings as water that nourishes rather than a flood to be feared.",
+        "zh": "你的敏感是一种源泉，而不是缺陷。把情绪当作滋养你的泉水，而不是需要提防的洪水。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Blocked feelings", "Emotional numbness", "Self-love", "Inner refill"],
+        "zh": ["情感阻塞", "情绪麻木", "自我关爱", "向内充盈"]
+      },
+      "meaning": {
+        "en": "The cup is still full, but the flow has turned inward or stalled. You may be holding back affection, feeling flat, or giving so much to others that your own well has run low. This is a cue to tend your own heart first, not a sign that love has left.",
+        "zh": "杯中依然有水，只是流动转向了内在，或暂时停滞。你可能在压抑情感、感到麻木，或一直为别人付出，自己的井却快要见底。这是在提醒你先照顾好自己的心，而不是说爱已经离开。"
+      },
+      "advice": {
+        "en": "Pour one cup for yourself this week before you pour for anyone else.",
+        "zh": "这周在为别人倒水之前，先给自己斟满一杯。"
+      },
+      "love": {
+        "en": "You may be guarding your heart after a hurt, or waiting for someone else to fill you. Warmth returns as you rebuild your own sense of worth.",
+        "zh": "也许你在受伤之后筑起了心墙，或在等别人来填满你。当你重新看见自己的价值，温度自然会回来。"
+      },
+      "work": {
+        "en": "Work might feel emotionally empty right now. Look for the one piece of it that still matters to you and start there.",
+        "zh": "工作此刻可能让你提不起劲。找出其中仍让你在意的那一小部分，从那里重新出发。"
+      },
+      "growth": {
+        "en": "Numbness is often a protective pause. Gently ask what feeling is waiting quietly behind it.",
+        "zh": "麻木往往是一种自我保护的暂停。温柔地问问自己，它背后正静静等着的是什么情绪。"
+      }
+    }
+  },
+  {
+    "id": "cups-02",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 2,
+    "name": { "en": "Two of Cups", "zh": "圣杯二" },
+    "description": {
+      "en": "A young man and woman face each other, each raising a cup as if exchanging a pledge. Above them, a winged lion's head rises from a staff entwined with two serpents.",
+      "zh": "一对年轻男女相对而立，各自举起杯子，仿佛在交换誓约。两人上方，一根缠绕着双蛇的权杖上浮现出一颗带翼的狮子头。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Partnership", "Mutual respect", "Attraction", "Harmony"],
+        "zh": ["心意相通", "互相尊重", "彼此吸引", "和谐"]
+      },
+      "meaning": {
+        "en": "The Two of Cups celebrates a meeting of equals, where each person truly sees and values the other. It can be a romance, a friendship, or a working alliance built on genuine respect. The energy is balanced: you give, you receive, and neither side has to shrink.",
+        "zh": "圣杯二描绘的是两个平等灵魂的相遇，彼此看见，也彼此珍惜。它可能是一段恋情、一份友谊，也可能是建立在真诚尊重之上的合作。这里的能量是平衡的：你付出，也接纳，谁都不必委屈自己。"
+      },
+      "advice": {
+        "en": "Reach out to someone you feel in sync with and tell them one thing you appreciate about them.",
+        "zh": "主动联系一个与你频率相合的人，告诉对方你欣赏他的哪一点。"
+      },
+      "love": {
+        "en": "A connection with real mutual interest is forming or deepening. Being honest about what you each want will make it stronger.",
+        "zh": "一段双向奔赴的关系正在萌芽或加深。坦诚说出彼此想要什么，会让它更加稳固。"
+      },
+      "work": {
+        "en": "A partnership, collaborator, or client relationship looks promising when both sides feel heard and fairly treated.",
+        "zh": "合作伙伴、搭档或客户关系前景不错，前提是双方都感到被倾听、被公平对待。"
+      },
+      "growth": {
+        "en": "Notice how you show up in one-on-one bonds. Can you stay fully yourself while truly meeting someone else?",
+        "zh": "留意你在一对一关系中的样子。你能否在真正靠近他人的同时，依然完整地做你自己？"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Imbalance", "Miscommunication", "Distance", "Self-reconciliation"],
+        "zh": ["失衡", "沟通错位", "疏远", "与己和解"]
+      },
+      "meaning": {
+        "en": "The bond feels slightly out of tune — one person may be giving more, or words keep landing wrong. It can also point to a rift within yourself, where your choices and feelings are pulling apart. Repair starts with an honest, unhurried conversation.",
+        "zh": "这段关系有些走调——可能一方付出得更多，或者话总是说不到一块儿。它也可能指向你与自己之间的裂缝：你的选择和感受正在背道而驰。修复，从一次坦诚而不急躁的对话开始。"
+      },
+      "advice": {
+        "en": "Ask one clarifying question instead of assuming what the other person meant.",
+        "zh": "与其猜测对方的意思，不如问一个澄清的问题。"
+      },
+      "love": {
+        "en": "Tension or distance may be creeping in. Rather than keeping score, talk about what each of you needs to feel close again.",
+        "zh": "紧张或疏远可能正悄悄出现。与其计较谁付出得多，不如聊聊彼此需要什么才能重新靠近。"
+      },
+      "work": {
+        "en": "A collaboration may feel lopsided or tangled in misunderstandings. Resetting roles and expectations can clear the air.",
+        "zh": "某段合作可能显得一边倒，或陷在误会里。重新厘清分工和期待，能让气氛重新明朗。"
+      },
+      "growth": {
+        "en": "Before seeking harmony with others, check whether you are at peace with your own needs and boundaries.",
+        "zh": "在追求与他人的和谐之前，先看看你是否与自己的需求和界限和平相处。"
+      }
+    }
+  },
+  {
+    "id": "cups-03",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 3,
+    "name": { "en": "Three of Cups", "zh": "圣杯三" },
+    "description": {
+      "en": "Three women in flowing robes dance in a circle, lifting their cups high in a joyful toast. Fruit, gourds, and other harvest bounty lie scattered at their feet.",
+      "zh": "三位身着长袍的女子围成一圈起舞，高举酒杯欢快地互相祝贺。她们脚边散落着瓜果等丰收的馈赠。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Celebration", "Friendship", "Community", "Shared joy"],
+        "zh": ["庆祝", "友谊", "社群", "共享喜悦"]
+      },
+      "meaning": {
+        "en": "This card is a toast to the people who make life lighter. It points to gatherings, reunions, and the kind of friendship where good news doubles when it's shared. Something deserves celebrating right now, and it will taste sweeter in good company.",
+        "zh": "这张牌是在为那些让生活变轻盈的人举杯。它指向聚会、重逢，以及那种分享好消息就会让快乐加倍的友谊。眼下正有值得庆祝的事，而有人相伴，滋味会更甜。"
+      },
+      "advice": {
+        "en": "Gather your people — even for a quick call or a shared meal — and mark a recent win together.",
+        "zh": "召集你的伙伴——哪怕只是一通电话或一顿便饭——一起为最近的小成就庆祝一下。"
+      },
+      "love": {
+        "en": "Light, social energy brightens romance. Meeting someone through friends, or enjoying a group outing as a couple, is especially favored.",
+        "zh": "轻松热闹的社交氛围为感情添彩。通过朋友结识新对象，或与伴侣一同参加聚会，都格外合宜。"
+      },
+      "work": {
+        "en": "Team spirit is strong. Collaborate generously, celebrate milestones, and let colleagues share in the credit.",
+        "zh": "团队士气高涨。多多协作，为每个里程碑庆祝，也让同事一起分享功劳。"
+      },
+      "growth": {
+        "en": "Let yourself be supported. Your circle is part of how you heal and grow.",
+        "zh": "允许自己被支持。你的朋友圈，本就是你疗愈与成长的一部分。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Overindulgence", "Feeling left out", "Gossip", "Quiet time"],
+        "zh": ["过度放纵", "被冷落", "流言", "独处时光"]
+      },
+      "meaning": {
+        "en": "The party energy has tipped out of balance — maybe too much socializing, or a circle that has grown cliquey or draining. You might also feel left out, or simply crave solitude after a busy stretch. Notice which connections truly fill you up.",
+        "zh": "聚会的能量有些失衡——也许社交过度，也许某个圈子变得排外或令人疲惫。你也可能觉得被冷落，或只是在一段忙碌之后渴望独处。留意哪些关系真正滋养了你。"
+      },
+      "advice": {
+        "en": "Step back from one social obligation that drains you and give that time to someone who doesn't.",
+        "zh": "推掉一个让你耗神的社交邀约，把时间留给真正让你舒服的人。"
+      },
+      "love": {
+        "en": "Outside opinions, a third party, or too much partying may be crowding your relationship. Protect some private time just for the two of you.",
+        "zh": "旁人的意见、第三者，或过多的应酬，可能正在挤压你们的关系。为两个人留出一些专属的私人时光。"
+      },
+      "work": {
+        "en": "Office politics or gossip could be distracting. Stay friendly, but keep your focus on your own work.",
+        "zh": "办公室政治或流言可能令人分心。保持友善，但把注意力放回自己的工作上。"
+      },
+      "growth": {
+        "en": "Solitude isn't loneliness. Use some quiet to recharge and remember who you are outside the group.",
+        "zh": "独处不等于孤单。借安静的时间充充电，记起在群体之外的你是谁。"
+      }
+    }
+  },
+  {
+    "id": "cups-04",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 4,
+    "name": { "en": "Four of Cups", "zh": "圣杯四" },
+    "description": {
+      "en": "A young man sits cross-legged beneath a tree with his arms folded, staring at three cups on the grass before him. A hand reaches out of a cloud to offer him a fourth cup, which he seems not to notice.",
+      "zh": "一位年轻人双臂交叉，盘腿坐在树下，盯着面前草地上的三只杯子。一只从云中伸出的手正递来第四只杯子，他却似乎浑然不觉。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Apathy", "Contemplation", "Discontent", "Overlooked offers"],
+        "zh": ["倦怠", "沉思", "不满", "视而不见"]
+      },
+      "meaning": {
+        "en": "You may be feeling flat, bored, or unimpressed by what's in front of you. Some withdrawal can be healthy reflection, but this card gently asks whether you're overlooking a genuine offer while replaying what's missing. Look up — something new is being held out to you.",
+        "zh": "你可能觉得索然无味，对眼前的一切提不起兴趣。适度抽离可以是健康的沉淀，但这张牌温柔地提醒你：是不是太执着于缺失的东西，反而错过了真正递到面前的机会？抬起头看看，新的东西正被递过来。"
+      },
+      "advice": {
+        "en": "Write down three good things in your life you've stopped noticing, plus one new invitation you could say yes to.",
+        "zh": "写下三样你早已习以为常的美好，再写下一个你可以答应的新邀请。"
+      },
+      "love": {
+        "en": "A restless “is this all?” feeling may be clouding your view. A partner's quiet efforts, or a new person's interest, could be easy to miss right now.",
+        "zh": "一种“就这样了吗”的烦闷可能遮住了你的视线。伴侣默默的付出，或新对象的好感，此刻都很容易被你忽略。"
+      },
+      "work": {
+        "en": "Feeling uninspired at work is a signal, not a verdict. Consider which overlooked project or offer could rekindle your interest.",
+        "zh": "工作上提不起劲是一个信号，而不是定论。想想有哪个被忽略的项目或机会，能重新点燃你的兴趣。"
+      },
+      "growth": {
+        "en": "Introspection is valuable when it leads somewhere. Set a gentle time limit on brooding, then turn toward curiosity.",
+        "zh": "内省有价值，前提是它能带你走向某处。给沉思设一个温柔的期限，然后转向好奇。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Re-engagement", "Awareness", "Seizing chances", "Conscious retreat"],
+        "zh": ["重新投入", "觉察", "把握机会", "主动抽离"]
+      },
+      "meaning": {
+        "en": "The fog of indifference is starting to lift. You're ready to stop circling the same complaints and actually reach for what's being offered. Alternatively, you may be stepping back on purpose to protect your energy — and that can be a wise, deliberate choice too.",
+        "zh": "冷漠的迷雾正在散去。你准备好不再绕着同样的抱怨打转，而是真正伸手接住眼前的机会。另一种可能是，你在有意识地退后一步，保护自己的能量——这同样可以是明智的选择。"
+      },
+      "advice": {
+        "en": "Pick up the opportunity you've been ignoring and take one concrete step with it this week.",
+        "zh": "拾起那个一直被你忽略的机会，这周就迈出具体的一步。"
+      },
+      "love": {
+        "en": "You're becoming open to connection again. It's a good moment to re-engage with a partner or say yes to a date.",
+        "zh": "你重新对亲密关系敞开了心。这是与伴侣重新连结，或答应一次约会的好时机。"
+      },
+      "work": {
+        "en": "Fresh motivation is returning. Revisit ideas you once dismissed and see which ones feel alive now.",
+        "zh": "新的动力正在回归。回顾那些曾被你否定的想法，看看哪些如今重新有了生命力。"
+      },
+      "growth": {
+        "en": "You've learned something in your stillness. Carry that clarity forward instead of slipping back into autopilot.",
+        "zh": "你在这段沉静中学到了些什么。带着这份清明继续前行，别又回到自动驾驶的状态。"
+      }
+    }
+  },
+  {
+    "id": "cups-05",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 5,
+    "name": { "en": "Five of Cups", "zh": "圣杯五" },
+    "description": {
+      "en": "A figure wrapped in a long black cloak bows their head over three spilled cups, while two cups still stand upright behind them, unseen. In the distance, a bridge crosses a river toward a small castle.",
+      "zh": "一个裹着黑色长斗篷的人低头望着三只倾倒的杯子，身后还立着两只完好的杯子，他却没有看见。远处，一座桥横跨河流，通往一座小小的城堡。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Grief", "Regret", "Disappointment", "What remains"],
+        "zh": ["悲伤", "懊悔", "失落", "尚有所存"]
+      },
+      "meaning": {
+        "en": "Something didn't go the way you hoped, and it's natural to feel the loss. The Five of Cups honors that grief while gently noting that not everything has spilled. When you're ready, turning around reveals what's still standing — and a bridge toward what comes next.",
+        "zh": "事情没能如你所愿，感到失落再自然不过。圣杯五尊重你的悲伤，同时也轻声提醒：并不是所有的杯子都打翻了。当你准备好时，转过身就能看见仍然完好的东西，以及通往下一段路的桥。"
+      },
+      "advice": {
+        "en": "Give yourself a set time to feel the disappointment fully, then name one thing that is still intact.",
+        "zh": "给自己一段时间好好难过，然后说出一件依然完好的事。"
+      },
+      "love": {
+        "en": "Heartbreak or regret may feel heavy right now. Healing begins when you can hold both the loss and the love that remains.",
+        "zh": "失恋或对一段感情的遗憾，此刻可能很沉重。当你能同时承载失去与仍然存在的爱，疗愈就开始了。"
+      },
+      "work": {
+        "en": "A setback or rejection stings, but it doesn't erase your skills or the opportunities still open to you.",
+        "zh": "挫折或被拒绝令人刺痛，但它抹不去你的能力，也抹不去仍向你敞开的机会。"
+      },
+      "growth": {
+        "en": "Grief is love that hasn't found where to go yet. Give it a place, and it will begin to move.",
+        "zh": "悲伤是还没找到去处的爱。给它一个安放的地方，它就会开始流动。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Acceptance", "Forgiveness", "Recovery", "Moving forward"],
+        "zh": ["接纳", "原谅", "复原", "向前走"]
+      },
+      "meaning": {
+        "en": "You are beginning to lift your head and look around. The sting of loss is softening, and you're more willing to forgive — others or yourself — and gather what remains. If you still feel stuck, it may be time to let someone help you carry it.",
+        "zh": "你开始抬起头，环顾四周。失去的刺痛正在减轻，你也更愿意原谅——原谅他人，或原谅自己——并收拾起仍然留存的东西。如果你仍觉得走不出来，或许该让身边的人帮你分担一些了。"
+      },
+      "advice": {
+        "en": "Write a short note of forgiveness to someone else or to yourself, even if you never send it.",
+        "zh": "写一段简短的和解之语，给别人或给自己，即使永远不寄出也没关系。"
+      },
+      "love": {
+        "en": "Old hurts are loosening their grip. You may reconnect with someone, or simply feel ready to love again.",
+        "zh": "旧伤正在松开它的手。你可能与某人重修旧好，或只是觉得自己准备好再次去爱。"
+      },
+      "work": {
+        "en": "After a disappointment, you're regaining perspective and can start rebuilding with hard-won lessons in hand.",
+        "zh": "经历失望之后，你正在找回全局的视角，可以带着来之不易的经验重新出发。"
+      },
+      "growth": {
+        "en": "Healing isn't forgetting. It's choosing to carry the lesson instead of the weight.",
+        "zh": "疗愈不是遗忘，而是选择带走教训，放下重担。"
+      }
+    }
+  },
+  {
+    "id": "cups-06",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 6,
+    "name": { "en": "Six of Cups", "zh": "圣杯六" },
+    "description": {
+      "en": "In a sunlit old courtyard, a boy hands a younger girl a cup filled with white star-shaped flowers. More flower-filled cups stand around them, and a guard walks away in the background.",
+      "zh": "在洒满阳光的古老庭院里，一个男孩把一只盛满白色星形小花的杯子递给年幼的女孩。四周还摆着几只插满鲜花的杯子，背景中一名守卫正转身走开。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Nostalgia", "Innocence", "Kindness", "Childhood memories"],
+        "zh": ["怀旧", "纯真", "善意", "童年回忆"]
+      },
+      "meaning": {
+        "en": "Memories and simple kindness take center stage. You might reconnect with an old friend, revisit a place from your past, or rediscover something you loved as a kid. This card invites a softer, more playful heart — one that gives freely without overthinking.",
+        "zh": "回忆与单纯的善意成了主角。你可能与老朋友重逢、重访过去的某个地方，或重新找回小时候热爱的东西。这张牌唤醒一颗更柔软、更爱玩的心——不假思索地付出善意。"
+      },
+      "advice": {
+        "en": "Do one thing today that your younger self would have loved, purely for the joy of it.",
+        "zh": "今天做一件小时候的你会喜欢的事，只为那份纯粹的快乐。"
+      },
+      "love": {
+        "en": "Sweet, uncomplicated affection is highlighted. Perhaps someone from your past resurfaces, or you and a partner return to the playful feel of your early days.",
+        "zh": "甜蜜而纯粹的感情是重点。也许是故人重逢，或是你与伴侣找回初识时的那份俏皮。"
+      },
+      "work": {
+        "en": "Past experience and old contacts can open doors. Mentoring someone or approaching tasks with a sense of play may also bring fulfillment.",
+        "zh": "过去的经验和旧人脉可能为你打开新门路。指导他人，或以玩心对待手头的任务，也会带来满足感。"
+      },
+      "growth": {
+        "en": "Your inner child holds clues about what truly delights you. Take time to listen.",
+        "zh": "你内在的小孩藏着关于什么能真正让你快乐的线索。花点时间好好听听。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Stuck in yesterday", "Rose-tinted memories", "Growing up", "Letting go"],
+        "zh": ["沉溺过去", "美化回忆", "成长", "放手"]
+      },
+      "meaning": {
+        "en": "Looking back has become a way of avoiding what's in front of you. You may be romanticizing an old relationship or a “better time” that wasn't as perfect as memory suggests. Honor the past, then let it stay there, so the present can have your full attention.",
+        "zh": "回望过去，变成了逃避眼前的方式。你可能在美化一段旧情，或一段记忆里的“美好时光”，而它其实并不像回忆中那样完美。向过去致意，然后让它留在原地，把全部注意力交还给现在。"
+      },
+      "advice": {
+        "en": "When you catch yourself comparing today to the good old days, redirect that energy into one plan for the present.",
+        "zh": "当你发现自己又拿今天和“从前多好”作比较时，把这份心力转向一个属于当下的计划。"
+      },
+      "love": {
+        "en": "Lingering attachment to an ex or an old dynamic may be blocking new intimacy. Give the relationship in front of you a chance of its own.",
+        "zh": "对前任或旧相处模式的留恋，可能正挡住新的亲密。给眼前的关系一个属于它自己的机会。"
+      },
+      "work": {
+        "en": "Clinging to “the way it's always been done” may hold you back. Be willing to update your approach.",
+        "zh": "一味依赖“一直都是这么做的”可能会拖住你。试着愿意更新你的方法。"
+      },
+      "growth": {
+        "en": "Maturing means keeping the warmth of your past while releasing its old rules.",
+        "zh": "成熟意味着保留过去的温暖，同时放下它的旧规则。"
+      }
+    }
+  },
+  {
+    "id": "cups-07",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 7,
+    "name": { "en": "Seven of Cups", "zh": "圣杯七" },
+    "description": {
+      "en": "A dark silhouetted figure faces seven cups floating among the clouds, each holding a different vision. Inside are a glowing veiled figure, a head, a snake, a castle, jewels, a laurel wreath, and a dragon.",
+      "zh": "一个剪影般的人面对着七只漂浮在云间的杯子，每只杯子里都盛着不同的幻象：蒙着面纱的发光人形、一颗头像、一条蛇、一座城堡、珠宝、一顶月桂花冠和一条龙。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Choices", "Daydreams", "Illusion", "Imagination"],
+        "zh": ["选择", "白日梦", "幻象", "想象力"]
+      },
+      "meaning": {
+        "en": "Possibilities are multiplying, and each one shimmers with promise. The catch is that not every option is as solid as it looks, and wishful thinking can blur the details. Enjoy the brainstorm, then ground yourself: which vision is real, and which one do you actually want?",
+        "zh": "可能性正在成倍增加，每一个看起来都闪闪发光。难点在于，并非每个选项都像表面那么可靠，一厢情愿容易模糊细节。尽情发散想象吧，然后让自己落地：哪个愿景是真实的？哪一个才是你真正想要的？"
+      },
+      "advice": {
+        "en": "List your options, then cross off any that rest mostly on hope rather than evidence.",
+        "zh": "列出你的所有选项，划掉那些主要靠希望而非依据支撑的。"
+      },
+      "love": {
+        "en": "You may be idealizing someone or juggling several romantic possibilities. Look for consistent actions, not just thrilling fantasies.",
+        "zh": "你可能在理想化某个人，或在几个心动对象之间摇摆。看重持续的行动，而不只是令人心动的想象。"
+      },
+      "work": {
+        "en": "Too many ideas or offers can scatter your focus. Choose one direction to test before committing to the rest.",
+        "zh": "想法或机会太多，会分散你的专注。先挑一个方向试一试，再考虑其他。"
+      },
+      "growth": {
+        "en": "Imagination becomes a gift when it's paired with discernment. Dream big, then check in with reality.",
+        "zh": "想象力配上辨别力，才是真正的天赋。大胆做梦，再回头与现实对一对表。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Clarity", "Decision", "Reality check", "Focus"],
+        "zh": ["清明", "做出决定", "回归现实", "专注"]
+      },
+      "meaning": {
+        "en": "The mist is clearing, and you can see your options for what they are. You may finally be ready to commit to one path and let the others go. Sometimes, though, this card reflects feeling swamped by choice — a reminder to simplify rather than chase every possibility.",
+        "zh": "迷雾正在散开，你能看清每个选项的真实样子。你或许终于准备好选定一条路，放下其他的可能。不过有时，这张牌也反映出你被太多选择压得喘不过气——提醒你化繁为简，而不是追逐每一种可能。"
+      },
+      "advice": {
+        "en": "Make one decision today that you've been postponing, even if it's a small one.",
+        "zh": "今天就做一个你一直拖着的决定，哪怕只是个小决定。"
+      },
+      "love": {
+        "en": "You're seeing someone more clearly now, beyond the fantasy. That clarity helps you decide what you truly want.",
+        "zh": "你正在更清楚地看见一个人，摘下了想象的滤镜。这份清晰能帮你确定自己真正想要什么。"
+      },
+      "work": {
+        "en": "Priorities are sharpening. Trimming distractions will help you deliver on the goal that matters most.",
+        "zh": "优先级正在变得清晰。砍掉干扰，能帮你完成最重要的那个目标。"
+      },
+      "growth": {
+        "en": "Choosing one thing isn't losing everything else; it's how dreams become real.",
+        "zh": "选择一件事并不等于失去其他一切，这正是梦想成真的方式。"
+      }
+    }
+  },
+  {
+    "id": "cups-08",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 8,
+    "name": { "en": "Eight of Cups", "zh": "圣杯八" },
+    "description": {
+      "en": "Beneath a watchful moon in the night sky, a cloaked figure with a walking staff turns away from eight neatly stacked cups. They head toward rugged mountains in the distance.",
+      "zh": "在夜空中月亮的注视下，一个披着斗篷、拄着手杖的人背对八只整齐叠放的杯子，朝远方嶙峋的群山走去。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Walking away", "Seeking meaning", "Release", "Inner journey"],
+        "zh": ["转身离开", "寻找意义", "释怀", "内在旅程"]
+      },
+      "meaning": {
+        "en": "You've built something that looks fine from the outside, yet it no longer satisfies a deeper part of you. The Eight of Cups describes the brave, often bittersweet choice to leave comfort behind in search of meaning. It isn't failure — it's growth asking for more room.",
+        "zh": "你所建立的一切从外表看并无不妥，却已无法满足你内心更深的渴望。圣杯八描绘的是一种勇敢而常带苦涩的选择：离开舒适，去寻找真正有意义的东西。这不是失败，而是成长在向你要更多空间。"
+      },
+      "advice": {
+        "en": "Identify one situation you've outgrown and picture what a small first step away from it would look like.",
+        "zh": "找出一个你已经不再适合的处境，想象一下离开它的第一小步会是什么样子。"
+      },
+      "love": {
+        "en": "You may realize a relationship or pattern no longer meets your emotional needs. Being honest about that, starting with yourself, is the first move.",
+        "zh": "你可能意识到某段关系或某种相处模式已无法满足你的情感需求。先对自己坦诚，是一切的起点。"
+      },
+      "work": {
+        "en": "A role that once fit may now feel hollow. Reflect on what kind of work would feel meaningful before you decide on any next step.",
+        "zh": "曾经合适的位置，如今可能让你感到空洞。在决定下一步之前，先想清楚什么样的工作对你有意义。"
+      },
+      "growth": {
+        "en": "Sometimes walking away is the most honest form of self-respect.",
+        "zh": "有时转身离开，是最诚实的自我尊重。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Hesitation", "Fear of change", "Aimless drifting", "Second look"],
+        "zh": ["犹豫不决", "害怕改变", "漫无目的", "回头审视"]
+      },
+      "meaning": {
+        "en": "You sense it may be time to move on, but something keeps pulling you back — fear, obligation, or uncertainty about what's next. Or you might be drifting, leaving situations before giving them a real chance. Ask whether you're staying out of love or fear, and leaving out of wisdom or restlessness.",
+        "zh": "你隐约感到该离开了，却总有什么把你拉回来——恐惧、责任，或对未来的不确定。也可能你在漫无目的地游荡，还没真正给一件事机会就先走了。问问自己：留下是因为爱还是恐惧？离开是出于智慧还是躁动？"
+      },
+      "advice": {
+        "en": "Write down your real reason for staying or going, and see whether it still holds up in daylight.",
+        "zh": "写下你留下或离开的真实理由，看看它在白天的光线下是否依然站得住。"
+      },
+      "love": {
+        "en": "You might be holding on to a relationship out of habit, or leaving too quickly when things get hard. Slow down and look at what's actually there.",
+        "zh": "你可能出于习惯紧抓着一段关系，或者一遇到困难就急着离开。放慢脚步，看清它真实的样子。"
+      },
+      "work": {
+        "en": "Uncertainty about your direction may keep you circling in place. Gathering information and support first can make any change feel less daunting.",
+        "zh": "对方向的不确定可能让你原地打转。先收集信息、寻求支持，任何改变都会显得不那么可怕。"
+      },
+      "growth": {
+        "en": "Sometimes the journey is inward: you can change your relationship to a situation without leaving it.",
+        "zh": "有时旅程是向内的：你可以不离开，却改变自己与处境之间的关系。"
+      }
+    }
+  },
+  {
+    "id": "cups-09",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 9,
+    "name": { "en": "Nine of Cups", "zh": "圣杯九" },
+    "description": {
+      "en": "A well-fed man sits on a wooden bench with his arms crossed and a satisfied smile. Behind him, nine golden cups are lined up in an arc on a shelf draped in blue cloth.",
+      "zh": "一位富态的男子双臂交叉坐在木凳上，脸上挂着心满意足的笑容。他身后铺着蓝布的高台上，九只金杯排成一道弧形。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Wish fulfilled", "Contentment", "Gratitude", "Pleasure"],
+        "zh": ["心愿达成", "满足", "感恩", "享受"]
+      },
+      "meaning": {
+        "en": "Often called the “wish card,” the Nine of Cups reflects a moment of genuine satisfaction. Something you hoped for is within reach or already here, and you're allowed to enjoy it. Let gratitude deepen the pleasure rather than worrying about what comes next.",
+        "zh": "圣杯九常被称为“愿望牌”，象征着发自内心的满足。你曾经期盼的事已近在咫尺，或已经实现，你完全可以尽情享受。让感恩加深这份喜悦，不必为接下来会怎样而忧心。"
+      },
+      "advice": {
+        "en": "Pause today to savor one good thing in your life and say out loud what you're grateful for.",
+        "zh": "今天停下来细细品味生活中的一件好事，并把你的感谢说出口。"
+      },
+      "love": {
+        "en": "Emotional satisfaction runs high, whether you feel good in your relationship or perfectly at ease in your own company.",
+        "zh": "情感上的满足感很强，无论是在关系中感到幸福，还是享受一个人的自在。"
+      },
+      "work": {
+        "en": "Recognition, a goal reached, or a smooth stretch at work is indicated. Take a moment to acknowledge how far you've come.",
+        "zh": "获得认可、达成目标，或进入一段顺心的工作期。花点时间肯定自己一路走来的进步。"
+      },
+      "growth": {
+        "en": "Contentment is a skill. Practice noticing “enough,” so your joy doesn't hinge on the next achievement.",
+        "zh": "知足是一种能力。练习觉察“已经足够”，让快乐不必依赖下一个成就。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Unmet wishes", "Complacency", "Overindulgence", "Inner fulfillment"],
+        "zh": ["心愿落空", "自满", "贪图享乐", "内在满足"]
+      },
+      "meaning": {
+        "en": "Satisfaction feels just out of reach, or the thing you wanted didn't feel the way you expected. You may be chasing pleasure to fill a gap, or resting so comfortably that growth has stalled. This is a nudge to redefine happiness on your own terms, from the inside out.",
+        "zh": "满足感似乎总差一点点，或者得到想要的东西之后，感觉却和预期不同。你可能在用享乐填补某种空缺，也可能安逸得太久，成长因此停滞。这是在提醒你，由内而外，按自己的标准重新定义幸福。"
+      },
+      "advice": {
+        "en": "Ask yourself what you really wanted beneath the wish, then find one simple way to give yourself that.",
+        "zh": "问问自己，在那个愿望背后你真正渴望的是什么，再找一个简单的方式满足它。"
+      },
+      "love": {
+        "en": "Expectations may be outpacing reality, or you may be looking to a partner for a happiness only you can build.",
+        "zh": "期待可能跑在了现实前面，或者你在指望伴侣给你一种只能由自己建立的幸福。"
+      },
+      "work": {
+        "en": "Success might feel hollow or slower than hoped. Revisit whether your goals still reflect what you value.",
+        "zh": "成功可能让你觉得空洞，或来得比预期慢。重新检视你的目标是否仍反映你真正看重的东西。"
+      },
+      "growth": {
+        "en": "True fulfillment grows from alignment, not accumulation.",
+        "zh": "真正的满足来自内外一致，而非不断累积。"
+      }
+    }
+  },
+  {
+    "id": "cups-10",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 10,
+    "name": { "en": "Ten of Cups", "zh": "圣杯十" },
+    "description": {
+      "en": "A couple stands with arms around each other, raising their free hands toward a rainbow of ten cups arching across the sky. Two children dance beside them, and a cozy house sits on a green hill beyond.",
+      "zh": "一对夫妇相拥而立，用空着的手迎向天空中由十只圣杯组成的彩虹。两个孩子在一旁欢快起舞，远处绿色的山丘上坐落着一座温馨的小屋。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Lasting joy", "Family", "Emotional fulfillment", "Belonging"],
+        "zh": ["长久幸福", "家庭", "情感圆满", "归属感"]
+      },
+      "meaning": {
+        "en": "This is the heart at home — lasting happiness rooted in love, belonging, and shared values. Whether your family is one of blood or of choice, you can rest in the deep peace of being accepted. It's less about a picture-perfect life and more about the quiet joy of truly being together.",
+        "zh": "这是心灵找到归宿的时刻——建立在爱、归属与共同价值上的长久幸福。无论是血缘家人还是你选择的家人，你都可以安心沉浸在被接纳的深深安宁里。重点不在于完美无瑕的生活，而在于真正在一起时那份安静的喜悦。"
+      },
+      "advice": {
+        "en": "Create a small ritual of togetherness with the people who feel like home to you.",
+        "zh": "与那些让你有家的感觉的人，创造一个小小的相聚仪式。"
+      },
+      "love": {
+        "en": "Long-term harmony and emotional commitment are highlighted. It's a lovely time to dream up a shared vision for your future together.",
+        "zh": "长久的和谐与情感承诺是重点。这是一起勾勒共同未来的美好时机。"
+      },
+      "work": {
+        "en": "A workplace that feels like a supportive community, or work that fits well with your home life, brings deep satisfaction.",
+        "zh": "一个像温暖社群般的工作环境，或与家庭生活相协调的工作，会带来深层的满足。"
+      },
+      "growth": {
+        "en": "Belonging begins with how you treat yourself. Become the home you've been looking for.",
+        "zh": "归属感始于你如何对待自己。成为你一直在寻找的那个家。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Disconnection", "Unrealistic ideals", "Family tension", "Redefining home"],
+        "zh": ["隔阂", "理想过高", "家庭摩擦", "重新定义家"]
+      },
+      "meaning": {
+        "en": "The picture of harmony has a few cracks — family tension, misaligned values, or a sense that you don't quite belong. You may also be holding your relationships to an ideal no one could meet. Real closeness grows from honest conversations, not perfect appearances.",
+        "zh": "和睦的画面出现了几道裂痕——家庭摩擦、价值观不合，或是那种不太属于这里的感觉。也可能是你用一个没人能达到的理想标准来要求你的关系。真正的亲密来自坦诚的沟通，而不是完美的表象。"
+      },
+      "advice": {
+        "en": "Have one honest, kind conversation with someone close about what “home” means to each of you.",
+        "zh": "与一位亲近的人坦诚而温和地聊一聊，“家”对你们各自意味着什么。"
+      },
+      "love": {
+        "en": "You and a partner may be picturing different futures or feeling out of step. Naming your hopes openly can rebuild common ground.",
+        "zh": "你和伴侣对未来的想象可能不同，或感到步调不一。坦然说出各自的期盼，能重建共同的基础。"
+      },
+      "work": {
+        "en": "Work-life balance may be strained, or team harmony feels off. Look for small adjustments that restore a sense of belonging.",
+        "zh": "工作与生活的平衡可能被打破，或团队氛围不太和谐。寻找一些小调整，找回归属感。"
+      },
+      "growth": {
+        "en": "Let go of the storybook version of happiness and make room for a real one.",
+        "zh": "放下童话版的幸福，为真实的幸福腾出空间。"
+      }
+    }
+  },
+  {
+    "id": "cups-11",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 11,
+    "name": { "en": "Page of Cups", "zh": "圣杯侍从" },
+    "description": {
+      "en": "A young page in a flower-patterned tunic and soft hat stands at the edge of the sea. He holds a golden cup from which a small fish pokes its head out and looks back at him.",
+      "zh": "一位年轻侍从身穿印有花朵图案的短袍，头戴软帽，站在海边。他手捧一只金杯，一条小鱼正从杯中探出头来，与他对视。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Curiosity", "Creative spark", "Sensitivity", "Sweet surprise"],
+        "zh": ["好奇心", "灵感乍现", "敏感细腻", "意外惊喜"]
+      },
+      "meaning": {
+        "en": "A playful, open-hearted energy is knocking — an unexpected feeling, a creative idea, or a sweet message. The Page of Cups encourages you to stay curious and let your intuition speak, even if what it says sounds a little odd. Delight often arrives in unlikely packaging.",
+        "zh": "一股轻快而真诚的能量正在敲门——可能是一份意外的心动、一个创意，或一条温暖的讯息。圣杯侍从鼓励你保持好奇，让直觉开口说话，哪怕它说的话有点古怪。惊喜常常以意想不到的样子出现。"
+      },
+      "advice": {
+        "en": "Follow one quirky idea or gut feeling today without judging it first.",
+        "zh": "今天跟随一个古怪的点子或直觉行动，先别急着评判它。"
+      },
+      "love": {
+        "en": "A shy confession, a new crush, or a tender gesture could appear. Respond with openness and a light heart.",
+        "zh": "一句羞涩的告白、一份新的好感，或一个温柔的举动可能出现。以开放而轻松的心去回应。"
+      },
+      "work": {
+        "en": "Fresh creative ideas are flowing. Share them, even in rough form, and see where they lead.",
+        "zh": "新的创意正源源不断。即使还很粗糙，也把它们分享出来，看看会走向哪里。"
+      },
+      "growth": {
+        "en": "Approach your emotions the way a curious student would, with wonder rather than critique.",
+        "zh": "像一个好奇的学生那样对待你的情绪，带着惊奇，而不是批判。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Hypersensitivity", "Creative block", "Insecurity", "Escapism"],
+        "zh": ["过度敏感", "灵感受阻", "不安", "逃避现实"]
+      },
+      "meaning": {
+        "en": "Your sensitivity may be turning prickly, or you're hiding a creative impulse because you fear it looks silly. Sometimes this card points to daydreaming as an escape from feelings you'd rather not face. Gently give your inner artist permission to be imperfect.",
+        "zh": "你的敏感可能正变得一碰就疼，或者你因为怕显得幼稚，而把一份创作冲动藏了起来。有时这张牌也指向用白日梦来逃避不愿面对的感受。温柔地允许你内在的艺术家不完美吧。"
+      },
+      "advice": {
+        "en": "Share one creative piece or honest feeling with someone you trust, even if it feels clumsy.",
+        "zh": "把一件创作或一份真实的感受分享给你信任的人，哪怕它显得有些笨拙。"
+      },
+      "love": {
+        "en": "Mixed signals or overreactions may muddy things. Express what you feel clearly instead of hoping it will be guessed.",
+        "zh": "忽冷忽热的信号或过度的反应，可能让事情变得混乱。清楚表达你的感受，而不是期待对方去猜。"
+      },
+      "work": {
+        "en": "Self-doubt might be blocking good ideas. Start small, and let feedback help you grow rather than stop you.",
+        "zh": "自我怀疑可能正在挡住好点子。从小处着手，让反馈帮助你成长，而不是让你止步。"
+      },
+      "growth": {
+        "en": "Being emotionally young isn't a flaw; it's an invitation to mature with tenderness.",
+        "zh": "情感上还稚嫩并不是缺点，而是一份让你温柔长大的邀请。"
+      }
+    }
+  },
+  {
+    "id": "cups-12",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 12,
+    "name": { "en": "Knight of Cups", "zh": "圣杯骑士" },
+    "description": {
+      "en": "A knight in armor and a fish-patterned tunic rides a white horse at a calm walk, holding out a golden cup as if offering it. Wings adorn his helmet and heels, and a quiet river winds through the landscape.",
+      "zh": "一位骑士身穿盔甲与饰有鱼纹的外袍，骑着白马缓步前行，伸手递出一只金杯，仿佛要将它献给谁。他的头盔与脚跟都饰有羽翼，一条静静的河流蜿蜒穿过原野。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Romance", "Charm", "Idealism", "Following the heart"],
+        "zh": ["浪漫", "魅力", "理想主义", "追随内心"]
+      },
+      "meaning": {
+        "en": "The Knight of Cups brings an invitation wrapped in feeling — a romantic gesture, an artistic calling, or a heartfelt proposal. He moves gently, leading with emotion and a love of beauty. Follow your heart, but keep an eye on whether the dream has a practical path.",
+        "zh": "圣杯骑士带来一份饱含情感的邀约——可能是浪漫的表白、艺术的召唤，或一个真诚的提议。他步伐从容，以情感和对美的热爱引路。追随你的心吧，同时也看看这个梦想是否有一条可行的路。"
+      },
+      "advice": {
+        "en": "Offer something heartfelt — a compliment, an idea, a handmade gift — without waiting for the perfect moment.",
+        "zh": "送出一份真心——一句赞美、一个想法、一份亲手做的礼物——不必等待完美时机。"
+      },
+      "love": {
+        "en": "Romance is in the air, and a charming admirer or sweet gesture may sweep you off your feet. Enjoy it while keeping your feet on the ground.",
+        "zh": "空气中弥漫着浪漫，一位迷人的追求者或一个贴心的举动可能让你怦然心动。尽情享受，但也别忘了脚踏实地。"
+      },
+      "work": {
+        "en": "Creative proposals and passion projects are favored. Pitch your idea with sincerity and back it with a clear plan.",
+        "zh": "创意提案和热情所在的项目都很顺利。真诚地提出你的想法，并附上清晰的计划。"
+      },
+      "growth": {
+        "en": "Let your ideals guide you, but measure them by what you actually do, not only by what you feel.",
+        "zh": "让理想指引你，但要用实际行动，而不只是感受，去衡量它们。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Unrealistic dreams", "Empty promises", "Mood swings", "Disillusion"],
+        "zh": ["不切实际", "空头承诺", "情绪起伏", "幻灭"]
+      },
+      "meaning": {
+        "en": "Charm without follow-through may be the theme — grand words that don't match actions, or plans that live only in daydreams. You might also be swept along by emotions that shift by the hour. Bring your feelings down to earth and check what's real.",
+        "zh": "这里的主题可能是有魅力却缺乏行动——说得动听，做得却跟不上，或者计划只活在白日梦里。你也可能被一阵阵变化无常的情绪牵着走。让感受落地，看看什么才是真实的。"
+      },
+      "advice": {
+        "en": "Before making a promise, ask yourself honestly whether you can keep it.",
+        "zh": "在许下承诺之前，诚实地问问自己能否兑现。"
+      },
+      "love": {
+        "en": "Be mindful of sweet talk that isn't backed by consistency, whether it's yours or someone else's. Value steady care over sweeping gestures.",
+        "zh": "留意那些缺少一致行动的甜言蜜语，不论出自你还是别人之口。比起轰轰烈烈的姿态，更该看重稳定的关心。"
+      },
+      "work": {
+        "en": "An exciting idea may lack a plan, or someone may be overpromising. Anchor creativity with clear deadlines.",
+        "zh": "一个令人兴奋的想法可能缺乏计划，或有人在过度承诺。用明确的时间节点为创意下锚。"
+      },
+      "growth": {
+        "en": "Disappointment can be the doorway to a more realistic, and more durable, kind of idealism.",
+        "zh": "失望可以是一扇门，引你走向一种更现实、也更持久的理想主义。"
+      }
+    }
+  },
+  {
+    "id": "cups-13",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 13,
+    "name": { "en": "Queen of Cups", "zh": "圣杯王后" },
+    "description": {
+      "en": "A queen sits at the water's edge on a throne carved with sea nymphs, gazing intently at an ornate, lidded chalice flanked by angel figures. Smooth pebbles and gentle waves lie at her feet.",
+      "zh": "一位王后坐在水边，王座上雕刻着海中仙女。她专注地凝视着手中一只华丽的带盖圣杯，杯身两侧饰有天使。她的脚边是光滑的卵石与轻柔的浪花。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Compassion", "Intuition", "Emotional depth", "Nurturing"],
+        "zh": ["同理心", "直觉", "情感深度", "温柔滋养"]
+      },
+      "meaning": {
+        "en": "The Queen of Cups holds space for feelings — yours and other people's — with calm, deep understanding. She trusts her intuition and offers care without losing herself. This card asks you to lead with empathy while staying anchored in your own emotional truth.",
+        "zh": "圣杯王后以平静而深刻的理解，承接着各种情绪——你的，也包括他人的。她信任自己的直觉，给予关怀却不迷失自我。这张牌请你以同理心为先，同时稳稳扎根于自己真实的感受。"
+      },
+      "advice": {
+        "en": "Listen to someone today without trying to fix anything, and trust what your intuition picks up.",
+        "zh": "今天倾听一个人，不急着解决任何问题，并相信你的直觉所捕捉到的。"
+      },
+      "love": {
+        "en": "Deep emotional attunement is available. You can offer tenderness, patience, and genuine understanding — and ask for the same in return.",
+        "zh": "深层的情感共鸣近在眼前。你可以给予温柔、耐心与真正的理解，也可以坦然向对方索取同样的东西。"
+      },
+      "work": {
+        "en": "Your emotional intelligence is an asset, whether in caring roles, creative work, or simply reading the room in a tense meeting.",
+        "zh": "你的情商是一项资产，无论是在照护类工作、创作领域，还是在紧张的会议里察言观色。"
+      },
+      "growth": {
+        "en": "Compassion that includes yourself is the steadiest kind there is.",
+        "zh": "把自己也包括在内的慈悲，才是最稳定的慈悲。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Overgiving", "Emotional overwhelm", "Codependency", "Self-care"],
+        "zh": ["过度付出", "情绪泛滥", "关系依赖", "照顾自己"]
+      },
+      "meaning": {
+        "en": "You may be absorbing other people's feelings until your own get lost, or giving so much care that you've run dry. Sometimes emotions turn inward as moodiness or insecurity. What's needed now is gentle boundaries, and the same compassion for yourself that you so freely give away.",
+        "zh": "你可能一直在吸收别人的情绪，以至于找不到自己的感受；也可能付出太多关怀，把自己掏空了。有时情绪会向内翻涌，变成反复无常或不安。此刻需要的是温柔的界限，以及把你慷慨给予他人的慈悲，也分一些给自己。"
+      },
+      "advice": {
+        "en": "Choose one place where you're overextending and let yourself say “not right now.”",
+        "zh": "找一个你过度付出的地方，允许自己说一句“现在不行”。"
+      },
+      "love": {
+        "en": "Taking on a partner's moods or losing yourself in their needs can tip the balance. Your feelings deserve equal space.",
+        "zh": "承接伴侣所有的情绪，或迷失在对方的需求中，会让关系失衡。你的感受同样值得被重视。"
+      },
+      "work": {
+        "en": "Emotional labor may be wearing you down. Clarify what's yours to carry and what isn't.",
+        "zh": "情绪劳动可能正在消耗你。分清哪些是你该承担的，哪些不是。"
+      },
+      "growth": {
+        "en": "Intuition grows clearer when you rest. Quiet time alone helps you hear your own voice again.",
+        "zh": "休息时，直觉会更清晰。独处的安静时光能帮你重新听见自己的声音。"
+      }
+    }
+  },
+  {
+    "id": "cups-14",
+    "arcana": "minor",
+    "suit": "cups",
+    "number": 14,
+    "name": { "en": "King of Cups", "zh": "圣杯国王" },
+    "description": {
+      "en": "A king sits on a stone throne that floats upon a restless sea, holding a cup in one hand and a scepter in the other. Behind him, a ship sails on one side while a fish leaps from the waves on the other.",
+      "zh": "一位国王坐在漂浮于翻涌海面上的石制王座上，一手持杯，一手握权杖。他身后，一侧有帆船航行，另一侧有一条鱼跃出浪花。"
+    },
+    "upright": {
+      "keywords": {
+        "en": ["Emotional balance", "Calm wisdom", "Diplomacy", "Generosity"],
+        "zh": ["情绪平衡", "沉稳智慧", "圆融", "宽厚"]
+      },
+      "meaning": {
+        "en": "The King of Cups stays steady while the waters around him churn. He embodies emotional maturity — feeling deeply without being ruled by those feelings. You're asked to respond rather than react, and to guide others with warmth, patience, and a cool head.",
+        "zh": "四周波涛翻涌，圣杯国王却依然沉稳。他代表情绪上的成熟——感受深刻，却不被情绪左右。这张牌请你先回应而不是急于反应，用温暖、耐心与冷静的头脑去引导他人。"
+      },
+      "advice": {
+        "en": "When emotions run high, take one slow breath and choose your words as if you were the calmest person in the room.",
+        "zh": "当情绪高涨时，慢慢吸一口气，像在场最冷静的人那样斟酌你的措辞。"
+      },
+      "love": {
+        "en": "Steady, mature love is highlighted: a partner, or you, who listens, stays calm in conflict, and offers dependable support.",
+        "zh": "稳定而成熟的爱是重点：一个懂得倾听、在争执中保持冷静、给予可靠支持的伴侣——这个人也可能就是你。"
+      },
+      "work": {
+        "en": "Leadership that balances empathy with clear boundaries serves you well. You may be the one who keeps the team grounded.",
+        "zh": "兼顾同理心与清晰界限的领导方式对你很有帮助。你可能正是那个让团队安定下来的人。"
+      },
+      "growth": {
+        "en": "Mastering your feelings isn't suppressing them; it's knowing your tides and steering with them.",
+        "zh": "驾驭情绪不是压抑情绪，而是了解自己的潮汐，并顺势掌舵。"
+      }
+    },
+    "reversed": {
+      "keywords": {
+        "en": ["Repressed emotions", "Emotional distance", "Control", "Inner work"],
+        "zh": ["压抑情绪", "情感疏离", "掌控欲", "内在修炼"]
+      },
+      "meaning": {
+        "en": "The calm surface may be hiding a storm. You might be bottling up feelings until they leak out as irritability, or using composure to keep others at arm's length. Let emotion move honestly instead of controlling it — or using it to control the people around you.",
+        "zh": "平静的表面之下，也许藏着一场风暴。你可能把情绪憋在心里，直到它以烦躁的形式溢出来；或是用冷静来与他人保持距离。让情绪坦诚地流动，而不是控制它——更不要借它去控制身边的人。"
+      },
+      "advice": {
+        "en": "Name one feeling you've been keeping under wraps and share it with someone you feel safe with.",
+        "zh": "说出一种你一直压在心底的情绪，并与一个让你安心的人分享。"
+      },
+      "love": {
+        "en": "Emotional distance or unspoken resentment may be cooling a relationship. Vulnerability, not composure, is what will bring you closer.",
+        "zh": "情感上的疏离或未说出口的怨气，可能正让关系降温。能拉近彼此的，是坦露脆弱，而不是故作镇定。"
+      },
+      "work": {
+        "en": "Stress may be making you curt or controlling. Check in on how your mood is affecting the people around you.",
+        "zh": "压力可能让你变得生硬，或想掌控一切。留意你的情绪正如何影响身边的人。"
+      },
+      "growth": {
+        "en": "Real steadiness comes from feeling things through, not from holding them down.",
+        "zh": "真正的沉稳来自把情绪好好感受完，而不是把它压下去。"
+      }
+    }
+  }
+]

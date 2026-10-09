@@ -1,0 +1,800 @@
+[
+  {
+    "id": "wands-01",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 1,
+    "name": { "en": "Ace of Wands", "zh": "权杖王牌" },
+    "description": {
+      "en": "A hand emerges from a cloud, gripping a sturdy wand that sprouts fresh green leaves, a few drifting down. Below lies a calm landscape of trees, a river, and a castle perched on a distant hill.",
+      "zh": "一只手从云中伸出，紧握一根冒出新叶的木杖，几片叶子正缓缓飘落。下方是宁静的风景：树木、河流，以及远山上的一座城堡。"
+    },
+    "upright": {
+      "keywords": { "en": ["Spark", "Inspiration", "New venture", "Raw potential"], "zh": ["火花", "灵感", "新起点", "潜能"] },
+      "meaning": {
+        "en": "A fresh spark has landed in your hands. This is the moment an idea starts to glow with real heat—something you want to make, start, or chase. The energy is raw and unshaped, but it is unmistakably yours to pick up and run with.",
+        "zh": "一簇新火落到了你手里。某个想法开始真正发热——你想动手去做、去开始、去追逐。这股能量还很原始，尚未成形，但它确确实实属于你，等你接住，然后奔跑起来。"
+      },
+      "advice": {
+        "en": "Write down the idea that's buzzing in you today and take one small step toward it before the week ends.",
+        "zh": "把今天在你心里嗡嗡作响的念头写下来，并在这周结束前朝它迈出一小步。"
+      },
+      "love": {
+        "en": "Attraction feels electric and new, whether it's a fresh connection or a rekindled spark with someone familiar. Let yourself be playful and bold.",
+        "zh": "吸引力新鲜而带电，可能是一段刚开始的缘分，也可能是与熟悉之人重新擦出的火花。允许自己大胆一点，也俏皮一点。"
+      },
+      "work": {
+        "en": "A project, pitch, or side idea is asking to be born. Momentum favors whoever moves first, so sketch the prototype instead of waiting for perfect conditions.",
+        "zh": "某个项目、提案或副业点子正等着诞生。先动手的人更容易抓住势头，与其等待完美时机，不如先把雏形画出来。"
+      },
+      "growth": {
+        "en": "Notice what makes you feel genuinely alive right now. That pull is information about who you're becoming.",
+        "zh": "留意此刻什么让你真正感到鲜活。那股牵引，正在告诉你自己将成为怎样的人。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Delayed start", "Creative block", "Hesitation", "Scattered spark"], "zh": ["迟迟未启", "创意受阻", "犹豫", "火花涣散"] },
+      "meaning": {
+        "en": "The spark is there, but it's struggling to catch. Maybe you're waiting for permission, doubting the idea, or spreading your enthusiasm across too many directions at once. This isn't a lack of fire—it's fire that hasn't yet found enough oxygen or focus.",
+        "zh": "火种还在，只是迟迟点不着。也许你在等某种许可，也许在怀疑这个想法，又或者把热情同时撒向了太多方向。这不是没有火，而是火还缺少足够的空气与聚焦。"
+      },
+      "advice": {
+        "en": "Pick the single idea that still excites you most and give it fifteen uninterrupted minutes today.",
+        "zh": "挑出仍最让你心动的那一个点子，今天给它十五分钟不受打扰的时间。"
+      },
+      "love": {
+        "en": "Desire may feel muted or hard to express, or one of you is more eager than the other. Talk about what lights you up rather than forcing a spark.",
+        "zh": "欲望可能有些低迷或难以表达，也可能两人的热度并不同步。与其硬要擦出火花，不如聊聊彼此真正为何心动。"
+      },
+      "work": {
+        "en": "A launch or new initiative may be stalling over unclear goals or too much planning. Shrink the first step until it feels almost too easy to skip.",
+        "zh": "新计划或新项目可能卡在目标不清或计划过度上。把第一步缩小，小到你几乎找不到理由不做。"
+      },
+      "growth": {
+        "en": "Ask yourself whose approval you're waiting for. Your creative impulses don't need to be justified before they're explored.",
+        "zh": "问问自己，到底在等谁的认可。你的创作冲动，不必先证明合理才能去探索。"
+      }
+    }
+  },
+  {
+    "id": "wands-02",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 2,
+    "name": { "en": "Two of Wands", "zh": "权杖二" },
+    "description": {
+      "en": "A man in a red cap and cloak stands on castle battlements, holding a small globe in one hand and a wand in the other, while a second wand is fixed to the wall. He gazes out over the sea and the land beyond.",
+      "zh": "一名头戴红帽、身披斗篷的男子站在城垛上，一手托着小小的地球仪，一手握着权杖，另一根权杖固定在墙边。他眺望着远方的海与陆地。"
+    },
+    "upright": {
+      "keywords": { "en": ["Planning", "Bold vision", "Decisions", "Wider horizons"], "zh": ["规划", "远见", "抉择", "开阔视野"] },
+      "meaning": {
+        "en": "You've proven you can start something; now you're standing at the edge of what's next, weighing how far you want to go. The world feels both larger and more reachable. This card asks you to think strategically about your ambitions rather than staying comfortable inside familiar walls.",
+        "zh": "你已证明自己能够起步，如今站在下一步的边缘，掂量着想走多远。世界似乎更大，也更触手可及。这张牌邀请你用更有策略的眼光看待自己的野心，而不是安于熟悉的围墙之内。"
+      },
+      "advice": {
+        "en": "Map out two possible paths on paper and name what each one would ask of you.",
+        "zh": "在纸上画出两条可能的路，并写清每一条需要你付出什么。"
+      },
+      "love": {
+        "en": "You may be deciding whether to stay in a cozy pattern or explore a bigger future together. Share your long-range hopes openly.",
+        "zh": "你或许正在犹豫，是守着舒适的相处模式，还是一起探索更大的未来。坦然说出你对长远的期待吧。"
+      },
+      "work": {
+        "en": "Long-term planning pays off now: think about new markets, collaborations, or skills that extend your reach. A clear roadmap beats scattered hustle.",
+        "zh": "此刻适合做长远规划：想想新的方向、合作或能拓展影响力的技能。一张清晰的路线图，胜过零散的忙碌。"
+      },
+      "growth": {
+        "en": "Growth here means choosing expansion over safety, even slightly. Let yourself want more without apologizing for it.",
+        "zh": "此时的成长，意味着在安全与扩展之间，哪怕只往扩展那边偏一点点。允许自己想要更多，不必为此道歉。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Fear of change", "Playing small", "Indecision", "Vague plans"], "zh": ["畏惧改变", "自我设限", "举棋不定", "计划模糊"] },
+      "meaning": {
+        "en": "You can see the horizon but keep stepping back from it. Perhaps the plan feels too vague, or the familiar feels safer than the unknown. Upside down, the card points to ambition that's been folded up and put away—still there, waiting for you to unfold it.",
+        "zh": "你看得见地平线，却一次次往后退。也许计划太模糊，也许熟悉的一切比未知更让人安心。逆位的这张牌，指向一份被折叠收起的野心——它还在，等你重新展开。"
+      },
+      "advice": {
+        "en": "Name the one fear behind your hesitation and ask whether it's protecting you or just keeping you small.",
+        "zh": "说出让你迟疑的那一个恐惧，再问问它是在保护你，还是只是让你缩小自己。"
+      },
+      "love": {
+        "en": "One or both of you may be avoiding conversations about the future. Uncertainty eases when you name what you actually want.",
+        "zh": "你们之中可能有人在回避关于未来的话题。说出自己真正想要什么，不确定感才会慢慢松动。"
+      },
+      "work": {
+        "en": "Plans may stall because the goal is too broad or the risk feels too large. Break the vision into one testable step.",
+        "zh": "计划停滞，可能是因为目标太宽泛，或风险显得太大。把愿景拆成一个可以验证的小步骤。"
+      },
+      "growth": {
+        "en": "Comfort zones are restful, but notice if yours has quietly become a cage. Small experiments can widen it gently.",
+        "zh": "舒适区可以让人休息，但要留意它是否已悄悄变成笼子。一些小小的尝试，就能温和地把它撑开。"
+      }
+    }
+  },
+  {
+    "id": "wands-03",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 3,
+    "name": { "en": "Three of Wands", "zh": "权杖三" },
+    "description": {
+      "en": "A figure seen from behind stands on a high ridge, resting a hand on one of three planted wands. Below, ships sail across a golden expanse of water toward distant hills.",
+      "zh": "一个背影站在高处的山脊上，一手扶着三根插在地上的权杖之一。下方，几艘船正驶过金色的水面，朝远方的群山而去。"
+    },
+    "upright": {
+      "keywords": { "en": ["Expansion", "Foresight", "Momentum", "Progress"], "zh": ["拓展", "远瞻", "势头", "进展"] },
+      "meaning": {
+        "en": "What you set in motion is starting to travel. Your efforts have left the harbor, and now you can watch them move outward toward possibilities you could only imagine before. There's confidence here, and the patience to let results arrive in their own time.",
+        "zh": "你启动的事情开始远行了。努力已经离港，你可以望着它们驶向从前只能想象的可能。这里有一份笃定，也有一份耐心，让结果按自己的节奏抵达。"
+      },
+      "advice": {
+        "en": "Keep your eyes on the bigger picture and prepare for the opportunities your earlier work is about to bring back.",
+        "zh": "把目光放在更大的图景上，为先前的努力即将带回的机会做好准备。"
+      },
+      "love": {
+        "en": "A relationship may be growing beyond its early stage—perhaps through travel, distance, or shared plans. Trust the direction you're building together.",
+        "zh": "这段关系可能正走出最初的阶段，也许借由旅行、异地或共同的计划。相信你们一起搭建的方向。"
+      },
+      "work": {
+        "en": "Projects are gaining reach, and opportunities from farther afield may appear. Think about scale and who else could join the voyage.",
+        "zh": "项目的影响范围正在扩大，更远处的机会也可能出现。想想如何扩大规模，以及还有谁能一同远航。"
+      },
+      "growth": {
+        "en": "You're learning that vision includes waiting. Hold your direction steady while staying curious about what the horizon reveals.",
+        "zh": "你正在学习：远见也包括等待。稳住方向，同时对地平线将显露的东西保持好奇。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Delays", "Narrow view", "Frustration", "Missed signals"], "zh": ["延误", "视野受限", "挫败", "错失信号"] },
+      "meaning": {
+        "en": "The ships seem slow to return, and impatience is creeping in. Maybe obstacles have pushed back your timeline, or you're focusing so narrowly on what's late that you miss what's quietly arriving. The invitation is to widen your gaze and rethink expectations rather than give up.",
+        "zh": "船迟迟不归，焦躁悄悄爬上心头。也许阻碍推迟了时间表，也许你太紧盯着延误，反而没看见正在静静抵达的东西。此时需要的是放宽视线、调整期待，而不是就此放弃。"
+      },
+      "advice": {
+        "en": "Review your original plan and adjust the timeline instead of judging the whole effort as a failure.",
+        "zh": "回头检视最初的计划，调整时间表，而不是把整件事判定为失败。"
+      },
+      "love": {
+        "en": "Long-distance strain or mismatched timelines may be testing you. Patience and honest check-ins matter more than grand gestures.",
+        "zh": "异地的压力或彼此节奏的错位，可能正在考验你们。此时耐心与坦诚的沟通，比轰轰烈烈的表示更重要。"
+      },
+      "work": {
+        "en": "Expansion may be hitting logistical snags or slower responses than expected. Look for what you can refine while you wait.",
+        "zh": "扩展可能遇到流程上的卡点，或者回应比预期慢。等待的同时，看看有什么可以顺手打磨。"
+      },
+      "growth": {
+        "en": "Disappointment often comes from a timeline you set alone. Let reality inform your plans without dimming your vision.",
+        "zh": "失望往往来自你独自设定的时间表。让现实修正计划，但别让它熄灭你的愿景。"
+      }
+    }
+  },
+  {
+    "id": "wands-04",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 4,
+    "name": { "en": "Four of Wands", "zh": "权杖四" },
+    "description": {
+      "en": "Four wands stand as a canopy draped with a garland of flowers and fruit. Behind them, two figures raise bouquets in greeting, with a small crowd and a castle in the background.",
+      "zh": "四根权杖撑起一座挂满花果花环的拱棚。后方两人高举花束迎接来客，人群聚在一起，远处可见一座城堡。"
+    },
+    "upright": {
+      "keywords": { "en": ["Celebration", "Homecoming", "Harmony", "Milestone"], "zh": ["庆祝", "归属", "和谐", "里程碑"] },
+      "meaning": {
+        "en": "This is a moment to pause and celebrate what you've built. A milestone has been reached, and the people around you are part of the joy. There's warmth, belonging, and stable ground beneath your feet—proof that effort can turn into something worth gathering around.",
+        "zh": "此刻值得停下来，庆祝你亲手建立的一切。一个里程碑已经抵达，身边的人也在分享这份喜悦。这里有温暖、有归属，脚下的土地也很踏实——努力确实能化作值得大家围聚的成果。"
+      },
+      "advice": {
+        "en": "Mark this chapter with a real celebration, even a small one, and invite the people who helped you get here.",
+        "zh": "为这一阶段办一场真正的庆祝，哪怕规模很小，也要邀请那些陪你走到这里的人。"
+      },
+      "love": {
+        "en": "Commitment, a shared home, or a joyful gathering may be highlighted. Your bond feels secure enough to show to the world.",
+        "zh": "承诺、共同的家，或一场欢乐的聚会可能正被点亮。你们的感情踏实得足以让世界看见。"
+      },
+      "work": {
+        "en": "A launch, a completed project, or a team win deserves recognition. Celebrating together strengthens the foundation for what comes next.",
+        "zh": "一次发布、一个圆满收尾，或团队的一场胜利，都值得被认可。一起庆祝，会让下一步的根基更牢靠。"
+      },
+      "growth": {
+        "en": "Let yourself fully receive this good moment instead of rushing to the next goal. Rest and joy are part of progress too.",
+        "zh": "好好接住这份美好，不要急着奔向下一个目标。休息与喜悦，同样是前进的一部分。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Unsettled", "Strained ties", "Postponed joy", "Inner home"], "zh": ["动荡不安", "关系紧绷", "喜悦延后", "内在之家"] },
+      "meaning": {
+        "en": "The celebration feels muted, or the sense of home isn't quite settled. Maybe plans for a gathering shifted, or you feel slightly outside the circle. This reversal invites you to build belonging from within and to notice the quieter joys still available to you.",
+        "zh": "庆祝显得有些冷清，家的感觉也还没完全安顿下来。也许聚会计划有变，也许你觉得自己站在圈子边缘。牌面倒转，是在邀请你从内心建立归属感，并看见那些依然可得的安静喜悦。"
+      },
+      "advice": {
+        "en": "Create a small ritual of comfort for yourself this week rather than waiting for others to make you feel at home.",
+        "zh": "这周为自己安排一个小小的安心仪式，别等着别人来让你有家的感觉。"
+      },
+      "love": {
+        "en": "Tension at home or differing ideas about commitment may surface. Gentle honesty can restore the warmth you both want.",
+        "zh": "家中的摩擦，或对承诺的不同想法，可能会浮出水面。温和而诚实的沟通，能找回你们都想要的温度。"
+      },
+      "work": {
+        "en": "A team may feel disconnected, or a milestone passed without recognition. Acknowledge wins yourself, and help others feel included.",
+        "zh": "团队可能有些疏离，或者某个成果悄然过去、无人肯定。你可以自己认可这些进展，也帮助别人感到被接纳。"
+      },
+      "growth": {
+        "en": "Belonging begins with how you treat yourself. Ask where you feel most at ease, and spend more time there.",
+        "zh": "归属感始于你如何对待自己。问问自己在哪里最自在，然后多在那里停留。"
+      }
+    }
+  },
+  {
+    "id": "wands-05",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 5,
+    "name": { "en": "Five of Wands", "zh": "权杖五" },
+    "description": {
+      "en": "Five young men swing long staves at one another in a jumble of crossing wands. The scene reads more like a rowdy contest or game than a real battle.",
+      "zh": "五个年轻人挥舞长杖，权杖在空中交错成一团。比起真正的战斗，这场面更像一场喧闹的比试或游戏。"
+    },
+    "upright": {
+      "keywords": { "en": ["Friction", "Competition", "Clashing ideas", "Healthy rivalry"], "zh": ["摩擦", "竞争", "意见交锋", "良性较劲"] },
+      "meaning": {
+        "en": "Many voices are pushing at once, and the result is noisy, scrappy energy. It may be competition, debate, or simply too many egos in one room. This friction isn't necessarily destructive—it can sharpen your ideas if you engage with curiosity rather than defensiveness.",
+        "zh": "许多声音同时用力，场面嘈杂又躁动。可能是竞争、争论，或是一屋子的自我在碰撞。这种摩擦未必具有破坏性——只要你带着好奇而非防备去参与，它反而能把你的想法磨得更锋利。"
+      },
+      "advice": {
+        "en": "Listen for the useful point inside the argument before you defend your own position.",
+        "zh": "在为自己辩护之前，先从争论里听出那个有用的观点。"
+      },
+      "love": {
+        "en": "Playful sparring or recurring small arguments may be in the mix. Ask whether you're fighting each other or fighting for understanding.",
+        "zh": "感情里可能有打闹式的斗嘴，或反复出现的小争执。问问自己，你们是在对抗彼此，还是在争取理解。"
+      },
+      "work": {
+        "en": "Competing priorities, brainstorming chaos, or rivalry with peers may be heating up. Set clear ground rules so the energy becomes productive.",
+        "zh": "优先级冲突、头脑风暴的混乱，或同侪间的较劲，可能正在升温。定下清楚的规则，让这股能量变得有用。"
+      },
+      "growth": {
+        "en": "You grow stronger when you can hold your ground without needing to win every exchange.",
+        "zh": "当你能站稳立场，却不必在每一次交锋中都赢，你就变得更强大了。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Avoiding conflict", "Truce", "Inner tension", "Common ground"], "zh": ["回避冲突", "休战", "内在拉扯", "求同存异"] },
+      "meaning": {
+        "en": "The fighting may be winding down, or it may have gone underground. In reverse, this card can signal a welcome truce—or conflict you're swallowing instead of addressing. It can also point to an inner tug-of-war between competing desires that deserves your attention.",
+        "zh": "争斗也许正在平息，也许只是转入了地下。逆位既可能代表难得的休战，也可能意味着你把冲突咽了下去，并没有真正处理。它还可能指向内心几种欲望之间的拉扯，值得你好好留意。"
+      },
+      "advice": {
+        "en": "Name the disagreement plainly and calmly, rather than letting it simmer beneath polite silence.",
+        "zh": "平静而直接地把分歧说出来，别让它在客气的沉默下继续闷烧。"
+      },
+      "love": {
+        "en": "You may be keeping the peace at the cost of honesty. A gentle, direct conversation can clear the air better than avoidance.",
+        "zh": "你可能在用牺牲坦诚来维持和平。一次温和而直接的谈话，比回避更能让空气清新。"
+      },
+      "work": {
+        "en": "Tension may ease as the team finds alignment, or quiet resentments may linger. Focus on shared goals to move forward together.",
+        "zh": "随着团队找到共识，紧张感或许会缓解，但也可能残留着暗中的不满。聚焦共同目标，才能一起向前。"
+      },
+      "growth": {
+        "en": "Notice which parts of you are arguing. Integration starts when every inner voice gets a fair hearing.",
+        "zh": "留意你内心有哪些部分在争吵。当每个声音都被公平倾听，整合才会开始。"
+      }
+    }
+  },
+  {
+    "id": "wands-06",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 6,
+    "name": { "en": "Six of Wands", "zh": "权杖六" },
+    "description": {
+      "en": "A rider crowned with laurel sits on a white horse, holding a wand topped with a victory wreath. A crowd on foot carries wands alongside him like a procession.",
+      "zh": "一位头戴月桂冠的骑士骑着白马，手持顶端挂着胜利花环的权杖。步行的人群举着权杖簇拥在旁，宛如一场游行。"
+    },
+    "upright": {
+      "keywords": { "en": ["Victory", "Recognition", "Confidence", "Public praise"], "zh": ["胜利", "认可", "自信", "众人瞩目"] },
+      "meaning": {
+        "en": "Your efforts are being seen. This card brings a well-earned win and the visible recognition that comes with it. You've moved through challenge and come out ahead, and others are noticing. Stand tall—confidence built on real progress is something to enjoy, not hide.",
+        "zh": "你的努力正在被看见。这张牌带来实至名归的胜利，以及随之而来的公开认可。你穿过挑战、走在了前面，旁人也注意到了。挺直腰背吧——建立在真实进展上的自信，值得享受，不必藏起来。"
+      },
+      "advice": {
+        "en": "Accept praise with a simple thank-you and share the credit with those who walked beside you.",
+        "zh": "用一句简单的“谢谢”接住赞美，也把功劳分给一路同行的人。"
+      },
+      "love": {
+        "en": "You may feel proud of your relationship or admired by someone special. Let affection be seen and celebrated.",
+        "zh": "你可能为这段感情感到自豪，或正被某个特别的人欣赏。让爱意被看见，也被庆祝。"
+      },
+      "work": {
+        "en": "A promotion, a successful launch, or public acknowledgment may arrive. Use the momentum to set your next ambitious goal.",
+        "zh": "升职、成功的发布或公开表扬，可能正在路上。借着这股势头，定下下一个有野心的目标。"
+      },
+      "growth": {
+        "en": "Practice owning your achievements without shrinking or inflating them. Steady self-worth makes success sustainable.",
+        "zh": "练习坦然承认自己的成就，既不贬低，也不夸大。稳定的自我价值感，才能让成功持久。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Unseen effort", "Self-doubt", "Ego pitfalls", "Quiet wins"], "zh": ["默默付出", "自我怀疑", "自负陷阱", "低调成就"] },
+      "meaning": {
+        "en": "Recognition may feel delayed, or you're questioning whether your success really counts. Alternatively, the hunger for applause might be pulling you off course. Here you're asked to define victory on your own terms and to value the progress that happens out of the spotlight.",
+        "zh": "认可可能迟迟未到，或者你在怀疑自己的成功究竟算不算数。又或者，对掌声的渴望正让你偏离方向。这时不妨用自己的标准定义胜利，珍视那些发生在聚光灯之外的进步。"
+      },
+      "advice": {
+        "en": "List three things you've accomplished recently that no one else saw, and give yourself credit for each.",
+        "zh": "列出最近三件无人看见的成就，并逐一给自己肯定。"
+      },
+      "love": {
+        "en": "You might feel unappreciated or crave more outward validation. Express what kind of recognition truly matters to you.",
+        "zh": "你可能觉得不被珍惜，或渴望更多外在的肯定。说出哪种认可对你真正重要。"
+      },
+      "work": {
+        "en": "Credit may go elsewhere, or results are slower to show. Keep refining quietly; visibility often catches up with quality.",
+        "zh": "功劳可能落到别处，或者成果显现得较慢。继续默默打磨，好的品质往往终会被看见。"
+      },
+      "growth": {
+        "en": "When your worth depends on applause, it wobbles. Root your confidence in your values instead.",
+        "zh": "当价值感依赖掌声，它就会摇摆。把自信扎根在你的价值观里吧。"
+      }
+    }
+  },
+  {
+    "id": "wands-07",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 7,
+    "name": { "en": "Seven of Wands", "zh": "权杖七" },
+    "description": {
+      "en": "A man on a rocky rise holds a wand defensively against six wands thrusting up from below. He wears mismatched shoes, as if he rushed into the fight.",
+      "zh": "一名男子站在岩石高处，举杖抵挡从下方伸上来的六根权杖。他脚上的两只鞋并不一样，仿佛是匆忙应战。"
+    },
+    "upright": {
+      "keywords": { "en": ["Standing firm", "Conviction", "Defense", "Resilience"], "zh": ["坚守", "信念", "捍卫", "韧性"] },
+      "meaning": {
+        "en": "You've climbed to higher ground, and now others are testing whether you'll stay there. Challenges or criticism may be coming from several directions, but your position is stronger than it feels. This card honors the courage it takes to defend what you believe in, even when you feel outnumbered.",
+        "zh": "你已登上高处，如今有人在试探你能否守住。挑战或批评可能从四面八方涌来，但你的位置其实比感觉中更稳固。这张牌致敬那份勇气：即使寡不敌众，你仍守护着自己所信的东西。"
+      },
+      "advice": {
+        "en": "Decide which boundary truly matters to you and hold it clearly, without needing to fight every battle.",
+        "zh": "确定哪一条界线对你真正重要，并清楚地守住它，不必每一仗都要打。"
+      },
+      "love": {
+        "en": "You may need to protect your relationship from outside opinions or stand up for your own needs. Calm firmness works better than defensiveness.",
+        "zh": "你可能需要保护这段关系不受外界议论干扰，或为自己的需求发声。冷静的坚定比防御姿态更有效。"
+      },
+      "work": {
+        "en": "Competition is real, and your ideas may face pushback. Back your position with preparation and stay confident in your expertise.",
+        "zh": "竞争确实存在，你的想法也可能遭到反对。用充分的准备支撑立场，对自己的专业保持信心。"
+      },
+      "growth": {
+        "en": "Standing up for yourself is a skill that strengthens with use. Each time you hold your ground, you learn you can.",
+        "zh": "为自己站出来是一种越练越强的能力。每一次守住立场，你都会更确信自己做得到。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Overwhelm", "Giving ground", "Defensiveness", "Worn down"], "zh": ["不堪重负", "节节退让", "过度防御", "心力交瘁"] },
+      "meaning": {
+        "en": "Holding your position has started to feel like too much. You may be tempted to give in, or you might be defending yourself so constantly that everything feels like an attack. The task now is discernment: which challenges deserve your energy, and which can simply pass you by.",
+        "zh": "坚守阵地开始让你吃不消。你可能想要放弃，也可能一直处于防御状态，觉得事事都在针对你。此刻的功课是分辨：哪些挑战值得你投入精力，哪些可以任它过去。"
+      },
+      "advice": {
+        "en": "Choose one battle to step back from this week and notice how much energy returns to you.",
+        "zh": "这周选一场仗主动退出，感受有多少力气重新回到你身上。"
+      },
+      "love": {
+        "en": "Constant defensiveness may be blocking closeness, or you're yielding too much to avoid conflict. Look for the middle path.",
+        "zh": "持续的防御可能正在阻碍亲密，或者你为了避免冲突退让太多。试着找到中间的那条路。"
+      },
+      "work": {
+        "en": "Pressure from competitors or critics may feel relentless. Consider whether to regroup, seek allies, or reframe the challenge.",
+        "zh": "来自对手或批评者的压力可能让人喘不过气。想想是否该先重整旗鼓、寻找盟友，或换个角度看待挑战。"
+      },
+      "growth": {
+        "en": "Not every challenge is a threat. Learning to soften without collapsing is a deep form of strength.",
+        "zh": "并非每个挑战都是威胁。学会柔软却不崩塌，是一种深层的力量。"
+      }
+    }
+  },
+  {
+    "id": "wands-08",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 8,
+    "name": { "en": "Eight of Wands", "zh": "权杖八" },
+    "description": {
+      "en": "Eight wands fly in parallel through a clear sky, angled downward as if about to land. Beneath them stretches open countryside with a river and a house on a hill.",
+      "zh": "八根权杖平行地划过晴朗的天空，斜斜向下，仿佛即将落地。下方是开阔的田野、一条河流，以及山丘上的一座房屋。"
+    },
+    "upright": {
+      "keywords": { "en": ["Swift movement", "Rapid news", "Alignment", "Flow"], "zh": ["迅速推进", "消息飞来", "顺势", "流动"] },
+      "meaning": {
+        "en": "Things are moving fast, and the path ahead is unusually clear. Messages, decisions, and opportunities may arrive in quick succession. After a period of waiting, energy is finally flying toward its target—your job is to stay focused and ride the momentum instead of second-guessing it.",
+        "zh": "事情推进得很快，前方的路也格外清晰。消息、决定与机会可能接连而来。等待了一段时间后，能量终于朝着目标飞去——你要做的，是保持专注、顺着势头前进，而不是反复怀疑。"
+      },
+      "advice": {
+        "en": "Respond to what's arriving promptly and keep your priorities simple so you can move with the current.",
+        "zh": "及时回应正在到来的一切，让优先事项保持简单，好跟上这股水流。"
+      },
+      "love": {
+        "en": "Feelings may intensify quickly, or long-awaited communication finally comes through. Enjoy the rush while staying present.",
+        "zh": "感情可能迅速升温，或期待已久的消息终于传来。享受这份心跳加速，也别忘了活在当下。"
+      },
+      "work": {
+        "en": "Deadlines, emails, and approvals may come in fast. Clear away distractions and act decisively.",
+        "zh": "截止日期、邮件与审批可能接踵而至。清掉手边的干扰，果断行动。"
+      },
+      "growth": {
+        "en": "Trust that progress doesn't always require struggle. Sometimes the work is simply to keep up with what's unfolding.",
+        "zh": "相信进步不一定非要挣扎。有时，你只需跟上正在展开的一切。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Stalled momentum", "Crossed wires", "Haste", "Holding pattern"], "zh": ["势头受阻", "沟通错位", "操之过急", "原地盘旋"] },
+      "meaning": {
+        "en": "Momentum has hit turbulence. Messages may be delayed or misread, or you could be racing ahead so quickly that details slip through the cracks. Check your direction before accelerating, and trust that a pause is not the same thing as failure.",
+        "zh": "势头遇上了气流。消息可能延误或被误读，又或者你冲得太快，细节从缝隙里溜走。加速之前先确认方向，也要相信，暂停并不等于失败。"
+      },
+      "advice": {
+        "en": "Slow down long enough to double-check one important message or plan before sending it into motion.",
+        "zh": "放慢一点，在推动某个重要的消息或计划之前，再确认一次。"
+      },
+      "love": {
+        "en": "Mixed signals or slow replies may stir up anxiety. Avoid jumping to conclusions; clarify directly when you can.",
+        "zh": "忽冷忽热的信号或迟迟不来的回复，可能让你焦虑。别急着下结论，能直接问清楚就问清楚。"
+      },
+      "work": {
+        "en": "Projects may stall due to dependencies or miscommunication. Use the lull to tighten processes and confirm expectations.",
+        "zh": "项目可能因为依赖环节或沟通失误而停滞。趁这段空档理顺流程、确认各方期待。"
+      },
+      "growth": {
+        "en": "Impatience often hides a fear of losing your chance. Remind yourself that the right momentum can return.",
+        "zh": "急躁背后往往藏着怕错过机会的恐惧。提醒自己：对的势头还会再回来。"
+      }
+    }
+  },
+  {
+    "id": "wands-09",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 9,
+    "name": { "en": "Nine of Wands", "zh": "权杖九" },
+    "description": {
+      "en": "A man with a bandaged head leans on a wand, glancing warily to the side. Behind him, eight more wands stand upright like a palisade.",
+      "zh": "一名头缠绷带的男子倚着一根权杖，警惕地侧目张望。他身后，另外八根权杖笔直排列，像一道栅栏。"
+    },
+    "upright": {
+      "keywords": { "en": ["Perseverance", "Last stretch", "Guardedness", "Grit"], "zh": ["坚持", "最后冲刺", "戒备", "韧劲"] },
+      "meaning": {
+        "en": "You've been through a lot, and you're still standing. Tired and a little wary, you're close to the finish but bracing for one more test. This card recognizes your endurance and reminds you that the strength that got you here is still with you.",
+        "zh": "你经历了很多，却依然站着。疲惫又带点戒备，你离终点已经很近，却还在为最后一次考验绷紧神经。这张牌肯定你的耐力，也提醒你：带你走到这里的力量，仍然与你同在。"
+      },
+      "advice": {
+        "en": "Gather your remaining energy for the final push, and let one trusted person support you along the way.",
+        "zh": "为最后的冲刺收拢剩余的力气，并让一个值得信任的人在路上支持你。"
+      },
+      "love": {
+        "en": "Past hurts may make you cautious about opening up again. Protect your heart, but don't let old wounds decide everything.",
+        "zh": "过去的伤痛可能让你对再次敞开心扉有所保留。守护好自己的心，但别让旧伤替你决定一切。"
+      },
+      "work": {
+        "en": "A demanding project is nearly done, though the fatigue is real. Pace yourself and keep your eyes on the finish line.",
+        "zh": "一个高强度的项目即将完成，但疲惫感也是真的。调整节奏，把目光锁定在终点线上。"
+      },
+      "growth": {
+        "en": "Resilience isn't about never feeling worn; it's about choosing to keep going while caring for yourself.",
+        "zh": "韧性不在于从不疲倦，而在于一边照顾自己，一边选择继续前行。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Running on empty", "Over-vigilance", "Letting go", "Stubbornness"], "zh": ["力不从心", "过度警觉", "放下", "固执"] },
+      "meaning": {
+        "en": "Your guard has been up so long that it's become heavy. You may be pushing through on fumes, or treating every new situation as a potential threat. This reversal gently asks whether some battles are already over—and whether it's time to rest, ask for help, or lay down a defense you no longer need.",
+        "zh": "你戒备太久，连防备本身都变得沉重。你可能在硬撑，也可能把每个新情况都当作潜在威胁。这张逆位牌温柔地问你：有些仗是否早已结束？是不是该休息、求助，或放下不再需要的防线了？"
+      },
+      "advice": {
+        "en": "Identify one defense you're holding out of habit and experiment with setting it down for a day.",
+        "zh": "找出一道出于习惯而守着的防线，试着放下它一天。"
+      },
+      "love": {
+        "en": "Wariness may keep a caring partner at arm's length. Consider whether the past is shaping how you see the present.",
+        "zh": "过度的戒心可能把关心你的人推远。想一想，过去是否在左右你看待现在的方式。"
+      },
+      "work": {
+        "en": "You may be clinging to an approach that no longer works, or pushing past your limits out of habit. Reassess whether the effort still serves the goal.",
+        "zh": "你可能在死守一个已经行不通的方法，或出于惯性一再透支自己。重新评估这份努力是否仍在为目标服务。"
+      },
+      "growth": {
+        "en": "Strength also looks like admitting you need rest. Letting yourself be supported is not the same as giving up.",
+        "zh": "承认自己需要休息，同样是一种力量。允许自己被支持，并不等于放弃。"
+      }
+    }
+  },
+  {
+    "id": "wands-10",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 10,
+    "name": { "en": "Ten of Wands", "zh": "权杖十" },
+    "description": {
+      "en": "A man bends forward under a bundle of ten wands clutched against his chest, their tops blocking his view. He trudges toward a house and town in the distance.",
+      "zh": "一名男子弯着腰，把十根权杖紧紧抱在胸前，杖头挡住了他的视线。他正吃力地走向远处的房屋与城镇。"
+    },
+    "upright": {
+      "keywords": { "en": ["Burden", "Responsibility", "Overcommitment", "Hard work"], "zh": ["重担", "责任", "揽事过多", "辛劳"] },
+      "meaning": {
+        "en": "You're carrying a lot—maybe more than anyone should hold at once. Success or duty has piled up until it blocks your view. Your dedication is real, but it's worth asking whether every bundle in your arms truly belongs to you, and what might change if you set a few down.",
+        "zh": "你扛着很多，也许远超一个人该同时承担的分量。成就或责任层层堆叠，挡住了你的视线。你的付出毋庸置疑，但也值得问问：怀里的每一捆是否真的属于你？放下几捆，会有什么不同？"
+      },
+      "advice": {
+        "en": "Write down everything you're carrying and mark one item you can delegate, delay, or drop.",
+        "zh": "把你正在扛的事情全部写下来，圈出一项可以交给别人、延后或干脆放下的。"
+      },
+      "love": {
+        "en": "One partner may be shouldering too much of the emotional or practical load. Look for ways to share the weight more fairly.",
+        "zh": "某一方可能承担了过多的情绪或生活负担。想办法把重量分得更公平一些吧。"
+      },
+      "work": {
+        "en": "Your workload may be at its limit. Talk about priorities and boundaries before stress becomes the default.",
+        "zh": "你的工作量可能已到极限。在压力成为常态之前，谈谈优先级和界限。"
+      },
+      "growth": {
+        "en": "Notice the belief that you must do it all yourself. Letting go of that story can lighten more than your schedule.",
+        "zh": "留意那个“一切都得我自己来”的信念。放下这个故事，减轻的将不只是日程。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Unloading", "Delegation", "Overextended", "Clearer view"], "zh": ["卸下重担", "分工授权", "透支", "视野重现"] },
+      "meaning": {
+        "en": "Turned upside down, this card has two edges. You may finally be setting down what was never yours to carry, finding relief and a clearer view. Or the load may have grown so heavy that something has to give. Either way, the message is the same: you're allowed to put things down.",
+        "zh": "逆位的十根权杖有两面。你或许终于放下了本不该由你背负的东西，得到了喘息，视野也重新清晰。也可能负担已重到某处不得不松动。无论哪种，讯息都一样：你可以放下。"
+      },
+      "advice": {
+        "en": "Ask for help with one specific task today, using clear and simple words.",
+        "zh": "今天就某一件具体的事，用清楚简单的话开口求助。"
+      },
+      "love": {
+        "en": "Releasing unfair expectations can bring lightness back to your connection. Let yourself be cared for, too.",
+        "zh": "放下不公平的期待，能让关系重新轻盈起来。也允许自己被照顾。"
+      },
+      "work": {
+        "en": "It may be time to renegotiate duties, hand off tasks, or let a nonessential project go. Lighter hands can build better.",
+        "zh": "也许是时候重新商定分工、交出部分任务，或放掉不必要的项目了。双手轻了，才能建得更好。"
+      },
+      "growth": {
+        "en": "You are more than what you produce. Rest and release make room for the kind of energy that inspired you in the first place.",
+        "zh": "你的价值不止于你的产出。休息与放手，会为最初点燃你的那股能量腾出空间。"
+      }
+    }
+  },
+  {
+    "id": "wands-11",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 11,
+    "name": { "en": "Page of Wands", "zh": "权杖侍从" },
+    "description": {
+      "en": "A young page in a tunic patterned with salamanders stands in a desert landscape, gazing up at the tip of a tall wand he holds. Pyramid-shaped hills rise in the distance.",
+      "zh": "一位身穿火蜥蜴纹样上衣的年轻侍从站在荒漠中，仰望手中高高的权杖顶端。远处耸立着金字塔般的山丘。"
+    },
+    "upright": {
+      "keywords": { "en": ["Curiosity", "Enthusiasm", "Exploration", "Fresh ideas"], "zh": ["好奇", "热情", "探索", "新点子"] },
+      "meaning": {
+        "en": "A playful, curious energy is knocking. Something new has caught your attention, and you're eager to explore it without needing to know where it leads. This card invites a beginner's mind—trying, testing, and following the excitement simply because it feels alive.",
+        "zh": "一股俏皮又好奇的能量正在敲门。某样新事物吸引了你，你迫不及待想去探索，并不需要知道它会通向哪里。这张牌邀请你保持初学者之心——去尝试、去测试，只因它让你觉得鲜活。"
+      },
+      "advice": {
+        "en": "Sign up for, sketch, or try one new thing this week purely for the fun of discovering it.",
+        "zh": "这周去报名、动手画一画，或尝试一件新事物，单纯为了发现的乐趣。"
+      },
+      "love": {
+        "en": "Flirtation, playful messages, or an exciting new interest may appear. Approach romance with lightness and curiosity.",
+        "zh": "可能出现暧昧的试探、俏皮的讯息，或一个让你心动的新对象。用轻松和好奇的心态面对感情。"
+      },
+      "work": {
+        "en": "A new skill, idea, or entry-level opportunity could spark your enthusiasm. Ask questions boldly and learn by doing.",
+        "zh": "一项新技能、一个点子或一个入门机会，可能点燃你的热情。大胆提问，在实践中学习。"
+      },
+      "growth": {
+        "en": "Your inner explorer wants room to play. Give it permission to be imperfect and messy.",
+        "zh": "你内在的探险者需要玩耍的空间。允许它不完美，也允许它乱七八糟。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Restlessness", "Unfinished starts", "Impatience", "Creative doubt"], "zh": ["坐立不安", "虎头蛇尾", "急躁", "创意自疑"] },
+      "meaning": {
+        "en": "Enthusiasm is present, but it keeps flickering out before anything takes shape. You might be jumping between ideas, losing interest quickly, or doubting whether your creative impulses are worth following. What's needed is to nurture one spark long enough to see what it could become.",
+        "zh": "热情是有的，却总在成形之前就熄灭。你可能在不同点子间跳来跳去，很快失去兴趣，或怀疑自己的创作冲动是否值得追随。此刻需要的，是守护一个火花，久到足以看见它能长成什么。"
+      },
+      "advice": {
+        "en": "Choose one unfinished idea and commit to a tiny next step before starting anything new.",
+        "zh": "在开始任何新事之前，挑一个未完成的点子，承诺完成一个小小的下一步。"
+      },
+      "love": {
+        "en": "Interest may fade fast, or mixed messages create confusion. Be honest about what you're actually looking for.",
+        "zh": "兴趣可能来得快去得也快，或者含糊的讯号让人困惑。诚实说出你真正想要什么。"
+      },
+      "work": {
+        "en": "Scattered focus or impatience with the learning curve may slow you down. Trust that the basics build the foundation for brilliance.",
+        "zh": "注意力分散，或对学习过程缺乏耐心，可能拖慢你的脚步。相信扎实的基础，才能撑起日后的精彩。"
+      },
+      "growth": {
+        "en": "Notice the urge to quit when things get unglamorous. Staying a little longer is how curiosity becomes mastery.",
+        "zh": "留意事情变得平淡时想放弃的冲动。多停留一会儿，好奇心才能慢慢变成真功夫。"
+      }
+    }
+  },
+  {
+    "id": "wands-12",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 12,
+    "name": { "en": "Knight of Wands", "zh": "权杖骑士" },
+    "description": {
+      "en": "An armored knight on a rearing horse holds a wand aloft, his tunic decorated with salamanders and flame-like plumes streaming from his helmet. Pyramids rise from the desert behind him.",
+      "zh": "一位身披盔甲的骑士骑着前蹄高扬的马，高举权杖，外衣饰有火蜥蜴图案，头盔上的羽饰如火焰般飘扬。身后的荒漠中耸立着金字塔。"
+    },
+    "upright": {
+      "keywords": { "en": ["Passion", "Adventure", "Bold action", "Charisma"], "zh": ["激情", "冒险", "果敢", "魅力"] },
+      "meaning": {
+        "en": "Energy is surging, and you're ready to charge toward what you want. This card brings fearless momentum, a hunger for adventure, and the confidence to act before every detail is settled. It's thrilling and magnetic—just remember that fire spreads fastest when it has a direction.",
+        "zh": "能量正在涌动，你已准备好朝想要的东西冲去。这张牌带来无畏的势头、对冒险的渴望，以及不必等所有细节到位就敢出手的自信。它令人兴奋、充满魅力——只要记得，火有方向时才烧得最快。"
+      },
+      "advice": {
+        "en": "Channel your excitement into one bold move, and decide in advance what success looks like.",
+        "zh": "把兴奋集中到一个大胆的行动上，并提前想清楚怎样才算成功。"
+      },
+      "love": {
+        "en": "Passion runs high, and chemistry may be intense and spontaneous. Enjoy the adventure while staying honest about your intentions.",
+        "zh": "激情高涨，火花强烈又随性。享受这场冒险，同时对自己的真实意图保持诚实。"
+      },
+      "work": {
+        "en": "You're ready to pitch, launch, or take the initiative. Move decisively, but loop others in so your speed doesn't leave them behind.",
+        "zh": "你已准备好去提案、发布或主动出击。果断行动，但也要让其他人跟上，别因为你的速度把他们甩在后面。"
+      },
+      "growth": {
+        "en": "Your courage is a gift. Pairing it with follow-through will make it unstoppable.",
+        "zh": "你的勇气是一份天赋。再配上贯彻到底的能力，它将势不可挡。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Recklessness", "Short fuse", "Stalled drive", "Scattered energy"], "zh": ["鲁莽", "一点就着", "冲劲受挫", "精力分散"] },
+      "meaning": {
+        "en": "The fire is burning, but it's either racing out of control or sputtering in frustration. You may be acting on impulse, picking arguments, or finding that your drive keeps hitting walls. Take this as a signal to pause, cool down, and redirect your intensity toward something sustainable.",
+        "zh": "火在烧，但不是失控狂奔，就是在挫折中噼啪作响。你可能凭冲动行事、容易起冲突，或发现自己的冲劲一再撞墙。这是一个信号：停一停、降降温，把这份强度引向能长久维持的方向。"
+      },
+      "advice": {
+        "en": "Before your next big decision, wait one full day and see if the urge still feels right.",
+        "zh": "做下一个重大决定之前，先等上一整天，看看那股冲动是否依然对劲。"
+      },
+      "love": {
+        "en": "Intensity without consistency may create a hot-and-cold dynamic. Look for steady warmth rather than fleeting sparks.",
+        "zh": "只有强度没有稳定，容易形成忽冷忽热的相处模式。去寻找持久的温度，而不是一闪而过的火花。"
+      },
+      "work": {
+        "en": "Rushed decisions or clashing tempers could complicate projects. Slow down enough to plan your route.",
+        "zh": "仓促的决定或火爆的脾气，可能让项目变得复杂。放慢一点，先规划好路线。"
+      },
+      "growth": {
+        "en": "Ask what you're running toward—or away from. Self-awareness turns raw drive into real direction.",
+        "zh": "问问自己，是在奔向什么，还是在逃离什么。自我觉察能把原始的冲劲化为真正的方向。"
+      }
+    }
+  },
+  {
+    "id": "wands-13",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 13,
+    "name": { "en": "Queen of Wands", "zh": "权杖王后" },
+    "description": {
+      "en": "A queen sits on a throne carved with lions, holding a wand in one hand and a sunflower in the other. A black cat sits alert at her feet.",
+      "zh": "一位王后端坐在雕有狮子的宝座上，一手握权杖，一手持向日葵。一只黑猫机警地坐在她脚边。"
+    },
+    "upright": {
+      "keywords": { "en": ["Radiance", "Warmth", "Self-assurance", "Expression"], "zh": ["光芒", "温暖", "笃定", "自我表达"] },
+      "meaning": {
+        "en": "You're stepping fully into your own light. This card embodies warmth, courage, and the kind of confidence that draws people in without trying. You know your worth, you trust your instincts, and you're unafraid to be seen. Your presence itself can be a source of inspiration for others.",
+        "zh": "你正全然走进属于自己的光芒里。这张牌象征温暖、勇气，以及一种无需刻意就能吸引他人的自信。你清楚自己的价值，信任直觉，也不害怕被看见。你的存在本身，就能照亮身边的人。"
+      },
+      "advice": {
+        "en": "Show up today exactly as you are, and let your enthusiasm lead the room.",
+        "zh": "今天就以本来的样子出场，让你的热情带动整个场子。"
+      },
+      "love": {
+        "en": "Your charm and self-assurance are magnetic. Love flows best when you express desire openly and generously.",
+        "zh": "你的魅力与笃定极具吸引力。当你坦然、大方地表达心意，爱意会流动得最自然。"
+      },
+      "work": {
+        "en": "You can lead with charisma and a clear vision. Take visible ownership of projects that showcase your strengths.",
+        "zh": "你能以个人魅力和清晰的愿景带领他人。主动认领那些能展现你长处的项目。"
+      },
+      "growth": {
+        "en": "Self-trust is your foundation now. Keep nurturing the passions that make you feel most like yourself.",
+        "zh": "此刻，信任自己就是你的根基。持续滋养那些让你最像自己的热爱。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Dimmed light", "Insecurity", "Envy", "Self-neglect"], "zh": ["光芒黯淡", "不安全感", "嫉妒", "忽视自我"] },
+      "meaning": {
+        "en": "Your natural radiance may feel dimmed, or it's leaking out sideways as impatience, envy, or the need to control. Perhaps you've been giving so much to others that your own fire is running low. Let this be a cue to reconnect with what makes you feel confident from the inside out.",
+        "zh": "你天生的光芒可能暗淡了，或以急躁、嫉妒、想要掌控的方式歪斜地流露出来。也许你为他人付出太多，自己的火焰快要见底。不妨借此重新连接那些由内而外让你自信的东西。"
+      },
+      "advice": {
+        "en": "Spend time on one activity that is purely for your own joy, with no audience and no outcome in mind.",
+        "zh": "花点时间做一件纯粹让自己开心的事，不需要观众，也不追求结果。"
+      },
+      "love": {
+        "en": "Insecurity or comparison may stir up jealousy. Turn toward what you value in yourself rather than measuring against others.",
+        "zh": "不安或比较心可能引发嫉妒。把目光转回你欣赏自己的地方，而不是拿自己和别人较量。"
+      },
+      "work": {
+        "en": "You may feel overlooked or stretched too thin. Reclaim your boundaries and refocus on work that energizes rather than drains you.",
+        "zh": "你可能觉得被忽视，或者分身乏术。重新划定界限，把精力放回那些能为你充电、而非耗尽你的工作上。"
+      },
+      "growth": {
+        "en": "Confidence can be rebuilt one honest step at a time. Be as warm toward yourself as you are toward others.",
+        "zh": "自信可以一步一步、诚实地重建。像温暖他人那样温暖自己。"
+      }
+    }
+  },
+  {
+    "id": "wands-14",
+    "arcana": "minor",
+    "suit": "wands",
+    "number": 14,
+    "name": { "en": "King of Wands", "zh": "权杖国王" },
+    "description": {
+      "en": "A king sits on a throne decorated with lions and salamanders, holding a flowering wand and leaning slightly forward. A small salamander rests on the ground beside him.",
+      "zh": "一位国王坐在饰有狮子与火蜥蜴的宝座上，手握一根抽出新芽的权杖，身体微微前倾。他脚边的地面上伏着一只小火蜥蜴。"
+    },
+    "upright": {
+      "keywords": { "en": ["Visionary", "Leadership", "Decisiveness", "Influence"], "zh": ["远见卓识", "领导力", "果断", "影响力"] },
+      "meaning": {
+        "en": "You're ready to lead with vision and conviction. This card represents mature fire—passion shaped into purpose, energy directed toward a goal larger than yourself. You see the big picture, inspire others to follow, and have the courage to make decisive moves that turn ideas into reality.",
+        "zh": "你已准备好以远见与信念去引领。这张牌代表成熟的火焰——热情被锻造成目标，能量投向比自己更大的愿景。你看得见全局，能鼓舞他人追随，也有勇气做出果断的决定，把想法变成现实。"
+      },
+      "advice": {
+        "en": "Share your long-term vision with the people who matter to it, and invite them to help build it.",
+        "zh": "把你的长远愿景告诉与之相关的人，并邀请他们一起建造。"
+      },
+      "love": {
+        "en": "You bring confident, generous energy to relationships. Lead with honesty and let your partner shape the vision with you.",
+        "zh": "你为感情带来自信而慷慨的能量。以真诚为先，也让伴侣与你一起描绘未来。"
+      },
+      "work": {
+        "en": "Leadership roles, entrepreneurial moves, or big-picture strategy are favored. Delegate details so you can focus on direction.",
+        "zh": "领导角色、创业行动或全局战略都正当其时。把细节交给他人，你才能专注于方向。"
+      },
+      "growth": {
+        "en": "True authority comes from integrity. Let your actions match the vision you speak about.",
+        "zh": "真正的权威来自言行一致。让你的行动配得上你口中的愿景。"
+      }
+    },
+    "reversed": {
+      "keywords": { "en": ["Overbearing", "Control", "Unrealistic aims", "Hollow authority"], "zh": ["专横", "控制欲", "好高骛远", "徒有其表"] },
+      "meaning": {
+        "en": "The drive to lead is strong, but it may be tipping into control, impatience with others, or expectations no one could meet. Alternatively, you might be doubting your ability to step up at all. The reversal asks you to lead from steadiness rather than force, and to listen as much as you direct.",
+        "zh": "引领的渴望很强烈，但可能正滑向控制、对他人缺乏耐心，或设下无人能达到的标准。也可能，你在怀疑自己能否挑起大梁。逆位提醒你，以沉稳而非强势去带领，倾听与指挥同样重要。"
+      },
+      "advice": {
+        "en": "In your next conversation, ask for input before giving direction, and genuinely consider what you hear.",
+        "zh": "下一次交谈时，先征询意见再给出指示，并认真考虑对方的想法。"
+      },
+      "love": {
+        "en": "Dominating decisions or rigid expectations can strain closeness. Make room for your partner's voice and pace.",
+        "zh": "包办决定或僵硬的期待，会让亲密变得紧绷。为伴侣的声音与节奏留出空间。"
+      },
+      "work": {
+        "en": "Big plans may outpace practical resources, or leadership may feel heavy-handed. Recalibrate goals and give your team real room to contribute.",
+        "zh": "宏大的计划可能超出实际资源，或者领导方式显得过于强硬。重新校准目标，让团队真正有发挥的空间。"
+      },
+      "growth": {
+        "en": "Power is most trustworthy when it's grounded. Notice where ego might be steering instead of purpose.",
+        "zh": "扎根于现实的力量，才最值得信赖。留意在哪些地方，是自我而非初心在掌舵。"
+      }
+    }
+  }
+]
