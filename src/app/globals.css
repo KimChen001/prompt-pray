@@ -207,7 +207,6 @@ button, input, textarea, select { font: inherit; color: inherit; }
   .chart-panel { padding: 14px 10px; }
   .wheel .hn { font-size: 21px; }
   .wheel .lbl { font-size: 20px; }
-  .wheel .pg { font-size: 27px; }
 }
 .planet-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .planet-table th, .planet-table td { text-align: left; padding: 12px 6px; border-top: 1px solid var(--hairline); white-space: nowrap; font-weight: 400; }
@@ -364,3 +363,6 @@ input[type="date"].input, input[type="time"].input { color-scheme: dark; }
 .chat-user { align-self: flex-end; background: var(--bg-2); }
 .chat-assistant { align-self: flex-start; background: var(--bg-1); }
 .chat-assistant .badge { align-self: flex-start; }
+
+/* SVG zodiac / planet icons (never Unicode symbols, which can render as emoji) */
+.astro-icon { display: inline-block; flex: none; vertical-align: -0.2em; }

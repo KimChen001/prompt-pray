@@ -21,7 +21,7 @@ export function FactorLine({ f, name }: { f: Factor; name: string }) {
     return (
       <li className="small">
         {fmt(m.match.aspect, { a, glyph: GLYPH[f.aspect], b, aspect: title, orb: (f.orb ?? 0).toFixed(1) })}{" "}
-        <Link href={learnHref("aspect", f.aspect)} aria-label={title}>↗</Link>
+        <Link href={learnHref("aspect", f.aspect)} aria-label={title}>→</Link>
       </li>
     );
   }

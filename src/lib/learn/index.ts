@@ -23,7 +23,7 @@ export type LearnType = (typeof LEARN_TYPES)[number];
 export const isLearnType = (v: unknown): v is LearnType => LEARN_TYPES.includes(v as LearnType);
 
 export interface SignContent { id: Sign; dates: L10n; summary: L10n; strengths: L10n; growth: L10n }
-export interface PlanetContent { id: Planet; glyph: string; pace: L10n; summary: L10n }
+export interface PlanetContent { id: Planet; pace: L10n; summary: L10n }
 export interface HouseContent { id: number; summary: L10n }
 export interface AspectContent { id: Aspect; glyph: string; angle: number; summary: L10n }
 export interface SpreadContent { id: SpreadId; howTo: L10n }
@@ -65,6 +65,7 @@ export interface LearnEntry {
   slug: string;
   title: L10n;
   subtitle: L10n;
+  /** Aspect symbol (☌ ⚹ □ △ ☍ — none of them can render as emoji). Signs and planets use SVG icons. */
   glyph?: string;
   /** Lower-cased names (both languages) and aliases: matched first. */
   names: string[];
@@ -88,10 +89,10 @@ function build(): LearnEntry[] {
     const info = SIGN_INFO[c.id];
     add("sign", c.id, info.name, join(ELEMENT_NAME[info.element], " · ", MODALITY_NAME[info.modality], " · ", c.dates), [
       ...both(SIGN_KEYWORDS[c.id]), ...both(c.summary), ...both(c.strengths), ...both(c.growth), ...both(ELEMENT_NAME[info.element]),
-    ], info.glyph);
+    ]);
   }
   for (const c of PLANET_CONTENT) {
-    add("planet", c.id, PLANET_NAME[c.id], c.pace, [...both(PLANET_FUNCTION[c.id]), ...both(c.summary)], c.glyph);
+    add("planet", c.id, PLANET_NAME[c.id], c.pace, [...both(PLANET_FUNCTION[c.id]), ...both(c.summary)]);
   }
   for (const c of HOUSE_CONTENT) {
     add("house", String(c.id), houseName(c.id), HOUSE_THEME[c.id - 1], [...both(HOUSE_THEME[c.id - 1]), ...both(c.summary)]);

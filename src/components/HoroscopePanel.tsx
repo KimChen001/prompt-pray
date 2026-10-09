@@ -12,6 +12,7 @@ import { composeHoroscope } from "@/lib/astro/horoscope";
 import { SIGNS, SIGN_INFO, type Sign } from "@/lib/astro/zodiac";
 import type { BirthData } from "@/lib/astro/birth";
 import { SourceBadge } from "./bits";
+import { ZodiacIcon } from "./AstroIcon";
 
 // "live" = generated for this view just now; "saved" = read back from this device's cache.
 type AiState = { status: "idle" | "loading" | "live" | "saved" | "failed" | "off"; text?: CachedText };
@@ -103,7 +104,7 @@ export function HoroscopePanel({ localDate, timeZone, now }: { localDate: string
         <div className="btn-row" role="group" aria-label={m.horoscope.pickSign}>
           {SIGNS.map((s) => (
             <button key={s} type="button" className="chip" onClick={() => updateSettings({ sunSign: s })}>
-              {SIGN_INFO[s].glyph}&#xFE0E; {pick(SIGN_INFO[s].name)}
+              <ZodiacIcon sign={s} size={16} /> {pick(SIGN_INFO[s].name)}
             </button>
           ))}
         </div>

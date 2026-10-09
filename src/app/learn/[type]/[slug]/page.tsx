@@ -22,6 +22,7 @@ import { DECK, elementOf, getCard } from "@/lib/tarot/deck";
 import { SPREADS } from "@/lib/tarot/spreads";
 import type { CardSide, L10n } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
+import { EntryIcon } from "@/components/AstroIcon";
 
 function useChart(): NatalChart | null | undefined {
   const version = useStoreVersion();
@@ -111,7 +112,7 @@ export default function LearnDetail() {
     <header className="stack gap-8">
       <Link href="/learn" className="meta">← {m.learn.backToLearn}</Link>
       <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        <h1 className="h1">{entry.glyph ? <span aria-hidden="true">{entry.glyph}&#xFE0E; </span> : null}{pick(entry.title)}</h1>
+        <h1 className="h1" style={{ display: "inline-flex", alignItems: "center", gap: 14 }}><EntryIcon entry={entry} size={40} />{pick(entry.title)}</h1>
         <SaveButton type={entry.type} slug={entry.slug} />
       </div>
       <p className="lede" style={{ margin: 0 }}>{pick(entry.subtitle)}</p>

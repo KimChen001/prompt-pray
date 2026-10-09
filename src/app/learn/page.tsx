@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { allEntries, learnHref, LEARN_TYPES, searchLearn, type LearnEntry, type LearnType } from "@/lib/learn";
+import { EntryIcon } from "@/components/AstroIcon";
 
 const SUGGESTIONS: { en: string; zh: string }[] = [
   { en: "Moon", zh: "月亮" },
@@ -18,7 +19,7 @@ function EntryLink({ e }: { e: LearnEntry }) {
   const { pick } = useI18n();
   return (
     <Link href={learnHref(e.type, e.slug)} className="tile" style={{ minHeight: 0, padding: "12px 14px" }}>
-      <span style={{ fontWeight: 500 }}>{e.glyph ? <span aria-hidden="true">{e.glyph}&#xFE0E; </span> : null}{pick(e.title)}</span>
+      <span style={{ fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 8 }}><EntryIcon entry={e} size={18} />{pick(e.title)}</span>
       <span className="muted small">{pick(e.subtitle)}</span>
     </Link>
   );

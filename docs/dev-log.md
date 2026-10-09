@@ -173,3 +173,15 @@ Decision (user, 2026-10-09): web only; the WeChat mini-program is obsolete. Visu
 **Verified**
 - Typecheck, 451 tests, `next build` clean. Screenshots from a headless Edge with a throwaway profile against `next start` on :3101 (both stopped): Birth Details, Big Three and Birth Chart at 1440 and 390 match the Figma layouts; Aug 14 1999 07:30 Boston computes Leo Sun 21°14′, Virgo Moon 28°58′, Virgo Rising 9°38′ (the Figma numbers are illustrative); unknown-time Chinese state shows "X或Y"/"未解锁"; home, tarot and today inherit the foundations; phone menu lists all sections; no horizontal scroll at 390px. Wheel labels were too small on phones and were enlarged.
 - Not done: designs for Home, Tarot, Guidance, Journal, Learn, Match, Whispers and share images (waiting for the team).
+
+## No emoji, ever (2026-10-09)
+
+Rule from the user: MOONA's assets never use emoji — above all for zodiac signs and chart symbols.
+
+**What**
+- Removed every emoji-capable character from shipped code and content: the zodiac symbols (U+2648–U+2653) are gone from the sign data; Venus/Mars (U+2640/U+2642) gone from the planet content, wheel and table; the Match "↗" link is now "→"; share images no longer prefix Big Three rows with symbols.
+- Signs always use the Figma zodiac SVG vectors; planets use ten MOONA line icons in the same style (`public/design/planets/*.svg`, 48×48, silver 1.7 stroke; placeholders until the design team supplies planets). `src/components/AstroIcon.tsx` (`ZodiacIcon`, `PlanetIcon`, `EntryIcon`) is the only way these symbols are drawn. Aspect symbols (☌ ⚹ □ △ ☍) stay as text; none of them is emoji-capable.
+- `tests/no-emoji.test.ts` fails on any non-ASCII character with the Unicode Emoji property in `src/`, `content/`, `public/design/`, `eval/` and `scripts/`, and checks the detector itself (catches the zodiac signs, Venus, Mars, the arrow and colour emoji; allows the plain arrows, ✦ ✧, ☉ ☽, aspect symbols, ° and CJK).
+
+**Verified**
+- 453 tests pass; `next build` clean. Headless Edge screenshots (throwaway profile, stopped afterwards): the chart wheel and planet table, the Learn sign and planet lists and the horoscope sign buttons all show the SVG icons; the rendered `/today` text contains 0 emoji-capable characters.

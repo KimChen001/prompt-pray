@@ -18,9 +18,8 @@ import { TAGLINES, type BigThreeKind } from "@/components/BigThree";
 import { learnHref } from "@/lib/learn";
 import { ShareImage } from "@/components/ShareImage";
 import { bigThreeCard } from "@/lib/share/content";
+import { PlanetIcon } from "@/components/AstroIcon";
 
-const GLYPH: Record<string, string> = { sun: "☉", moon: "☽", mercury: "☿", venus: "♀", mars: "♂", jupiter: "♃", saturn: "♄", uranus: "♅", neptune: "♆", pluto: "♇" };
-const TEXT_STYLE = String.fromCharCode(0xfe0e);
 const deg = (p: Placement) => `${p.degree}°${String(p.minute).padStart(2, "0")}′`;
 
 export default function ChartPage() {
@@ -159,7 +158,7 @@ function ChartView({ birth, chart, system, onSystem }: { birth: BirthData; chart
                 const pos = chart.positions[p];
                 return (
                   <tr key={p}>
-                    <th scope="row"><Link href={learnHref("planet", p)}><span aria-hidden="true">{GLYPH[p] + TEXT_STYLE} </span>{pick(PLANET_NAME[p])}</Link></th>
+                    <th scope="row"><Link href={learnHref("planet", p)} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><PlanetIcon planet={p} size={16} />{pick(PLANET_NAME[p])}</Link></th>
                     <td><Link href={learnHref("sign", pos.placement.sign)}>{pick(SIGN_INFO[pos.placement.sign].name)}</Link></td>
                     <td className="num">{approx ? "≈" : ""}{deg(pos.placement)}</td>
                     <td>{pos.house ? <Link href={learnHref("house", pos.house)}>{pos.house}</Link> : "–"}</td>

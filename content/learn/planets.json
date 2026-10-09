@@ -1,8 +1,10 @@
 [
   {
     "id": "sun",
-    "glyph": "☉",
-    "pace": { "en": "about one month in each sign", "zh": "每个星座约停留一个月" },
+    "pace": {
+      "en": "about one month in each sign",
+      "zh": "每个星座约停留一个月"
+    },
     "summary": {
       "en": "The Sun is your core identity: what you are here to express and what makes you feel most like yourself. Your Sun sign is the one people usually mean by \"my sign\".",
       "zh": "太阳代表你的核心身份：你想表达的东西，以及让你最像自己的东西。人们平常说的“我是什么星座”，指的就是太阳星座。"
@@ -10,8 +12,10 @@
   },
   {
     "id": "moon",
-    "glyph": "☽",
-    "pace": { "en": "about two and a half days in each sign", "zh": "每个星座约停留两天半" },
+    "pace": {
+      "en": "about two and a half days in each sign",
+      "zh": "每个星座约停留两天半"
+    },
     "summary": {
       "en": "The Moon is your emotional life: what you need to feel safe, how you react before you think, and how you recharge. It moves fast, so it changes sign every couple of days.",
       "zh": "月亮代表你的情感生活：你需要什么才会觉得安全，你在思考之前的本能反应，以及你如何恢复能量。它移动很快，每两三天就换一个星座。"
@@ -19,8 +23,10 @@
   },
   {
     "id": "mercury",
-    "glyph": "☿",
-    "pace": { "en": "about three to eight weeks in each sign; retrograde about three times a year", "zh": "每个星座约三到八周；每年约逆行三次" },
+    "pace": {
+      "en": "about three to eight weeks in each sign; retrograde about three times a year",
+      "zh": "每个星座约三到八周；每年约逆行三次"
+    },
     "summary": {
       "en": "Mercury is the mind and the messenger: how you think, learn, talk and write. When it is retrograde, astrology traditionally suggests reviewing and double-checking.",
       "zh": "水星是思维与信使：你如何思考、学习、说话和写作。它逆行时，占星传统上建议回顾和多核对。"
@@ -28,8 +34,10 @@
   },
   {
     "id": "venus",
-    "glyph": "♀",
-    "pace": { "en": "about four to five weeks in each sign", "zh": "每个星座约四到五周" },
+    "pace": {
+      "en": "about four to five weeks in each sign",
+      "zh": "每个星座约四到五周"
+    },
     "summary": {
       "en": "Venus is what you love and value: attraction, beauty, pleasure and the way you connect with others. It also speaks to money in the sense of what you find worth having.",
       "zh": "金星代表你所爱与所重视的：吸引、美、享受，以及你与人连结的方式。它也和金钱有关，指的是你觉得什么值得拥有。"
@@ -37,8 +45,10 @@
   },
   {
     "id": "mars",
-    "glyph": "♂",
-    "pace": { "en": "about six to seven weeks in each sign", "zh": "每个星座约六到七周" },
+    "pace": {
+      "en": "about six to seven weeks in each sign",
+      "zh": "每个星座约六到七周"
+    },
     "summary": {
       "en": "Mars is drive: how you go after what you want, assert yourself and deal with anger. It is the energy that turns wanting into doing.",
       "zh": "火星代表行动力：你如何追求想要的东西、如何表达立场、如何处理愤怒。它是把“想要”变成“去做”的能量。"
@@ -46,8 +56,10 @@
   },
   {
     "id": "jupiter",
-    "glyph": "♃",
-    "pace": { "en": "about one year in each sign", "zh": "每个星座约一年" },
+    "pace": {
+      "en": "about one year in each sign",
+      "zh": "每个星座约一年"
+    },
     "summary": {
       "en": "Jupiter is growth and meaning: where you tend to expand, find opportunity and feel generous. It is traditionally called the greater benefic.",
       "zh": "木星代表成长与意义：你容易在哪里扩展、遇到机会、变得慷慨。传统上它被称为“大吉星”。"
@@ -55,8 +67,10 @@
   },
   {
     "id": "saturn",
-    "glyph": "♄",
-    "pace": { "en": "about two and a half years in each sign", "zh": "每个星座约两年半" },
+    "pace": {
+      "en": "about two and a half years in each sign",
+      "zh": "每个星座约两年半"
+    },
     "summary": {
       "en": "Saturn is structure and time: responsibility, limits and the slow work of mastery. Where Saturn sits is often where you grow up the hardest and build the most.",
       "zh": "土星代表结构与时间：责任、界限，以及慢慢磨练出来的功力。土星所在之处，往往是你成长最辛苦、也建立最多的地方。"
@@ -64,8 +78,10 @@
   },
   {
     "id": "uranus",
-    "glyph": "♅",
-    "pace": { "en": "about seven years in each sign", "zh": "每个星座约七年" },
+    "pace": {
+      "en": "about seven years in each sign",
+      "zh": "每个星座约七年"
+    },
     "summary": {
       "en": "Uranus is change and freedom: sudden insight, rebellion and invention. Because it moves slowly, its sign is shared by everyone born within several years.",
       "zh": "天王星代表改变与自由：突然的领悟、反叛与发明。它移动很慢，前后几年出生的人都落在同一个星座。"
@@ -73,8 +89,10 @@
   },
   {
     "id": "neptune",
-    "glyph": "♆",
-    "pace": { "en": "about fourteen years in each sign", "zh": "每个星座约十四年" },
+    "pace": {
+      "en": "about fourteen years in each sign",
+      "zh": "每个星座约十四年"
+    },
     "summary": {
       "en": "Neptune is imagination and ideals: dreams, compassion, art and the wish to dissolve boundaries. Its sign describes a generation more than an individual.",
       "zh": "海王星代表想象与理想：梦、慈悲、艺术，以及想要消融界限的渴望。它所在的星座更多描述一代人，而不是某个人。"
@@ -82,8 +100,10 @@
   },
   {
     "id": "pluto",
-    "glyph": "♇",
-    "pace": { "en": "about twelve to thirty years in each sign", "zh": "每个星座约十二到三十年" },
+    "pace": {
+      "en": "about twelve to thirty years in each sign",
+      "zh": "每个星座约十二到三十年"
+    },
     "summary": {
       "en": "Pluto is depth and transformation: power, endings and rebirth. Astronomers reclassified it as a dwarf planet in 2006; astrology still uses it. Its sign is generational.",
       "zh": "冥王星代表深度与蜕变：力量、结束与重生。天文学在 2006 年把它归为矮行星，占星仍然使用它。它所在的星座属于一整代人。"

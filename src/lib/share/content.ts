@@ -55,9 +55,9 @@ export function bigThreeCard(chart: NatalChart, m: Messages, locale: Locale): Sh
     eyebrow: `MOONA · ${m.chart.title}`,
     title: m.chart.bigThree,
     rows: [
-      { label: `☉ ${m.chart.sun}`, value: show(chart.bigThree.sun) },
-      { label: `☽ ${m.chart.moon}`, value: show(chart.bigThree.moon) },
-      { label: `↑ ${m.chart.rising}`, value: show(chart.bigThree.rising) },
+      { label: m.chart.sun, value: show(chart.bigThree.sun) },
+      { label: m.chart.moon, value: show(chart.bigThree.moon) },
+      { label: m.chart.rising, value: show(chart.bigThree.rising) },
     ],
     footer: m.disclaimer,
   };

@@ -1,0 +1,5 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- MOONA planet icon; placeholder until the design team supplies planets. -->
+<path d="M15 8V24M33 8V24M15 16H33M24 8V30.5" stroke="#DDE1E8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="24" cy="35" r="4.5" stroke="#DDE1E8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

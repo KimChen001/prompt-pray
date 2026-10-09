@@ -14,8 +14,6 @@ const SIZE = 558;
 const C = SIZE / 2;
 const PAD = 30;
 const R = { ring0: 279, ring1: 265, ring2: 251, glyph: 238, houses: 225, houseNum: 206, planet: 174, tick: 216, hub: 112, label: 292 };
-const GLYPH: Record<Planet, string> = { sun: "☉", moon: "☽", mercury: "☿", venus: "♀", mars: "♂", jupiter: "♃", saturn: "♄", uranus: "♅", neptune: "♆", pluto: "♇" };
-const TEXT_STYLE = String.fromCharCode(0xfe0e); // force text (not emoji) presentation
 const MIN_SEP = 8; // degrees between planet glyphs on the wheel
 
 export interface WheelAspect {
@@ -131,10 +129,10 @@ export function ChartWheel({ chart, aspects }: { chart: NatalChart; aspects: Whe
           <g key={p}>
             <line x1={t1.x} y1={t1.y} x2={t2.x} y2={t2.y} stroke="#ECEEF2" strokeOpacity={0.8} />
             <circle cx={hub.x} cy={hub.y} r={2} fill="#DDE1E8" fillOpacity={0.7} />
-            <text className="pg" x={g.x} y={g.y} fontSize={18} fill={p === "sun" ? "#D2B78C" : "#ECEEF2"} textAnchor="middle" dominantBaseline="central" style={{ fontFamily: "var(--font-ui)" }}>
-              {GLYPH[p] + TEXT_STYLE}
+            {/* SVG icon, never a Unicode symbol (some render as emoji) */}
+            <image className="pg" href={`/design/planets/${p}.svg`} x={g.x - 13} y={g.y - 13} width={26} height={26}>
               <title>{pick(PLANET_NAME[p])}</title>
-            </text>
+            </image>
           </g>
         );
       })}
