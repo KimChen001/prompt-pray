@@ -14,7 +14,7 @@ import {
 import { hasSimilarNote, type MemoryNote } from "@/lib/memory";
 import { detectCrisis } from "@/lib/safety";
 import { windowMessages } from "@/lib/chat/limits";
-import { awaitingReply, newSession, type ChatContextChoice, type ChatSession } from "@/lib/chat/session";
+import { awaitingReply, newSession, TALK_DRAFT_KEY, type ChatContextChoice, type ChatSession } from "@/lib/chat/session";
 import { chartContext, chosenNotes, type TalkBody } from "@/lib/chat/context";
 import { localDateKey, userTimeZone, formatLocalDate } from "@/lib/time";
 import type { BirthData } from "@/lib/astro/birth";
@@ -64,6 +64,20 @@ export function Conversation({ id }: { id: string | null }) {
   }, [sessionId, version]);
 
   useEffect(() => () => inflight.current?.abort(), []);
+
+  // A draft offered by another page (e.g. Whispers → "Talk about this"): fills the box, sends nothing.
+  useEffect(() => {
+    if (id) return;
+    try {
+      const offered = window.sessionStorage.getItem(TALK_DRAFT_KEY);
+      if (offered) {
+        window.sessionStorage.removeItem(TALK_DRAFT_KEY);
+        setDraft(offered);
+      }
+    } catch {
+      /* storage blocked */
+    }
+  }, [id]);
 
   const context = session ? session.context : draftContext;
   const turns = useMemo(() => session?.turns ?? [], [session]);

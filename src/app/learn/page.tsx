@@ -39,6 +39,7 @@ export default function LearnPage() {
   return (
     <div className="stack gap-32">
       <header className="stack gap-12">
+        <p className="eyebrow">{m.nav.learn}</p>
         <h1 className="h1">{m.learn.title}</h1>
         <p className="lede">{m.learn.subtitle}</p>
         <label htmlFor="learn-q" className="visually-hidden">{m.learn.searchLabel}</label>

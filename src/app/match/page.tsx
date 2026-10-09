@@ -99,9 +99,11 @@ export default function MatchPage() {
 
   return (
     <div className="stack gap-32" style={{ maxWidth: 680 }}>
-      <header className="stack gap-8">
+      <header className="page-head">
+        <p className="eyebrow">{m.nav.match}</p>
         <h1 className="h1">{m.match.title}</h1>
         <p className="lede">{m.match.subtitle}</p>
+        <p className="notice-quiet" style={{ marginTop: 6 }}>{m.match.sameDeviceNote}</p>
       </header>
 
       <section className="panel stack gap-12" aria-labelledby="match-you">

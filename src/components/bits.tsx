@@ -40,23 +40,3 @@ export function SupportPanel({ onEdit }: { onEdit?: () => void }) {
     </section>
   );
 }
-
-/** Honest placeholder for modules that are scheduled but not built yet. Shows no fake data. */
-export function DevModule({ module, date, points }: { module: string; date: string; points: string[] }) {
-  const { m, fmt } = useI18n();
-  return (
-    <div className="stack gap-24">
-      <div className="stack gap-12">
-        <SourceBadge source="dev" />
-        <h1 className="h1">{fmt(m.dev.title, { module })}</h1>
-        <p className="lede">{fmt(m.dev.body, { date })}</p>
-      </div>
-      <div className="panel">
-        <p className="meta" style={{ margin: "0 0 8px" }}>{m.dev.plan}</p>
-        <ul style={{ margin: 0, paddingLeft: 20, color: "var(--text-2)" }}>
-          {points.map((p) => <li key={p}>{p}</li>)}
-        </ul>
-      </div>
-    </div>
-  );
-}

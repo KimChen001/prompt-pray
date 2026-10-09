@@ -1,5 +1,5 @@
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <!-- MOONA planet icon (line style matching the Figma zodiac vectors); placeholder until the design team supplies planets. -->
-<circle cx="24" cy="24" r="13" stroke="#DDE1E8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="24" cy="24" r="2.2" fill="#DDE1E8"/>
+<circle cx="24" cy="24" r="13" stroke="#CDD2DC" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="24" cy="24" r="2.2" fill="#CDD2DC"/>
 </svg>

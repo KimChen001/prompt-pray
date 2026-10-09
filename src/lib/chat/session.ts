@@ -20,6 +20,8 @@ export interface ChatSession {
 }
 
 export const TITLE_MAX = 64;
+/** sessionStorage key: text another page offers to start a conversation with (never sent until the person sends it). */
+export const TALK_DRAFT_KEY = "moona.talkDraft";
 
 export function sessionTitle(firstMessage: string): string {
   const line = firstMessage.trim().split(/\r?\n/)[0].replace(/\s+/g, " ");

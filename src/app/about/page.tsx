@@ -1,31 +1,54 @@
 "use client";
+// About: what the source labels mean, exactly what leaves the device, what is and isn't built,
+// and where every asset comes from.
 import { useI18n } from "@/lib/i18n";
 
 export default function AboutPage() {
   const { m } = useI18n();
+  const a = m.about;
   return (
-    <div className="stack gap-32 prose">
-      <div className="stack gap-12">
-        <h1 className="h1">{m.about.title}</h1>
-        <p className="lede">{m.about.intro}</p>
-      </div>
-      <section className="stack gap-8">
-        <h2 className="h2">{m.about.cardsTitle}</h2>
-        <p style={{ margin: 0 }}>
-          {m.about.cards}{" "}
-          <a href="https://commons.wikimedia.org/wiki/Category:Rider-Waite_tarot_deck_(Roses_%26_Lilies)" target="_blank" rel="noreferrer">Wikimedia Commons</a>
-        </p>
-        <p className="muted small" style={{ margin: 0 }}>{m.about.backNote}</p>
+    <div className="stack gap-48" style={{ maxWidth: 860 }}>
+      <header className="about-head">
+        <div className="page-head">
+          <p className="eyebrow">MOONA</p>
+          <h1 className="h1">{a.title}</h1>
+          <p className="lede">{a.intro}</p>
+        </div>
+        <img src="/brand/moona-wheel.svg" alt="" width={220} height={220} className="about-wheel" />
+      </header>
+
+      <section className="stack gap-12" aria-labelledby="labels-title">
+        <h2 className="h2" id="labels-title">{a.labelsTitle}</h2>
+        <dl className="about-list">
+          {a.labels.map(([k, v]) => (
+            <div key={k}><dt><span className="badge">{k}</span></dt><dd>{v}</dd></div>
+          ))}
+        </dl>
       </section>
-      <section className="stack gap-8">
-        <h2 className="h2">{m.about.dataTitle}</h2>
-        <p style={{ margin: 0 }}>{m.about.data}</p>
+
+      <section className="stack gap-12" aria-labelledby="sent-title">
+        <h2 className="h2" id="sent-title">{a.sentTitle}</h2>
+        <ul className="prose" style={{ margin: 0, paddingLeft: 20, color: "var(--text-2)" }}>
+          {a.sent.map((s) => <li key={s} style={{ marginBottom: 8 }}>{s}</li>)}
+        </ul>
+        <p className="notice-quiet">{a.sentNote}</p>
       </section>
-      <section className="stack gap-8">
-        <h2 className="h2">{m.about.privacyTitle}</h2>
-        <p style={{ margin: 0 }}>{m.about.privacy}</p>
+
+      <section className="stack gap-12" aria-labelledby="status-title">
+        <h2 className="h2" id="status-title">{a.statusTitle}</h2>
+        <dl className="about-list">
+          {a.status.map(([k, v]) => (
+            <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
+          ))}
+        </dl>
       </section>
-      <p className="muted small" style={{ margin: 0 }}>{m.disclaimer}</p>
+
+      <section className="stack gap-12" aria-labelledby="sources-title">
+        <h2 className="h2" id="sources-title">{a.sourcesTitle}</h2>
+        <ul className="prose" style={{ margin: 0, paddingLeft: 20, color: "var(--text-2)" }}>
+          {a.sources.map((s) => <li key={s} style={{ marginBottom: 8 }}>{s}</li>)}
+        </ul>
+      </section>
     </div>
   );
 }

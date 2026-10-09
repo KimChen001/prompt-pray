@@ -8,7 +8,7 @@ import { useI18n } from "@/lib/i18n";
 import { getBirth, getSettings, updateSettings, useStoreVersion } from "@/lib/store";
 import { computeChart, type NatalChart, type SignCandidate } from "@/lib/astro/chart";
 import type { BirthData } from "@/lib/astro/birth";
-import { PLANET_NAME, PLANETS, SIGN_INFO, type Placement } from "@/lib/astro/zodiac";
+import { PLANET_NAME, PLANETS, SIGN_INFO, placement, type Placement } from "@/lib/astro/zodiac";
 import type { HouseSystem } from "@/lib/astro/houses";
 import { SourceBadge } from "@/components/bits";
 import { NatalReport, SynthesisCard, useNatalReport, wheelAspects } from "@/components/NatalReport";
@@ -18,7 +18,7 @@ import { TAGLINES, type BigThreeKind } from "@/components/BigThree";
 import { learnHref } from "@/lib/learn";
 import { ShareImage } from "@/components/ShareImage";
 import { bigThreeCard } from "@/lib/share/content";
-import { PlanetIcon } from "@/components/AstroIcon";
+import { PlanetIcon, ZodiacIcon } from "@/components/AstroIcon";
 
 const deg = (p: Placement) => `${p.degree}°${String(p.minute).padStart(2, "0")}′`;
 
@@ -105,7 +105,7 @@ function PlacementCard({ kind, title, c }: { kind: BigThreeKind; title: string; 
 }
 
 function ChartView({ birth, chart, system, onSystem }: { birth: BirthData; chart: NatalChart; system: HouseSystem; onSystem: (s: HouseSystem) => void }) {
-  const { m, pick, locale } = useI18n();
+  const { m, fmt, pick, locale } = useI18n();
   const natal = useNatalReport(birth, chart, chart.houseSystem ?? system);
   const aspects = useMemo(() => wheelAspects(natal.nf), [natal.nf]);
   const approx = !chart.timeKnown;
@@ -141,9 +141,9 @@ function ChartView({ birth, chart, system, onSystem }: { birth: BirthData; chart
           {approx && <p className="muted small" style={{ margin: "12px 0 0" }}>{m.chartPage.timeOnly} {m.chart.noonNote}</p>}
         </section>
 
-        <section className="chart-panel" aria-labelledby="points-title" style={{ overflowX: "auto" }}>
+        <section className="chart-panel" aria-labelledby="points-title">
           <h2 className="eyebrow" id="points-title" style={{ marginBottom: 14 }}>{m.chartPage.points}</h2>
-          <table className="planet-table">
+          <div className="table-scroll"><table className="planet-table">
             <thead>
               <tr>
                 <th scope="col">{m.chartPage.planet}</th>
@@ -185,7 +185,37 @@ function ChartView({ birth, chart, system, onSystem }: { birth: BirthData; chart
                 </>
               )}
             </tbody>
-          </table>
+          </table></div>
+
+          {/* House cusps (visual review: restore the queryable cusp longitudes). Same numbers the wheel draws. */}
+          <details className="panel-quiet" style={{ marginTop: 18 }} open={false}>
+            <summary className="disclosure-summary" style={{ listStyle: "none", cursor: "pointer" }}>
+              {m.chartPage.cuspsTitle}{chart.houseSystem ? ` · ${chart.houseSystem === "placidus" ? m.chart.placidus : m.chart.whole}` : ""}
+            </summary>
+            {chart.cusps ? (
+              <>
+                <ol className="cusp-list">
+                  {chart.cusps.map((lon, i) => {
+                    const p = placement(lon);
+                    return (
+                      <li key={i}>
+                        <Link href={learnHref("house", i + 1)} className="meta" style={{ textDecoration: "none" }}>{fmt(m.chartPage.houseN, { n: i + 1 })}</Link>
+                        <span className="cusp-sign">
+                          <Link href={learnHref("sign", p.sign)} style={{ display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
+                            <ZodiacIcon sign={p.sign} size={14} />{pick(SIGN_INFO[p.sign].name)}
+                          </Link>
+                          <span className="num">{deg(p)}</span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ol>
+                <p className="muted small" style={{ margin: "10px 0 0" }}>{m.chartPage.cuspsNote}</p>
+              </>
+            ) : (
+              <p className="muted small" style={{ margin: "10px 0 0" }}>{m.chart.noHouses}</p>
+            )}
+          </details>
         </section>
       </div>
 

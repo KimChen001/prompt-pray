@@ -62,15 +62,15 @@ export function ChartWheel({ chart, aspects }: { chart: NatalChart; aspects: Whe
       <image href="/design/wheel-ring-1.svg" x={14} y={14} width={530} height={530} />
       <image href="/design/wheel-ring-2.svg" x={28} y={28} width={502} height={502} />
       <image href="/design/wheel-houses.svg" x={54} y={54} width={450} height={450} />
-      <circle cx={C} cy={C} r={R.hub} fill="none" stroke="#DDE1E8" strokeOpacity={0.16} />
+      <circle cx={C} cy={C} r={R.hub} fill="none" stroke="#BFC5D2" strokeOpacity={0.18} />
 
-      {/* sign boundaries (✧) and sign glyphs */}
+      {/* sign boundaries (sparks) and sign glyphs */}
       {SIGNS.map((s, i) => {
         const star = at(i * 30, R.ring1, base);
         const g = at(i * 30 + 15, R.glyph, base);
         return (
           <g key={s}>
-            <text x={star.x} y={star.y} fontSize={11} fill="#A9AFBC" textAnchor="middle" dominantBaseline="central" style={{ fontFamily: "var(--font-ui)" }}>✧</text>
+            <image href="/design/sparkle.svg" x={star.x - 4.5} y={star.y - 4.5} width={9} height={9} />
             <image href={`/design/zodiac/${s}.svg`} x={g.x - 14} y={g.y - 14} width={28} height={28}>
               <title>{pick(SIGN_INFO[s].name)}</title>
             </image>
@@ -86,8 +86,8 @@ export function ChartWheel({ chart, aspects }: { chart: NatalChart; aspects: Whe
         const n = at(mid, R.houseNum, base);
         return (
           <g key={i}>
-            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#DDE1E8" strokeOpacity={0.3} />
-            <text className="hn" x={n.x} y={n.y} fontSize={13} fill="#8A90A0" textAnchor="middle" dominantBaseline="central">{i + 1}</text>
+            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#BFC5D2" strokeOpacity={0.32} />
+            <text className="hn" x={n.x} y={n.y} fontSize={13} fill="#9692A6" textAnchor="middle" dominantBaseline="central">{i + 1}</text>
           </g>
         );
       })}
@@ -97,15 +97,15 @@ export function ChartWheel({ chart, aspects }: { chart: NatalChart; aspects: Whe
         <g>
           {[chart.asc.lon, chart.mc.lon].map((lon, i) => {
             const a = at(lon, R.ring0, base), b = at(lon + 180, R.ring0, base);
-            return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#DDE1E8" strokeOpacity={0.22} />;
+            return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#BFC5D2" strokeOpacity={0.26} />;
           })}
           {(() => {
             const ac = at(chart.asc.lon, R.label, base);
             const mc = at(chart.mc.lon, R.label, base);
             return (
               <>
-                <text className="lbl" x={ac.x} y={ac.y} fontSize={12} fill="#ECEEF2" textAnchor="middle" dominantBaseline="central">AC</text>
-                <text className="lbl" x={mc.x} y={mc.y} fontSize={12} fill="#ECEEF2" textAnchor="middle" dominantBaseline="central">MC</text>
+                <text className="lbl" x={ac.x} y={ac.y} fontSize={12} fill="#F0EDE7" textAnchor="middle" dominantBaseline="central">AC</text>
+                <text className="lbl" x={mc.x} y={mc.y} fontSize={12} fill="#F0EDE7" textAnchor="middle" dominantBaseline="central">MC</text>
               </>
             );
           })()}
@@ -116,7 +116,7 @@ export function ChartWheel({ chart, aspects }: { chart: NatalChart; aspects: Whe
       {aspects.filter((x) => x.aspect !== "conjunction").map((x) => {
         const a = at(chart.positions[x.a].lon, R.hub, base), b = at(chart.positions[x.b].lon, R.hub, base);
         const hard = x.aspect === "square" || x.aspect === "opposition";
-        return <line key={`${x.a}-${x.b}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#DDE1E8" strokeOpacity={hard ? 0.32 : 0.5} strokeDasharray={hard ? "4 4" : undefined} />;
+        return <line key={`${x.a}-${x.b}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={hard ? "#BFC5D2" : "#A394C7"} strokeOpacity={hard ? 0.38 : 0.6} strokeDasharray={hard ? "4 4" : undefined} />;
       })}
 
       {/* planets: exact tick on the houses circle, glyph spread to avoid overlaps */}
@@ -127,8 +127,8 @@ export function ChartWheel({ chart, aspects }: { chart: NatalChart; aspects: Whe
         const hub = at(lon, R.hub, base);
         return (
           <g key={p}>
-            <line x1={t1.x} y1={t1.y} x2={t2.x} y2={t2.y} stroke="#ECEEF2" strokeOpacity={0.8} />
-            <circle cx={hub.x} cy={hub.y} r={2} fill="#DDE1E8" fillOpacity={0.7} />
+            <line x1={t1.x} y1={t1.y} x2={t2.x} y2={t2.y} stroke="#F0EDE7" strokeOpacity={0.8} />
+            <circle cx={hub.x} cy={hub.y} r={2} fill="#BFC5D2" fillOpacity={0.75} />
             {/* SVG icon, never a Unicode symbol (some render as emoji) */}
             <image className="pg" href={`/design/planets/${p}.svg`} x={g.x - 13} y={g.y - 13} width={26} height={26}>
               <title>{pick(PLANET_NAME[p])}</title>

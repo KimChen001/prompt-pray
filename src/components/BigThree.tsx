@@ -1,7 +1,7 @@
 "use client";
 // Big Three cards (Figma: "Big Three Reveal", Card / Sun · Moon · Rising). The medallion uses the
-// design's own assets in /public/design: three astrolabe rings, twelve ✧ marks and the original
-// MOONA Sun / Moon / Rising glyphs, at the offsets from the Figma frame.
+// design's own assets in /public/design: three astrolabe rings, twelve spark marks and the original
+// MOONA Sun / Moon / Rising glyphs, at the offsets from the Figma frame. The twelve marks are SVG sparks.
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import type { NatalChart, SignCandidate } from "@/lib/astro/chart";
@@ -27,7 +27,7 @@ export function Medallion({ kind }: { kind: BigThreeKind }) {
       <img className="ring-1" src="/design/astrolabe-ring-1.svg" alt="" width={102} height={102} />
       <img className="ring-2" src="/design/astrolabe-ring-2.svg" alt="" width={74} height={74} />
       {STARS.map((s, i) => (
-        <span key={i} className="star" style={{ left: s.x, top: s.y }}>✧</span>
+        <img key={i} className="star" src="/design/sparkle.svg" alt="" width={7} height={7} style={{ left: s.x, top: s.y }} />
       ))}
       <img className="glyph" src={`/design/glyph-${kind}.svg`} alt="" width={48} height={48} style={{ left: GLYPH_LEFT[kind], top: 45 }} />
     </div>
