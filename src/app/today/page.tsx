@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { getDaily, getDeviceId, getSettings, saveDaily, saveReading } from "@/lib/store";
@@ -7,6 +8,7 @@ import { getCard } from "@/lib/tarot/deck";
 import { formatLocalDate, localDateKey, userTimeZone } from "@/lib/time";
 import type { DrawnCard, Topic } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
+import { learnHref } from "@/lib/learn";
 import { SourceBadge } from "@/components/bits";
 import { SkyPanel } from "@/components/SkyPanel";
 import { HoroscopePanel } from "@/components/HoroscopePanel";
@@ -98,6 +100,7 @@ export default function TodayPage() {
               </h2>
               <SourceBadge source="library" />
             </div>
+            <Link href={learnHref("card", card.id)} className="meta">{m.learn.title}: {pick(card.name)} →</Link>
             <div className="kw">{pickList(side.keywords).map((k) => <span key={k}>{k}</span>)}</div>
             <p style={{ margin: 0 }}>{pick(side.meaning)}</p>
             {topic !== "general" && <p className="muted" style={{ margin: 0 }}>{pick(side[topic])}</p>}

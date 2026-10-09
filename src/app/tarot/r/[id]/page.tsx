@@ -20,6 +20,7 @@ import { SourceBadge } from "@/components/bits";
 import { TarotChat } from "@/components/TarotChat";
 import { SharedNotes, sharedNotes } from "@/components/Notes";
 import { CheckInPlanner } from "@/components/CheckIns";
+import { learnHref } from "@/lib/learn";
 
 export default function ReadingPage() {
   return (
@@ -152,7 +153,7 @@ function ReadingView() {
           <TarotCard id={c.id} reversed={c.reversed} revealed label={pick(c.name)} />
           <div>
             <span className="meta">{String(i + 1).padStart(2, "0")} · {pick(c.position)}</span>
-            <h4 className="h3" style={{ marginTop: 4, fontSize: 19 }}>{pick(c.name)}</h4>
+            <h4 className="h3" style={{ marginTop: 4, fontSize: 19 }}><Link href={learnHref("card", c.id)}>{pick(c.name)}</Link></h4>
             <div className="kw">{c.keywords[locale].map((k) => <span key={k}>{k}</span>)}</div>
             <p style={{ margin: "0 0 8px" }}>{pick(c.meaning)}</p>
             {c.topicLine && (
@@ -191,7 +192,7 @@ function ReadingView() {
             <div className="stack gap-4">
               <span className="meta">{pick(c.position)}</span>
               <span className="h3" style={{ fontSize: 20 }}>
-                {pick(c.name)} {c.reversed && <span className="badge tag-rev" style={{ verticalAlign: "middle" }}>{m.common.reversed}</span>}
+                <Link href={learnHref("card", c.id)}>{pick(c.name)}</Link> {c.reversed && <span className="badge tag-rev" style={{ verticalAlign: "middle" }}>{m.common.reversed}</span>}
               </span>
               <p className="phrase-line">{pick(c.phrase)}</p>
             </div>

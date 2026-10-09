@@ -1,0 +1,6 @@
+[
+  { "id": "single", "howTo": { "en": "Use one card when you want a clear focus for today or a quick check-in. Ask an open question such as \"What do I need to see right now?\"", "zh": "想为今天找一个清晰的重点，或快速自我检视时，用一张牌。问一个开放式的问题，例如“我现在需要看见什么？”" } },
+  { "id": "triad", "howTo": { "en": "Three cards show how a situation has developed: what led here, where it stands and where it is heading if nothing changes. The future card is a direction, not a verdict.", "zh": "三张牌呈现一件事的发展：什么导致了现在、现在处于什么位置、如果不改变会走向哪里。未来那张牌是方向，不是定论。" } },
+  { "id": "relate", "howTo": { "en": "For a relationship of any kind: one card for you, one for the other person, and one for the bond itself. It shows each side's view; it can't read anyone's mind.", "zh": "适用于任何一种关系：一张代表你，一张代表对方，一张代表你们之间的连结。它呈现双方的视角，但无法读出任何人的心思。" } },
+  { "id": "choice", "howTo": { "en": "When you are weighing two options: a card for each option, one for the key factor that should guide you, and one for the likely outcome. Name option A and option B before you draw.", "zh": "在两个选项之间权衡时使用：每个选项各一张，一张代表应当指引你的关键因素，一张代表可能的结果。抽牌前先说清楚哪个是 A、哪个是 B。" } }
+]

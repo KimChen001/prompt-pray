@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import {
-  clearBirth, clearLocalData, deleteReading, listCheckIns, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
+  clearBirth, clearLocalData, deleteReading, listCheckIns, listFavorites, toggleFavorite, type Favorite, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
 } from "@/lib/store";
 import { computeChart } from "@/lib/astro/chart";
 import { SIGN_INFO } from "@/lib/astro/zodiac";
@@ -15,6 +15,7 @@ import { ReadingList } from "@/components/ReadingList";
 import { NotesManager } from "@/components/Notes";
 import { CheckInItem } from "@/components/CheckIns";
 import type { CheckIn } from "@/lib/memory";
+import { getEntry, learnHref, type LearnType } from "@/lib/learn";
 
 export default function MePage() {
   const { m, fmt, pick, locale, setLocale } = useI18n();
@@ -22,6 +23,7 @@ export default function MePage() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [readings, setReadings] = useState<Reading[]>([]);
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [storageOk, setStorageOk] = useState(true);
   const [guess, setGuess] = useState<"US" | "other">("other");
   const [birth, setBirth] = useState<BirthData | null>(null);
@@ -32,6 +34,7 @@ export default function MePage() {
     setSettings(getSettings());
     setReadings(listReadings());
     setCheckIns(listCheckIns());
+    setFavorites(listFavorites());
     setStorageOk(storageAvailable());
     setGuess(guessHelpRegion(userTimeZone()));
     setBirth(getBirth());
@@ -142,6 +145,27 @@ export default function MePage() {
       </section>
 
       <NotesManager />
+
+      <section className="stack gap-12" aria-labelledby="favorites-title">
+        <h2 className="h2" id="favorites-title">{m.learn.favoritesTitle}</h2>
+        {favorites.length ? (
+          <ul className="stack gap-4" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {favorites.map((f) => {
+              const e = getEntry(f.type, f.slug);
+              if (!e) return null;
+              return (
+                <li key={`${f.type}/${f.slug}`} style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                  <Link href={learnHref(f.type as LearnType, f.slug)}>{pick(e.title)}</Link>
+                  <span className="muted small">{m.learn.types[e.type]}</span>
+                  <button type="button" className="btn-text" style={{ padding: 0, minHeight: 0 }} onClick={() => toggleFavorite(f.type, f.slug)}>{m.common.delete}</button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="muted" style={{ margin: 0 }}>{m.learn.favoritesEmpty}</p>
+        )}
+      </section>
 
       <section className="stack gap-12" aria-labelledby="checkins-title">
         <h2 className="h2" id="checkins-title">{m.checkin.listTitle}</h2>

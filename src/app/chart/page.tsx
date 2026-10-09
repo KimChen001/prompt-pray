@@ -11,6 +11,7 @@ import type { HouseSystem } from "@/lib/astro/houses";
 import { formatLocalDate } from "@/lib/time";
 import { SourceBadge } from "@/components/bits";
 import { NatalReport } from "@/components/NatalReport";
+import { learnHref } from "@/lib/learn";
 
 export default function ChartPage() {
   const { m, fmt, pick, locale } = useI18n();
@@ -98,7 +99,7 @@ export default function ChartPage() {
               <span className="meta">{label} · {desc}</span>
               {c ? (
                 <>
-                  <span className="h2">{candidate(c)}</span>
+                  <span className="h2">{c.placement ? <Link href={learnHref("sign", c.placement.sign)}>{candidate(c)}</Link> : candidate(c)}</span>
                   {c.changesAt && <span className="muted small">{fmt(m.chart.changesAt, { time: c.changesAt })}</span>}
                 </>
               ) : (
@@ -126,7 +127,7 @@ export default function ChartPage() {
                 const pos = chart.positions[p];
                 return (
                   <tr key={p}>
-                    <th scope="row">{pick(PLANET_NAME[p])}</th>
+                    <th scope="row"><Link href={learnHref("planet", p)}>{pick(PLANET_NAME[p])}</Link></th>
                     <td>{formatPlacement(pos.placement, locale)}</td>
                     <td>{pos.house ?? "—"}</td>
                     <td>{pos.retrograde ? <abbr title={m.chart.retro}>℞</abbr> : ""}</td>
@@ -158,7 +159,7 @@ export default function ChartPage() {
         {chart.cusps ? (
           <ol className="cusps">
             {chart.cusps.map((c, i) => (
-              <li key={i}><span className="meta">{i + 1}</span> {formatPlacement(placement(c), locale)}</li>
+              <li key={i}><Link href={learnHref("house", i + 1)} className="meta">{i + 1}</Link> {formatPlacement(placement(c), locale)}</li>
             ))}
           </ol>
         ) : (

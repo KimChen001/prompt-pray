@@ -21,6 +21,7 @@ const KEYS = {
   natal: "moona.natal.v1", // saved natal report versions (derived from birth details)
   notes: "moona.notes.v1", // notes the person confirmed ("what MOONA remembers")
   checkins: "moona.checkins.v1", // in-site check-ins
+  favorites: "moona.favorites.v1", // saved Learn entries
 } as const;
 
 const MAX_READINGS = 100;
@@ -221,10 +222,29 @@ export function deleteCheckIn(id: string): void {
   write(KEYS.checkins, listCheckIns().filter((c) => c.id !== id));
 }
 
+// ---- Learn favorites (newest first) ----
+export interface Favorite {
+  type: string;
+  slug: string;
+  savedAt: string;
+}
+export function listFavorites(): Favorite[] {
+  return read<Favorite[]>(KEYS.favorites, []);
+}
+export function isFavorite(type: string, slug: string): boolean {
+  return listFavorites().some((f) => f.type === type && f.slug === slug);
+}
+export function toggleFavorite(type: string, slug: string): boolean {
+  const list = listFavorites();
+  const on = !list.some((f) => f.type === type && f.slug === slug);
+  write(KEYS.favorites, on ? [{ type, slug, savedAt: new Date().toISOString() }, ...list].slice(0, 300) : list.filter((f) => !(f.type === type && f.slug === slug)));
+  return on;
+}
+
 // ---- export / wipe ----
 export function exportLocalData(): string {
   return JSON.stringify(
-    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}), natalReports: listNatalReports(), notes: listNotes(), checkIns: listCheckIns() },
+    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}), natalReports: listNatalReports(), notes: listNotes(), checkIns: listCheckIns(), favorites: listFavorites() },
     null,
     2,
   );

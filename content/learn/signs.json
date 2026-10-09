@@ -1,0 +1,122 @@
+[
+  {
+    "id": "aries",
+    "dates": { "en": "about Mar 21 – Apr 19", "zh": "约 3月21日 – 4月19日" },
+    "summary": {
+      "en": "Aries opens the zodiac, so its energy is about beginnings: acting first and learning on the way. It is the spark that gets something off the ground, honest and impatient with waiting.",
+      "zh": "白羊座是黄道的第一个星座，它的能量关乎开始：先行动，再在路上学习。它是让事情启动的那一点火花，坦率，不太擅长等待。"
+    },
+    "strengths": { "en": "Courage, initiative, saying what it means.", "zh": "勇气、主动、说到做到。" },
+    "growth": { "en": "Finishing what it starts, and pausing before reacting.", "zh": "把开始的事做完；在反应之前先停一停。" }
+  },
+  {
+    "id": "taurus",
+    "dates": { "en": "about Apr 20 – May 20", "zh": "约 4月20日 – 5月20日" },
+    "summary": {
+      "en": "Taurus is the builder of steady, tangible things. It trusts the senses, values comfort and quality, and prefers slow progress it can rely on over quick wins.",
+      "zh": "金牛座擅长建造稳定、看得见摸得着的东西。它相信感官，重视舒适与品质，宁可稳扎稳打，也不追求一时的快速胜利。"
+    },
+    "strengths": { "en": "Patience, loyalty, a good sense of what lasts.", "zh": "耐心、忠诚、知道什么东西经得起时间。" },
+    "growth": { "en": "Letting change in before it is forced.", "zh": "在被迫之前，主动接纳改变。" }
+  },
+  {
+    "id": "gemini",
+    "dates": { "en": "about May 21 – Jun 20", "zh": "约 5月21日 – 6月20日" },
+    "summary": {
+      "en": "Gemini lives through curiosity and conversation. It connects people and ideas quickly, sees more than one side, and keeps learning by asking the next question.",
+      "zh": "双子座靠好奇心和交流生活。它能迅速把人与想法连在一起，看得到事情的不止一面，并通过不断追问来学习。"
+    },
+    "strengths": { "en": "Wit, adaptability, a gift for explaining.", "zh": "机智、适应力强、擅长解释。" },
+    "growth": { "en": "Staying with one thing long enough to go deep.", "zh": "在一件事上停留得够久，才能深入。" }
+  },
+  {
+    "id": "cancer",
+    "dates": { "en": "about Jun 21 – Jul 22", "zh": "约 6月21日 – 7月22日" },
+    "summary": {
+      "en": "Cancer is about care and belonging. It reads moods well, protects the people it loves, and needs a safe place, inside and out, to feel at home.",
+      "zh": "巨蟹座关乎照顾与归属。它善于感知情绪，保护所爱的人，也需要一个内外都安全的地方，才会觉得像家。"
+    },
+    "strengths": { "en": "Empathy, memory, devotion to its people.", "zh": "同理心、念旧、对自己人全心付出。" },
+    "growth": { "en": "Saying what it needs instead of hoping it is noticed.", "zh": "直接说出需要，而不是等别人察觉。" }
+  },
+  {
+    "id": "leo",
+    "dates": { "en": "about Jul 23 – Aug 22", "zh": "约 7月23日 – 8月22日" },
+    "summary": {
+      "en": "Leo shines by expressing itself. It is generous and warm, loves to create and to be seen doing it, and brings heart to whatever it leads.",
+      "zh": "狮子座通过表达自己发光。它慷慨而温暖，热爱创造，也喜欢被看见；无论带领什么，都会投入真心。"
+    },
+    "strengths": { "en": "Warmth, confidence, loyalty, play.", "zh": "温暖、自信、忠诚、会玩。" },
+    "growth": { "en": "Feeling worthy without needing applause.", "zh": "不需要掌声，也能觉得自己值得。" }
+  },
+  {
+    "id": "virgo",
+    "dates": { "en": "about Aug 23 – Sep 22", "zh": "约 8月23日 – 9月22日" },
+    "summary": {
+      "en": "Virgo improves things. It notices details others miss, likes to be useful, and finds meaning in doing ordinary work well.",
+      "zh": "处女座让事情变得更好。它能注意到别人忽略的细节，喜欢派上用场，也能在把平凡的事做好之中找到意义。"
+    },
+    "strengths": { "en": "Care, precision, practical help.", "zh": "用心、精确、实际的帮助。" },
+    "growth": { "en": "Accepting \"good enough\", including in itself.", "zh": "接受“已经够好”，也包括对自己。" }
+  },
+  {
+    "id": "libra",
+    "dates": { "en": "about Sep 23 – Oct 22", "zh": "约 9月23日 – 10月22日" },
+    "summary": {
+      "en": "Libra seeks balance, fairness and beauty, especially between people. It is at its best in partnership, weighing both sides before it decides.",
+      "zh": "天秤座追求平衡、公平与美，尤其是在人与人之间。它在合作关系中状态最好，做决定前会把两边都掂量清楚。"
+    },
+    "strengths": { "en": "Diplomacy, taste, a sense of justice.", "zh": "圆融、品味、正义感。" },
+    "growth": { "en": "Choosing even when someone may be disappointed.", "zh": "即使有人会失望，也能做出选择。" }
+  },
+  {
+    "id": "scorpio",
+    "dates": { "en": "about Oct 23 – Nov 21", "zh": "约 10月23日 – 11月21日" },
+    "summary": {
+      "en": "Scorpio goes deep. It wants what is real beneath the surface, trusts slowly and commits fully, and understands that endings make room for renewal.",
+      "zh": "天蝎座喜欢深入。它想知道表面之下的真相，信任来得慢，一旦投入就全心全意，也明白结束会为重生腾出空间。"
+    },
+    "strengths": { "en": "Depth, focus, emotional courage.", "zh": "深度、专注、面对情绪的勇气。" },
+    "growth": { "en": "Letting go of control and of old hurts.", "zh": "放下控制，也放下旧伤。" }
+  },
+  {
+    "id": "sagittarius",
+    "dates": { "en": "about Nov 22 – Dec 21", "zh": "约 11月22日 – 12月21日" },
+    "summary": {
+      "en": "Sagittarius is the explorer and the seeker of meaning. It wants room to roam, in the world and in ideas, and says what it believes with optimism.",
+      "zh": "射手座是探索者，也是意义的追寻者。无论在世界还是思想里，它都需要自由驰骋的空间，并乐观地说出自己的信念。"
+    },
+    "strengths": { "en": "Optimism, honesty, a big-picture view.", "zh": "乐观、坦诚、看得到大局。" },
+    "growth": { "en": "Following through on the details.", "zh": "把细节落实到底。" }
+  },
+  {
+    "id": "capricorn",
+    "dates": { "en": "about Dec 22 – Jan 19", "zh": "约 12月22日 – 1月19日" },
+    "summary": {
+      "en": "Capricorn plays the long game. It takes responsibility seriously, builds structures that last, and measures success by what it has earned over time.",
+      "zh": "摩羯座着眼长远。它认真对待责任，建立持久的结构，用一路累积的成果来衡量成功。"
+    },
+    "strengths": { "en": "Discipline, reliability, dry humor.", "zh": "自律、可靠、冷幽默。" },
+    "growth": { "en": "Resting without earning it first.", "zh": "允许自己休息，不必先“挣”到它。" }
+  },
+  {
+    "id": "aquarius",
+    "dates": { "en": "about Jan 20 – Feb 18", "zh": "约 1月20日 – 2月18日" },
+    "summary": {
+      "en": "Aquarius thinks ahead and thinks for itself. It cares about groups, causes and fairness, and is happiest when it is free to be a little different.",
+      "zh": "水瓶座有远见，也有独立思考。它关心群体、理想和公平，在可以做一点与众不同的自己时最自在。"
+    },
+    "strengths": { "en": "Originality, principle, friendship.", "zh": "原创性、原则感、重友情。" },
+    "growth": { "en": "Staying close when feelings get personal.", "zh": "当情感变得私人时，依然愿意靠近。" }
+  },
+  {
+    "id": "pisces",
+    "dates": { "en": "about Feb 19 – Mar 20", "zh": "约 2月19日 – 3月20日" },
+    "summary": {
+      "en": "Pisces closes the zodiac and feels the connections between everything. It is imaginative and compassionate, moved by music, art and other people's stories.",
+      "zh": "双鱼座是黄道的最后一个星座，能感受到万物之间的联系。它富有想象力和同情心，容易被音乐、艺术和他人的故事打动。"
+    },
+    "strengths": { "en": "Compassion, intuition, creativity.", "zh": "慈悲、直觉、创造力。" },
+    "growth": { "en": "Keeping healthy boundaries.", "zh": "守住健康的界限。" }
+  }
+]

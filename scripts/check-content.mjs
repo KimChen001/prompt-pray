@@ -39,8 +39,29 @@ for (const c of cards) {
 }
 if (!existsSync("public/cards/back.jpg")) err("back", "image missing");
 
+// Learn content: every entry present once, every text field in both languages.
+const LEARN = {
+  signs: { ids: ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"], fields: ["dates", "summary", "strengths", "growth"] },
+  planets: { ids: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"], fields: ["pace", "summary"] },
+  houses: { ids: Array.from({ length: 12 }, (_, i) => i + 1), fields: ["summary"] },
+  aspects: { ids: ["conjunction", "sextile", "square", "trine", "opposition"], fields: ["summary"] },
+  spreads: { ids: ["single", "triad", "relate", "choice"], fields: ["howTo"] },
+};
+let learnCount = 0;
+for (const [file, { ids: want, fields }] of Object.entries(LEARN)) {
+  const entries = JSON.parse(readFileSync(`content/learn/${file}.json`, "utf8"));
+  const got = entries.map((e) => e.id);
+  want.filter((id) => !got.includes(id)).forEach((id) => err(`learn/${file}/${id}`, "missing"));
+  got.filter((id, i) => !want.includes(id) || got.indexOf(id) !== i).forEach((id) => err(`learn/${file}/${id}`, "unknown or duplicate id"));
+  for (const e of entries) {
+    fields.forEach((f) => text(`learn/${file}/${e.id}`, f, e[f]));
+    fields.forEach((f) => /[A-Za-z]{4,}/.test((e[f]?.zh ?? "").replace(/Placidus|IC|MC/g, "")) && err(`learn/${file}/${e.id}`, `${f}.zh contains English`));
+  }
+  learnCount += entries.length;
+}
+
 if (errors.length) {
   console.error(`Content check failed (${errors.length}):\n  ` + errors.join("\n  "));
   process.exit(1);
 }
-console.log(`Content OK: ${cards.length} cards × 2 sides × ${LANGS.length} languages, images and credits present.`);
+console.log(`Content OK: ${cards.length} cards × 2 sides × ${LANGS.length} languages, images and credits present; ${learnCount} Learn entries in both languages.`);

@@ -1,0 +1,7 @@
+[
+  { "id": "conjunction", "glyph": "☌", "angle": 0, "summary": { "en": "Two planets in nearly the same place blend their energies. The result depends on the planets: it can be a strength or something hard to separate out.", "zh": "两颗行星几乎在同一位置，能量会融合在一起。结果取决于是哪两颗行星：可能是优势，也可能难以分开看待。" } },
+  { "id": "sextile", "glyph": "⚹", "angle": 60, "summary": { "en": "A friendly angle that offers opportunity. It helps when you act on it; it doesn't happen on its own.", "zh": "一个友好的角度，带来机会。你主动去做时它才会发挥作用，不会自己发生。" } },
+  { "id": "square", "glyph": "□", "angle": 90, "summary": { "en": "A tense angle that creates friction between two parts of you. Uncomfortable, but often the push that makes you grow.", "zh": "一个紧张的角度，让你内在的两个部分产生摩擦。不舒服，却常常是推动你成长的力量。" } },
+  { "id": "trine", "glyph": "△", "angle": 120, "summary": { "en": "A harmonious angle where two energies support each other easily. A natural talent, so easy it can be taken for granted.", "zh": "一个和谐的角度，两股能量自然地互相支持。是一种天赋，顺利到容易被视为理所当然。" } },
+  { "id": "opposition", "glyph": "☍", "angle": 180, "summary": { "en": "Two planets facing each other across the chart. They pull in opposite directions and ask you to find a balance, often through other people.", "zh": "两颗行星在星盘上遥遥相对，朝相反方向拉扯，需要你找到平衡，这常常通过与他人的关系来实现。" } }
+]

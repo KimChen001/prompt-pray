@@ -8,7 +8,7 @@ const TILES = [
   { key: "today", href: "/today", ready: true },
   { key: "chart", href: "/chart", ready: true },
   { key: "match", href: "/match", ready: false, date: { en: "Oct 15", zh: "10月15日" } },
-  { key: "learn", href: "/learn", ready: false, date: { en: "Oct 13", zh: "10月13日" } },
+  { key: "learn", href: "/learn", ready: true },
   { key: "whispers", href: "/whispers", ready: false, date: { en: "Oct 17", zh: "10月17日" } },
 ] as const;
 

@@ -1,0 +1,14 @@
+[
+  { "id": 1, "summary": { "en": "The 1st house starts at your Rising sign. It is about your body, your first impressions and how you begin things.", "zh": "第 1 宫从你的上升星座开始，关乎你的身体、给人的第一印象，以及你开始一件事的方式。" } },
+  { "id": 2, "summary": { "en": "The 2nd house is about money, possessions and self-worth: what you own, what you earn and what you value.", "zh": "第 2 宫关乎金钱、财物与自我价值：你拥有什么、赚取什么、重视什么。" } },
+  { "id": 3, "summary": { "en": "The 3rd house is about everyday communication: siblings, neighbors, short trips, learning and the messages that fill your day.", "zh": "第 3 宫关乎日常沟通：兄弟姐妹、邻居、短途出行、学习，以及充满你一天的各种讯息。" } },
+  { "id": 4, "summary": { "en": "The 4th house is about home, family and roots, the private foundation you build your life on. It starts at the IC.", "zh": "第 4 宫关乎家、家人与根源，是你建立生活的私人地基。它从天底开始。" } },
+  { "id": 5, "summary": { "en": "The 5th house is about joy: creativity, play, romance, hobbies and, traditionally, children.", "zh": "第 5 宫关乎快乐：创造、玩乐、恋爱、爱好，传统上也包括子女。" } },
+  { "id": 6, "summary": { "en": "The 6th house is about daily routines, work habits, health practices and the ways you are of service.", "zh": "第 6 宫关乎日常节奏、工作习惯、养生方式，以及你服务他人的方式。" } },
+  { "id": 7, "summary": { "en": "The 7th house is about one-on-one relationships: partners, close collaborators and open rivals. It starts at the Descendant.", "zh": "第 7 宫关乎一对一的关系：伴侣、紧密的合作者，以及公开的对手。它从下降点开始。" } },
+  { "id": 8, "summary": { "en": "The 8th house is about intimacy and shared resources: trust, joint money, inheritance, and the changes that come from merging with others.", "zh": "第 8 宫关乎亲密与共享资源：信任、共同财务、继承，以及与他人深度结合所带来的改变。" } },
+  { "id": 9, "summary": { "en": "The 9th house is about the big picture: higher learning, long journeys, beliefs, philosophy and publishing.", "zh": "第 9 宫关乎更大的图景：高等教育、远行、信念、哲学与出版。" } },
+  { "id": 10, "summary": { "en": "The 10th house is about career, reputation and public life: what you are known for. In Placidus it starts at the Midheaven.", "zh": "第 10 宫关乎事业、名声与公众形象：你以什么为人所知。在普拉西度斯宫制中，它从天顶开始。" } },
+  { "id": 11, "summary": { "en": "The 11th house is about friends, communities and hopes for the future: the groups you belong to and the causes you join.", "zh": "第 11 宫关乎朋友、社群和对未来的希望：你所属的群体，以及你参与的理想。" } },
+  { "id": 12, "summary": { "en": "The 12th house is about rest, solitude and the inner world: dreams, retreat and what works behind the scenes.", "zh": "第 12 宫关乎休息、独处与内心世界：梦、退隐，以及在幕后运作的事物。" } }
+]

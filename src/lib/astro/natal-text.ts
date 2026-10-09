@@ -38,7 +38,7 @@ export const PLANET_FUNCTION: Record<Planet, L10n> = {
   pluto: { en: "your capacity for deep transformation", zh: "你深层蜕变的力量" },
 };
 
-const ASPECT_MEANING: Record<Aspect, L10n> = {
+export const ASPECT_MEANING: Record<Aspect, L10n> = {
   conjunction: { en: "fused together, so they act as one", zh: "融为一体，彼此难以分开" },
   sextile: { en: "an easy opening that rewards a little effort", zh: "一个稍加努力就能打开的机会" },
   square: { en: "friction that can become your engine", zh: "摩擦，也可能成为你的动力" },
