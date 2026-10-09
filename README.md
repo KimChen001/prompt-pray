@@ -16,7 +16,13 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. No environment variables are needed: everything in this build runs in the browser.
+Open http://localhost:3000. No environment variables are needed: without them, AI features show the offline/template text.
+
+### Turning on AI (optional)
+
+Copy `.env.example` to `.env.local` and paste your own key into `AI_API_KEY` (defaults point at MIT Parley, `claude-haiku-4-5`). Restart `npm run dev`. The key stays on the server; the browser never sees it.
+
+**Public deployments:** set `AI_ACCESS_CODE` as well. Then only devices that entered that code on the Me page use AI; everyone else gets the template text. Parley runs on MIT credits tied to a personal MIT identity, and its use on a site reachable from outside MIT is not confirmed yet, so keep it gated until it is.
 
 Checks:
 
@@ -41,7 +47,8 @@ npm run build
 | Module | Route | State |
 | --- | --- | --- |
 | Tarot: ask → spread → shuffle → pick from fan → reveal → reading | `/tarot`, `/tarot/new`, `/tarot/r/[id]` | **Working**, offline engine |
-| Daily card + Today's sky (Moon sign/phase, sign changes, stations, lunations, retrogrades) | `/today` | **Working** — sky checked against Swiss Ephemeris for all of 2026; horoscope Oct 10 |
+| Daily card + Today's sky (Moon sign/phase, sign changes, stations, lunations, retrogrades) | `/today` | **Working** — sky checked against Swiss Ephemeris for all of 2026 |
+| Daily horoscope (natal or Sun-sign mode) | `/today`, `/api/ai/horoscope` | **Working** — template text from real transits; AI rewrite when configured |
 | History, settings, export, clear data | `/me` | **Working** (local only) |
 | Crisis detection on the question | `/tarot/new` | **Working**, keyword layer (AI layer Oct 13) |
 | EN / 中文 switch | everywhere | **Working** — switching never changes cards or state |
@@ -49,10 +56,14 @@ npm run build
 | Learn | `/learn` | Scheduled Oct 16 |
 | Match | `/match` | Scheduled Oct 17 |
 | Whispers (community) | `/whispers` | Scheduled Oct 18–19 |
-| AI readings | — | Oct 13, after the provider is chosen |
+| AI layer (MIT Parley, OpenAI-compatible) | `/api/ai/*` | **Working** for the horoscope; tarot AI readings Oct 11–12 |
 | Share snapshots | — | Oct 20 (needs Supabase); today: copy text and the native share sheet |
 
 Nothing in the app is mock data. Unbuilt modules show an "In development" page with their date. Every reading shows where its text came from (`Offline engine` today; `Live AI` once AI ships).
+
+## Daily horoscope
+
+`src/lib/astro/transits.ts` turns today's real sky into ranked *facts*: aspects from the transiting Sun, Moon, Mercury, Venus and Mars to the natal Sun, Moon and Ascendant (or whole-sign aspects to the Sun sign), the Moon's house, today's ingresses, stations and lunations, and current retrogrades. `src/lib/astro/horoscope.ts` writes one sentence per fact (EN/ZH) and assembles Overall / Love / Work; the "Why" list shows the facts. `/api/ai/horoscope` sends only those localized facts and sign names to the model, which must use only them; output is length- and safety-checked, and any failure keeps the template. AI text is cached per day, subject and language on the device.
 
 ## Astrology engine
 

@@ -9,6 +9,7 @@ import type { DrawnCard, Topic } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
 import { SourceBadge } from "@/components/bits";
 import { SkyPanel } from "@/components/SkyPanel";
+import { HoroscopePanel } from "@/components/HoroscopePanel";
 
 const TOPICS: Topic[] = ["general", "love", "work", "growth"];
 
@@ -110,11 +111,7 @@ export default function TodayPage() {
 
       <section className="grid-tiles">
         {now && <SkyPanel localDate={date} timeZone={tz} now={now} />}
-        <div className="panel stack gap-8">
-          <SourceBadge source="dev" />
-          <h2 className="h3">{m.daily.horoscopeTitle}</h2>
-          <p className="muted small" style={{ margin: 0 }}>{m.daily.horoscopeDev}</p>
-        </div>
+        {now && <HoroscopePanel localDate={date} timeZone={tz} now={now} />}
       </section>
     </div>
   );

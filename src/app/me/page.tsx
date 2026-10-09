@@ -21,6 +21,8 @@ export default function MePage() {
   const [storageOk, setStorageOk] = useState(true);
   const [guess, setGuess] = useState<"US" | "other">("other");
   const [birth, setBirth] = useState<BirthData | null>(null);
+  const [aiCode, setAiCode] = useState("");
+  const [aiSaved, setAiSaved] = useState(false);
 
   useEffect(() => {
     setSettings(getSettings());
@@ -55,6 +57,14 @@ export default function MePage() {
   }
 
   const regionName = (r: "US" | "other") => (r === "US" ? m.me.regionUS : m.me.regionOther);
+
+  function saveAiCode() {
+    // Only gates AI on a public deployment; the server compares it with AI_ACCESS_CODE.
+    const secure = window.location.protocol === "https:" ? "; secure" : "";
+    const value = encodeURIComponent(aiCode.trim());
+    document.cookie = `moona-ai-access=${value}; path=/; max-age=31536000; samesite=lax${secure}`;
+    setAiSaved(true);
+  }
 
   return (
     <div className="stack gap-32" style={{ maxWidth: 760 }}>
@@ -107,6 +117,16 @@ export default function MePage() {
             <option value="US">{m.me.regionUS}</option>
             <option value="other">{m.me.regionOther}</option>
           </select>
+        </div>
+        <div className="setting">
+          <label className="stack" htmlFor="ai-code">
+            <span>{m.me.aiAccess}</span>
+            <span className="muted small">{aiSaved ? m.me.aiAccessSaved : m.me.aiAccessDesc}</span>
+          </label>
+          <span style={{ display: "flex", gap: 8 }}>
+            <input id="ai-code" className="input" style={{ width: 160 }} type="password" autoComplete="off" value={aiCode} onChange={(e) => { setAiCode(e.target.value); setAiSaved(false); }} />
+            <button type="button" className="btn btn-ghost" onClick={saveAiCode}>OK</button>
+          </span>
         </div>
       </section>
 

@@ -7,6 +7,7 @@ import { guessHelpRegion, type HelpRegion } from "@/lib/safety";
 import { userTimeZone } from "@/lib/time";
 import type { BirthData } from "@/lib/astro/birth";
 import type { HouseSystem } from "@/lib/astro/houses";
+import type { Sign } from "@/lib/astro/zodiac";
 
 const KEYS = {
   settings: "moona.settings.v1",
@@ -14,6 +15,7 @@ const KEYS = {
   readings: "moona.readings.v1",
   daily: "moona.daily.v1",
   birth: "moona.birth.v1",
+  horoscope: "moona.horoscope.v1",
 } as const;
 
 const MAX_READINGS = 100;
@@ -22,9 +24,10 @@ export interface Settings {
   reversals: boolean;
   helpRegion: HelpRegion | "auto";
   houseSystem: HouseSystem;
+  sunSign: Sign | null; // for the horoscope when there are no birth details
 }
 
-const DEFAULT_SETTINGS: Settings = { reversals: true, helpRegion: "auto", houseSystem: "placidus" };
+const DEFAULT_SETTINGS: Settings = { reversals: true, helpRegion: "auto", houseSystem: "placidus", sunSign: null };
 
 function read<T>(key: string, fallback: T): T {
   try {
@@ -145,6 +148,17 @@ export function clearBirth(): void {
     /* storage unavailable */
   }
   emit();
+}
+
+// ---- AI horoscope cache (one day's text per subject + language) ----
+export interface CachedText { overall: string; love: string; work: string }
+export function getCachedHoroscope(key: string): CachedText | null {
+  return read<Record<string, CachedText>>(KEYS.horoscope, {})[key] ?? null;
+}
+export function cacheHoroscope(key: string, text: CachedText): void {
+  const map = read<Record<string, CachedText>>(KEYS.horoscope, {});
+  const entries = Object.entries({ ...map, [key]: text }).slice(-20);
+  write(KEYS.horoscope, Object.fromEntries(entries));
 }
 
 // ---- export / wipe ----
