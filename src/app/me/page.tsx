@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import {
-  clearBirth, clearLocalData, deleteReading, listCheckIns, listFavorites, toggleFavorite, type Favorite, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
+  clearBirth, clearLocalData, deleteReading, listCheckIns, listFavorites, listMatches, toggleFavorite, type Favorite, type SavedMatch, exportLocalData, getBirth, getSettings, listReadings, storageAvailable, updateSettings, useStoreVersion, type Settings,
 } from "@/lib/store";
 import { computeChart } from "@/lib/astro/chart";
 import { SIGN_INFO } from "@/lib/astro/zodiac";
@@ -13,6 +13,7 @@ import { userTimeZone } from "@/lib/time";
 import type { Reading } from "@/lib/tarot/types";
 import { ReadingList } from "@/components/ReadingList";
 import { NotesManager } from "@/components/Notes";
+import { MatchList } from "@/components/MatchParts";
 import { CheckInItem } from "@/components/CheckIns";
 import type { CheckIn } from "@/lib/memory";
 import { getEntry, learnHref, type LearnType } from "@/lib/learn";
@@ -24,6 +25,7 @@ export default function MePage() {
   const [readings, setReadings] = useState<Reading[]>([]);
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [matches, setMatches] = useState<SavedMatch[]>([]);
   const [storageOk, setStorageOk] = useState(true);
   const [guess, setGuess] = useState<"US" | "other">("other");
   const [birth, setBirth] = useState<BirthData | null>(null);
@@ -35,6 +37,7 @@ export default function MePage() {
     setReadings(listReadings());
     setCheckIns(listCheckIns());
     setFavorites(listFavorites());
+    setMatches(listMatches());
     setStorageOk(storageAvailable());
     setGuess(guessHelpRegion(userTimeZone()));
     setBirth(getBirth());
@@ -142,6 +145,11 @@ export default function MePage() {
       <section className="stack gap-12">
         <h2 className="h2">{m.me.history}</h2>
         {readings.length ? <ReadingList readings={readings} onDelete={(id) => window.confirm(m.me.confirmDeleteReading) && deleteReading(id)} /> : <p className="muted">{m.me.empty}</p>}
+      </section>
+
+      <section className="stack gap-12" aria-labelledby="matches-title">
+        <h2 className="h2" id="matches-title">{m.match.saved}</h2>
+        <MatchList matches={matches} />
       </section>
 
       <NotesManager />

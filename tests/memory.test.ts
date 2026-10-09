@@ -215,4 +215,20 @@ describe("device store cascade", () => {
     expect(store.listNotes()).toEqual([]);
     expect(store.listCheckIns()).toEqual([]);
   });
+
+  it("removing birth details removes matches computed from them, not matches typed by hand", async () => {
+    const store = await import("@/lib/store");
+    const b = { name: "Sam", date: "1998-05-02", time: null, place: null };
+    const result = { version: "match-rules@1", score: 70, labels: { emotional: "flow", communication: "flow", attraction: "spark" }, factors: [], notes: [] } as never;
+    store.saveBirth({ date: "1994-03-21", time: "08:15", place: { name: "x", country: "", lat: 0, lon: 0, tz: "UTC" } });
+    store.saveMatch({ id: "p", createdAt: "", a: { fromProfile: true, name: "" }, b, result });
+    store.saveMatch({ id: "t", createdAt: "", a: { fromProfile: false, ...b, name: "" }, b, result });
+    store.saveNatalReport({ key: { reportType: "natal-core" }, createdAt: "x" } as never);
+    store.clearBirth();
+    expect(store.getBirth()).toBeNull();
+    expect(store.listNatalReports()).toEqual([]);
+    expect(store.listMatches().map((x) => x.id)).toEqual(["t"]);
+    store.deleteMatch("t");
+    expect(store.listMatches()).toEqual([]);
+  });
 });

@@ -10,6 +10,7 @@ import type { HouseSystem } from "@/lib/astro/houses";
 import type { Sign } from "@/lib/astro/zodiac";
 import { keyString, type SavedNatalReport } from "@/lib/astro/natal-report";
 import { MAX_NOTES, type CheckIn, type MemoryNote } from "@/lib/memory";
+import type { MatchPerson, MatchResult } from "@/lib/astro/match";
 
 const KEYS = {
   settings: "moona.settings.v1",
@@ -22,6 +23,7 @@ const KEYS = {
   notes: "moona.notes.v1", // notes the person confirmed ("what MOONA remembers")
   checkins: "moona.checkins.v1", // in-site check-ins
   favorites: "moona.favorites.v1", // saved Learn entries
+  matches: "moona.matches.v1", // Match results, including the other person's birth details (device only)
 } as const;
 
 const MAX_READINGS = 100;
@@ -152,11 +154,13 @@ export function getBirth(): BirthData | null {
 export function saveBirth(birth: BirthData): boolean {
   return write(KEYS.birth, birth);
 }
-/** Removing birth details also removes everything derived from them (saved natal reports). */
+/** Removing birth details also removes everything derived from them (natal reports, matches computed from them). */
 export function clearBirth(): void {
+  const keptMatches = listMatches().filter((x) => !x.a.fromProfile);
   try {
     window.localStorage.removeItem(KEYS.birth);
     window.localStorage.removeItem(KEYS.natal);
+    window.localStorage.setItem(KEYS.matches, JSON.stringify(keptMatches));
   } catch {
     /* storage unavailable */
   }
@@ -241,10 +245,36 @@ export function toggleFavorite(type: string, slug: string): boolean {
   return on;
 }
 
+// ---- Match (newest first) ----
+export interface SavedMatch {
+  id: string;
+  createdAt: string;
+  /** "You": a reference to the saved birth details at the time, or details typed just for this match. */
+  a: { fromProfile: true; name: string } | ({ fromProfile: false } & MatchPerson);
+  b: MatchPerson;
+  result: MatchResult;
+}
+export function listMatches(): SavedMatch[] {
+  return read<SavedMatch[]>(KEYS.matches, []);
+}
+const memoryMatches = new Map<string, SavedMatch>();
+export function getMatch(id: string): SavedMatch | null {
+  return listMatches().find((x) => x.id === id) ?? memoryMatches.get(id) ?? null;
+}
+/** Returns false when the match could only be kept in memory (storage blocked). */
+export function saveMatch(x: SavedMatch): boolean {
+  memoryMatches.set(x.id, x);
+  return write(KEYS.matches, [x, ...listMatches().filter((y) => y.id !== x.id)].slice(0, 50));
+}
+export function deleteMatch(id: string): void {
+  memoryMatches.delete(id);
+  write(KEYS.matches, listMatches().filter((x) => x.id !== id));
+}
+
 // ---- export / wipe ----
 export function exportLocalData(): string {
   return JSON.stringify(
-    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}), natalReports: listNatalReports(), notes: listNotes(), checkIns: listCheckIns(), favorites: listFavorites() },
+    { exportedAt: new Date().toISOString(), settings: getSettings(), birth: getBirth(), readings: listReadings(), daily: read(KEYS.daily, {}), natalReports: listNatalReports(), notes: listNotes(), checkIns: listCheckIns(), favorites: listFavorites(), matches: listMatches() },
     null,
     2,
   );

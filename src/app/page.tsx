@@ -7,7 +7,7 @@ const TILES = [
   { key: "tarot", href: "/tarot", ready: true },
   { key: "today", href: "/today", ready: true },
   { key: "chart", href: "/chart", ready: true },
-  { key: "match", href: "/match", ready: false, date: { en: "Oct 15", zh: "10月15日" } },
+  { key: "match", href: "/match", ready: true },
   { key: "learn", href: "/learn", ready: true },
   { key: "whispers", href: "/whispers", ready: false, date: { en: "Oct 17", zh: "10月17日" } },
 ] as const;
