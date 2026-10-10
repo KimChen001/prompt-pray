@@ -22,9 +22,10 @@ import { NotesManager } from "@/components/Notes";
 import { MatchList } from "@/components/MatchParts";
 import { CheckInItem } from "@/components/CheckIns";
 import { MotionSetting } from "@/components/AppShell";
+import { PacksPanel } from "@/components/packs/PacksPanel";
 import { getEntry, learnHref, type LearnType } from "@/lib/learn";
 
-const SECTIONS = ["chart", "readings", "talks", "memory", "checkins", "matches", "saved", "settings", "data"] as const;
+const SECTIONS = ["chart", "readings", "talks", "memory", "checkins", "matches", "saved", "packs", "settings", "data"] as const;
 
 export default function JournalPage() {
   const { m, fmt, pick, locale, setLocale } = useI18n();
@@ -41,6 +42,7 @@ export default function JournalPage() {
   const [birth, setBirth] = useState<BirthData | null>(null);
   const [aiCode, setAiCode] = useState("");
   const [aiSaved, setAiSaved] = useState(false);
+  const [packsOn, setPacksOn] = useState(false);
 
   useEffect(() => {
     setSettings(getSettings());
@@ -106,7 +108,7 @@ export default function JournalPage() {
       {!storageOk && <p className="notice">{m.common.storageOff}</p>}
 
       <nav className="tabs" aria-label={m.journal.sections}>
-        {SECTIONS.map((s) => <a key={s} href={`#${s}`}>{m.journal.tabs[s]}</a>)}
+        {SECTIONS.filter((s) => s !== "packs" || packsOn).map((s) => <a key={s} href={`#${s}`}>{m.journal.tabs[s]}</a>)}
       </nav>
 
       <section id="chart" className="panel stack gap-3 journal-section">
@@ -190,6 +192,9 @@ export default function JournalPage() {
           <p className="muted" style={{ margin: 0 }}>{m.learn.favoritesEmpty}</p>
         )}
       </section>
+
+      {/* shown only when payments are enabled in some mode; off by default */}
+      <PacksPanel onVisible={setPacksOn} />
 
       <section id="settings" className="panel journal-section">
         <h2 className="h2" style={{ marginBottom: 8 }}>{m.me.settings}</h2>

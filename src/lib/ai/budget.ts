@@ -75,7 +75,8 @@ export class Budget {
       let handle;
       try { handle = await open(lockPath, "wx"); }
       catch (e) {
-        if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw new AiError("budget", "usage ledger unavailable");
+        // Windows reports a lock file being deleted by another worker as EPERM/EACCES/EBUSY: wait and retry
+        if (!["EEXIST", "EPERM", "EACCES", "EBUSY"].includes((e as NodeJS.ErrnoException).code ?? "")) throw new AiError("budget", "usage ledger unavailable");
         await new Promise((resolve) => setTimeout(resolve, 10));
         continue;
       }

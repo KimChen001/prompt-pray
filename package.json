@@ -13,6 +13,8 @@
     "fetch:cards": "node scripts/fetch-cards.mjs",
     "build:places": "node scripts/build-places.mjs",
     "eval:build": "tsx eval/build.ts",
+    "ledger": "tsx --conditions=react-server scripts/ledger-admin.ts",
+    "budget:plan": "tsx --conditions=react-server scripts/budget-plan.ts",
     "eval:run": "node scripts/eval-run.mjs",
     "eval:blind": "node scripts/eval-blind.mjs"
   },
