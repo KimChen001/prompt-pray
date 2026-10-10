@@ -29,6 +29,9 @@ import { ShareSheet } from "@/components/ShareImage";
 import { readingCard, readingShareText } from "@/lib/share/content";
 import { StateOrb, type OrbMode } from "@/components/cosmos/StateOrb";
 
+// How long a tap's request may still be on its way: until then, a resume told "never made" keeps it.
+const PENDING_GRACE_MS = 3 * 60_000;
+
 // The outages that close the follow-up chat (see `down` below).
 const CLOSES_CHAT: ReadonlySet<OfflineReason> = new Set(["unconfigured", "locked", "paused", "ledger"]);
 
@@ -170,8 +173,9 @@ function ReadingView() {
     if (how === "resume" && !pending) return;
     const reqLocale = pending?.locale ?? locale;
     const requestId = pending?.requestId ?? newRequestId();
+    const sentAt = how === "tap" ? new Date().toISOString() : pending?.sentAt;
     const epoch = dataEpoch();
-    patchReading(r.id, (latest) => ({ ...latest, paid: { locale: reqLocale, requestId } })); // drops any older saved body
+    patchReading(r.id, (latest) => ({ ...latest, paid: { locale: reqLocale, requestId, ...(sentAt ? { sentAt } : {}) } })); // drops any older saved body
     setAiStatus("loading");
     setNotice(null);
     setPackNote(null);
@@ -190,6 +194,11 @@ function ReadingView() {
     }
     if (epoch !== dataEpoch()) return;
     const forget = () => patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
+    if (out.state === "failed" && out.code === "no_such_request" && how === "resume" && sentAt && Date.now() - Date.parse(sentAt) < PENDING_GRACE_MS) {
+      // the tap's own request may still be on its way (slow, or sent from another tab): keep it for now
+      setOrb("quiet");
+      return setAiStatus("failed");
+    }
     if (out.state === "retry" || (out.state === "failed" && (out.code === "no_such_request" || out.code === "key_reused"))) {
       // never made, or failed with its credit back: forget it and show the current offer (no new charge)
       const next = forget();
@@ -411,7 +420,7 @@ function ReadingView() {
               (packNote || packsOpen) && <p className="muted small" style={{ margin: 0 }}>{packNote ? `${packNote} ` : ""}{packsOpen && <Link href="/me#packs">{m.packs.packLink}</Link>}</p>
             )
           )}
-          {!ai && aiStatus === "off" && credits === null && packNote && <p className="muted small" style={{ margin: 0 }}>{packNote}</p>}
+          {!ai && aiStatus === "off" && credits === null && packNote && !paidPending && <p className="muted small" style={{ margin: 0 }}>{packNote}</p>}
           {!ai && aiStatus !== "loading" && offlineBlock}
 
           {ai && (

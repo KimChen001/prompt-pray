@@ -80,6 +80,20 @@ async function main() {
     return 0;
   }
 
+  // the result file must be writable before anything is sent (it is saved after every case)
+  const runId = randomBytes(9).toString("base64url");
+  const startedAt = new Date().toISOString();
+  const label = String(args.label ?? `${s0.provider}-${s0.model}`).replace(/[^\w.-]+/g, "_");
+  const out = String(args.out ?? join("eval", "results", `${startedAt.slice(0, 19).replace(/[:T]/g, "-")}-${label}.json`));
+  const header = { evalVersion: set.version, label, base, provider: s0.provider, model: s0.model, runId, operator: signedIn.operator, operatorRequests: asOperator, ledger: view?.kind ?? null, replay: replays, startedAt };
+  const save = (results, extra = {}) => writeFileSync(out, JSON.stringify({ ...header, ...extra, summary: summarize(results), results }, null, 2) + "\n");
+  try {
+    mkdirSync(dirname(out), { recursive: true });
+    save([]);
+  } catch (e) {
+    return stop(`Can't write the result file ${out}: ${e?.message ?? e}. Nothing was sent.`, 1);
+  }
+
   const visitor = await prepareVisitor(aiClient);
   if (!visitor.ok) {
     return stop(visitor.reason === "cookie_dropped"
@@ -88,14 +102,7 @@ async function main() {
   }
   console.log(`visitor: ${visitor.visitor}${asOperator ? " (operator device: the server's operator quota rule applies)" : " (an ordinary visitor: its free quota applies)"}`);
 
-  const runId = randomBytes(9).toString("base64url");
-  const startedAt = new Date().toISOString();
-  const label = String(args.label ?? `${s0.provider}-${s0.model}`).replace(/[^\w.-]+/g, "_");
-  const out = String(args.out ?? join("eval", "results", `${startedAt.slice(0, 19).replace(/[:T]/g, "-")}-${label}.json`));
-  mkdirSync(dirname(out), { recursive: true });
   const measure = signedIn.operator ? async () => ledgerView(await readStatus(opsClient)) : null;
-  const header = { evalVersion: set.version, label, base, provider: s0.provider, model: s0.model, runId, operator: signedIn.operator, operatorRequests: asOperator, ledger: view?.kind ?? null, replay: replays, startedAt };
-  const save = (results, extra = {}) => writeFileSync(out, JSON.stringify({ ...header, ...extra, summary: summarize(results), results }, null, 2) + "\n");
   const money = (r) => (r.costUsd === null ? "      ?" : `$${r.costUsd.toFixed(4)}`);
   const opts = { measure, networkRetries: replays ? 1 : 0, resend: view?.kind !== "file", maxWaitMs, sleep };
 
@@ -112,8 +119,14 @@ async function main() {
       },
     });
   } catch (e) {
-    save(results, { finishedAt: new Date().toISOString(), brokeOff: String(e?.message ?? e) });
-    return stop(`The run broke off after ${results.length} cases: ${e?.message ?? e}. What was done is saved in ${out}.`, 3);
+    let saved = true;
+    try {
+      save(results, { finishedAt: new Date().toISOString(), brokeOff: String(e?.message ?? e) });
+    } catch {
+      saved = false;
+    }
+    const done = results.map((r) => `${r.id} ${r.outcome}`).join(", ") || "none";
+    return stop(`The run broke off after ${results.length} cases (${done}): ${e?.message ?? e}. ${saved ? `What was done is saved in ${out}.` : "The result file could not be written."}`, 3);
   }
   let replay;
   try {

@@ -24,7 +24,8 @@ The cases are kept separate from the examples inside the prompts. `eval/build.ts
 - **One request id per case.** Every attempt for a case uses the same id, so the shared ledger replays or joins it instead of starting another model call.
   - "Still running" (202) and "busy" are waited on with the same id, up to `--max-wait` seconds (default 120); then the case is recorded as `pending`.
   - A lost response is retried once with the same id, but only when an operator device shows that the server uses the SQL ledger, which replays.
-  - Otherwise a lost response is recorded as `lost` and never re-sent. That covers no operator device, and the legacy file ledger, which has no replay. On the file ledger a 202 is not waited on either: nothing is ever sent twice there.
+  - Otherwise a lost response is recorded as `lost` and never re-sent. That covers no operator device, and the legacy file ledger, which has no replay.
+  - When an operator device shows the file ledger, a 202 is not waited on either, so nothing is ever sent twice there. The app never answers 202 on the file ledger itself; only something in between could.
   - A 409 (an earlier attempt with this id failed) is recorded as `failed`, not retried with a new id.
 - **Limits stay on.**
   - A free-quota refusal stops the rest of that route's cases, recorded as `not_run`.
@@ -46,7 +47,7 @@ The cases are kept separate from the examples inside the prompts. `eval/build.ts
 - **Without an operator device**, every sent case's cost is `null` ("unknown"), never 0. A case that was not sent costs nothing, so it shows 0.
 - **With one**, a case's cost is the ledger's change around that case. It is attributed only when nothing else was in flight, nothing was held, and the ledger's call count moved by exactly what the case did.
   - Money that stays held the whole time doesn't count against this, such as a pack lot's allocation, or a hold the file ledger keeps after an unknown bill. A change in what is held does.
-  - Otherwise the cost is `null` with the reason: other traffic, a lost or delayed response that can't be checked, or a failed status read.
+  - Otherwise the cost is `null` with the reason: other traffic, a change in what is held, a lost or delayed response that can't be checked, a provider failure that may or may not have been billed, or a failed status read.
   - The run total is given only when every sent case was attributed. If anyone else uses the server during a run, expect unknowns rather than someone else's cost.
 - **Ledger shapes.** Both are read: the shared SQL ledger (AI pool and window) and the legacy file ledger (total and today). The file ledger reports spending to $0.0001, so its per-case costs are rounded to that.
 - **What the number means.** Cost is the ledger's estimate from the configured prices, not the provider's invoice. Check it against the provider dashboard.
@@ -73,6 +74,8 @@ The cases are kept separate from the examples inside the prompts. `eval/build.ts
      - 1: the server or its status can't be used.
      - 2: stopped before any AI request (the visitor check).
      - 3: the run broke off; what was done is saved.
+   - The result file is written before anything is sent, so a path that can't be written stops the run with nothing sent.
+   - A 200 that isn't JSON (a captive portal, a proxy page) is recorded as `error` with code `bad_response`, not as an answer.
 4. **Second provider.** Stop the server, switch providers, start it again and repeat steps 2–3.
 5. **Blind sheet.** `npm run eval:blind -- eval/results/<run A>.json eval/results/<run B>.json --out eval/results/blind`, then give graders only `blind.html`.
 6. **Rating.** Graders rate each case (facts, specificity, answers the question, uncertainty, style, overall) and click "Export ratings".

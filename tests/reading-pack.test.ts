@@ -40,6 +40,9 @@ interface Server {
   chargeThenRefuse?: Refusal;
   /** the next same-id retry of a recorded pack request is refused before the ledger (a gate in front of it) */
   gateNext?: Refusal;
+  /** the next new pack tap is held on its way to the server until release() (slow, or from another tab) */
+  holdNext?: boolean;
+  release?: () => void;
   followups: number; chatPaid: Map<string, string>; chatCreates: string[]; chatLose: number;
 }
 let server: Server;
@@ -67,6 +70,11 @@ function handle(url: string, init?: RequestInit): Response | Promise<Response> {
     }
     if (server.chatLose > 0) { server.chatLose--; throw new TypeError("reply lost on the way"); }
     return json(200, { reply: "[MOCK] pack follow-up reply", remember: null, meta, paidReadingId: "00000000-0000-4000-8000-0000000000aa", followupsLeft: server.followups });
+  }
+  if (url === "/api/ai/tarot" && body.use === "paid" && server.holdNext && !body.replayOnly) {
+    server.holdNext = false;
+    // a loss when it lands rejects this fetch, as the network would
+    return new Promise<Response>((resolve) => { server.release = () => { server.release = undefined; resolve(Promise.resolve().then(() => handle(url, init))); }; });
   }
   if (url === "/api/ai/tarot" && body.use === "paid") {
     server.paidPosts.push(body.requestId);
@@ -257,7 +265,8 @@ describe("pack readings on the reading page", () => {
     for (const outage of [{ status: 503, code: "ledger" }, { status: 503, code: "locked" }, { status: 503, code: "unconfigured" }, { status: 500 }, { status: 502 }]) {
       server.outage = outage;
       await open("en"); // reload while the server refuses before the ledger
-      expect(getReading("reading-1")?.paid).toEqual({ locale: "en", requestId: id });
+      expect(getReading("reading-1")?.paid).toMatchObject({ locale: "en", requestId: id });
+      expect(getReading("reading-1")?.paid?.paidReadingId).toBeUndefined();
       expect(text()).toContain("Your pack reading hasn't arrived yet");
       expect(text()).not.toContain("Use a pack reading");
     }
@@ -345,10 +354,57 @@ describe("pack readings on the reading page", () => {
     const id = getReading("reading-1")?.paid?.requestId;
     expect(id).toBeTruthy(); // kept: the first attempt may have been recorded
     expect(server.credits).toBe(4);
+    expect(text()).toContain("Your pack reading hasn't arrived yet");
+    expect(text()).not.toContain("needs an account"); // not beside the pending line
     await open("en"); // the resume replays it
     expect(text()).toContain("[MOCK] pack reading in en");
     expect(server.creating).toEqual([id]);
     expect(server.credits).toBe(4);
+  });
+
+  it("keeps a tap told 'never made' while its own request may still be on its way, and replays it once it lands", async () => {
+    server.holdNext = true; // the tap's request is slow to reach the server
+    await open("en");
+    await tap("Use a pack reading");
+    const id = getReading("reading-1")?.paid?.requestId;
+    expect(getReading("reading-1")?.paid?.sentAt).toBeTruthy();
+    await open("en"); // another tab, or a reload: its replay-only resume overtakes the tap and is told "never made"
+    expect(server.paidPosts.filter((p) => p === id)).toHaveLength(1); // only the resume has arrived
+    expect(getReading("reading-1")?.paid?.requestId).toBe(id); // kept, not forgotten
+    expect(text()).toContain("Your pack reading hasn't arrived yet");
+    expect(text()).not.toContain("Use 1 of your");
+    await act(async () => server.release!()); // the tap lands and is charged; its answer reaches the first page
+    await settle();
+    expect(server.credits).toBe(4);
+    expect(text()).toContain("[MOCK] pack reading in en"); // saved by the tap's page, shown here at once
+    expect(server.creating).toEqual([id]); // one pack request for the spread
+    expect(server.credits).toBe(4);
+  });
+
+  it("fetches a slow tap's answer with Try again when the tap's own page never got it", async () => {
+    server.holdNext = true;
+    await open("en");
+    await tap("Use a pack reading");
+    const id = getReading("reading-1")?.paid?.requestId;
+    await open("en"); // the resume overtakes the tap: kept
+    server.lose = 2; // when the tap lands, its answer and the retry are lost (say, its tab was closed)
+    await act(async () => server.release!());
+    await settle();
+    expect(server.credits).toBe(4);
+    expect(text()).not.toContain("[MOCK] pack reading in en");
+    await tap("Try AI again");
+    expect(text()).toContain("[MOCK] pack reading in en");
+    expect(server.creating).toEqual([id]);
+    expect(server.credits).toBe(4);
+  });
+
+  it("forgets an old pending tap the server never got, and offers the choice again", async () => {
+    await open("en");
+    saveReading({ ...getReading("reading-1")!, paid: { locale: "en", requestId: "never-reached-0000002", sentAt: new Date(Date.now() - 10 * 60_000).toISOString() } });
+    await open("en");
+    expect(getReading("reading-1")?.paid).toBeUndefined();
+    expect(text()).toContain("Use 1 of your 5 pack readings for this spread?");
+    expect(server.creating).toHaveLength(0);
   });
 
   it("sends no notes when it only replays an answer", async () => {

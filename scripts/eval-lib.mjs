@@ -183,8 +183,15 @@ export function attribute(before, after, expected) {
   const ledgerCalls = after.calls - before.calls;
   const range = expected === null ? null : Array.isArray(expected) ? expected : [expected, expected];
   const quiet = after.heldMicro === before.heldMicro && (before.inflight ?? 0) === 0 && (after.inflight ?? 0) === 0 && (before.kind !== "file" || before.day === after.day);
+  if (after.heldMicro !== before.heldMicro) {
+    return { costUsd: null, ledgerCalls, costNote: "unknown: the money held changed during this case (a request still unsettled, this case's or another's)" };
+  }
   if (!quiet || (range && (ledgerCalls < range[0] || ledgerCalls > range[1]))) {
     return { costUsd: null, ledgerCalls, costNote: "unknown: other requests ran or settled during this case, so its share can't be told apart" };
+  }
+  // a failure that may have gone unbilled: one more call could be its own or someone else's
+  if (range && range[0] !== range[1] && ledgerCalls !== range[0]) {
+    return { costUsd: null, ledgerCalls, costNote: "unknown: the provider failure may or may not have been billed, so the call counted can't be told apart from another request's" };
   }
   if (!range) {
     return { costUsd: null, ledgerCalls, costNote: "unknown: a response was lost or delayed, so this case's ledger change can't be checked against what it did" };
@@ -242,7 +249,8 @@ export async function runCase(client, c, o) {
   }
   const after = await read();
   const httpStatus = res?.status ?? 0;
-  const code = error ? "network" : typeof body?.code === "string" ? body.code : httpStatus === 200 ? "ok" : `http_${httpStatus}`;
+  // a 200 that isn't JSON (a captive portal, a proxy page) is not an answer
+  const code = error ? "network" : typeof body?.code === "string" ? body.code : httpStatus === 200 ? (body && typeof body === "object" ? "ok" : "bad_response") : `http_${httpStatus}`;
   // calls: what this case made the model do, as far as the answers show (null: can't be known);
   // expect: what the ledger's call count may move by for the cost to be this case's alone
   let outcome, calls, expect;
@@ -251,6 +259,7 @@ export async function runCase(client, c, o) {
   // joined someone else's identical request): no call by this case. After a lost response it may be
   // this request's own answer, so the count is unknown.
   else if (httpStatus === 200 && code === "ok") [outcome, calls] = body?.replayed === true ? (lost ? ["completed", null] : ["replayed", 0]) : ["completed", 1];
+  else if (code === "bad_response") [outcome, calls] = ["error", null];
   else if (httpStatus === 200) [outcome, calls] = ["handled", 0]; // e.g. crisis: answered before any model call
   else if (stillRunning) [outcome, calls] = ["pending", null];
   else if (httpStatus === 409 && code === "retry_new_key") [outcome, calls] = ["failed", lost ? null : 0]; // an earlier attempt with this id failed

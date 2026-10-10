@@ -92,7 +92,9 @@ export interface Reading {
    * id is kept before sending, so a retry or reload replays it and a credit is used once; after
    * success, the paid reading and its follow-ups left.
    */
-  paid?: { locale: Locale; requestId: string; paidReadingId?: string; followupsLeft?: number; followupsTotal?: number };
+  // sentAt: when the tap sent it; a "never made" answer soon after may only mean the tap's own request
+  // (slow, or from another tab) hasn't reached the server yet
+  paid?: { locale: Locale; requestId: string; sentAt?: string; paidReadingId?: string; followupsLeft?: number; followupsTotal?: number };
   /** Follow-up conversation about this reading. */
   thread?: ChatTurn[];
   /** Saved notes the person chose to share with the AI for this reading (ids into the note store). */

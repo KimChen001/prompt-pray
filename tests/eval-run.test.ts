@@ -295,16 +295,24 @@ describe("the evaluation runner after its review (verify-eval findings)", () => 
   it("attributes an unbilled provider failure (the ledger takes the call back) instead of blaming other traffic", () => {
     const q = (o: Partial<{ spentMicro: number; heldMicro: number; calls: number; inflight: number }>) => ({ kind: "sql" as const, spentMicro: 0, heldMicro: 0, calls: 0, inflight: 0, ...o });
     expect(attribute(q({}), q({}), [0, 1])).toEqual({ costUsd: 0, ledgerCalls: 0, costNote: null });
-    expect(attribute(q({}), q({ spentMicro: 900, calls: 1 }), [0, 1])).toMatchObject({ costUsd: 0.0009, ledgerCalls: 1 });
+    // one more call could be its own billed failure or someone else's request: not attributed
+    expect(attribute(q({}), q({ spentMicro: 900, calls: 1 }), [0, 1])).toMatchObject({ costUsd: null, ledgerCalls: 1, costNote: expect.stringMatching(/may or may not have been billed/) });
     expect(attribute(q({}), q({ calls: 2 }), [0, 1]).costUsd).toBeNull();
   });
 
   it("attributes cost while money stays held for other reasons (a pack lot, a hold the file ledger keeps)", () => {
     const q = (o: Partial<{ spentMicro: number; heldMicro: number; calls: number; inflight: number }>) => ({ kind: "sql" as const, spentMicro: 0, heldMicro: 2_000_000, calls: 0, inflight: 0, ...o });
     expect(attribute(q({}), q({ spentMicro: 1500, calls: 1 }), 1)).toMatchObject({ costUsd: 0.0015 });
-    expect(attribute(q({}), q({ spentMicro: 1500, calls: 1, heldMicro: 2_100_000 }), 1).costUsd).toBeNull(); // something new is held
+    expect(attribute(q({}), q({ spentMicro: 1500, calls: 1, heldMicro: 2_100_000 }), 1)).toMatchObject({ costUsd: null, costNote: expect.stringMatching(/money held changed/) }); // something new is held
     const f = (o: Partial<{ spentMicro: number; calls: number }>) => ({ kind: "file" as const, spentMicro: 0, heldMicro: 39_138, calls: 0, inflight: null, day: "2026-10-10", ...o });
     expect(attribute(f({}), f({ spentMicro: 13_600, calls: 1 }), 1)).toEqual({ costUsd: 0.0136, ledgerCalls: 1, costNote: "the file ledger reports spending to $0.0001" });
+  });
+
+  it("records a 200 that isn't JSON (a captive portal) as an error, not an answer", async () => {
+    const s = scripted(() => new Response("<html>Wi-Fi login</html>", { status: 200, headers: { "Content-Type": "text/html" } }));
+    const r = await runCase(s.client, T1, { requestId: requestIdFor("html", "T1"), sleep: noSleep });
+    expect(r).toMatchObject({ outcome: "error", code: "bad_response", inferredCalls: null });
+    expect(summarize([r]).ok).toBe(0);
   });
 
   it("does not take a visitor check without its cookie as confirmed", async () => {
@@ -387,6 +395,20 @@ describe("the command line's exit codes", () => {
     s.close();
     expect(r.code, r.out).toBe(2);
     expect(s.hits.filter((h) => h.startsWith("POST /api/ai/") && h !== "POST /api/ai/visitor")).toHaveLength(0);
+  });
+
+  it("exits 1 before sending anything when the result file can't be written", async () => {
+    const s = await stub({
+      "GET /api/ai/status": status({ available: true, provider: "fake", model: "simulated" }),
+      "POST /api/ai/visitor": (_, res) => { res.statusCode = 204; res.setHeader("x-moona-visitor", "known"); res.end(); },
+    });
+    const dir = mkdtempSync(join(tmpdir(), "moona-eval-out-"));
+    const r = await cli(s.port, ["--yes", "--out", dir], { MOONA_EVAL_OPS_TOKEN: undefined, OPS_TOKEN: undefined }); // a directory, not a file
+    s.close();
+    rmSync(dir, { recursive: true, force: true });
+    expect(r.code, r.out).toBe(1);
+    expect(r.out).toContain("Nothing was sent");
+    expect(s.hits).toEqual(["GET /api/ai/status"]);
   });
 
   it("exits 1 when AI is not available, after an operator sign-in", async () => {
