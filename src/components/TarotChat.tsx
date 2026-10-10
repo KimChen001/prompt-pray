@@ -13,6 +13,10 @@ import type { ChatTurn, Reading } from "@/lib/tarot/types";
 import type { BigThreeNames } from "@/lib/astro/summary";
 import { SupportPanel } from "./bits";
 import { newRequestId, requestAiOnce } from "@/lib/ai/client";
+import { CreditMeter } from "./packs/PacksPanel";
+
+// When the pack's follow-ups for this reading can't be used, replies go back to the free allowance.
+const PACK_GONE = new Set(["no_followups", "lot_closed", "no_such_reading", "reading_mismatch"]);
 import { setReadingSuggestion, sharedNotes } from "./Notes";
 import { ChatThread, Composer } from "./chat/ChatParts";
 
@@ -29,7 +33,7 @@ interface Props {
 }
 
 export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onBusy }: Props) {
-  const { m, locale } = useI18n();
+  const { m, fmt, locale } = useI18n();
   const version = useStoreVersion();
   const [draft, setDraft] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "failed" | "needsAi" | "crisis">(aiUnavailable ? "needsAi" : "idle");
@@ -48,7 +52,11 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
   useEffect(() => () => inflight.current?.abort(), []);
   useEffect(() => onBusy?.(state === "sending"), [state, onBusy]);
 
-  async function send(r: Reading) {
+  // A pack reading's follow-ups, in this language, while some are left (spec §10.2).
+  const packOf = (r: Reading) => (r.paid && r.paid.locale === locale && r.paid.paidReadingId && (r.paid.followupsLeft ?? 0) > 0 ? r.paid : null);
+
+  async function send(r: Reading, free = false) {
+    const pack = free ? null : packOf(r);
     const turns = r.thread ?? [];
     const answered = turns[turns.length - 1];
     const messages = windowMessages(turns);
@@ -72,7 +80,15 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
         },
         shown,
         messages,
+        ...(pack ? { paidReadingId: pack.paidReadingId } : {}),
       }, { requestId, signal: ctrl.signal, onNewId: remember });
+      if (pack && out.state === "failed" && PACK_GONE.has(out.code)) {
+        // the pack's follow-ups are used (or its pack was refunded): say so, and answer from the free allowance
+        const next = patchReading(r.id, (latest) => (latest.paid ? { ...latest, paid: { ...latest.paid, followupsLeft: 0 } } : latest));
+        setNotice(m.packs.followupsDone);
+        if (next) queueMicrotask(() => void send(next, true));
+        return;
+      }
       const stop = (next: "failed" | "needsAi", why: string | null = null) => {
         setNotice(why);
         setState(next);
@@ -87,6 +103,7 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
       if (out.state !== "done" || typeof out.value.reply !== "string") return setState("failed");
       const body = out.value;
       if (epoch !== dataEpoch()) return;
+      if (pack && out.paid) patchReading(r.id, (latest) => (latest.paid ? { ...latest, paid: { ...latest.paid, followupsLeft: out.paid!.followupsLeft } } : latest));
       // A suggestion is only offered; it becomes a note if the person saves it.
       const s = body.remember as { text: string; quote: string } | null | undefined;
       const suggestion = s && !hasSimilarNote(listNotes(), s.text) ? { text: s.text, quote: s.quote, status: "pending" as const } : undefined;
@@ -145,6 +162,8 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
         </p>
       )}
 
+      {packOf(reading) && <CreditMeter left={reading.paid!.followupsLeft!} total={Math.max(2, reading.paid!.followupsLeft!)} label={fmt(m.packs.followupsMeter, { n: reading.paid!.followupsLeft! })} />}
+      {!packOf(reading) && reading.paid?.paidReadingId && reading.paid.locale === locale && <span className="muted small">{m.packs.followupsDone}</span>}
       {state !== "needsAi" && state !== "crisis" && (
         <div className="stack gap-2">
           <Composer id="reading-chat" value={draft} onChange={setDraft} onSend={submit} disabled={state === "sending"} placeholder={m.reading.chatPlaceholder} label={m.reading.chatPlaceholder} autoFocus={autoFocus} />

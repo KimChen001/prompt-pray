@@ -116,6 +116,15 @@ describe("resolvePlan and validatePlan", LEDGER_TIMEOUT, () => {
     expect(resolvePlan({ MOONA_PLAN: "nope" }, cfg).plan.id).toBe("dev");
   });
 
+  it("sets the free readings per visitor from AI_FREE_QUOTA, for every window", () => {
+    const cfg = aiConfig(FAKE);
+    const r = resolvePlan({ MOONA_PLAN: "event-2026-10-28", AI_FREE_QUOTA: "tarot:1, chat:2, bogus:9, natal:x" }, cfg);
+    for (const w of r.plan.windows) expect([w.quotas.tarot.perSubject, w.quotas.chat.perSubject]).toEqual([1, 2]);
+    expect(r.plan.windows.find((w) => w.id === "win:demo")!.quotas.natal.perSubject).toBe(1); // unchanged
+    expect(r.sync.quotas.filter((q) => q.purpose === "tarot").every((q) => q.per_subject === 1)).toBe(true);
+    expect(r.hash).not.toBe(resolvePlan({ MOONA_PLAN: "event-2026-10-28" }, cfg).hash);
+  });
+
   it("flags unsafe leases, a small Demo Day call cap, and a pack pool too small to sell", () => {
     const cfg = aiConfig(FAKE);
     const lease = resolvePlan({ MOONA_PLAN: "event-2026-10-28", AI_LEASE_SECONDS: "60" }, cfg);

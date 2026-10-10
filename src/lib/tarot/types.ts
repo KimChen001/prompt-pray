@@ -87,6 +87,12 @@ export interface Reading {
   ai?: Partial<Record<Locale, TarotAiResult>>;
   /** The request id of the AI interpretation per language, kept before sending so a retry or reload replays it for free. */
   aiRequest?: Partial<Record<Locale, string>>;
+  /**
+   * A pack reading the person chose for this spread (only by tapping "Use a pack reading"). Its request
+   * id is kept before sending, so a retry or reload replays it and a credit is used once; after
+   * success, the paid reading and its follow-ups left.
+   */
+  paid?: { locale: Locale; requestId: string; paidReadingId?: string; followupsLeft?: number };
   /** Follow-up conversation about this reading. */
   thread?: ChatTurn[];
   /** Saved notes the person chose to share with the AI for this reading (ids into the note store). */

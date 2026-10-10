@@ -54,6 +54,10 @@ function ReadingView() {
   // Why live AI is not shown (quota, budget, paused, busy), and whether tonight's budget runs low.
   const [notice, setNotice] = useState<string | null>(null);
   const [low, setLow] = useState(false);
+  // Out of free readings: this browser's pack credits (null when there is no account), and what
+  // happened when the person chose to use one.
+  const [credits, setCredits] = useState<number | null | undefined>(undefined);
+  const [packNote, setPackNote] = useState<string | null>(null);
   const [orb, setOrb] = useState<OrbMode>("quiet");
   const requested = useRef(new Set<string>());
 
@@ -74,14 +78,21 @@ function ReadingView() {
   // language). The request id is saved with the reading before sending, so a reload or a second tab
   // replays the same request for free; "Try again" uses a new one. The result is merged into the
   // latest copy, for its own language only.
-  const generate = useCallback(async (r: Reading, fresh: boolean) => {
+  // A pack reading is never automatic: it is sent only when the person taps "Use a pack reading"
+  // after the free readings ran out. Its id is kept too, so retrying or reloading replays it and the
+  // credit is used once; a failed attempt gives the credit back.
+  const generate = useCallback(async (r: Reading, fresh: boolean, paid = false) => {
     const reqLocale = locale;
     const epoch = dataEpoch();
-    const remember = (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, aiRequest: { ...latest.aiRequest, [reqLocale]: requestId } }));
-    const requestId = (!fresh && r.aiRequest?.[reqLocale]) || newRequestId();
+    const remember = paid
+      ? (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, paid: { locale: reqLocale, requestId } }))
+      : (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, aiRequest: { ...latest.aiRequest, [reqLocale]: requestId } }));
+    const savedPaid = r.paid && r.paid.locale === reqLocale && !r.paid.paidReadingId ? r.paid.requestId : null;
+    const requestId = (paid ? savedPaid : !fresh && r.aiRequest?.[reqLocale]) || newRequestId();
     remember(requestId);
     setAiStatus("loading");
     setNotice(null);
+    setPackNote(null);
     setOrb("pulse");
     let out: AiOutcome<TarotAiResult>;
     try {
@@ -89,6 +100,7 @@ function ReadingView() {
         locale: reqLocale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
         chart: r.includeChart ? chart : undefined,
         notes: sharedNotes(r).map((n) => n.text),
+        ...(paid ? { use: "paid" } : {}),
       }, { requestId, onNewId: remember });
     } catch {
       out = { state: "offline", reason: "network" };
@@ -96,8 +108,14 @@ function ReadingView() {
     if (epoch !== dataEpoch()) return;
     if (out.state === "done") {
       const body = out.value;
-      const next = patchReading(r.id, (latest) => (latest.ai?.[reqLocale] ? latest : { ...latest, ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }));
+      const pack = paid && out.paid ? { locale: reqLocale, requestId, paidReadingId: out.paid.paidReadingId, followupsLeft: out.paid.followupsLeft } : null;
+      const next = patchReading(r.id, (latest) => ({
+        ...latest,
+        ...(latest.ai?.[reqLocale] ? {} : { ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }),
+        ...(pack ? { paid: pack } : {}),
+      }));
       if (!next) return; // deleted while it was being written
+      setCredits(undefined);
       setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
       setAiStatus("live");
       setOrb("settle");
@@ -105,6 +123,13 @@ function ReadingView() {
     }
     setOrb("quiet");
     if (out.state === "quota") {
+      setNotice(m.aiNotice.quota);
+      setCredits(out.credits);
+      return setAiStatus("off");
+    }
+    if (out.state === "no_credits" || out.state === "needs_login") {
+      setPackNote(out.state === "no_credits" ? m.packs.noCredits : m.packs.needsAccount);
+      setCredits(out.state === "no_credits" ? 0 : null);
       setNotice(m.aiNotice.quota);
       return setAiStatus("off");
     }
@@ -144,9 +169,11 @@ function ReadingView() {
   const def = SPREADS[reading.spread];
   const shownSummary = ai ? `${ai.synthesis}\n${ai.action}` : `${pick(analysis.summary)}\n${pick(analysis.action)}`;
   const reflection = ai ? ai.reflection : pick(analysis.reflection);
+  // this spread's AI text in this language came from a pack reading
+  const paidHere = !!(ai && reading?.paid?.paidReadingId && reading.paid.locale === locale);
   const statusLine =
     aiStatus === "loading" ? <span className="status-line"><span className="status-dot" />{m.reading.aiPreparing}</span> :
-    ai ? <span className="muted small">{m.reading.aiReady}{low ? ` ${m.aiNotice.low}` : ""}</span> :
+    ai ? <span className="muted small">{m.reading.aiReady}{paidHere ? ` ${fmt(m.packs.packReading, { n: reading?.paid?.followupsLeft ?? 0 })}` : ""}{low ? ` ${m.aiNotice.low}` : ""}</span> :
     aiStatus === "off" || aiStatus === "failed" ? <span className="muted small">{m.reading.offlineReady}</span> : null;
 
   const offlineBlock = (
@@ -253,6 +280,7 @@ function ReadingView() {
             </div>
           )}
 
+          {paidHere && <p className="muted small" style={{ margin: 0 }}>{fmt(m.packs.packReading, { n: reading.paid?.followupsLeft ?? 0 })}</p>}
           {!ai && aiStatus === "failed" && (
             <p className="notice">
               {m.reading.aiFallback}{" "}
@@ -260,6 +288,17 @@ function ReadingView() {
             </p>
           )}
           {!ai && aiStatus === "off" && <p className="notice-quiet">{notice ?? m.reading.aiOff}</p>}
+          {!ai && aiStatus === "off" && credits !== undefined && credits !== null && (
+            credits > 0 ? (
+              <div className="stack gap-2">
+                <p style={{ margin: 0 }}>{fmt(m.packs.useOne, { n: credits })}</p>
+                <div className="btn-row"><button type="button" className="btn" onClick={() => void generate(reading, false, true)}>{m.packs.useOneCta}</button></div>
+              </div>
+            ) : (
+              <p className="muted small" style={{ margin: 0 }}>{packNote ? `${packNote} ` : ""}<Link href="/me#packs">{m.packs.packLink}</Link></p>
+            )
+          )}
+          {!ai && aiStatus === "off" && credits === null && packNote && <p className="muted small" style={{ margin: 0 }}>{packNote}</p>}
           {!ai && aiStatus !== "loading" && offlineBlock}
 
           {ai && (

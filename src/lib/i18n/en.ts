@@ -66,6 +66,7 @@ const en = {
     reasons: { sold_out: "Sold out for now.", budget_short: "Not enough budget left for another pack tonight.", paused: "Paused for a moment.", closed: "Closed for now.", ledger: "Unavailable right now.", no_pack_pool: "No budget is set aside for packs.", login_unavailable: "Sign-in isn't available yet.", operators_only: "Test purchases are for the team's devices.", unconfigured: "Payments are not enabled.", misconfigured: "Payments are not enabled." },
     useOne: "Use 1 of your {n} pack readings for this spread?",
     useOneCta: "Use a pack reading",
+    noCredits: "No pack readings left on this browser's account.",
     packLink: "Reading packs",
     packReading: "Pack reading, {n} follow-ups included",
     followupsMeter: "Pack follow-ups left: {n}",
