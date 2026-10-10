@@ -7,9 +7,13 @@
 //   npm run ledger -- record-spend --pools ai,win:testing --usd 1.25 --kind manual_spend --entry ID --note "..."
 //   npm run ledger -- set-flag breaker ok|tripped --reason "..."   |   set-flag sales open|closed --reason "..."
 //   npm run ledger -- revoke-mode-test --yes   (going live: release and revoke every fake and test pack)
+//   npm run ledger -- maintenance start --note "migrate 004" [--wait 300]   pause for a migration or deploy
+//   npm run ledger -- maintenance wait [--wait 300] | status
+//   npm run ledger -- maintenance finish --smoke-ok   checks, then puts back the state from before the pause
 import { aiConfig } from "@/lib/ai/config";
 import { pgExecutor, pgliteExecutor, type SqlExecutor } from "@/lib/ledger/drivers";
 import { migrate } from "@/lib/ledger/migrate";
+import { maintenanceDrain, maintenanceFinish, maintenanceStart, maintenanceStatus } from "@/lib/ledger/maintenance";
 import { checkFunctionsVersion, LEDGER_FUNCTIONS_VERSION } from "@/lib/ledger/version";
 import { resolvePlan, validatePlan } from "@/lib/ledger/plans";
 import { createSqlLedger } from "@/lib/ledger/sql-ledger";
@@ -33,13 +37,15 @@ async function connect(): Promise<{ exec: SqlExecutor; where: string }> {
 }
 
 async function main() {
-  if (!cmd) fail("commands: migrate, sync-plan, snapshot, audit, reap, reconcile, record-spend, set-flag, revoke-mode-test");
+  if (!cmd) fail("commands: migrate, sync-plan, snapshot, audit, reap, reconcile, record-spend, set-flag, maintenance, revoke-mode-test");
   const { exec, where } = await connect();
   const ledger = createSqlLedger(exec);
   console.log(`ledger: ${where}`);
   try {
-    // every command but migrate runs the money rules in the database: never on another version
-    if (cmd !== "migrate") await checkFunctionsVersion(exec);
+    // every command but migrate runs the money rules in the database: never on another version. A
+    // maintenance pause starts before the migration (the database still runs the old version), and its
+    // finish checks the version itself before anything is put back.
+    if (cmd !== "migrate" && cmd !== "maintenance") await checkFunctionsVersion(exec);
     switch (cmd) {
       case "migrate":
         console.log(`applied: ${(await migrate(exec, { roles: has("roles") })).join(", ") || "nothing (up to date)"}`);
@@ -95,6 +101,37 @@ async function main() {
         if (!ok) fail("set-flag breaker ok|tripped --reason TEXT   |   set-flag sales open|closed --reason TEXT");
         await ledger.setFlag(key as "breaker" | "sales", value as "ok" | "tripped" | "open" | "closed", flag("reason") ?? "operator");
         console.log(`${key} = ${value}`);
+        break;
+      }
+      case "maintenance": {
+        const sub = rest[0];
+        const waitMs = (Number(flag("wait")) || 300) * 1000;
+        const drain = async () => {
+          const left = await maintenanceDrain(ledger, { timeoutMs: waitMs, onPoll: (n) => console.log(`in flight: ${n}`) });
+          console.log(left === 0 ? "drained: nothing in flight. Migrate and deploy now, then `maintenance finish --smoke-ok`." : `still ${left} in flight; run \`maintenance wait\` again`);
+          if (left > 0) process.exitCode = 3;
+        };
+        if (sub === "start") {
+          const st = await maintenanceStart(ledger, { id: new Date().toISOString(), note: flag("note") ?? "maintenance" });
+          console.log(`paused (${st.id}): sales closed and the breaker tripped; saved sales=${st.sales.saved?.was}, breaker=${st.breaker.saved?.was}`);
+          await drain();
+        } else if (sub === "wait") {
+          await drain();
+        } else if (sub === "status") {
+          console.log(JSON.stringify(await maintenanceStatus(ledger), null, 2));
+        } else if (sub === "finish") {
+          const r = await maintenanceFinish(ledger, exec, { smokeOk: has("smoke-ok") });
+          for (const n of r.notes) console.log(`note: ${n}`);
+          if (!r.restored) {
+            for (const p of r.problems) console.error(`problem: ${p}`);
+            console.error("still paused: fix the problems above, then run `maintenance finish --smoke-ok` again");
+            process.exitCode = 1;
+          } else {
+            console.log(`resumed: sales=${r.status.sales.now}, breaker=${r.status.breaker.now}`);
+          }
+        } else {
+          fail("maintenance start --note TEXT [--wait SECONDS] | wait [--wait SECONDS] | status | finish --smoke-ok");
+        }
         break;
       }
       case "revoke-mode-test":

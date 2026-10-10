@@ -167,8 +167,8 @@ export function createSqlLedger(exec: SqlExecutor, o: { clock?: () => Date } = {
     async audit(): Promise<AuditRow[]> {
       return ((await callAny("audit")) as J[]).map((x) => ({ check: String(x.check), subject: String(x.subject), expected: num(x.expected), actual: num(x.actual) }));
     },
-    async setFlag(key, value, reason) {
-      await call("set_flag", { key, value, reason });
+    async setFlag(key, value, reason, o) {
+      await call("set_flag", { key, value, reason, ...(o?.keepAck ? { keep_ack: true } : {}) });
     },
 
     async ensureAccount(provider, subject) {

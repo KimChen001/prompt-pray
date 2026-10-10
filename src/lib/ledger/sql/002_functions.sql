@@ -3,7 +3,7 @@
 -- `npm run ledger -- migrate` fails closed instead of running new code on old rules. The marker is
 -- derived from this file's text (ledger/version.ts; a test keeps the two in step).
 create or replace function moona.functions_version() returns text language sql immutable
-set search_path = pg_catalog, pg_temp as $$ select 'ledger-fns:a822c437f3f8'::text $$;
+set search_path = pg_catalog, pg_temp as $$ select 'ledger-fns:648ff5f08e74'::text $$;
 
 -- Helpers (security invoker; called only from the definer functions below; EXECUTE revoked from public in 003)
 create or replace function moona._clock(p jsonb) returns timestamptz
@@ -561,8 +561,11 @@ declare v_now timestamptz := moona._clock(p);
 begin
   perform moona._lock();
   if p->>'key' = 'breaker' and p->>'value' in ('ok','tripped') then
+    -- clearing the breaker acknowledges the overrun so far, unless keep_ack: putting back the state from
+    -- before a maintenance pause must not quietly accept an overrun that was never reviewed
     update moona.gate set breaker = p->>'value', breaker_reason = p->>'reason', updated_at = v_now,
-           overrun_ack_micro = case when p->>'value' = 'ok' then (select overrun_micro from moona.pools where id = 'ai') else overrun_ack_micro end
+           overrun_ack_micro = case when p->>'value' = 'ok' and not coalesce((p->>'keep_ack')::boolean, false)
+                                    then (select overrun_micro from moona.pools where id = 'ai') else overrun_ack_micro end
      where id = 1;
   elsif p->>'key' = 'sales' and p->>'value' in ('open','closed') then
     update moona.gate set sales = p->>'value', sales_reason = p->>'reason', updated_at = v_now where id = 1;

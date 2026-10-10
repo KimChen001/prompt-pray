@@ -8,7 +8,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import type { SqlExecutor } from "./drivers";
 
-export const LEDGER_FUNCTIONS_VERSION = "ledger-fns:a822c437f3f8";
+export const LEDGER_FUNCTIONS_VERSION = "ledger-fns:648ff5f08e74";
 
 const MARKER = /ledger-fns:[0-9a-f]{12}/;
 

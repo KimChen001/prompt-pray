@@ -177,7 +177,8 @@ export interface LedgerPort {
   reap(limit?: number): Promise<number>;
   purgeResults(): Promise<number>;
   audit(): Promise<AuditRow[]>;
-  setFlag(key: "breaker" | "sales", value: "ok" | "tripped" | "open" | "closed", reason: string): Promise<void>;
+  /** keepAck: clear the breaker without acknowledging the overrun so far (restoring a saved state). */
+  setFlag(key: "breaker" | "sales", value: "ok" | "tripped" | "open" | "closed", reason: string | null, o?: { keepAck?: boolean }): Promise<void>;
   // paid (the file ledger throws LedgerUnsupported)
   ensureAccount(provider: string, subject: string): Promise<string>;
   entitlements(accountId: string): Promise<EntitlementView>;
