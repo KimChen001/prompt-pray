@@ -5,7 +5,7 @@
 // IP has a high ceiling across all its visitors (sized for ~200 people behind one NAT) as an abuse backstop.
 import "server-only";
 import type { NextRequest } from "next/server";
-import { aiConfig } from "./config";
+import { aiConfig, aiConfigured } from "./config";
 import { sharedLedgerAvailable } from "./budget";
 import { verifyVisitor, visitorSecret, VISITOR_COOKIE } from "@/lib/visitor";
 
@@ -26,7 +26,7 @@ export function hasAiAccess(req: NextRequest): boolean {
 /** Why AI is not offered at all on this deployment (before any per-request check), or null. */
 export function aiUnavailable(): "unconfigured" | "ledger" | "misconfigured" | null {
   const cfg = aiConfig();
-  if (!cfg.apiKey || !cfg.model) return "unconfigured";
+  if (!aiConfigured(cfg)) return "unconfigured";
   if (!sharedLedgerAvailable()) return "ledger"; // no shared spend cap here: fail closed
   if (!visitorSecret()) return "misconfigured"; // deployed without SESSION_SECRET
   return null;

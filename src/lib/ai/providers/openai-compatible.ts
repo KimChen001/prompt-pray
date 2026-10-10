@@ -1,9 +1,11 @@
 // OpenAI-compatible Chat Completions proxies (MIT Parley). No schema enforcement: the schema is
-// stated in the system prompt and the reply is validated afterwards.
+// stated in the system prompt and the reply is validated afterwards. Errors carry whether they were billed.
 import "server-only";
 import type { ModelCaps } from "../capabilities";
 import type { AiConfig } from "../config";
-import { AiError, type JsonRequest, type ProviderResult } from "../types";
+import { outputCap } from "../pricing";
+import { fromOpenAiCompatible } from "../usage";
+import { AiError, billingForStatus, retryAfterSeconds, type JsonRequest, type ProviderResult } from "../types";
 
 export async function callOpenAiCompatible(cfg: AiConfig, caps: ModelCaps, req: JsonRequest, fetchImpl: typeof fetch = fetch): Promise<ProviderResult> {
   const ctrl = new AbortController();
@@ -17,24 +19,20 @@ export async function callOpenAiCompatible(cfg: AiConfig, caps: ModelCaps, req: 
       body: JSON.stringify({
         model: cfg.model,
         messages: [{ role: "system", content: system }, ...req.messages],
-        [caps.tokenParam]: req.maxOutputTokens ?? caps.defaultMaxOutput,
+        [caps.tokenParam]: outputCap(req, cfg, caps.defaultMaxOutput),
         ...(caps.temperature ? { temperature: 0.7 } : {}),
       }),
     });
-    if (!res.ok) throw new AiError("upstream", `HTTP ${res.status}`);
-    const body = (await res.json()) as {
-      model?: string;
-      choices?: { message?: { content?: string | null }; finish_reason?: string }[];
-      usage?: { prompt_tokens?: number; completion_tokens?: number };
-    };
-    const usage = { inputTokens: body.usage?.prompt_tokens ?? 0, outputTokens: body.usage?.completion_tokens ?? 0 };
+    if (!res.ok) throw new AiError("upstream", `HTTP ${res.status}`, { ...billingForStatus(res.status), status: res.status, retryAfterS: retryAfterSeconds(res.headers.get("retry-after")) });
+    const body = (await res.json()) as { choices?: { message?: { content?: string | null }; finish_reason?: string }[] };
+    const usage = fromOpenAiCompatible(body, cfg.model);
     const choice = body.choices?.[0];
-    if (choice?.finish_reason === "length") throw new AiError("bad_output", "reply was cut off (token limit)", usage);
+    if (choice?.finish_reason === "length") throw new AiError("bad_output", "reply was cut off (token limit)", { usage });
     return { text: choice?.message?.content ?? "", model: cfg.model, usage };
   } catch (e) {
     if (e instanceof AiError) throw e;
-    if ((e as Error).name === "AbortError") throw new AiError("timeout");
-    throw new AiError("upstream", (e as Error).message);
+    if ((e as Error).name === "AbortError") throw new AiError("timeout", "timed out", { billing: "unknown" });
+    throw new AiError("upstream", (e as Error).message, { billing: "unknown" });
   } finally {
     clearTimeout(timer);
   }

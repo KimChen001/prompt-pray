@@ -2,7 +2,7 @@
 // Sources: Anthropic model docs (Claude 5.x models reject non-default sampling parameters, run
 // thinking that can't be turned off, and take `output_config.effort`); OpenAI reasoning models
 // (gpt-5*, o*) take `max_completion_tokens`, `reasoning_effort` and no `temperature`.
-export type ProviderKind = "openai-compatible" | "openai" | "anthropic";
+export type ProviderKind = "openai-compatible" | "openai" | "anthropic" | "fake";
 
 export interface ModelCaps {
   /** Send `temperature` at all. */
@@ -22,6 +22,8 @@ const CLAUDE_FALLBACKS = /^claude-(opus-5-5|opus-5|sonnet-5-5|fable-5-1)$/;
 const OPENAI_REASONING = /^(gpt-5|o\d)/;
 
 export function modelCaps(provider: ProviderKind, model: string): ModelCaps {
+  // The offline fake provider (providers/fake.ts): JSON validated afterwards, like a proxy.
+  if (provider === "fake") return { temperature: false, tokenParam: "max_tokens", structured: "none", effort: null, fallbacks: false, defaultMaxOutput: 1500 };
   if (provider === "anthropic") {
     if (CLAUDE_5.test(model)) {
       return { temperature: false, tokenParam: "max_tokens", structured: "anthropic", effort: "anthropic", fallbacks: CLAUDE_FALLBACKS.test(model), defaultMaxOutput: 8000 };
@@ -40,15 +42,16 @@ export function modelCaps(provider: ProviderKind, model: string): ModelCaps {
   return { temperature: !CLAUDE_5.test(model), tokenParam: "max_tokens", structured: "none", effort: null, fallbacks: false, defaultMaxOutput: 1500 };
 }
 
-/** USD per million tokens, used only for the local budget cap. Unknown models use a high estimate. */
+/** USD per million tokens (input/output) for the legacy budget and display; the full table is pricing.ts. */
 export function defaultPrices(provider: ProviderKind, model: string): { input: number; output: number } {
   const table: [RegExp, number, number][] = [
     [/claude-haiku-4-5/, 1, 5],
     [/claude-sonnet-5(-5)?$/, 2, 10],
     [/claude-opus-5-5/, 4, 20],
-    [/claude-opus-5$/, 5, 25],
+    [/claude-opus-(5|4-8)$/, 5, 25],
     [/claude-fable-5/, 10, 50],
   ];
   for (const [re, input, output] of table) if (re.test(model)) return { input, output };
+  if (provider === "fake") return { input: 2, output: 10 }; // priced as Sonnet 5.5 by default
   return provider === "openai-compatible" ? { input: 1, output: 5 } : { input: 15, output: 60 };
 }

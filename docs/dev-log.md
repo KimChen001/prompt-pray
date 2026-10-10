@@ -258,3 +258,20 @@ From Codex's 15:51 review (`outputs/MOONA巡检与原型Review-2026-10-09-1551.m
 - Not done here: production build of this exact tree (Codex is verifying on :3104 and `.next` must not be rebuilt concurrently; a separate worktree build follows), real-model calls (none made).
 
 **Next**: shared persistent budget ledger and paid-pack preparation (design workflow done; implementation spec next).
+
+## Budget S0 + S1: per-visitor limits, correct prices and billing classes (2026-10-09, night)
+
+Spec: `docs/ai-ledger-spec.md` (synthesised by a design workflow: three independent designs, two judges, one spec; the correctness-first design won, built in the minimal design's order).
+
+**S0 (commit 4265231)**: signed visitor cookie (`src/proxy.ts`, `src/lib/visitor.ts`) replaces the per-IP burst limit; serverless hosts fail closed ("ledger") without a shared ledger; deployments without SESSION_SECRET are "misconfigured".
+
+**S1 (this commit)**
+- `src/lib/ai/pricing.ts`: integer nano-USD per token per category (input, output incl. thinking, cache write 5m = 1.25x, 1h = 2x, cache read per model); component-wise ceiling for unknown served models; fallback targets (Opus 5.5 → Opus 5 / 4.8, Sonnet 5.5 → Sonnet 5 …); cost per attempt at the model that ran it; bound = primary + each allowed fallback hop at full output cap.
+- `src/lib/ai/usage.ts`: Anthropic `usage.iterations` → one attempt each (refused attempt + fallback rescue); a served model other than the requested one without iterations is incomplete (bound charged); OpenAI/proxy usage normalised; missing usage incomplete.
+- Adapters return per-attempt usage and classify errors: 429/529 and 4xx-before-work = billed "none" (settled at 0, retry-after kept); timeouts/5xx/connection = "unknown" (hold kept); refusal/truncation/bad JSON = "known".
+- Every purpose has an output cap (thinking included): tarot 3000, chat 1200, talk 1200, natal 5000, horoscope 1500 (`AI_MAX_OUTPUT_*`). Tarot previously reserved and requested the 8000-token default. **Calibrate on test credit**: a cap that is too low truncates (and a truncated reply is still billed).
+- `AI_PROVIDER=fake` (`providers/fake.ts`): in-process stand-in with "[MOCK]" replies that pass every validator, simulated usage, scripted failures (`FAKE_AI_FAILURES`), allowed only off deployments or on a preview with `AI_ALLOW_FAKE_ON_DEPLOY=1`. Its output is never "Live AI".
+
+**Verification**: 622 tests pass (19 new in `tests/pricing.test.ts`); TypeScript passes. No real model call, no spend.
+
+**Next (S2)**: shared SQL ledger (Postgres functions under one global lock, PGlite for offline tests), plans and audit invariants.

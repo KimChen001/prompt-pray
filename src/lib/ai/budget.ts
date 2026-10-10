@@ -10,6 +10,7 @@ import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 import type { BudgetLimits } from "./config";
 import { AiError } from "./types";
+import { isServerlessHost } from "@/lib/host";
 
 export interface BudgetReservation { id: string; day: string; usd: number }
 
@@ -41,7 +42,7 @@ export function utcDay(now = new Date()): string {
 
 export function usageFilePath(env: Record<string, string | undefined> = process.env): { path: string; durable: boolean } {
   // On serverless hosts every instance has its own disk, so a file ledger is never one shared cap.
-  if (env.VERCEL) return { path: env.AI_USAGE_FILE || join("/tmp", "moona-ai-usage.json"), durable: false };
+  if (isServerlessHost(env)) return { path: env.AI_USAGE_FILE || join("/tmp", "moona-ai-usage.json"), durable: false };
   if (env.AI_USAGE_FILE) return { path: env.AI_USAGE_FILE, durable: true };
   return { path: join(process.cwd(), ".data", "ai-usage.json"), durable: true };
 }

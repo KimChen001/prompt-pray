@@ -1,13 +1,17 @@
-// Single entry point for AI generation: config → budget reservation → provider adapter (params
-// from the capability table) → cost recording → JSON parse → caller's validation.
+// Single entry point for AI generation: config → budget reservation of the request's bound → provider
+// adapter (params from the capability table) → settle what was actually billed → JSON parse →
+// caller's validation. Billing follows the error class: "none" settles 0, "known" settles the reported
+// usage (priced per attempt at the model that ran it), "unknown" keeps the hold.
 import "server-only";
-import { modelCaps } from "./capabilities";
-import { aiConfig, type AiConfig } from "./config";
-import { Budget, costUsd, usageFilePath } from "./budget";
+import { modelCaps, type ModelCaps } from "./capabilities";
+import { aiConfig, aiConfigured, type AiConfig } from "./config";
+import { Budget, usageFilePath } from "./budget";
+import { costMicro, outputCap, requestBoundMicro } from "./pricing";
 import { callAnthropic } from "./providers/anthropic";
 import { callOpenAi } from "./providers/openai";
 import { callOpenAiCompatible } from "./providers/openai-compatible";
-import { AiError, type GenerationMeta, type JsonRequest, type ProviderResult } from "./types";
+import { callFake, fakeScriptFromEnv, type FakeScript } from "./providers/fake";
+import { AiError, type GenerationMeta, type JsonRequest, type NormalizedUsage, type ProviderResult } from "./types";
 
 export { AiError } from "./types";
 
@@ -23,6 +27,16 @@ export function extractJson(text: string): unknown {
   }
 }
 
+/** The reply as JSON: strict when the provider enforced a schema, extracted otherwise. */
+export function parseReply(text: string, caps: ModelCaps): unknown {
+  if (caps.structured === "none") return extractJson(text);
+  try {
+    return JSON.parse(text);
+  } catch {
+    return extractJson(text); // schema mode should give clean JSON; fall back defensively
+  }
+}
+
 const budgets = new Map<string, Budget>();
 export function budgetFor(cfg: AiConfig): Budget {
   const file = usageFilePath();
@@ -35,55 +49,63 @@ export interface GenerateDeps {
   cfg?: AiConfig;
   budget?: Budget;
   fetchImpl?: typeof fetch;
+  fake?: FakeScript;
 }
 
-/** Conservative token bound: UTF-8 bytes, schema, message framing, and maximum output. */
+/** The request with its output cap fixed (its own, the purpose's, or the model default). */
+export function sizeRequest(req: JsonRequest, cfg: AiConfig): JsonRequest {
+  return { ...req, maxOutputTokens: outputCap(req, cfg, modelCaps(cfg.provider, cfg.model).defaultMaxOutput) };
+}
+
+/** USD bound for a request as generateJson will send it (legacy name; micro-USD in pricing.ts). */
 export function requestCostBound(req: JsonRequest, cfg: AiConfig): number {
+  const sized = sizeRequest(req, cfg);
+  return requestBoundMicro(sized, cfg, sized.maxOutputTokens!) / 1e6;
+}
+
+let fakeScripts: (() => FakeScript) | null = null;
+
+export async function callProvider(req: JsonRequest, cfg: AiConfig, deps: { fetchImpl?: typeof fetch; fake?: FakeScript } = {}): Promise<ProviderResult> {
   const caps = modelCaps(cfg.provider, cfg.model);
-  const input = Buffer.byteLength(JSON.stringify({ system: req.system, messages: req.messages, schema: req.schema }), "utf8") + 2048;
-  const output = req.maxOutputTokens ?? caps.defaultMaxOutput;
-  if (!Number.isFinite(output) || output <= 0 || !Number.isFinite(cfg.prices.input) || cfg.prices.input <= 0 || !Number.isFinite(cfg.prices.output) || cfg.prices.output <= 0) {
-    throw new AiError("budget", "invalid token budget or prices");
-  }
-  return Math.ceil(costUsd({ inputTokens: input, outputTokens: output }, cfg.prices) * 1_000_000) / 1_000_000;
+  if (cfg.provider === "fake") return callFake(cfg, caps, req, deps.fake ?? (fakeScripts ??= fakeScriptFromEnv(process.env))());
+  if (cfg.provider === "anthropic") return callAnthropic(cfg, caps, req, deps.fetchImpl);
+  if (cfg.provider === "openai") return callOpenAi(cfg, caps, req, deps.fetchImpl);
+  return callOpenAiCompatible(cfg, caps, req, deps.fetchImpl);
+}
+
+/** What to charge for reported usage: its cost when complete, otherwise the request's whole bound. */
+export function chargeMicro(usage: NormalizedUsage, cfg: AiConfig, boundMicro: number): number {
+  return usage.complete && usage.attempts.length ? costMicro(usage, cfg).micro : boundMicro;
 }
 
 export async function generateJson<T>(req: JsonRequest, validate: (data: unknown) => T | null, deps: GenerateDeps = {}): Promise<{ value: T; meta: GenerationMeta }> {
   const cfg = deps.cfg ?? aiConfig();
-  if (!cfg.apiKey || !cfg.model) throw new AiError("unconfigured");
+  if (!aiConfigured(cfg)) throw new AiError("unconfigured");
   const caps = modelCaps(cfg.provider, cfg.model);
   // Defence in depth (guard.ts checks first): never spend without a ledger every instance shares.
-  if (!deps.budget && !usageFilePath().durable) throw new AiError("budget", "no shared ledger");
+  if (!deps.budget && !usageFilePath().durable) throw new AiError("ledger", "no shared ledger");
   const budget = deps.budget ?? budgetFor(cfg);
 
-  const reservation = await budget.reserveRequest(requestCostBound(req, cfg));
+  const sized = sizeRequest(req, cfg);
+  const boundMicro = requestBoundMicro(sized, cfg, sized.maxOutputTokens!);
+  const reservation = await budget.reserveRequest(boundMicro / 1e6);
   if (typeof reservation === "string") throw new AiError("budget", reservation);
 
   let result: ProviderResult;
   try {
-    result =
-      cfg.provider === "anthropic" ? await callAnthropic(cfg, caps, req, deps.fetchImpl) :
-      cfg.provider === "openai" ? await callOpenAi(cfg, caps, req, deps.fetchImpl) :
-      await callOpenAiCompatible(cfg, caps, req, deps.fetchImpl);
+    result = await callProvider(sized, cfg, deps);
   } catch (e) {
-    if (e instanceof AiError && e.usage && e.usage.inputTokens + e.usage.outputTokens > 0) {
-      await budget.settle(reservation, costUsd(e.usage, cfg.prices)); // billed even though unusable
-    } // A timeout / unknown usage keeps its durable hold rather than restoring spend capacity.
+    if (e instanceof AiError) {
+      if (e.billing === "none") await budget.settle(reservation, 0); // certainly not billed: give the money back
+      else if (e.billing === "known" && e.usage) await budget.settle(reservation, chargeMicro(e.usage, cfg, boundMicro) / 1e6); // billed even though unusable
+    } // A timeout / unknown billing keeps its durable hold rather than restoring spend capacity.
     throw e;
   }
-  const cost = costUsd(result.usage, cfg.prices);
-  if (result.usage.inputTokens + result.usage.outputTokens > 0) await budget.settle(reservation, cost);
+  const charged = chargeMicro(result.usage, cfg, boundMicro);
+  await budget.settle(reservation, charged / 1e6);
 
-  const data = caps.structured === "none" ? extractJson(result.text) : parseStrict(result.text);
+  const data = parseReply(result.text, caps);
   const value = validate(data);
-  if (value === null) throw new AiError("bad_output", "reply failed validation");
-  return { value, meta: { provider: cfg.provider, model: result.model, generatedAt: new Date().toISOString(), costUsd: +cost.toFixed(6) } };
-}
-
-function parseStrict(text: string): unknown {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return extractJson(text); // schema mode should give clean JSON; fall back defensively
-  }
+  if (value === null) throw new AiError("bad_output", "reply failed validation", { usage: result.usage });
+  return { value, meta: { provider: cfg.provider, model: result.model, generatedAt: new Date().toISOString(), costUsd: +(charged / 1e6).toFixed(6) } };
 }
