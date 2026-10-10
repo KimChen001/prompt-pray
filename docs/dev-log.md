@@ -697,3 +697,47 @@ Left as is, written down:
 - **Regression.** The flow holds.
 
 Screenshots: `outputs/review-2026-10-10-claude/` (`final-afde6f7/`, `two-tabs-98220a2/`, `final-793d430/`). Real Postgres, a real model and real payments remain unverified.
+
+## One pack reading per draw (2026-10-10, afternoon; Codex's independent review)
+
+**Codex's review of 793d430: P2 and P3**
+- **P2: one draw could still be bought twice.** A clock set back by even 1 second, while the first tap was on its way, let the page forget its pending id. The SQL ledger also accepted two paid ids for the same account and reading. Codex reproduced both, in the page component and on PGlite (credits 5 to 3).
+- **P3: the eval runner counted a 200 with any `code` as an answer.** For example `{"code":"ok"}`.
+
+**The fix, on the server (589df9b, 6e8385c)**
+- **Migration 004.** It adds `moona.requests.draw_key`, with a partial unique index on live pack readings (calling, or succeeded with their text kept) per account and draw.
+- **The key.** A pack reading carries HMAC(account | the saved reading's own id | its reading hash).
+  - The same draw has one key in any tab, language or clock.
+  - A new draw of the same cards is new.
+  - The same id with other cards is another draw. Daily readings have a fixed id; after "Clear all local data" the card can change.
+- **Reserve step 1b.** Any other request for the draw gets the live one:
+  - a 202 while it runs, then its reading;
+  - its reading once done, never charged;
+  - a replay-only resume under another id also gets it.
+- **Bought again.** A failed or expired attempt (its credit came back), and a reading past its result time to live, may be bought again.
+- **Refusals.** reserve refuses a pack reading without a draw key, and the tarot route refuses one without `drawId` (400).
+- **The page.**
+  - It sends `drawId` with every pack request.
+  - It keeps a pending tap within the grace on either side of now. Only the offer depends on that now; the money doesn't.
+  - A tarot reading says which locale it is in, so a draw's reading replayed into the other language is filed under its own language and shows the other-language note.
+- **Eval runner.**
+  - Every 200 is checked against its route's answer shape: the right types, non-empty, and no code.
+  - Only the crisis reply is answered without a model.
+  - A malformed body no longer crashes text extraction.
+- **Deploying 004 on a live database.** Close sales and wait for no pack reading in flight before migrating. A request already running when 004 lands has no draw key.
+
+**Checks**
+- **Codex's repros:** both now fail, so the defect they assert is gone.
+- **Ledger tests** cover concurrent ids, the 202 path, replay-only under another id, the same cards as a new draw, another account, failed then retry, the result TTL, and a missing key.
+- **Page tests** cover a 1 s rollback, a 10-minute offset in either direction, and the other language.
+- **Browser check of 589df9b (both languages):**
+  - Codex's 1 s rollback, and clocks 10 minutes back or ahead, used one credit per draw.
+  - The late request was replayed with the same paid reading.
+  - A new draw of the same question cost a new credit.
+- **Tests:** 841 pass; the real-Postgres test is skipped. TypeScript and the content check pass.
+
+**Still to verify outside this machine:** real Postgres concurrency, migration 004 and the role grants, a small batch with a real model, Stripe test mode, and real phones.
+- **Browser check of 6e8385c (both languages):**
+  - A daily card drawn again after "Clear all local data" came out different both times. It cost one more credit, and the reading was about the new card.
+  - A forgotten tap answered in the other language got the draw's reading back with no second credit, filed under its own language with the note shown.
+- **Screenshots:** `outputs/review-2026-10-10-claude/draw-rule-589df9b/` and `draw-rule-6e8385c/`.
