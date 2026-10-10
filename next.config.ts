@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
   turbopack: { root: path.join(__dirname) },
   // The place search reads this file at runtime; make sure deployments ship it with the route.
   outputFileTracingIncludes: { "/api/places": ["./data/places.json"] },
+  // PGlite loads its WASM and data files from its own package folder at runtime (local ledger only).
+  serverExternalPackages: ["@electric-sql/pglite"],
   async headers() {
     return [
       {

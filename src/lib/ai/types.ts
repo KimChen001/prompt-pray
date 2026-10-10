@@ -63,6 +63,14 @@ export interface GenerationMeta {
   costUsd: number;
 }
 
+/** What a client is told about a generated text. "simulated" = the offline fake provider, never "Live AI". */
+export interface PublicMeta {
+  provider: ProviderKind;
+  model: string;
+  generatedAt: string; // ISO instant
+  source: "live" | "simulated";
+}
+
 export type AiErrorCode = "unconfigured" | "timeout" | "upstream" | "bad_output" | "refused" | "budget" | "ledger";
 
 /**

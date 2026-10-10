@@ -275,3 +275,47 @@ Spec: `docs/ai-ledger-spec.md` (synthesised by a design workflow: three independ
 **Verification**: 622 tests pass (19 new in `tests/pricing.test.ts`); TypeScript passes. No real model call, no spend.
 
 **Next (S2)**: shared SQL ledger (Postgres functions under one global lock, PGlite for offline tests), plans and audit invariants.
+
+## Budget S2: the shared SQL ledger, plans and audit (2026-10-09, late night)
+
+Built to `docs/ai-ledger-spec.md` §3.3, §4 and §7. Nothing calls it yet: routes switch to it in S3.
+
+**Ledger**
+- `src/lib/ledger/sql/*.sql`, applied by `migrate.ts` with checksums:
+  - 001 tables (immutable once applied).
+  - 002 PL/pgSQL functions, re-applied whenever they change. Every money or entitlement change is one function call that takes the single gate-row lock first.
+  - 003 database roles (real Postgres only).
+  - 900 a test clock, applied only by tests.
+- `sql-ledger.ts`: one `select moona.<fn>($1::jsonb)` per method, from an allowlist. Connection-level failures become `LedgerUnavailable`; anything else is a bug and is rethrown. Timestamps come back as UTC ISO.
+- `drivers.ts`: two backends.
+  - `pg` 8.23.1 (Supabase transaction pooler, pool cached across warm starts).
+  - PGlite 0.5.8 (real Postgres in WASM, dev dependency, `serverExternalPackages`).
+- `file-ledger.ts`: the old JSON budget behind the same contract, for local single-process development (free mode only).
+- `factory.ts` (`MOONA_LEDGER`):
+  - `auto` uses Postgres when `DATABASE_URL` is set, and otherwise refuses on serverless.
+  - It falls back to the file ledger locally.
+  - `pglite` and `memory` migrate and sync themselves.
+  - Postgres never does. A plan-hash mismatch is reported to operators only.
+- `plans.ts`:
+  - The `dev` and `event-2026-10-28` plans from §7.2: $100 = AI $50 + hosting $20 + reserve $30.
+  - Windows: testing $10, Demo Day $35 (with a $15/h slice), after $5. The pack pool is $0, so sales stay closed.
+  - Environment overrides and a stable hash.
+  - Pack allocation is computed from the worst-case request bounds (`ai/worst-case.ts`): 5 x (reading + 2 follow-ups).
+  - `validatePlan`.
+- `levels.ts`: ok / notice / warn / critical / exhausted, for the status route.
+
+**Two deviations from the spec SQL (both in `sync_plan`)**
+- **Overlap check:** it now only compares windows that can still admit. Switching dev → event mid-testing closed `win:dev` "at now" and then refused, because the closed window overlapped testing in the past.
+- **Slice cap:** a live slice's cap is never lowered below what it already spent and holds. Before, lowering the hourly slice mid-hour broke the audit's cap invariant.
+
+**Tests (offline, PGlite)**: `ledger.smoke`, `ledger.free`, `ledger.reaper`, `ledger.plan`, `ledger.concurrency`, `ledger.fuzz` (free). `audit()` is empty after every step.
+- **Fuzz:** the default run is 3 seeds x 400 steps, with three profiles (tight quotas, provider storms, tight caps). It checks that every denial kind is actually reached. `LEDGER_FUZZ_FULL=1` runs 21 x 2000.
+- **Concurrency:** PGlite serialises statements, so this proves per-call atomicity, not row locking under contention. That needs `ledger.pg` against a real database (S3+, `TEST_DATABASE_URL`).
+
+**Verification**: 661 tests pass; TypeScript passes. No database account, no real model call, no payment.
+
+**Next (S3)**:
+- `meter.ts` (reserve → provider → complete/fail with retries) and the five AI routes plus status on the ledger.
+- Client request ids for replay.
+- Visitor ids become UUIDs minted via `mint_visitor` (the ledger requires `v:<uuid>`; the Phase 0 cookie id is 22 base64url characters).
+- The quota and "simulated" labels in the UI.

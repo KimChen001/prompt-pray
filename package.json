@@ -33,6 +33,7 @@
     "lucide-react": "0.487.0",
     "motion": "12.23.24",
     "next": "16.4",
+    "pg": "8.23.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "server-only": "^0.0.1",
@@ -40,8 +41,10 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@tailwindcss/postcss": "4.1.12",
     "@types/node": "^26.6.4",
+    "@types/pg": "8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "tailwindcss": "4.1.12",

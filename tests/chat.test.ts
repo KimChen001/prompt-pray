@@ -54,7 +54,8 @@ describe("message window", () => {
   });
 });
 
-describe("ten-plus rounds through the routes (mocked provider)", () => {
+// 24+ route calls each; under a full parallel run (PGlite workers included) they can pass 5 s.
+describe("ten-plus rounds through the routes (mocked provider)", { timeout: 30_000 }, () => {
   const reply = (content: string) => new Response(JSON.stringify({ choices: [{ message: { content }, finish_reason: "stop" }], usage: { prompt_tokens: 900, completion_tokens: 300 } }), { status: 200 });
   const post = (url: string, body: unknown) => new NextRequest(`http://localhost${url}`, { method: "POST", body: JSON.stringify(body) });
   beforeEach(() => {
