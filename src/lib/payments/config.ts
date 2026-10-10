@@ -31,6 +31,14 @@ export interface PaymentsConfig {
   siteUrl: string;
 }
 
+/**
+ * Whether reading packs are on here: sold (fake, test or live), or no longer sold while orders already
+ * taken still settle. Only then is an account looked up for a visitor (so none is made elsewhere).
+ */
+export function packsOn(cfg: PaymentsConfig): boolean {
+  return cfg.state === "fake" || cfg.state === "test" || cfg.state === "live" || !!cfg.webhookMode;
+}
+
 export type LedgerKindForPayments = "postgres" | "pglite" | "memory" | "file" | null;
 
 /** A fixed secret for fake-mode webhooks under `next dev` (not a credential: nothing real is signed with it). */

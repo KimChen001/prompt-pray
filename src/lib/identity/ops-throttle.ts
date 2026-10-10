@@ -6,6 +6,8 @@ import "server-only";
 
 const WINDOW_MS = 10 * 60 * 1000, MAX_FAILS = 10, MAX_NETWORKS = 5000, SWEEP_MS = 30_000;
 const fails = new Map<string, number[]>();
+// attempts still being checked, so a burst of parallel guesses can't all pass before any is recorded
+const pending = new Map<string, number>();
 let swept = 0;
 
 function sweep(now: number) {
@@ -26,6 +28,23 @@ export function opsThrottled(bucket: string, now = Date.now()): boolean {
   return recentFor(bucket, now).length >= MAX_FAILS;
 }
 
+/** Starts an attempt from this network, or refuses it when the network has failed too often lately. */
+export function opsBegin(bucket: string, now = Date.now()): boolean {
+  sweep(now);
+  const inFlight = pending.get(bucket) ?? 0;
+  if (recentFor(bucket, now).length + inFlight >= MAX_FAILS) return false;
+  pending.set(bucket, inFlight + 1);
+  return true;
+}
+
+/** Ends an attempt started with opsBegin; a failed one is remembered. */
+export function opsSettle(bucket: string, failed: boolean, now = Date.now()): void {
+  const left = (pending.get(bucket) ?? 1) - 1;
+  if (left > 0) pending.set(bucket, left);
+  else pending.delete(bucket);
+  if (failed) recordOpsFailure(bucket, now);
+}
+
 export function recordOpsFailure(bucket: string, now = Date.now()): void {
   const recent = recentFor(bucket, now);
   fails.delete(bucket); // re-added as the newest
@@ -39,5 +58,6 @@ export function opsThrottleSizeForTests(): number {
 }
 export function resetOpsThrottleForTests(): void {
   fails.clear();
+  pending.clear();
   swept = 0;
 }

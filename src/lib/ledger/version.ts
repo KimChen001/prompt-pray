@@ -2,7 +2,7 @@
 // reports its own through moona.functions_version(); a server never runs against another version,
 // because the money rules live in those functions (a deploy that skipped `npm run ledger -- migrate`
 // would otherwise run new pages on old rules). The marker is a hash of the file's text with the
-// marker itself blanked, so it changes whenever the functions do; tests/ledger.version.test.ts fails
+// marker itself blanked, so it changes whenever the functions do; tests/review-round3.test.ts fails
 // until both the file's marker and this constant are updated (it prints the new value).
 import "server-only";
 import { createHash } from "node:crypto";
@@ -24,8 +24,12 @@ export async function checkFunctionsVersion(exec: SqlExecutor): Promise<void> {
   try {
     have = (await exec.query<{ v: string }>("select moona.functions_version() as v")).rows[0]?.v ?? null;
   } catch (e) {
+    const msg = (e as Error).message ?? "";
+    if (/permission denied/i.test(msg)) {
+      throw new Error("moona: this database role may not run moona.functions_version(); re-apply the grants with `npm run ledger -- migrate --roles` (owner URL)");
+    }
     // a database migrated before the marker existed has no such function
-    if (!/functions_version/.test((e as Error).message ?? "")) throw e;
+    if (!/functions_version/.test(msg)) throw e;
   }
   if (have !== LEDGER_FUNCTIONS_VERSION) {
     throw new Error(`moona: the database runs ledger functions ${have ?? "from before versioning"}, this server needs ${LEDGER_FUNCTIONS_VERSION}; run \`npm run ledger -- migrate\` with the owner URL`);

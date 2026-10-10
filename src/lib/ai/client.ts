@@ -50,6 +50,12 @@ export interface RequestAiOptions {
   /** How long to keep retrying "in progress" and "busy" (default 45 s). */
   maxWaitMs?: number;
   fetchImpl?: typeof fetch;
+  /**
+   * Set to true when an earlier attempt of this call may have reached the server: a lost response,
+   * or a 202 for a request it is still running. The final answer then can't prove that nothing was
+   * recorded under this id.
+   */
+  trace?: { maybeRecorded: boolean };
 }
 
 // The visitor cookie is set before the first AI request of a page (see /api/ai/visitor). Without a
@@ -150,6 +156,7 @@ export async function requestAi<T>(path: string, body: Record<string, unknown>, 
       res = await doFetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, signal: o.signal });
     } catch (e) {
       if (o.signal?.aborted) throw e;
+      if (o.trace) o.trace.maybeRecorded = true;
       // a same-id retry is only safe when the server will recognise this browser again
       if (networkRetried || !prepared.stable) return { state: "offline", reason: "network" };
       networkRetried = true;
@@ -158,6 +165,7 @@ export async function requestAi<T>(path: string, body: Record<string, unknown>, 
     const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
     const code = typeof json.code === "string" ? json.code : null;
     const again = res.status === 202 || (res.status === 503 && (code === "busy" || code === "cooldown")) || (res.status === 429 && code === "subject_busy");
+    if (res.status === 202 && o.trace) o.trace.maybeRecorded = true;
     if (again) {
       const ms = delay(json.retryAfterMs);
       if (Date.now() - started + ms > maxWait) return { state: "offline", reason: "busy" };

@@ -30,7 +30,7 @@ import { readingCard, readingShareText } from "@/lib/share/content";
 import { StateOrb, type OrbMode } from "@/components/cosmos/StateOrb";
 
 // The outages that close the follow-up chat (see `down` below).
-const CLOSES_CHAT: ReadonlySet<OfflineReason> = new Set(["unconfigured", "locked", "paused", "ledger", "budget"]);
+const CLOSES_CHAT: ReadonlySet<OfflineReason> = new Set(["unconfigured", "locked", "paused", "ledger"]);
 
 // A refusal that proves this tap's pack request was never recorded, or was recorded as failed (its
 // credit came back): the gates in front of the ledger, the ledger's own refusals, a crisis reply,
@@ -74,10 +74,10 @@ function ReadingView() {
   // Out of free readings: this browser's pack credits (null when there is no account), and what
   // happened when the person chose to use one.
   const [credits, setCredits] = useState<number | null | undefined>(undefined);
-  // Why AI itself can't be used here right now (not configured, locked, paused, the ledger down, the
-  // free budget spent): only then is the follow-up chat closed. Running out of free readings is not
-  // that (pack follow-ups and the chat's own allowance still work), nor is the free budget while this
-  // spread has pack follow-ups left (pack money is kept apart).
+  // Why AI itself can't be used here right now (not configured, locked, paused, the ledger down): only
+  // then is the follow-up chat closed. Running out of free readings is not that (pack follow-ups and
+  // the chat's own allowance still work), nor is a spent reading budget (a shorter chat reply may still
+  // fit, and pack money is kept apart); the chat says so itself if its own request is refused.
   const [down, setDown] = useState<OfflineReason | null>(null);
   const [packNote, setPackNote] = useState<string | null>(null);
   const [orb, setOrb] = useState<OrbMode>("quiet");
@@ -177,7 +177,9 @@ function ReadingView() {
     setPackNote(null);
     setOrb("pulse");
     const body = { ...bodyFor(r, reqLocale), use: "paid" };
-    const send = (replayOnly: boolean) => requestAi<TarotAiResult>("/api/ai/tarot", replayOnly ? { ...body, replayOnly: true } : body, { requestId });
+    // a replay only fetches the answer, so it sends no notes (one shared since can't be sent, or stop it)
+    const trace = { maybeRecorded: false };
+    const send = (replayOnly: boolean) => requestAi<TarotAiResult>("/api/ai/tarot", replayOnly ? { ...body, notes: [], replayOnly: true } : body, { requestId, trace });
     let out: AiOutcome<TarotAiResult>;
     try {
       out = await send(how === "resume");
@@ -196,9 +198,10 @@ function ReadingView() {
     }
     if (out.state !== "done") {
       // Anything else keeps the id, unless a fresh tap was refused before the ledger recorded it (or
-      // recorded it as failed, which gives the credit back). A kept id costs nothing: the next resume
-      // asks for that answer only, and is told when there is none.
-      if (how === "tap" && refusedBeforeRecording(out)) forget();
+      // recorded it as failed, which gives the credit back), and no earlier attempt of it may have got
+      // through (a lost response, a 202). A kept id costs nothing: the next resume asks for that answer
+      // only, and is told when there is none.
+      if (how === "tap" && !trace.maybeRecorded && refusedBeforeRecording(out)) forget();
       return showRefusal(out);
     }
     const value = out.value;
@@ -263,7 +266,7 @@ function ReadingView() {
   const paidHere = !!(ai && reading?.paid?.paidReadingId && reading.paid.locale === locale);
   // records from before the total was saved: the product's 2, or more if more are left
   const packFollowups = reading?.paid?.followupsTotal ?? Math.max(2, reading?.paid?.followupsLeft ?? 0);
-  const chatClosed = down !== null && !(down === "budget" && !!reading.paid?.paidReadingId && (reading.paid.followupsLeft ?? 0) > 0);
+  const chatClosed = down !== null;
   // a pack reading asked for whose answer hasn't arrived: it is fetched again, never paid again
   const paidPending = !ai && aiStatus !== "loading" && !!reading.paid && !reading.paid.paidReadingId;
   const statusLine =
@@ -388,7 +391,13 @@ function ReadingView() {
               <button type="button" className="btn-link" onClick={() => setAttempt((n) => n + 1)}>{m.reading.retryAi}</button>
             </p>
           )}
-          {!ai && aiStatus === "off" && <p className="notice-quiet">{notice ?? m.reading.aiOff}</p>}
+          {!ai && aiStatus === "off" && (
+            <p className="notice-quiet">
+              {notice ?? m.reading.aiOff}
+              {/* a short outage (the ledger, a pause): try again here instead of reloading */}
+              {(down === "ledger" || down === "paused") && !paidPending && <>{" "}<button type="button" className="btn-link" onClick={() => setAttempt((n) => n + 1)}>{m.reading.retryAi}</button></>}
+            </p>
+          )}
           {!ai && reading.paid?.paidReadingId && reading.paid.locale !== locale && (
             <p className="muted small" style={{ margin: 0 }}>{fmt(m.packs.paidOtherLanguage, { lang: m.packs.langNames[reading.paid.locale] })}</p>
           )}

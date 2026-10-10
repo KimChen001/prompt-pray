@@ -38,6 +38,8 @@ async function main() {
   const ledger = createSqlLedger(exec);
   console.log(`ledger: ${where}`);
   try {
+    // every command but migrate runs the money rules in the database: never on another version
+    if (cmd !== "migrate") await checkFunctionsVersion(exec);
     switch (cmd) {
       case "migrate":
         console.log(`applied: ${(await migrate(exec, { roles: has("roles") })).join(", ") || "nothing (up to date)"}`);

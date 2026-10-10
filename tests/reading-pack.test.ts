@@ -19,7 +19,7 @@ vi.mock("@/components/CheckIns", () => ({ CheckInPlanner: () => null }));
 
 import { I18nProvider } from "@/lib/i18n";
 import ReadingPage from "@/app/tarot/r/[id]/page";
-import { getReading, saveReading } from "@/lib/store";
+import { getReading, saveNote, saveReading } from "@/lib/store";
 import { resetVisitorForTests } from "@/lib/ai/client";
 import type { Locale } from "@/lib/tarot/types";
 
@@ -38,6 +38,8 @@ interface Server {
   outage?: Refusal; freeRefusal?: Refusal; visitorDown?: boolean;
   /** the next new pack request is recorded and charged, then its answer is lost behind this error */
   chargeThenRefuse?: Refusal;
+  /** the next same-id retry of a recorded pack request is refused before the ledger (a gate in front of it) */
+  gateNext?: Refusal;
   followups: number; chatPaid: Map<string, string>; chatCreates: string[]; chatLose: number;
 }
 let server: Server;
@@ -69,6 +71,7 @@ function handle(url: string, init?: RequestInit): Response | Promise<Response> {
   if (url === "/api/ai/tarot" && body.use === "paid") {
     server.paidPosts.push(body.requestId);
     server.bodies.push(String(init?.body));
+    if (server.gateNext && server.paid.has(body.requestId)) { const r = server.gateNext; server.gateNext = undefined; return refuse(r); }
     const known = server.paid.get(body.requestId);
     if (known?.failed) return json(409, { code: "retry_new_key" });
     if (!known) {
@@ -321,16 +324,56 @@ describe("pack readings on the reading page", () => {
     expect(container.querySelector("#reading-chat")).not.toBeNull();
   });
 
-  it("keeps pack follow-ups open when the free budget is spent, and closes the chat without them", async () => {
+  it("keeps the chat open when the reading budget is spent (a shorter chat reply may still fit; pack money is apart)", async () => {
     server.freeRefusal = { status: 503, code: "budget" };
     await open("en");
-    expect(container.querySelector("#reading-chat")).toBeNull(); // no pack here: the chat would be refused
+    expect(container.querySelector("#reading-chat")).not.toBeNull();
     server.freeRefusal = undefined;
     await open("en");
     await tap("Use a pack reading");
     server.freeRefusal = { status: 503, code: "budget" };
-    await open("zh"); // this language's free reading is refused for budget; pack money is separate
+    await open("zh");
     expect(container.querySelector("#reading-chat")).not.toBeNull();
     expect(text()).toContain("解读包追问剩余：2");
+  });
+
+  it("keeps a tap's request when an earlier attempt may have got through, even if the last answer is a gate's refusal", async () => {
+    server.lose = 1; // the tap is recorded and charged, its answer lost
+    server.gateNext = { status: 401, code: "login_required" }; // the same-id retry is turned away before the ledger
+    await open("en");
+    await tap("Use a pack reading");
+    const id = getReading("reading-1")?.paid?.requestId;
+    expect(id).toBeTruthy(); // kept: the first attempt may have been recorded
+    expect(server.credits).toBe(4);
+    await open("en"); // the resume replays it
+    expect(text()).toContain("[MOCK] pack reading in en");
+    expect(server.creating).toEqual([id]);
+    expect(server.credits).toBe(4);
+  });
+
+  it("sends no notes when it only replays an answer", async () => {
+    saveNote({ id: "note-1", text: "I start a new job in March", origin: "typed", createdAt: "2026-10-12T12:00:00Z" } as never);
+    saveReading({ ...getReading("reading-1")!, noteIds: ["note-1"] });
+    server.lose = 2;
+    await open("en");
+    await tap("Use a pack reading");
+    await open("en");
+    const sent = server.bodies.map((b) => JSON.parse(b) as { replayOnly?: boolean; notes: string[] });
+    expect(sent.filter((b) => !b.replayOnly).every((b) => b.notes.includes("I start a new job in March"))).toBe(true); // the tap
+    const replays = sent.filter((b) => b.replayOnly);
+    expect(replays.length).toBeGreaterThan(0);
+    expect(replays.every((b) => b.notes.length === 0)).toBe(true);
+    expect(text()).toContain("[MOCK] pack reading in en");
+  });
+
+  it("offers Try again after a short outage, and the chat opens again when it works", async () => {
+    server.freeLeft = 1;
+    server.outage = { status: 503, code: "ledger" };
+    await open("en");
+    expect(container.querySelector("#reading-chat")).toBeNull();
+    server.outage = undefined;
+    await tap("Try AI again");
+    expect(text()).toContain("[MOCK] free reading in en");
+    expect(container.querySelector("#reading-chat")).not.toBeNull();
   });
 });

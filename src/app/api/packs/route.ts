@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { aiConfig } from "@/lib/ai/config";
 import { accountFor, currentPlan, packsContext } from "@/lib/payments/context";
+import { packsOn } from "@/lib/payments/config";
 import { purchaseAction, salesState } from "@/lib/payments/service";
 
 const NO_STORE = { "Cache-Control": "no-store" };
@@ -20,7 +21,8 @@ export async function GET(req: NextRequest) {
   const sales = salesState(c.cfg, snap, { isOperator: c.operator, deployed: c.deployed, authReady: c.auth.ready({ isOperator: c.operator }), product: plan.product, packSlackMicro: Math.round(plan.plan.packSlackUsd * 1e6) });
   let accountId: string | null = null, entitlements;
   try {
-    accountId = await accountFor(req, c);
+    // only where packs are on: elsewhere no account is made for a free visitor opening this panel
+    accountId = packsOn(c.cfg) ? await accountFor(req, c) : null;
     if (accountId && c.ledger) entitlements = await c.ledger.entitlements(accountId);
   } catch {
     accountId = null;

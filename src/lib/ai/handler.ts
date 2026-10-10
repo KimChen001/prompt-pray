@@ -17,7 +17,7 @@ import { ensureVisitor } from "@/lib/identity/visitor";
 import { getLedger, ledgerKind } from "@/lib/ledger/factory";
 import { LedgerUnavailable, type LedgerPort, type ReqMode } from "@/lib/ledger/port";
 import type { EnvLike } from "@/lib/host";
-import { paymentsConfig } from "@/lib/payments/config";
+import { packsOn, paymentsConfig } from "@/lib/payments/config";
 
 export interface AiRouteSpec<P, T> {
   purpose: Purpose;
@@ -123,9 +123,8 @@ export async function handleAi<P, T>(req: NextRequest, spec: AiRouteSpec<P, T>, 
   // one. Only where reading packs are on (or were, and orders still settle): elsewhere no account is
   // looked up, so none is ever made for a free visitor.
   let credits: number | null = null;
-  const pay = outcome.kind === "denied" && outcome.reason === "subject_quota" ? paymentsConfig(env, { ledgerKind: ledgerKind(env), authKind: auth.kind }) : null;
-  const packsOn = !!pay && (pay.state === "fake" || pay.state === "test" || pay.state === "live" || !!pay.webhookMode);
-  if (packsOn && ledger.supportsPaid && auth.ready({ isOperator: operator })) {
+  const quota = outcome.kind === "denied" && outcome.reason === "subject_quota";
+  if (quota && packsOn(paymentsConfig(env, { ledgerKind: ledgerKind(env), authKind: auth.kind })) && ledger.supportsPaid && auth.ready({ isOperator: operator })) {
     try {
       const account = await auth.getAccount(req, { visitorId: visitor.id, ledger, isOperator: operator });
       if (account) credits = (await ledger.entitlements(account.accountId)).credits;

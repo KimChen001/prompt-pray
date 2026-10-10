@@ -4,6 +4,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { POST as tarotPOST } from "@/app/api/ai/tarot/route";
+import { GET as packsGET } from "@/app/api/packs/route";
+import { POST as sessionPOST } from "@/app/api/ops/session/route";
 import { setLedgerForTests } from "@/lib/ledger/factory";
 import { readSql } from "@/lib/ledger/migrate";
 import { checkFunctionsVersion, functionsVersionOf, LEDGER_FUNCTIONS_VERSION } from "@/lib/ledger/version";
@@ -23,6 +25,11 @@ describe("the ledger functions version", LEDGER_TIMEOUT, () => {
     expect(LEDGER_FUNCTIONS_VERSION).toBe(expected); // and LEDGER_FUNCTIONS_VERSION in ledger/version.ts
     const t = await makeTestLedger();
     await expect(checkFunctionsVersion(t.exec)).resolves.toBeUndefined();
+  });
+
+  it("says how to fix a database role that may not read the version", async () => {
+    const denied = { query: async () => { throw new Error("permission denied for function functions_version"); }, exec: async () => undefined, close: async () => undefined };
+    await expect(checkFunctionsVersion(denied)).rejects.toThrow(/migrate --roles/);
   });
 
   it("stops the server on a database that runs other functions, or functions from before versioning", async () => {
@@ -67,6 +74,14 @@ describe("free visitors where packs are off", LEDGER_TIMEOUT, () => {
     expect(await accounts(t)).toBe(0);
   });
 
+  it("get no account from opening the packs panel where packs are off", async () => {
+    vi.stubEnv("PAYMENTS_MODE", "off");
+    const first = await tarotPOST(post({ ...triad, requestId: "round3-free-0000003" }));
+    const res = await packsGET(new NextRequest("http://localhost/api/packs", { headers: { cookie: cookieOf(first)! } }));
+    expect((await res.json()).account).toMatchObject({ signedIn: false });
+    expect(await accounts(t)).toBe(0);
+  });
+
   it("are told their credits where packs are on", async () => {
     vi.stubEnv("PAYMENTS_MODE", "fake");
     const second = await useUpFreeReadings();
@@ -76,7 +91,18 @@ describe("free visitors where packs are off", LEDGER_TIMEOUT, () => {
 });
 
 describe("operator sign-in throttle", () => {
-  afterEach(() => resetOpsThrottleForTests());
+  afterEach(() => {
+    resetOpsThrottleForTests();
+    vi.unstubAllEnvs();
+  });
+
+  it("limits parallel wrong guesses from one network too", async () => {
+    vi.stubEnv("OPS_TOKEN", `round3-operator-${"y".repeat(16)}`);
+    const guess = () => sessionPOST(new NextRequest("http://localhost/api/ops/session", { method: "POST", body: JSON.stringify({ token: "wrong" }), headers: { "x-forwarded-for": "198.51.100.7" } }));
+    const codes = (await Promise.all(Array.from({ length: 30 }, guess))).map((r) => r.status);
+    expect(codes.filter((c) => c === 401).length).toBeLessThanOrEqual(10);
+    expect(codes.filter((c) => c === 429).length).toBeGreaterThanOrEqual(20);
+  });
 
   it("turns a guessing network away, and stays bounded under made-up networks", () => {
     const now = Date.parse("2026-10-12T12:00:00Z");
