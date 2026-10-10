@@ -398,6 +398,37 @@ describe("pack readings on the reading page", () => {
     expect(server.credits).toBe(4);
   });
 
+  it("does not treat a pending tap from the future (a clock set back) as just sent", async () => {
+    await open("en");
+    saveReading({ ...getReading("reading-1")!, paid: { locale: "en", requestId: "never-reached-0000003", sentAt: new Date(Date.now() + 24 * 3600_000).toISOString() } });
+    await open("en");
+    expect(getReading("reading-1")?.paid).toBeUndefined();
+    expect(text()).toContain("Use 1 of your 5 pack readings for this spread?");
+  });
+
+  it("opens the chat again when the server answers during the grace (it was closed by an outage)", async () => {
+    server.chargeThenRefuse = undefined;
+    server.refuseNext = { status: 503, code: "ledger" };
+    await open("en");
+    await tap("Use a pack reading"); // refused by a ledger outage: the chat closes, the tap is kept
+    expect(container.querySelector("#reading-chat")).toBeNull();
+    await tap("Try AI again"); // the server is back and was never given the tap: "never made", within the grace
+    expect(getReading("reading-1")?.paid?.requestId).toBeTruthy();
+    expect(container.querySelector("#reading-chat")).not.toBeNull();
+  });
+
+  it("asks for this language's own reading again once the pack reading lands in the other language", async () => {
+    server.holdNext = true;
+    await open("en");
+    await tap("Use a pack reading");
+    await open("zh"); // the other language while the tap is on its way
+    await act(async () => server.release!());
+    await settle();
+    expect(text()).toContain("这次抽牌的解读包解读是英文的");
+    expect(text()).not.toContain("AI 暂时不可用");
+    expect(server.credits).toBe(4);
+  });
+
   it("forgets an old pending tap the server never got, and offers the choice again", async () => {
     await open("en");
     saveReading({ ...getReading("reading-1")!, paid: { locale: "en", requestId: "never-reached-0000002", sentAt: new Date(Date.now() - 10 * 60_000).toISOString() } });

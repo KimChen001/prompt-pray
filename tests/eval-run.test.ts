@@ -2,7 +2,7 @@
 // in-process (the SQL ledger and the legacy file ledger, simulated provider), against scripted servers
 // for the failure paths, and the command line's dry run against a stub server. Codex 08:00 review.
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -169,6 +169,8 @@ function scripted(ai: (body: Record<string, unknown>, n: number) => Response | P
 }
 const T1 = CASES.find((c) => c.id === "T1")!;
 const tarotReply = { cards: [{ position: 0, insight: "a" }], synthesis: "s", action: "a", reflection: "r", meta: { provider: "fake", model: "simulated", source: "simulated" } };
+// an answer with every route's main field, for runs over cases of several kinds
+const anyReply = { ...tarotReply, overview: "o", themes: [], reply: "r", overall: "d", love: "l", work: "w" };
 
 describe("the evaluation runner's failure paths", () => {
   it("stops before any AI request when the server's visitor cookie does not stick", async () => {
@@ -207,7 +209,7 @@ describe("the evaluation runner's failure paths", () => {
   });
 
   it("stops the whole run when the budget is spent, and marks the rest as not run", async () => {
-    const s = scripted((_, n) => (n === 1 ? json(200, tarotReply) : json(503, { code: "budget" })));
+    const s = scripted((_, n) => (n === 1 ? json(200, anyReply) : json(503, { code: "budget" })));
     const some = CASES.slice(0, 5);
     const results = await runEval({ client: s.client, cases: some, runId: "b", measure: null, sleep: noSleep });
     expect(results.map((r) => r.outcome)).toEqual(["completed", "refused", "not_run", "not_run", "not_run"]);
@@ -311,8 +313,12 @@ describe("the evaluation runner after its review (verify-eval findings)", () => 
   it("records a 200 that isn't JSON (a captive portal) as an error, not an answer", async () => {
     const s = scripted(() => new Response("<html>Wi-Fi login</html>", { status: 200, headers: { "Content-Type": "text/html" } }));
     const r = await runCase(s.client, T1, { requestId: requestIdFor("html", "T1"), sleep: noSleep });
-    expect(r).toMatchObject({ outcome: "error", code: "bad_response", inferredCalls: null });
+    expect(r).toMatchObject({ outcome: "error", code: "bad_response", inferredCalls: null, costNote: expect.stringMatching(/wasn't readable/) });
     expect(summarize([r]).ok).toBe(0);
+    for (const odd of ["{}", '{"error":"blocked by proxy"}', "[]"]) {
+      const p = scripted(() => new Response(odd, { status: 200, headers: { "Content-Type": "application/json" } }));
+      expect((await runCase(p.client, T1, { requestId: requestIdFor("odd", "T1"), sleep: noSleep })).code, odd).toBe("bad_response");
+    }
   });
 
   it("does not take a visitor check without its cookie as confirmed", async () => {
@@ -391,9 +397,17 @@ describe("the command line's exit codes", () => {
       "GET /api/ai/status": status({ available: true, provider: "fake", model: "simulated" }),
       "POST /api/ai/visitor": (_, res) => { res.statusCode = 204; res.setHeader("x-moona-visitor", "new"); res.end(); },
     });
-    const r = await cli(s.port, ["--yes", "--out", join(tmpdir(), `moona-eval-stub-${process.pid}.json`)], { MOONA_EVAL_OPS_TOKEN: undefined, OPS_TOKEN: undefined });
+    const kept = join(tmpdir(), `moona-eval-stub-kept-${process.pid}.json`);
+    writeFileSync(kept, '{"label":"PREVIOUS RUN"}');
+    const fresh = join(tmpdir(), `moona-eval-stub-${process.pid}.json`);
+    const r = await cli(s.port, ["--yes", "--out", fresh], { MOONA_EVAL_OPS_TOKEN: undefined, OPS_TOKEN: undefined });
+    const r2 = await cli(s.port, ["--yes", "--out", kept], { MOONA_EVAL_OPS_TOKEN: undefined, OPS_TOKEN: undefined });
     s.close();
     expect(r.code, r.out).toBe(2);
+    expect(r2.code, r2.out).toBe(2);
+    expect(existsSync(fresh)).toBe(false); // made only for the check, removed when the run stops
+    expect(readFileSync(kept, "utf8")).toContain("PREVIOUS RUN"); // an existing file is not emptied
+    rmSync(kept, { force: true });
     expect(s.hits.filter((h) => h.startsWith("POST /api/ai/") && h !== "POST /api/ai/visitor")).toHaveLength(0);
   });
 
@@ -407,7 +421,7 @@ describe("the command line's exit codes", () => {
     s.close();
     rmSync(dir, { recursive: true, force: true });
     expect(r.code, r.out).toBe(1);
-    expect(r.out).toContain("Nothing was sent");
+    expect(r.out).toContain("No AI request was sent");
     expect(s.hits).toEqual(["GET /api/ai/status"]);
   });
 

@@ -194,8 +194,11 @@ function ReadingView() {
     }
     if (epoch !== dataEpoch()) return;
     const forget = () => patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
-    if (out.state === "failed" && out.code === "no_such_request" && how === "resume" && sentAt && Date.now() - Date.parse(sentAt) < PENDING_GRACE_MS) {
-      // the tap's own request may still be on its way (slow, or sent from another tab): keep it for now
+    const age = sentAt ? Date.now() - Date.parse(sentAt) : NaN; // NaN or negative (a clock set back): not recent
+    if (out.state === "failed" && out.code === "no_such_request" && how === "resume" && age >= 0 && age < PENDING_GRACE_MS) {
+      // the tap's own request may still be on its way (slow, or sent from another tab): keep it for now;
+      // the server did answer, so AI itself is up
+      setDown(null);
       setOrb("quiet");
       return setAiStatus("failed");
     }
@@ -235,7 +238,9 @@ function ReadingView() {
       setAiStatus((s) => (s === "live" ? s : "saved"));
       return;
     }
-    const key = `${reading.id}|${locale}|${attempt}`;
+    // once a pack reading lands (from this page, another tab, or another language), this language
+    // gets its own request again: its free reading, or the note and the choice it should show
+    const key = `${reading.id}|${locale}|${attempt}|${reading.paid?.paidReadingId ?? ""}`;
     if (requested.current.has(key)) return;
     requested.current.add(key);
     // a pack reading asked for but not yet seen is fetched again (replay only: no new credit)

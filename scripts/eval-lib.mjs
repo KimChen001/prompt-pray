@@ -161,6 +161,13 @@ export function requestIdFor(runId, caseId) {
   return id;
 }
 
+/** Whether a 200 body has the shape of this route's answer. */
+function looksLikeAnswer(kind, body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return false;
+  const field = { natal: "overview", tarot: "synthesis", chat: "reply", horoscope: "overall" }[kind];
+  return field ? typeof body[field] === "string" : true;
+}
+
 /** All model-written text in a response, for checks and for graders. */
 export function outputText(kind, body) {
   if (!body || body.code) return "";
@@ -249,8 +256,8 @@ export async function runCase(client, c, o) {
   }
   const after = await read();
   const httpStatus = res?.status ?? 0;
-  // a 200 that isn't JSON (a captive portal, a proxy page) is not an answer
-  const code = error ? "network" : typeof body?.code === "string" ? body.code : httpStatus === 200 ? (body && typeof body === "object" ? "ok" : "bad_response") : `http_${httpStatus}`;
+  // a 200 that isn't this route's answer (a captive portal, a proxy page, JSON of another shape) is not one
+  const code = error ? "network" : typeof body?.code === "string" ? body.code : httpStatus === 200 ? (looksLikeAnswer(c.kind, body) ? "ok" : "bad_response") : `http_${httpStatus}`;
   // calls: what this case made the model do, as far as the answers show (null: can't be known);
   // expect: what the ledger's call count may move by for the cost to be this case's alone
   let outcome, calls, expect;
@@ -269,7 +276,9 @@ export async function runCase(client, c, o) {
   else [outcome, calls] = ["error", null];
   const cost = readFailed
     ? { costUsd: null, ledgerCalls: null, costNote: "unknown: reading the ledger failed during this case" }
-    : attribute(before, after, expect === undefined ? calls : expect);
+    : code === "bad_response"
+      ? { ...attribute(before, after, null), costUsd: null, costNote: "unknown: the server's answer wasn't readable" }
+      : attribute(before, after, expect === undefined ? calls : expect);
   const text = outputText(c.kind, body);
   const checks = [
     ...(c.expectCode ? [{ name: `handled as ${c.expectCode}`, pass: body?.code === c.expectCode }] : []),

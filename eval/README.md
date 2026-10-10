@@ -71,11 +71,11 @@ The cases are kept separate from the examples inside the prompts. `eval/build.ts
    - Every server cap still applies, and the run stops cleanly at any of them.
    - Exit codes:
      - 0: done, or a dry run.
-     - 1: the server or its status can't be used.
+     - 1: the server or its status can't be used, or the result file can't be written.
      - 2: stopped before any AI request (the visitor check).
      - 3: the run broke off; what was done is saved.
-   - The result file is written before anything is sent, so a path that can't be written stops the run with nothing sent.
-   - A 200 that isn't JSON (a captive portal, a proxy page) is recorded as `error` with code `bad_response`, not as an answer.
+   - The result file is checked before any AI request (opened without being emptied), so a path that can't be written stops the run before anything costs money.
+   - A 200 that isn't this route's answer (a captive portal, a proxy page, JSON of another shape) is recorded as `error` with code `bad_response`, not as an answer.
 4. **Second provider.** Stop the server, switch providers, start it again and repeat steps 2–3.
 5. **Blind sheet.** `npm run eval:blind -- eval/results/<run A>.json eval/results/<run B>.json --out eval/results/blind`, then give graders only `blind.html`.
 6. **Rating.** Graders rate each case (facts, specificity, answers the question, uncertainty, style, overall) and click "Export ratings".

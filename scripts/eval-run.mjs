@@ -15,10 +15,11 @@
 // --operator-requests sends the AI requests from the operator device too, so they follow the
 // server's operator rule (AI_OPERATOR_QUOTA_EXEMPT); by default they come from an ordinary visitor
 // and its free quota applies. See eval/README.md.
-// Exit codes: 0 done (or dry run), 1 the server or its status can't be used, 2 stopped before any AI
-// request (the visitor check), 3 the run broke off (what was done is saved).
+// Exit codes: 0 done (or dry run), 1 the server or its status can't be used, or the result file can't
+// be written (checked before any AI request), 2 stopped before any AI request (the visitor check),
+// 3 the run broke off (what was done is saved).
 import { randomBytes } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { closeSync, existsSync, mkdirSync, openSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { ACCESS_COOKIE, CookieJar, DEFAULTS, describeLedger, ledgerView, makeClient, prepareVisitor, readStatus, replayCheck, runEval, signInOperator, summarize } from "./eval-lib.mjs";
 
@@ -80,22 +81,33 @@ async function main() {
     return 0;
   }
 
-  // the result file must be writable before anything is sent (it is saved after every case)
+  // the result file must be writable before any AI request (it is saved after every case); it is
+  // opened without being emptied, and a file made only for this check is removed if the run stops here
   const runId = randomBytes(9).toString("base64url");
   const startedAt = new Date().toISOString();
   const label = String(args.label ?? `${s0.provider}-${s0.model}`).replace(/[^\w.-]+/g, "_");
   const out = String(args.out ?? join("eval", "results", `${startedAt.slice(0, 19).replace(/[:T]/g, "-")}-${label}.json`));
   const header = { evalVersion: set.version, label, base, provider: s0.provider, model: s0.model, runId, operator: signedIn.operator, operatorRequests: asOperator, ledger: view?.kind ?? null, replay: replays, startedAt };
   const save = (results, extra = {}) => writeFileSync(out, JSON.stringify({ ...header, ...extra, summary: summarize(results), results }, null, 2) + "\n");
+  const existed = existsSync(out);
   try {
     mkdirSync(dirname(out), { recursive: true });
-    save([]);
+    if (existed && statSync(out).isDirectory()) throw new Error("it is a directory");
+    closeSync(openSync(out, "a"));
   } catch (e) {
-    return stop(`Can't write the result file ${out}: ${e?.message ?? e}. Nothing was sent.`, 1);
+    return stop(`Can't write the result file ${out}: ${e?.message ?? e}. No AI request was sent.`, 1);
   }
+  const unmake = () => {
+    try {
+      if (!existed) rmSync(out);
+    } catch {
+      // nothing to tidy
+    }
+  };
 
   const visitor = await prepareVisitor(aiClient);
   if (!visitor.ok) {
+    unmake();
     return stop(visitor.reason === "cookie_dropped"
       ? "Stopped before any AI request: the server's visitor cookie did not stick, so every request would run as a new visitor."
       : `Stopped before any AI request: the visitor check failed (${visitor.reason}).`, 2);
