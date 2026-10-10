@@ -184,7 +184,7 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
       {state !== "needsAi" && state !== "crisis" && (
         <div className="stack gap-2">
           <Composer id="reading-chat" value={draft} onChange={setDraft} onSend={submit} disabled={state === "sending"} placeholder={m.reading.chatPlaceholder} label={m.reading.chatPlaceholder} autoFocus={autoFocus} />
-          <span className="muted small">{m.reading.chatNote}</span>
+          <span className="muted small">{packOf(reading) ? m.packs.chatNote : m.reading.chatNote}</span>
         </div>
       )}
     </section>

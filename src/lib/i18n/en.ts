@@ -66,6 +66,7 @@ const en = {
     reasons: { sold_out: "Sold out for now.", budget_short: "Not enough budget left for another pack tonight.", paused: "Paused for a moment.", closed: "Closed for now.", ledger: "Unavailable right now.", no_pack_pool: "No budget is set aside for packs.", login_unavailable: "Sign-in isn't available yet.", operators_only: "Test purchases are for the team's devices.", unconfigured: "Payments are not enabled.", misconfigured: "Payments are not enabled." },
     useOne: "Use 1 of your {n} pack readings for this spread?",
     useOneCta: "Use a pack reading",
+    chatNote: "To reply, your messages and this reading's cards are sent to the AI service. A pack follow-up's reply is kept on our server for 30 days, so a retry doesn't pay twice.",
     pending: "Your pack reading hasn't arrived yet. Trying again fetches that same reading and never uses another credit.",
     noCredits: "No pack readings left on this browser's account.",
     paidOtherLanguage: "This spread's pack reading is in {lang}. Switch the language to read it; its follow-ups work in either language.",

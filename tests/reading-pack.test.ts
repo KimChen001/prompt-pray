@@ -137,6 +137,7 @@ describe("pack readings on the reading page", () => {
     expect(text()).toContain("[MOCK] free reading in en");
     expect(server.paidPosts).toHaveLength(0);
     expect(text()).not.toContain("Use a pack reading");
+    expect(text()).toContain("Our server keeps only the reply, for 2 hours");
   });
 
   it("asks before using a credit, uses exactly one, and opens the follow-ups right away", async () => {
@@ -148,6 +149,8 @@ describe("pack readings on the reading page", () => {
     expect(text()).toContain("Pack reading, 2 follow-ups included");
     expect(text()).toContain("Pack follow-ups left: 2");
     expect(container.querySelector("#reading-chat")).not.toBeNull(); // the composer is there at once
+    expect(text()).toContain("A pack follow-up's reply is kept on our server for 30 days"); // what the server really keeps
+    expect(text()).not.toContain("for 2 hours");
     expect(server.credits).toBe(4);
     await open("en"); // reload
     expect(server.credits).toBe(4);
