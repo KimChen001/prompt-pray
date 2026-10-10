@@ -73,6 +73,14 @@ async function askVisitor(doFetch: typeof fetch, signal: AbortSignal): Promise<P
   return { ok: false, outcome: { state: "failed", code: code ?? `http_${res.status}` } };
 }
 
+const DROPS_KEY = "moona.visitor.unkept";
+function dropsCookies(): boolean {
+  try { return typeof sessionStorage !== "undefined" && sessionStorage.getItem(DROPS_KEY) === "1"; } catch { return false; }
+}
+function rememberDropsCookies(): void {
+  try { sessionStorage.setItem(DROPS_KEY, "1"); } catch { /* storage blocked too: nothing to remember with */ }
+}
+
 async function prepareOnce(doFetch: typeof fetch): Promise<Prepared> {
   const ctrl = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -87,8 +95,11 @@ async function prepareOnce(doFetch: typeof fetch): Promise<Prepared> {
     try {
       const first = await askVisitor(doFetch, ctrl.signal);
       if (!first.ok || first.stable) return first;
-      // a visitor was just minted: ask once more to see whether the browser kept the cookie
+      // A visitor was just minted: ask once more to see whether the browser kept the cookie (once per
+      // tab session: a browser that drops it is remembered, so it doesn't mint two visitors per page).
+      if (dropsCookies() || ctrl.signal.aborted) return { ok: true, stable: false };
       const again = await askVisitor(doFetch, ctrl.signal);
+      if (again.ok && !again.stable) rememberDropsCookies();
       return again.ok ? { ok: true, stable: again.stable } : again;
     } catch {
       return { ok: false, outcome: { state: "offline", reason: "network" } };

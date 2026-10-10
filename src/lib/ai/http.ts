@@ -49,6 +49,7 @@ export function meterResponse(o: MeterOutcome<unknown>, body: Record<string, unk
       if (r === "plan_unsynced") return json({ code: "unconfigured" }, 503);
       if (BUDGET.has(r)) return json({ code: "budget" }, 503);
       if (r === "no_credits") return json({ code: r }, 402); // the sales state joins with packs (S4)
+      if (r === "no_such_request") return json({ code: r }, 404); // a replay-only request that was never made
       return json({ code: r }, 409); // no_such_reading, reading_mismatch, no_followups, lot_closed
     }
   }

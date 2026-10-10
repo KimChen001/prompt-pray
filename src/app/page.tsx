@@ -37,7 +37,7 @@ import { formatLocalDate, localDateKey, userTimeZone } from "@/lib/time";
 import type { AiMeta, BasisItem, ChatTurn, DrawnCard, Reading } from "@/lib/tarot/types";
 import { Orb } from "@/components/cosmos/Orb";
 import { Whispers } from "@/components/cosmos/Whispers";
-import { SupportPanel } from "@/components/bits";
+import { SupportPanel, aiSource } from "@/components/bits";
 
 type CardInfo = { id: string; reversed: boolean; href: string; daily: boolean };
 type MoonInfo = { phase: string; lit: number; sign: string; hint: string; next: string };
@@ -228,7 +228,10 @@ export default function AskPage() {
                   <div className="space-y-3">
                     <p className="m-0 whitespace-pre-wrap text-[15px] text-white/75">{x.text}</p>
                     {x.kind === "text" && x.meta && (
-                      <p className="m-0 font-mono-g text-[10px] uppercase tracking-[0.18em] text-[#5ee6d0]/80">{m.badge.live}</p>
+                      // a reply from the offline rehearsal model is never labelled live AI
+                      aiSource(x.meta, true) === "simulated"
+                        ? <p className="m-0 font-mono-g text-[10px] uppercase tracking-[0.18em] text-[#f2be6b]/80">{m.badge.simulated}</p>
+                        : <p className="m-0 font-mono-g text-[10px] uppercase tracking-[0.18em] text-[#5ee6d0]/80">{m.badge.live}</p>
                     )}
                     {x.kind === "card" && <CardPanel card={x.card} />}
                     {x.kind === "moon" && <MoonPanel moon={x.moon} />}

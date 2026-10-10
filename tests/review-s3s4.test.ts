@@ -178,11 +178,10 @@ describe("S3/S4 review regressions", LEDGER_TIMEOUT, () => {
     expect([res.status, await res.json()]).toEqual([200, { received: true, outcome: "unknown_payment" }]);
   });
 
-  it("throttles operator sign-in in total too, so spoofed networks can't guess without limit", async () => {
+  it("never lets failed sign-ins from other networks lock the team out", async () => {
     vi.stubEnv("OPS_TOKEN", OPS);
-    let limited = 0;
-    for (let i = 0; i < 120; i++) if ((await sessionPOST(post("/api/ops/session", { token: `guess-${i}` }, undefined, `10.${i}.0.1`))).status === 429) limited++;
-    expect(limited).toBeGreaterThanOrEqual(20); // the total cap (100 per 10 minutes) holds across "networks"
+    for (let i = 0; i < 120; i++) expect((await sessionPOST(post("/api/ops/session", { token: `guess-${i}` }, undefined, `10.${i}.0.1`))).status).toBe(401);
+    expect((await sessionPOST(post("/api/ops/session", { token: OPS }, undefined, "192.0.2.99"))).status).toBe(200);
   });
 
   it("asks the provider for the price once per process, not per request", async () => {

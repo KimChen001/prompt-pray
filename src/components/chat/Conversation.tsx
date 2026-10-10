@@ -276,14 +276,14 @@ export function Conversation({ id }: { id: string | null }) {
             <button type="button" className="btn-link" onClick={undoLast}>{m.talk.editLast}</button>
           </p>
         )}
-        <div ref={endRef} />
-
         {status !== "crisis" && (
           <div className="talk-dock">
             <Composer value={draft} onChange={setDraft} onSend={send} disabled={status === "sending"} placeholder={session ? m.talk.placeholderMore : m.talk.placeholder} label={m.talk.inputLabel} autoFocus />
             <p className="muted small" style={{ margin: "8px 0 0" }}>{m.talk.sendNote}</p>
           </div>
         )}
+        {/* after the dock: scrolling here leaves the newest reply (and its note buttons) above the dock, not under it */}
+        <div ref={endRef} />
       </div>
 
       <aside className="talk-side desktop-only">

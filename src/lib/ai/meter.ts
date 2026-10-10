@@ -33,6 +33,8 @@ export interface MeterInput<T> {
   cacheScope: "subject" | "shared";
   resultTtlSeconds: number;
   paid?: { readingHash: string; paidReadingId?: string };
+  /** Paid only: fetch the answer to this subject's earlier request with this id; never start one. */
+  replayOnly?: boolean;
 }
 
 export type MeterOutcome<T> =
@@ -93,6 +95,7 @@ export async function meteredGenerate<T>(a: MeterInput<T>, deps: MeterDeps = {})
       idemKey: idemKey(keys.input, a.subjectKey, a.purpose, a.requestId), subjectKey: a.subjectKey, accountId: a.accountId,
       cacheScope: a.cacheScope === "shared" ? "shared" : a.subjectKey, purpose: a.purpose, mode: a.mode, inputHash: hash, boundMicro,
       quotaExempt: a.quotaExempt, paidReadingId: a.paid?.paidReadingId, readingHash: a.paid?.readingHash,
+      replayOnly: a.mode !== "free" && !!a.replayOnly,
     });
   } catch (e) {
     if (e instanceof LedgerUnavailable) return { kind: "unavailable" };

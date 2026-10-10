@@ -164,7 +164,7 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
         </p>
       )}
 
-      {packOf(reading) && <CreditMeter left={reading.paid!.followupsLeft!} total={Math.max(reading.paid!.followupsTotal ?? 0, reading.paid!.followupsLeft!)} label={fmt(m.packs.followupsMeter, { n: reading.paid!.followupsLeft! })} />}
+      {packOf(reading) && <CreditMeter left={reading.paid!.followupsLeft!} total={reading.paid!.followupsTotal ?? Math.max(2, reading.paid!.followupsLeft!)} label={fmt(m.packs.followupsMeter, { n: reading.paid!.followupsLeft! })} />}
       {!packOf(reading) && reading.paid?.paidReadingId && <span className="muted small">{m.packs.followupsDone}</span>}
       {state !== "needsAi" && state !== "crisis" && (
         <div className="stack gap-2">

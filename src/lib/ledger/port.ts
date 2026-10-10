@@ -9,7 +9,7 @@ export type Billing = "known" | "none" | "unknown" | "bound";
 export type DenyReason =
   | "plan_unsynced" | "key_reused" | "paused" | "cooldown" | "busy" | "subject_busy" | "no_window" | "total_usd"
   | "window_usd" | "window_calls" | "slice_usd" | "purpose_closed" | "subject_quota" | "subject_failures" | "no_credits"
-  | "no_such_reading" | "reading_mismatch" | "no_followups" | "lot_closed" | "paid_capacity";
+  | "no_such_reading" | "reading_mismatch" | "no_followups" | "lot_closed" | "paid_capacity" | "no_such_request";
 
 export interface StoredResult {
   value: unknown;
@@ -39,6 +39,8 @@ export interface ReserveRequest {
   quotaExempt?: boolean;
   paidReadingId?: string;
   readingHash?: string; // hex
+  /** Paid only: return this subject's earlier request with this key, never create one (no_such_request). */
+  replayOnly?: boolean;
 }
 
 export type ReserveOutcome =

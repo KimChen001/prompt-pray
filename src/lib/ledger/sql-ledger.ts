@@ -109,6 +109,7 @@ export function createSqlLedger(exec: SqlExecutor, o: { clock?: () => Date } = {
       const j = await call("reserve", {
         idem_key: r.idemKey, subject_key: r.subjectKey, account_id: r.accountId ?? null, cache_scope: r.cacheScope, purpose: r.purpose, mode: r.mode,
         input_hash: r.inputHash, bound_micro: r.boundMicro, quota_exempt: !!r.quotaExempt, paid_reading_id: r.paidReadingId ?? null, reading_hash: r.readingHash ?? null,
+        replay_only: !!r.replayOnly,
       });
       switch (j.status) {
         case "reserved": return { status: "reserved", requestId: String(j.request_id), leaseExpiresAt: iso(j.lease_expires_at)! };

@@ -28,7 +28,7 @@ const tarotText = (locale: string, paid: boolean) => ({ cards: [0, 1, 2].map((po
 const json = (status: number, b: unknown) => new Response(JSON.stringify(b), { status, headers: { "Content-Type": "application/json" } });
 
 /** A server that keeps credits like the ledger: one credit per new paid id; a known id replays. */
-interface Server { freeLeft: number; credits: number; paid: Map<string, { locale: string; failed?: boolean }>; lose: number; paidPosts: string[] }
+interface Server { freeLeft: number; credits: number; paid: Map<string, { locale: string; failed?: boolean }>; lose: number; paidPosts: string[]; creating: string[]; bodies: string[]; refuseNext?: { status: number; code: string } }
 let server: Server;
 let root: Root | null = null;
 let container: HTMLElement;
@@ -39,11 +39,15 @@ function handle(url: string, init?: RequestInit): Response | Promise<Response> {
   const body = init?.body ? JSON.parse(String(init.body)) : {};
   if (url === "/api/ai/tarot" && body.use === "paid") {
     server.paidPosts.push(body.requestId);
+    server.bodies.push(String(init?.body));
     const known = server.paid.get(body.requestId);
     if (known?.failed) return json(409, { code: "retry_new_key" });
     if (!known) {
+      if (body.replayOnly) return json(404, { code: "no_such_request" }); // replay-only never creates
+      if (server.refuseNext) { const r = server.refuseNext; server.refuseNext = undefined; return json(r.status, { code: r.code }); } // refused before recording
       if (server.credits <= 0) return json(402, { code: "no_credits" });
       server.credits--;
+      server.creating.push(body.requestId);
       server.paid.set(body.requestId, { locale: body.locale });
     }
     if (server.lose > 0) { server.lose--; throw new TypeError("answer lost on the way"); }
@@ -76,7 +80,7 @@ async function tap(label: string) {
 beforeEach(() => {
   localStorage.clear();
   resetVisitorForTests(true);
-  server = { freeLeft: 0, credits: 5, paid: new Map(), lose: 0, paidPosts: [] };
+  server = { freeLeft: 0, credits: 5, paid: new Map(), lose: 0, paidPosts: [], creating: [], bodies: [] };
   container = document.createElement("div");
   document.body.appendChild(container);
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => handle(url, init)));
@@ -146,10 +150,58 @@ describe("pack readings on the reading page", () => {
     // pretend that attempt failed on the server and the page never saw the answer
     server.paid.set(id, { locale: "en", failed: true });
     server.credits = 5;
-    saveReading({ ...getReading("reading-1")!, ai: undefined, paid: { locale: "en", requestId: id, body: getReading("reading-1")!.paid!.body } });
+    saveReading({ ...getReading("reading-1")!, ai: undefined, paid: { locale: "en", requestId: id } });
     await open("en");
     expect(text()).toContain("Use 1 of your 5 pack readings for this spread?");
     expect(server.credits).toBe(5);
     expect(server.paidPosts.filter((p) => p !== id)).toHaveLength(0); // no new paid id without a tap
+  });
+
+  it("keeps the follow-up chat open in the other language (only a real AI outage closes it)", async () => {
+    await open("en");
+    await tap("Use a pack reading");
+    await open("zh");
+    expect(text()).toContain("解读包追问剩余：2");
+    expect(container.querySelector("#reading-chat")).not.toBeNull();
+    expect(text()).not.toContain("继续聊需要 AI");
+  });
+
+  it("never charges a refused tap later, and never resends a withdrawn note", async () => {
+    saveReading({ ...getReading("reading-1")!, noteIds: [] });
+    server.refuseNext = { status: 503, code: "paused" };
+    await open("en");
+    await tap("Use a pack reading");
+    expect(server.credits).toBe(5);
+    expect(getReading("reading-1")?.paid).toBeUndefined(); // nothing pending: the server never recorded it
+    await open("en"); // reload
+    expect(server.creating).toHaveLength(0); // no charge without a new tap
+    expect(text()).toContain("Use 1 of your 5 pack readings for this spread?");
+    const stored = Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i)!) ?? "").join(" ");
+    expect(stored).toContain("reading-1");
+    expect(stored).not.toMatch(/"paid":\{[^}]*"body"/); // no request text is ever stored with a pack request
+  });
+
+  it("offers the choice again when a lost request never reached the server", async () => {
+    await open("en");
+    // a tap whose request was lost before the server: only its id is pending
+    saveReading({ ...getReading("reading-1")!, paid: { locale: "en", requestId: "never-reached-0000001" } });
+    await open("en");
+    expect(server.paidPosts).toContain("never-reached-0000001");
+    expect(server.creating).toHaveLength(0); // the resume is replay-only
+    expect(getReading("reading-1")?.paid).toBeUndefined();
+    expect(text()).toContain("Use 1 of your 5 pack readings for this spread?");
+    expect(server.credits).toBe(5);
+  });
+
+  it("sends replayOnly on every automatic resume, never on the tap", async () => {
+    server.credits = 1;
+    server.lose = 2;
+    await open("en");
+    await tap("Use a pack reading");
+    await open("en");
+    const flags = server.bodies.map((b) => JSON.parse(b).replayOnly === true);
+    expect(flags[0]).toBe(false); // the tap
+    expect(flags.slice(-1)[0]).toBe(true); // the resume after reload
+    expect(server.creating).toHaveLength(1);
   });
 });

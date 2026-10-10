@@ -93,6 +93,33 @@ describe("paid readings", LEDGER_TIMEOUT, () => {
   });
 });
 
+describe("replay-only paid requests", LEDGER_TIMEOUT, () => {
+  it("return the subject's earlier answer whatever changed, and can never create or charge", async () => {
+    const { ledger, exec } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    expect(await ledger.reserve(reading(b, { idemKey: hex("never"), replayOnly: true }))).toEqual({ status: "denied", reason: "no_such_request" });
+    expect((await row<{ n: number }>(exec, "select count(*)::int as n from moona.requests")).n).toBe(0);
+    expect((await ledger.entitlements(b.accountId)).credits).toBe(5);
+    const id = reserved(await ledger.reserve(reading(b, { idemKey: hex("first"), inputHash: hex("with-a-note") })));
+    await ledger.complete(done(id));
+    // the context changed since (a note withdrawn): a normal request with the same id is refused...
+    expect(await ledger.reserve(reading(b, { idemKey: hex("first"), inputHash: hex("without-the-note") }))).toEqual({ status: "denied", reason: "key_reused" });
+    // ...but replay-only returns the answer that was paid for, without another credit
+    const again = await ledger.reserve(reading(b, { idemKey: hex("first"), inputHash: hex("without-the-note"), replayOnly: true }));
+    expect(again.status).toBe("existing");
+    expect((await ledger.entitlements(b.accountId)).credits).toBe(4);
+    await expectAudit(ledger);
+  });
+
+  it("are ignored for free requests: a changed free input is still refused", async () => {
+    const { ledger } = await makeTestLedger({ plan: PLAN });
+    const v = visitor();
+    reserved(await ledger.reserve(freeReq(v, { id: "x", input: "a" })));
+    expect(await ledger.reserve(freeReq(v, { id: "x", input: "b", replayOnly: true }))).toEqual({ status: "denied", reason: "key_reused" });
+    await expectAudit(ledger);
+  });
+});
+
 describe("pack money is isolated from free traffic", LEDGER_TIMEOUT, () => {
   it("keeps a pack's allocation and pending holds while free use exhausts its caps", async () => {
     const { ledger, exec } = await makeTestLedger({ plan: testPlan({ aiMicro: 10 * M, packsMicro: 5 * M, windows: [{ id: "win:t", startsAt: "2026-10-01T00:00:00Z", endsAt: "2026-11-01T00:00:00Z", capMicro: 3 * M, defaultQuota: [100_000, 100_000] }], product: PACK_PRODUCT, inflightCap: 1000 }) });

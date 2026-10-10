@@ -511,3 +511,41 @@ An independent review agent tried to break S3 and S4: no P1, 3 P2, 8 P3. Codex's
 **Tests:**
 - New: `tests/reading-pack.test.ts`, which drives the real page in happy-dom against a scripted credit server; the previous page fails 3 of its 5, the three confirmed P2s. Also `tests/composer.test.ts`, plus new cases in `client.test.ts` and `review-s3s4.test.ts`.
 - **Totals:** 773 tests pass (two full runs); the real-Postgres test is skipped (no TEST_DATABASE_URL). TypeScript and the content check pass.
+
+## Second verification round (2026-10-10, morning)
+
+Six agents re-checked build a47f13b in a real browser, in English and Chinese at 390×844 and 320×700, using ordinary taps, and reviewed the new diff. Every P1/P2 was re-proven by a skeptic.
+
+**Passed in both languages**
+- (a) Readings are free by default.
+- (b) The pack choice appears only after the free reading, and a paid request is sent only on the tap.
+- (c) "Pack reading, 2 follow-ups included", exactly one credit used, and the composer usable at once.
+- (d) Reload, a second tap, "Try AI again" and a reload mid-request never use a second credit: 10 paid requests carried 5 ids for 5 spreads.
+- (e) The follow-ups, the gold meter, the used-up message and the free third reply.
+- (f) Every AI text is labelled simulated.
+- (h) An answer lost on the last credit is replayed after a reload.
+- No Send tap was lost on /talk, the tarot chat or the home page, at 390 and 320 px.
+
+**Confirmed P2s, now fixed**
+- **Follow-ups after a language switch:** the other language's free reading hits its quota, and that quota refusal closed the chat, so pack follow-ups were unusable there. Now only a real AI outage (not configured, locked) closes the chat.
+- **A refused tap charged later without a tap:**
+  - The saved paid request body kept a shared note's text even after it was withdrawn or deleted.
+  - A tap the server refused before recording it (paused, busy) was re-sent on reload and charged without a new tap.
+  - Fix: no request body is stored any more, only the id.
+  - Only the tap can create a paid request. Every automatic resume (reload, "Try again", a lost answer) sends `replayOnly`. The ledger then returns this account's earlier answer for that id even if its context changed since (a note withdrawn, a new model), and can never create or charge a request (`no_such_request`).
+  - If the request never reached the server, or failed with its credit back, the choice is offered again.
+
+**P3s, now fixed**
+- **Talk:** the sticky dock covered the newest reply's note buttons after auto-scroll; the scroll anchor now sits after the dock.
+- **Home page:** labelled a rehearsal reply "Live AI"; it now says "Simulated reading — no AI call".
+- **Packs panel:** said SIMULATION twice; now once.
+- **Privacy copy:** an account exists only where packs are enabled.
+- **Operator sign-in:** the total cap let anyone lock out the whole team, so it is removed. Per-network throttling stays, and guessing a 24+ character random token is infeasible.
+- **Browsers that drop the cookie:** these are remembered for the tab session, so they don't mint two visitors per page load. A timed-out pre-call no longer sends its second confirmation.
+- **Readings from the previous build:** without a saved total they show 2 follow-ups.
+
+**Left as is**
+- The home send button is 35 px, from the approved design; every tap landed.
+- Two first-visit tabs minting two visitors (simulation only).
+
+**Verification:** 779 tests pass (two full runs); the real-Postgres test is skipped. TypeScript and the content check pass. New: replay-only ledger tests, and page tests for the other-language chat, the refused tap, a never-recorded request, and replayOnly on resumes.

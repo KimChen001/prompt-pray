@@ -122,8 +122,8 @@ export function PacksPanel({ onVisible }: { onVisible?: (visible: boolean) => vo
   return (
     <section id="packs" className="panel stack gap-3 journal-section" aria-labelledby="packs-title">
       <div className="row" style={{ gap: 10 }}>
-        <p className="eyebrow">{copy.eyebrow}</p>
-        {copy.badge && <span className="badge badge-dev">{copy.badge === "test" ? m.packs.eyebrow.test : m.packs.eyebrow.sim}</span>}
+        {/* test and simulation say so once, as a warning badge; otherwise the plain eyebrow */}
+        {copy.badge ? <span className="badge badge-dev">{copy.eyebrow}</span> : <p className="eyebrow">{copy.eyebrow}</p>}
       </div>
       <h2 className="h3" id="packs-title">{copy.title}</h2>
       <p style={{ margin: 0 }}>{copy.body}</p>

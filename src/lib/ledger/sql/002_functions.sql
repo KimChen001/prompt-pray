@@ -150,13 +150,16 @@ begin
   -- 1. idempotency (same subject + purpose + client request id)
   select * into v_r from moona.requests where idem_key = v_idem;
   if found then
-    if v_r.input_hash <> v_hash or v_r.mode <> v_mode then return moona._deny('key_reused'); end if;
+    -- replay_only (paid only): the subject asks for the answer to its own earlier request, whatever has
+    -- changed in its context since (notes withdrawn, a new model); it can never create a request
+    if v_r.mode <> v_mode or (v_r.input_hash <> v_hash and not (v_mode <> 'free' and coalesce((p->>'replay_only')::boolean, false))) then return moona._deny('key_reused'); end if;
     if v_r.result is not null and not v_r.result_purged and v_r.result_expires_at <= v_now then
       -- past its time to live: never replayed (the caller makes a new request id)
       update moona.requests set result = null, result_purged = true where id = v_r.id returning * into v_r;
     end if;
     return jsonb_build_object('status','existing','request', moona._view(v_r));
   end if;
+  if coalesce((p->>'replay_only')::boolean, false) then return moona._deny('no_such_request'); end if;
   -- 2. free only: replay a saved result, or join an identical in-flight request
   if v_mode = 'free' then
     select * into v_r from moona.requests where cache_scope = v_scope and purpose = v_purpose and input_hash = v_hash

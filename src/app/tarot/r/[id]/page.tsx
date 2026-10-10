@@ -57,6 +57,9 @@ function ReadingView() {
   // Out of free readings: this browser's pack credits (null when there is no account), and what
   // happened when the person chose to use one.
   const [credits, setCredits] = useState<number | null | undefined>(undefined);
+  // AI itself can't be used here (not configured, or locked): only then is the follow-up chat closed.
+  // Running out of free readings is not that: pack follow-ups and the chat's own allowance still work.
+  const [aiDown, setAiDown] = useState(false);
   const [packNote, setPackNote] = useState<string | null>(null);
   const [orb, setOrb] = useState<OrbMode>("quiet");
   const requested = useRef(new Set<string>());
@@ -83,6 +86,7 @@ function ReadingView() {
 
   const showRefusal = useCallback((out: Exclude<AiOutcome<TarotAiResult>, { state: "done" }>) => {
     setOrb("quiet");
+    setAiDown(out.state === "offline" && (out.reason === "unconfigured" || out.reason === "locked"));
     if (out.state === "quota") {
       setNotice(m.aiNotice.quota);
       setCredits(out.credits);
@@ -124,6 +128,7 @@ function ReadingView() {
     }
     if (epoch !== dataEpoch()) return;
     if (out.state !== "done") return showRefusal(out);
+    setAiDown(false);
     const body = out.value;
     const next = patchReading(r.id, (latest) => (latest.ai?.[reqLocale] ? latest : { ...latest, ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }));
     if (!next) return; // deleted while it was being written
@@ -133,53 +138,62 @@ function ReadingView() {
     setOrb("settle");
   }, [locale, bodyFor, showRefusal]);
 
-  // A pack reading is never automatic: it starts only when the person taps "Use a pack reading" after
-  // the free readings ran out, and a spread gets at most one, in the language it was asked in (its
-  // follow-ups work in either language). The exact request (id and body) is saved before sending, so a
-  // reload, "Try again" or a lost answer replays it: the credit is used once, and an answer that was
-  // paid for can always be fetched, even when it used the last credit. It never makes a new paid
-  // request by itself: if the attempt failed (the credit came back), the choice is offered again.
-  const generatePaid = useCallback(async (r: Reading) => {
+  // A pack reading is never automatic: only the person's tap on "Use a pack reading" (after the free
+  // readings ran out) can start one, and a spread gets at most one, in the language it was asked in;
+  // its follow-ups work in either language. Only the request id is saved before sending (no text, so
+  // a withdrawn or deleted note is never sent again). Everything else (a reload, "Try again", a lost
+  // answer, even on the last credit) asks the server for that request's answer with replayOnly, which
+  // can return what was paid for but can never start or charge a new one. If the server never got the
+  // request, or the attempt failed and its credit came back, the choice is simply offered again.
+  const generatePaid = useCallback(async (r: Reading, how: "tap" | "resume") => {
     if (r.paid?.paidReadingId) return;
     const pending = r.paid ?? null;
+    if (how === "resume" && !pending) return;
     const reqLocale = pending?.locale ?? locale;
     const requestId = pending?.requestId ?? newRequestId();
-    const payload = pending?.body ?? JSON.stringify({ ...bodyFor(r, reqLocale), use: "paid" });
     const epoch = dataEpoch();
-    patchReading(r.id, (latest) => ({ ...latest, paid: { locale: reqLocale, requestId, body: payload } }));
+    patchReading(r.id, (latest) => ({ ...latest, paid: { locale: reqLocale, requestId } })); // drops any older saved body
     setAiStatus("loading");
     setNotice(null);
     setPackNote(null);
     setOrb("pulse");
+    const body = { ...bodyFor(r, reqLocale), use: "paid" };
+    const send = (replayOnly: boolean) => requestAi<TarotAiResult>("/api/ai/tarot", replayOnly ? { ...body, replayOnly: true } : body, { requestId });
     let out: AiOutcome<TarotAiResult>;
     try {
-      out = await requestAi<TarotAiResult>("/api/ai/tarot", JSON.parse(payload) as Record<string, unknown>, { requestId });
+      out = await send(how === "resume");
+      // the same id with other context (a note withdrawn since): fetch the earlier answer instead
+      if (out.state === "failed" && out.code === "key_reused") out = await send(true);
     } catch {
       out = { state: "offline", reason: "network" };
     }
     if (epoch !== dataEpoch()) return;
-    if (out.state === "retry" || (out.state === "failed" && out.code === "key_reused")) {
-      // the attempt failed or expired and its credit is back: forget it and ask again
-      const next = patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
+    const forget = () => patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
+    if (out.state === "retry" || (out.state === "failed" && (out.code === "no_such_request" || out.code === "key_reused"))) {
+      // never made, or failed with its credit back: forget it and show the current offer (no new charge)
+      const next = forget();
       if (next) void generate(next, true);
       return;
     }
+    if (out.state === "offline" && out.reason === "network") return showRefusal(out); // may have reached the server: kept, replayed later
     if (out.state !== "done") {
-      if (out.state === "no_credits" || out.state === "needs_login") patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
+      forget(); // refused before anything was recorded (paused, busy, crisis, no credits...): offer again later
       return showRefusal(out);
     }
-    const body = out.value;
+    const value = out.value;
     const left = out.paid?.followupsLeft ?? 0;
     const next = patchReading(r.id, (latest) => ({
       ...latest,
-      ai: latest.ai?.[reqLocale] ? latest.ai : { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } },
+      ai: latest.ai?.[reqLocale] ? latest.ai : { ...latest.ai, [reqLocale]: { cards: value.cards, synthesis: value.synthesis, action: value.action, reflection: value.reflection, meta: value.meta } },
       paid: { locale: reqLocale, requestId, ...(out.paid ? { paidReadingId: out.paid.paidReadingId } : {}), followupsLeft: left, followupsTotal: left },
     }));
     if (!next) return;
     setCredits(undefined);
     setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
-    setAiStatus(reqLocale === locale ? "live" : "off");
+    setAiDown(false);
     setOrb("settle");
+    if (reqLocale === locale) setAiStatus("live");
+    else void generate(next, false); // this page is in the other language: its own (free) reading, if any is left
   }, [locale, bodyFor, showRefusal, generate]);
 
   useEffect(() => {
@@ -191,8 +205,8 @@ function ReadingView() {
     const key = `${reading.id}|${locale}|${attempt}`;
     if (requested.current.has(key)) return;
     requested.current.add(key);
-    // a pack reading already asked for but not yet seen is fetched again (a replay, no new credit)
-    if (reading.paid && !reading.paid.paidReadingId) void generatePaid(reading);
+    // a pack reading asked for but not yet seen is fetched again (replay only: no new credit)
+    if (reading.paid && !reading.paid.paidReadingId) void generatePaid(reading, "resume");
     else void generate(reading, attempt > 0);
   }, [reading, locale, attempt, generate, generatePaid]);
 
@@ -226,7 +240,8 @@ function ReadingView() {
   const reflection = ai ? ai.reflection : pick(analysis.reflection);
   // this spread's AI text in this language came from a pack reading
   const paidHere = !!(ai && reading?.paid?.paidReadingId && reading.paid.locale === locale);
-  const packFollowups = reading?.paid?.followupsTotal ?? reading?.paid?.followupsLeft ?? 0;
+  // records from before the total was saved: the product's 2, or more if more are left
+  const packFollowups = reading?.paid?.followupsTotal ?? Math.max(2, reading?.paid?.followupsLeft ?? 0);
   const statusLine =
     aiStatus === "loading" ? <span className="status-line"><span className="status-dot" />{m.reading.aiPreparing}</span> :
     ai ? <span className="muted small">{m.reading.aiReady}{paidHere ? ` ${fmt(m.packs.packReading, { n: packFollowups })}` : ""}{low ? ` ${m.aiNotice.low}` : ""}</span> :
@@ -351,7 +366,7 @@ function ReadingView() {
             credits > 0 ? (
               <div className="stack gap-2">
                 <p style={{ margin: 0 }}>{fmt(m.packs.useOne, { n: credits })}</p>
-                <div className="btn-row"><button type="button" className="btn btn-ghost" onClick={() => void generatePaid(reading)}>{m.packs.useOneCta}</button></div>
+                <div className="btn-row"><button type="button" className="btn btn-ghost" onClick={() => void generatePaid(reading, "tap")}>{m.packs.useOneCta}</button></div>
               </div>
             ) : (
               (packNote || packsOpen) && <p className="muted small" style={{ margin: 0 }}>{packNote ? `${packNote} ` : ""}{packsOpen && <Link href="/me#packs">{m.packs.packLink}</Link>}</p>
@@ -379,7 +394,7 @@ function ReadingView() {
           <div className="stack gap-3">
             <h2 className="h3">{m.reading.talk}</h2>
             <p className="muted small" style={{ margin: 0 }}>{m.reading.talkIntro}</p>
-            <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={aiStatus === "off"} onBusy={onChatBusy} />
+            <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={aiDown} onBusy={onChatBusy} />
           </div>
 
           <CheckInPlanner readingId={reading.id} suggestedAction={ai ? ai.action : pick(analysis.action)} />
