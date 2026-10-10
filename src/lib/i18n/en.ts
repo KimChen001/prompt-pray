@@ -621,6 +621,7 @@ const en = {
       "Talk with MOONA: your recent messages and only what you tick: your chart placements (never your birth date, time or place), today's date and time zone (the sky is recalculated on the server), and the notes you choose.",
       "Daily horoscope: the date, your time zone, your Sun, Moon and Rising signs and the day's sky facts, which the server checks against its own calculation.",
       "Birth-chart reading: your chart placements (signs, houses, aspects).",
+      "A random visitor id (a cookie), only so AI limits are shared fairly between people on the same Wi-Fi. It is not linked to anything you write and the server keeps nothing about it.",
     ],
     sentNote: "Our server passes AI requests to the AI provider and keeps no content, only a count of calls and their cost for the spending cap. There is no account and no analytics. Everything else stays in this browser.",
     statusTitle: "What is built, and what is not yet",

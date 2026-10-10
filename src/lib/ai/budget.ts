@@ -40,9 +40,18 @@ export function utcDay(now = new Date()): string {
 }
 
 export function usageFilePath(env: Record<string, string | undefined> = process.env): { path: string; durable: boolean } {
+  // On serverless hosts every instance has its own disk, so a file ledger is never one shared cap.
+  if (env.VERCEL) return { path: env.AI_USAGE_FILE || join("/tmp", "moona-ai-usage.json"), durable: false };
   if (env.AI_USAGE_FILE) return { path: env.AI_USAGE_FILE, durable: true };
-  if (env.VERCEL) return { path: join("/tmp", "moona-ai-usage.json"), durable: false };
   return { path: join(process.cwd(), ".data", "ai-usage.json"), durable: true };
+}
+
+/**
+ * Whether paid AI may run here: only with a ledger every instance shares. Until the shared SQL ledger
+ * is configured, that means a single long-running server (local, or one VM), never serverless.
+ */
+export function sharedLedgerAvailable(env: Record<string, string | undefined> = process.env): boolean {
+  return usageFilePath(env).durable;
 }
 
 export class Budget {

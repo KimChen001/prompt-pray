@@ -52,6 +52,8 @@ export async function generateJson<T>(req: JsonRequest, validate: (data: unknown
   const cfg = deps.cfg ?? aiConfig();
   if (!cfg.apiKey || !cfg.model) throw new AiError("unconfigured");
   const caps = modelCaps(cfg.provider, cfg.model);
+  // Defence in depth (guard.ts checks first): never spend without a ledger every instance shares.
+  if (!deps.budget && !usageFilePath().durable) throw new AiError("budget", "no shared ledger");
   const budget = deps.budget ?? budgetFor(cfg);
 
   const reservation = await budget.reserveRequest(requestCostBound(req, cfg));
