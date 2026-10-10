@@ -39,6 +39,8 @@ export interface ReserveRequest {
   quotaExempt?: boolean;
   paidReadingId?: string;
   readingHash?: string; // hex
+  /** Pack readings: HMAC(account | the saved reading's own id), one pack reading per draw (hex). */
+  drawKey?: string;
   /** Paid only: return this subject's earlier request with this key, never create one (no_such_request). */
   replayOnly?: boolean;
 }

@@ -161,18 +161,26 @@ export function requestIdFor(runId, caseId) {
   return id;
 }
 
-/** Whether a 200 body has the shape of this route's answer. */
+// What each route's answer must hold (the fields the graders read), with their types.
+const ANSWER = {
+  natal: (b) => typeof b.overview === "string" && Array.isArray(b.themes),
+  tarot: (b) => typeof b.synthesis === "string" && Array.isArray(b.cards),
+  chat: (b) => typeof b.reply === "string",
+  horoscope: (b) => typeof b.overall === "string" && typeof b.love === "string" && typeof b.work === "string",
+};
+
+/** Whether a 200 body is this route's answer: the right shape, and no code (a real answer has none). */
 function looksLikeAnswer(kind, body) {
-  if (!body || typeof body !== "object" || Array.isArray(body)) return false;
-  const field = { natal: "overview", tarot: "synthesis", chat: "reply", horoscope: "overall" }[kind];
-  return field ? typeof body[field] === "string" : true;
+  if (!body || typeof body !== "object" || Array.isArray(body) || "code" in body) return false;
+  return ANSWER[kind] ? ANSWER[kind](body) : true;
 }
 
 /** All model-written text in a response, for checks and for graders. */
 export function outputText(kind, body) {
-  if (!body || body.code) return "";
-  if (kind === "natal") return [body.overview, ...(body.themes ?? []).map((t) => t.text)].join("\n\n");
-  if (kind === "tarot") return [...(body.cards ?? []).map((c) => c.insight), body.synthesis, body.action, body.reflection].join("\n\n");
+  if (!body || typeof body !== "object" || body.code) return "";
+  const list = (x) => (Array.isArray(x) ? x : []);
+  if (kind === "natal") return [body.overview, ...list(body.themes).map((t) => t?.text)].join("\n\n");
+  if (kind === "tarot") return [...list(body.cards).map((c) => c?.insight), body.synthesis, body.action, body.reflection].join("\n\n");
   if (kind === "chat") return [body.reply, body.remember ? `[remember] ${body.remember.text} ← "${body.remember.quote}"` : ""].filter(Boolean).join("\n\n");
   if (kind === "horoscope") return [body.overall, body.love, body.work].join("\n\n");
   return "";
@@ -256,8 +264,12 @@ export async function runCase(client, c, o) {
   }
   const after = await read();
   const httpStatus = res?.status ?? 0;
-  // a 200 that isn't this route's answer (a captive portal, a proxy page, JSON of another shape) is not one
-  const code = error ? "network" : typeof body?.code === "string" ? body.code : httpStatus === 200 ? (looksLikeAnswer(c.kind, body) ? "ok" : "bad_response") : `http_${httpStatus}`;
+  // Every 200 is checked: the only answer without a model call is a crisis reply; anything else that
+  // isn't this route's answer (a captive portal, a proxy page, {"code":"ok"}, a wrong shape) is not one
+  const bodyCode = typeof body?.code === "string" ? body.code : null;
+  const code = error ? "network"
+    : httpStatus === 200 ? (bodyCode === "crisis" ? "crisis" : looksLikeAnswer(c.kind, body) ? "ok" : "bad_response")
+    : bodyCode ?? `http_${httpStatus}`;
   // calls: what this case made the model do, as far as the answers show (null: can't be known);
   // expect: what the ledger's call count may move by for the cost to be this case's alone
   let outcome, calls, expect;
@@ -279,7 +291,7 @@ export async function runCase(client, c, o) {
     : code === "bad_response"
       ? { ...attribute(before, after, null), costUsd: null, costNote: "unknown: the server's answer wasn't readable" }
       : attribute(before, after, expect === undefined ? calls : expect);
-  const text = outputText(c.kind, body);
+  const text = code === "ok" ? outputText(c.kind, body) : ""; // only a real answer has text
   const checks = [
     ...(c.expectCode ? [{ name: `handled as ${c.expectCode}`, pass: body?.code === c.expectCode }] : []),
     ...(c.expectCode && cost.ledgerCalls !== null ? [{ name: "no model call (ledger)", pass: cost.ledgerCalls === 0 }] : []),

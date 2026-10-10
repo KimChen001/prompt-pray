@@ -14,11 +14,11 @@ const wrap = (exec: SqlExecutor, rewrite: (name: string, sql: string) => string)
 });
 
 describe("ledger smoke (PGlite)", LEDGER_TIMEOUT, () => {
-  it("applies 001, 002 and 900 once, runs plpgsql, and re-runs nothing", async () => {
+  it("applies 001, 004, 002 and 900 once, runs plpgsql, and re-runs nothing", async () => {
     const exec = await pgliteExecutor();
-    expect(await migrate(exec, { testClock: true })).toEqual(["001", "002", "900"]);
+    expect(await migrate(exec, { testClock: true })).toEqual(["001", "004", "002", "900"]);
     const versions = (await exec.query<{ version: string }>("select version from moona.schema_migrations order by version")).rows.map((r) => r.version);
-    expect(versions).toEqual(["001", "002", "900"]);
+    expect(versions).toEqual(["001", "002", "004", "900"]);
     expect(await migrate(exec, { testClock: true })).toEqual([]);
 
     const ledger = createSqlLedger(exec, { clock: () => new Date("2026-10-12T12:00:00Z") });
@@ -45,6 +45,8 @@ describe("ledger smoke (PGlite)", LEDGER_TIMEOUT, () => {
     // production 002 resets the clock; the test clock is re-applied after it
     await exec.exec("update moona.schema_migrations set checksum = 'old' where version = '002'");
     expect(await migrate(exec, { testClock: true })).toEqual(["002", "900"]);
+    await exec.exec("update moona.schema_migrations set checksum = 'old' where version = '004'");
+    await expect(migrate(exec)).rejects.toThrow(/004_draw_key.sql changed/);
     await exec.exec("update moona.schema_migrations set checksum = 'old' where version = '001'");
     await expect(migrate(exec)).rejects.toThrow(/001_schema.sql changed/);
     await exec.close();
@@ -55,7 +57,7 @@ describe("ledger smoke (PGlite)", LEDGER_TIMEOUT, () => {
     const broken = wrap(inner, (_n, sql) => (sql.includes("create or replace function moona.reserve") ? sql.replace("create or replace function moona.audit", "create or replace function moona.audit_broken(") : sql));
     await expect(migrate(broken)).rejects.toThrow();
     const left = await inner.query<{ n: number }>("select count(*)::int as n from moona.schema_migrations");
-    expect(left.rows[0].n).toBe(1); // 001 committed; 002 rolled back in full
+    expect(left.rows[0].n).toBe(2); // 001 and 004 committed; 002 rolled back in full
     expect(await migrate(inner)).toEqual(["002"]);
     await inner.close();
   });

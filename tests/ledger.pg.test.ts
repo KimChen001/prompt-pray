@@ -48,7 +48,7 @@ describe.skipIf(!URL_)("ledger on real Postgres (TEST_DATABASE_URL)", () => {
             }
           } else {
             const accountId = accounts[Math.floor(rnd() * accounts.length)];
-            const out = await ledger.reserve({ idemKey: hex(`pg-${w}-${done}`), subjectKey: `a:${accountId}`, accountId, cacheScope: `a:${accountId}`, purpose: "tarot", mode: "paid_reading", inputHash: hex(`pgi-${w}-${done}`), boundMicro: 50_000, readingHash: hex("pg-reading") });
+            const out = await ledger.reserve({ idemKey: hex(`pg-${w}-${done}`), subjectKey: `a:${accountId}`, accountId, cacheScope: `a:${accountId}`, purpose: "tarot", mode: "paid_reading", drawKey: hex(`pgd-${w}-${done}`), inputHash: hex(`pgi-${w}-${done}`), boundMicro: 50_000, readingHash: hex("pg-reading") });
             if (out.status === "reserved") await ledger.complete({ requestId: out.requestId, chargedMicro: 20_000, billing: "known", usage: null, result: { value: 1, meta: { provider: "fake", model: "simulated", generatedAt: new Date().toISOString(), source: "simulated" } }, resultTtlSeconds: 600, readingHash: hex("pg-reading") });
           }
         } catch (e) {

@@ -315,7 +315,7 @@ describe("the evaluation runner after its review (verify-eval findings)", () => 
     const r = await runCase(s.client, T1, { requestId: requestIdFor("html", "T1"), sleep: noSleep });
     expect(r).toMatchObject({ outcome: "error", code: "bad_response", inferredCalls: null, costNote: expect.stringMatching(/wasn't readable/) });
     expect(summarize([r]).ok).toBe(0);
-    for (const odd of ["{}", '{"error":"blocked by proxy"}', "[]"]) {
+    for (const odd of ["{}", '{"error":"blocked by proxy"}', "[]", '{"code":"ok"}', '{"code":"proxy_login_required"}', '{"synthesis":5,"cards":[]}', '{"synthesis":"s","cards":"x"}', '{"code":"ok","synthesis":"s","cards":[]}']) {
       const p = scripted(() => new Response(odd, { status: 200, headers: { "Content-Type": "application/json" } }));
       expect((await runCase(p.client, T1, { requestId: requestIdFor("odd", "T1"), sleep: noSleep })).code, odd).toBe("bad_response");
     }

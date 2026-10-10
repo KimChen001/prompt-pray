@@ -32,7 +32,7 @@ export interface MeterInput<T> {
   validate: (d: unknown) => T | null;
   cacheScope: "subject" | "shared";
   resultTtlSeconds: number;
-  paid?: { readingHash: string; paidReadingId?: string };
+  paid?: { readingHash: string; paidReadingId?: string; drawKey?: string };
   /** Paid only: fetch the answer to this subject's earlier request with this id; never start one. */
   replayOnly?: boolean;
 }
@@ -84,6 +84,7 @@ export async function meteredGenerate<T>(a: MeterInput<T>, deps: MeterDeps = {})
   const { ledger, cfg, keys } = a;
   // a paid request is always tied to its reading; without that the ledger can't check or record it
   if (a.mode !== "free" && !a.paid?.readingHash) throw new Error("moona: a paid request needs its reading hash");
+  if (a.mode === "paid_reading" && !a.paid?.drawKey) throw new Error("moona: a pack reading needs its draw key");
 
   const sized = sizeRequest(a.req, cfg);
   const boundMicro = requestBoundMicro(sized, cfg, sized.maxOutputTokens!);
@@ -94,7 +95,7 @@ export async function meteredGenerate<T>(a: MeterInput<T>, deps: MeterDeps = {})
     reserved = await ledger.reserve({
       idemKey: idemKey(keys.input, a.subjectKey, a.purpose, a.requestId), subjectKey: a.subjectKey, accountId: a.accountId,
       cacheScope: a.cacheScope === "shared" ? "shared" : a.subjectKey, purpose: a.purpose, mode: a.mode, inputHash: hash, boundMicro,
-      quotaExempt: a.quotaExempt, paidReadingId: a.paid?.paidReadingId, readingHash: a.paid?.readingHash,
+      quotaExempt: a.quotaExempt, paidReadingId: a.paid?.paidReadingId, readingHash: a.paid?.readingHash, drawKey: a.paid?.drawKey,
       replayOnly: a.mode !== "free" && !!a.replayOnly,
     });
   } catch (e) {

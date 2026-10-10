@@ -378,6 +378,10 @@ export function setLedgerForTests(l: LedgerPort | null): void
 // the server checks moona.functions_version() against LEDGER_FUNCTIONS_VERSION (ledger/version.ts) before it uses any SQL
 // ledger, and so does every ledger-admin command except migrate; on any other version it refuses (fails closed).
 // After a 002 change, run `npm run ledger -- migrate` (with --roles on Postgres) before the new code serves.
+// 004_draw_key.sql (immutable once applied, like 001) adds moona.requests.draw_key: a pack reading carries
+// HMAC(account | the saved reading's own id), and reserve gives any other request for that draw the live one
+// (in progress, or done with its text kept) instead of a second charge; a failed or expired one, or one past
+// its result TTL, may be bought again. The tarot route refuses a pack reading without drawId (400).
 
 // plans.ts
 export interface WindowPlan { id: string; startsAt: string; endsAt: string; capUsd: number; callsCap: number | null; slice: { capUsd: number; seconds: 3600 | 86400 } | null; mintCap: number | null; quotas: Record<Purpose, { perSubject: number; failedCap: number }> }

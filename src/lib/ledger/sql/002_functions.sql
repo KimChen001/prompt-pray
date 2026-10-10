@@ -3,7 +3,7 @@
 -- `npm run ledger -- migrate` fails closed instead of running new code on old rules. The marker is
 -- derived from this file's text (ledger/version.ts; a test keeps the two in step).
 create or replace function moona.functions_version() returns text language sql immutable
-set search_path = pg_catalog, pg_temp as $$ select 'ledger-fns:ee25ebaaa430'::text $$;
+set search_path = pg_catalog, pg_temp as $$ select 'ledger-fns:a822c437f3f8'::text $$;
 
 -- Helpers (security invoker; called only from the definer functions below; EXECUTE revoked from public in 003)
 create or replace function moona._clock(p jsonb) returns timestamptz
@@ -140,6 +140,7 @@ declare
   v_subject text := p->>'subject_key'; v_scope text := p->>'cache_scope'; v_purpose text := p->>'purpose';
   v_idem bytea := decode(p->>'idem_key','hex'); v_hash bytea := decode(p->>'input_hash','hex');
   v_acct uuid := nullif(p->>'account_id','')::uuid; v_exempt boolean := coalesce((p->>'quota_exempt')::boolean, false);
+  v_draw bytea := decode(nullif(p->>'draw_key',''),'hex');
   g moona.gate; pl moona.plan; v_ai moona.pools; v_pk moona.pools; v_win moona.pools; v_sl moona.pools;
   v_q moona.free_quotas; v_u moona.subject_usage; v_has_u boolean; v_lot moona.lots; v_pr moona.paid_readings; v_r moona.requests;
   v_slice_id text; v_slice_start timestamptz; v_take bigint := 0; v_extra bigint := 0; v_free bigint;
@@ -149,6 +150,7 @@ begin
   if v_mode not in ('free','paid_reading','paid_followup') then raise exception 'moona: bad mode %', v_mode; end if;
   if v_mode <> 'free' and (v_acct is null or v_subject <> ('a:' || v_acct::text)) then raise exception 'moona: paid needs account subject'; end if;
   if v_mode = 'free' and left(v_subject, 2) <> 'v:' then raise exception 'moona: free needs visitor subject'; end if;
+  if v_mode = 'paid_reading' and v_draw is null then raise exception 'moona: a pack reading needs its draw key'; end if;
   perform moona._lock();
   select * into pl from moona.plan;
   if not found then return moona._deny('plan_unsynced'); end if;
@@ -172,6 +174,20 @@ begin
       update moona.requests set result = null, result_purged = true where id = v_r.id returning * into v_r;
     end if;
     return jsonb_build_object('status','existing','request', moona._view(v_r));
+  end if;
+  -- 1b. one pack reading per draw: another request for this draw under another id (a slow tap that
+  -- lands late, another tab, a page that forgot its id after a clock change) gets that one back, still
+  -- running or done, and is never charged; a failed or expired one (its credit came back) may be bought
+  -- again, and so may one whose text is past its time to live (it can no longer be given back)
+  if v_mode = 'paid_reading' then
+    select * into v_r from moona.requests where account_id = v_acct and draw_key = v_draw and mode = 'paid_reading'
+       and (state = 'calling' or (state = 'succeeded' and not result_purged))
+     order by created_at desc limit 1;
+    if found then
+      if v_r.state = 'calling' then return jsonb_build_object('status','in_progress','request_id', v_r.id); end if;
+      if v_r.result is not null and v_r.result_expires_at > v_now then return jsonb_build_object('status','existing','request', moona._view(v_r)); end if;
+      update moona.requests set result = null, result_purged = true where id = v_r.id;
+    end if;
   end if;
   if coalesce((p->>'replay_only')::boolean, false) then return moona._deny('no_such_request'); end if;
   -- 2. free only: replay a saved result, or join an identical in-flight request
@@ -256,9 +272,9 @@ begin
   update moona.gate set inflight = inflight + 1, updated_at = v_now where id = 1;
   v_lease := v_now + make_interval(secs => pl.lease_seconds);
   insert into moona.requests (id, idem_key, subject_key, account_id, cache_scope, purpose, mode, input_hash, window_id, slice_id,
-      lot_id, paid_reading_id, bound_micro, take_micro, extra_micro, state, lease_expires_at, created_at)
+      lot_id, paid_reading_id, bound_micro, take_micro, extra_micro, state, lease_expires_at, created_at, draw_key)
   values (v_id, v_idem, v_subject, v_acct, v_scope, v_purpose, v_mode, v_hash, v_win.id, v_slice_id,
-      v_lot.order_id, v_pr.id, v_bound, v_take, v_extra, 'calling', v_lease, v_now);
+      v_lot.order_id, v_pr.id, v_bound, v_take, v_extra, 'calling', v_lease, v_now, case when v_mode = 'paid_reading' then v_draw end);
   return jsonb_build_object('status','reserved','request_id', v_id, 'lease_expires_at', v_lease);
 end $$;
 

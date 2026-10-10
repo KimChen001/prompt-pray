@@ -151,7 +151,7 @@ describe("S3/S4 review regressions", LEDGER_TIMEOUT, () => {
   it("9: a ledger outage while finding the pack account answers 503", async () => {
     vi.stubEnv("AUTH_PROVIDER", "fake");
     setLedgerForTests({ ...t.ledger, ensureAccount: () => Promise.reject(new LedgerUnavailable("ledger_down")) });
-    const res = await tarotPOST(post("/api/ai/tarot", { ...triad, use: "paid" }));
+    const res = await tarotPOST(post("/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-s3s4-9" }));
     expect([res.status, await res.json()]).toEqual([503, { code: "ledger" }]);
   });
 

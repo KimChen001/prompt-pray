@@ -63,7 +63,7 @@ describe("buying and using a pack, offline", LEDGER_TIMEOUT, () => {
     expect((await call(packsGET, "GET", "/api/packs")).json).toMatchObject({ account: { signedIn: true }, entitlements: { credits: 5 } });
 
     // a pack reading, only when asked for
-    const r = await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", requestId: "paid-reading-0000001" });
+    const r = await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-flow-1", requestId: "paid-reading-0000001" });
     expect(r.status).toBe(200);
     expect(r.json).toMatchObject({ followupsLeft: 2, meta: { source: "simulated" } });
     const paidReadingId = r.json.paidReadingId as string;
@@ -73,17 +73,23 @@ describe("buying and using a pack, offline", LEDGER_TIMEOUT, () => {
     expect((await ask(2)).json).toMatchObject({ followupsLeft: 0 });
     expect(await ask(3)).toEqual({ status: 409, json: { code: "no_followups" } });
     // replays cost nothing
-    expect((await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", requestId: "paid-reading-0000001" })).json.replayed).toBe(true);
+    expect((await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-flow-1", requestId: "paid-reading-0000001" })).json.replayed).toBe(true);
     expect((await ask(2)).json.replayed).toBe(true);
     expect((await call(packsGET, "GET", "/api/packs")).json.entitlements.credits).toBe(4);
+    // the same draw under a new request id (a page that forgot its id): that reading back, no new credit
+    const sameDraw = await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-flow-1", requestId: "paid-reading-0000002" });
+    expect(sameDraw.json).toMatchObject({ replayed: true, paidReadingId });
+    // a pack reading must name its draw
+    expect(await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", requestId: "paid-reading-0000003" })).toEqual({ status: 400, json: { code: "bad_request" } });
+    expect((await call(packsGET, "GET", "/api/packs")).json.entitlements.credits).toBe(4);
     // another browser has no account here, and no pack
-    expect(await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid" }, "b")).toMatchObject({ status: 402, json: { code: "no_credits" } });
+    expect(await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-flow-b" }, "b")).toMatchObject({ status: 402, json: { code: "no_credits" } });
     await expectAudit(t.ledger);
   });
 
   it("asks for an account before a pack reading when accounts are off", async () => {
     vi.stubEnv("AUTH_PROVIDER", "none");
-    expect(await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid" })).toEqual({ status: 401, json: { code: "login_required" } });
+    expect(await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-flow-c" })).toEqual({ status: 401, json: { code: "login_required" } });
     expect(await call(checkoutPOST, "POST", "/api/packs/checkout", { productId: "tarot5", checkoutKey: "checkout-key-none-01" })).toEqual({ status: 401, json: { code: "login_required" } });
     expect((await call(packsGET, "GET", "/api/packs")).json.sales).toEqual({ open: false, reason: "login_unavailable" });
   });

@@ -15,6 +15,7 @@ import { serverKeys, type Keys } from "@/lib/identity/keys";
 import { isOperator } from "@/lib/identity/ops";
 import { ensureVisitor } from "@/lib/identity/visitor";
 import { getLedger, ledgerKind } from "@/lib/ledger/factory";
+import { drawKey } from "@/lib/ledger/hash";
 import { LedgerUnavailable, type LedgerPort, type ReqMode } from "@/lib/ledger/port";
 import type { EnvLike } from "@/lib/host";
 import { packsOn, paymentsConfig } from "@/lib/payments/config";
@@ -32,7 +33,7 @@ export interface AiRouteSpec<P, T> {
   /** What identifies the request for replay and caching (default: the parsed request). */
   canonical?(p: P): unknown;
   /** A paid request (a pack reading or follow-up), never assumed: only when the body asks for it. */
-  paid?(body: Record<string, unknown>, p: P, keys: Keys): { mode: "paid_reading" | "paid_followup"; readingHash: string; paidReadingId?: string } | null;
+  paid?(body: Record<string, unknown>, p: P, keys: Keys): { mode: "paid_reading" | "paid_followup"; readingHash: string; paidReadingId?: string; drawId?: string } | null;
 }
 
 export interface HandlerDeps extends MeterDeps {
@@ -92,6 +93,7 @@ export async function handleAi<P, T>(req: NextRequest, spec: AiRouteSpec<P, T>, 
 
   // Free requests count against this visitor; a paid one is drawn from the account's pack.
   const paid = spec.paid?.(raw, parsed, keys) ?? null;
+  if (paid?.mode === "paid_reading" && !paid.drawId) return NextResponse.json({ code: "bad_request" }, { status: 400 }); // one pack reading per draw
   let subjectKey = `v:${visitor.id}`, accountId: string | undefined, mode: ReqMode = "free";
   if (paid) {
     let account;
@@ -115,7 +117,8 @@ export async function handleAi<P, T>(req: NextRequest, spec: AiRouteSpec<P, T>, 
     ledger, cfg, keys, subjectKey, accountId, purpose: spec.purpose, mode, requestId,
     quotaExempt: !paid && operator && env.AI_OPERATOR_QUOTA_EXEMPT !== "0",
     req: spec.build(parsed), canonical: spec.canonical ? spec.canonical(parsed) : parsed, versions: spec.versions(parsed), validate: spec.validate(parsed),
-    cacheScope: scope, resultTtlSeconds: ttl, ...(paid ? { paid: { readingHash: paid.readingHash, paidReadingId: paid.paidReadingId }, replayOnly: raw.replayOnly === true } : {}),
+    cacheScope: scope, resultTtlSeconds: ttl,
+    ...(paid ? { paid: { readingHash: paid.readingHash, paidReadingId: paid.paidReadingId, ...(paid.drawId && accountId ? { drawKey: drawKey(keys.input, accountId, paid.drawId) } : {}) }, replayOnly: raw.replayOnly === true } : {}),
   }, deps);
   const value = outcome.kind === "fresh" || outcome.kind === "replayed" ? spec.respond(outcome.value as T, outcome.meta, parsed) : undefined;
   const level = outcome.kind === "fresh" ? levelFor(outcome.budgetRatio, env) : null;

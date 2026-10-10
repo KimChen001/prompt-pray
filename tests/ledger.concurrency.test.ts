@@ -49,7 +49,7 @@ describe("ledger concurrency", LEDGER_TIMEOUT, () => {
     await ledger.attachSession({ orderId: made.order.id, sessionId: "cs_p", url: "https://checkout.invalid/p" });
     await ledger.fulfil({ eventId: "evt_p", type: "checkout.session.completed", orderId: made.order.id, sessionId: "cs_p", paymentId: "pi_p", amountCents: 500, currency: "usd", livemode: false, paid: true });
     const out = await Promise.all(Array.from({ length: 40 }, (_, i) => ledger.reserve({
-      idemKey: hex(`paid-${i}`), subjectKey: `a:${accountId}`, accountId, cacheScope: `a:${accountId}`, purpose: "tarot", mode: "paid_reading", inputHash: hex(`in-${i}`), boundMicro: 300_000,
+      idemKey: hex(`paid-${i}`), subjectKey: `a:${accountId}`, accountId, cacheScope: `a:${accountId}`, purpose: "tarot", mode: "paid_reading", drawKey: hex(`draw-${i}`), inputHash: hex(`in-${i}`), boundMicro: 300_000,
     })));
     expect(out.filter((o) => o.status === "reserved")).toHaveLength(5);
     expect(out.filter((o) => o.status === "denied" && o.reason === "no_credits")).toHaveLength(35);

@@ -193,7 +193,7 @@ describe("free reserve and complete", LEDGER_TIMEOUT, () => {
   it("never serves a paid request's result from the free cache", async () => {
     const { ledger } = await makeTestLedger({ plan: testPlan({ packsMicro: 5 * M, windows: [{ ...WIN, capMicro: 10 * M }], product: PACK_PRODUCT }) });
     const buyer = await grantPack(ledger);
-    const paid = await ledger.reserve({ idemKey: hex("paid-1"), subjectKey: buyer.subjectKey, accountId: buyer.accountId, cacheScope: "shared", purpose: "tarot", mode: "paid_reading", inputHash: hex("in|shared"), boundMicro: 100_000 });
+    const paid = await ledger.reserve({ idemKey: hex("paid-1"), subjectKey: buyer.subjectKey, accountId: buyer.accountId, cacheScope: "shared", purpose: "tarot", mode: "paid_reading", drawKey: hex("draw-free"), inputHash: hex("in|shared"), boundMicro: 100_000 });
     await ledger.complete({ ...done(reserved(paid)), readingHash: hex("reading") });
     await expectAudit(ledger);
     expect((await ledger.reserve(freeReq(visitor(), { cacheScope: "shared", input: "shared" }))).status).toBe("reserved");

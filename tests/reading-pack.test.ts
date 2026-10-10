@@ -43,6 +43,8 @@ interface Server {
   /** the next new pack tap is held on its way to the server until release() (slow, or from another tab) */
   holdNext?: boolean;
   release?: () => void;
+  /** like the ledger: the live pack request for each draw (one pack reading per draw) */
+  byDraw: Map<string, string>;
   followups: number; chatPaid: Map<string, string>; chatCreates: string[]; chatLose: number;
 }
 let server: Server;
@@ -82,6 +84,10 @@ function handle(url: string, init?: RequestInit): Response | Promise<Response> {
     if (server.gateNext && server.paid.has(body.requestId)) { const r = server.gateNext; server.gateNext = undefined; return refuse(r); }
     const known = server.paid.get(body.requestId);
     if (known?.failed) return json(409, { code: "retry_new_key" });
+    // one pack reading per draw: another id for a draw already bought gets that reading back, free
+    const drawn = !known && body.drawId ? server.byDraw.get(body.drawId) : undefined;
+    const live = drawn ? server.paid.get(drawn) : undefined;
+    if (live && !live.failed) return json(200, { ...tarotText(live.locale, true), paidReadingId: "00000000-0000-4000-8000-0000000000aa", followupsLeft: 2, replayed: true });
     if (!known) {
       if (body.replayOnly) return json(404, { code: "no_such_request" }); // replay-only never creates
       if (server.refuseNext) { const r = server.refuseNext; server.refuseNext = undefined; return json(r.status, { code: r.code }); } // refused before recording
@@ -89,6 +95,7 @@ function handle(url: string, init?: RequestInit): Response | Promise<Response> {
       server.credits--;
       server.creating.push(body.requestId);
       server.paid.set(body.requestId, { locale: body.locale });
+      if (body.drawId) server.byDraw.set(body.drawId, body.requestId);
       if (server.chargeThenRefuse) { const r = server.chargeThenRefuse; server.chargeThenRefuse = undefined; return refuse(r); }
     }
     if (server.lose > 0) { server.lose--; throw new TypeError("answer lost on the way"); }
@@ -128,7 +135,7 @@ async function tap(label: string) {
 beforeEach(() => {
   localStorage.clear();
   resetVisitorForTests(true);
-  server = { freeLeft: 0, credits: 5, paid: new Map(), lose: 0, paidPosts: [], creating: [], bodies: [], followups: 2, chatPaid: new Map(), chatCreates: [], chatLose: 0 };
+  server = { freeLeft: 0, credits: 5, paid: new Map(), lose: 0, paidPosts: [], creating: [], bodies: [], followups: 2, chatPaid: new Map(), chatCreates: [], chatLose: 0, byDraw: new Map() };
   container = document.createElement("div");
   document.body.appendChild(container);
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => handle(url, init)));
@@ -253,6 +260,7 @@ describe("pack readings on the reading page", () => {
     const flags = server.bodies.map((b) => JSON.parse(b).replayOnly === true);
     expect(flags[0]).toBe(false); // the tap
     expect(flags.slice(-1)[0]).toBe(true); // the resume after reload
+    expect(server.bodies.every((b) => JSON.parse(b).drawId === "reading-1")).toBe(true); // every pack request names its draw
     expect(server.creating).toHaveLength(1);
   });
 
@@ -396,6 +404,39 @@ describe("pack readings on the reading page", () => {
     expect(text()).toContain("[MOCK] pack reading in en");
     expect(server.creating).toEqual([id]);
     expect(server.credits).toBe(4);
+  });
+
+  it("keeps a slow tap through a clock set back a second (Codex's repro), and uses one credit", async () => {
+    server.holdNext = true;
+    await open("en");
+    await tap("Use a pack reading");
+    const id = getReading("reading-1")!.paid!.requestId;
+    saveReading({ ...getReading("reading-1")!, paid: { ...getReading("reading-1")!.paid!, sentAt: new Date(Date.now() + 1000).toISOString() } });
+    await open("en"); // the resume overtakes the tap and is told "never made"
+    expect(getReading("reading-1")?.paid?.requestId).toBe(id); // kept: within the grace either side of now
+    expect(text()).not.toContain("Use 1 of your");
+    await act(async () => server.release!());
+    await settle();
+    expect(server.creating).toEqual([id]);
+    expect(server.credits).toBe(4);
+  });
+
+  it("never uses two credits for one draw, even when the page's clock is far off and it offers the choice again", async () => {
+    server.holdNext = true;
+    await open("en");
+    await tap("Use a pack reading");
+    const first = getReading("reading-1")!.paid!.requestId;
+    saveReading({ ...getReading("reading-1")!, paid: { ...getReading("reading-1")!.paid!, sentAt: new Date(Date.now() + 10 * 60_000).toISOString() } });
+    await open("en"); // far outside the grace: the page forgets the tap and offers the choice again
+    expect(text()).toContain("Use 1 of your 5 pack readings for this spread?");
+    await tap("Use a pack reading"); // a second id for the same draw
+    expect(server.credits).toBe(4);
+    await act(async () => server.release!()); // the first tap lands: the server gives it the draw's reading back
+    await settle();
+    expect(server.creating).toHaveLength(1);
+    expect(server.creating).not.toContain(first);
+    expect(server.credits).toBe(4);
+    expect(text()).toContain("[MOCK] pack reading in en");
   });
 
   it("does not treat a pending tap from the future (a clock set back) as just sent", async () => {

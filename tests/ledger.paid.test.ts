@@ -9,7 +9,7 @@ const RESULT: StoredResult = { value: { text: "paid" }, meta: { provider: "fake"
 const READING = hex("reading-hash");
 let k = 0;
 type Buyer = { accountId: string; subjectKey: string; orderId: string };
-const reading = (b: Buyer, o: Partial<ReserveRequest> = {}): ReserveRequest => ({ idemKey: hex(`pr-${++k}`), subjectKey: b.subjectKey, accountId: b.accountId, cacheScope: b.subjectKey, purpose: "tarot", mode: "paid_reading", inputHash: hex(`in-${k}`), boundMicro: 100_000, readingHash: READING, ...o });
+const reading = (b: Buyer, o: Partial<ReserveRequest> = {}): ReserveRequest => ({ idemKey: hex(`pr-${++k}`), subjectKey: b.subjectKey, accountId: b.accountId, cacheScope: b.subjectKey, purpose: "tarot", mode: "paid_reading", drawKey: hex(`draw-${k}`), inputHash: hex(`in-${k}`), boundMicro: 100_000, readingHash: READING, ...o });
 const followup = (b: Buyer, paidReadingId: string, o: Partial<ReserveRequest> = {}): ReserveRequest => ({ idemKey: hex(`fu-${++k}`), subjectKey: b.subjectKey, accountId: b.accountId, cacheScope: b.subjectKey, purpose: "chat", mode: "paid_followup", inputHash: hex(`fin-${k}`), boundMicro: 50_000, readingHash: READING, paidReadingId, ...o });
 const done = (requestId: string, chargedMicro = 20_000) => ({ requestId, chargedMicro, billing: "known" as const, usage: null, result: RESULT, resultTtlSeconds: 86_400, readingHash: READING });
 const PLAN = testPlan({ packsMicro: 5 * M, product: PACK_PRODUCT });
@@ -90,6 +90,101 @@ describe("paid readings", LEDGER_TIMEOUT, () => {
     expect(e.credits).toBe(5);
     expect(e.unservable).toBe(true);
     await expectAudit(ledger);
+  });
+});
+
+// Codex's 2026-10-10 review: a page that forgot its pending id (a clock set back, a slow tap, another
+// tab) could buy the same draw twice. The draw key (the saved reading's own id) makes it once per draw.
+describe("one pack reading per draw", LEDGER_TIMEOUT, () => {
+  const DRAW = hex("draw-of-reading-1");
+  const credits = async (ledger: Awaited<ReturnType<typeof makeTestLedger>>["ledger"], b: Buyer) => (await ledger.entitlements(b.accountId)).credits;
+
+  it("gives a second request id for the same draw the first one, running or done, and charges once", async () => {
+    const { ledger, exec } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    const first = reserved(await ledger.reserve(reading(b, { drawKey: DRAW })));
+    // while the first is still running, the second waits for it (never a second hold)
+    expect(await ledger.reserve(reading(b, { drawKey: DRAW }))).toEqual({ status: "in_progress", requestId: first });
+    expect(await credits(ledger, b)).toBe(4);
+    const c = await ledger.complete(done(first));
+    const pr = c.status === "succeeded" ? c.request.paidReadingId : null;
+    // once done, any other id for the draw gets that reading back, the same paid reading and follow-ups
+    const again = await ledger.reserve(reading(b, { drawKey: DRAW }));
+    expect(again.status).toBe("existing");
+    if (again.status === "existing") expect(again.request).toMatchObject({ id: first, paidReadingId: pr, followupsLeft: 2 });
+    expect(await credits(ledger, b)).toBe(4);
+    expect((await row<{ n: number }>(exec, "select count(*)::int as n from moona.paid_readings")).n).toBe(1);
+    await expectAudit(ledger);
+  });
+
+  it("closes Codex's repro: two ids, one draw, both sent before either finishes", async () => {
+    const { ledger, exec } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    const firstId = reserved(await ledger.reserve(reading(b, { drawKey: DRAW })));
+    const second = await ledger.reserve(reading(b, { drawKey: DRAW }));
+    expect(second.status).toBe("in_progress"); // no second reservation to complete
+    await ledger.complete(done(firstId));
+    expect(await credits(ledger, b)).toBe(4);
+    expect((await row<{ n: number }>(exec, "select count(*)::int as n from moona.paid_readings")).n).toBe(1);
+    await expectAudit(ledger);
+  });
+
+  it("answers a replay-only resume under another id with the draw's reading, never 'no such request'", async () => {
+    const { ledger } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    const id = reserved(await ledger.reserve(reading(b, { drawKey: DRAW })));
+    await ledger.complete(done(id));
+    const resume = await ledger.reserve(reading(b, { drawKey: DRAW, idemKey: hex("a-forgotten-id"), replayOnly: true }));
+    expect(resume.status).toBe("existing");
+    expect(await credits(ledger, b)).toBe(4);
+    // a draw that was never bought is still "no such request" for a replay-only resume
+    expect(await ledger.reserve(reading(b, { drawKey: hex("never-bought"), replayOnly: true }))).toEqual({ status: "denied", reason: "no_such_request" });
+    await expectAudit(ledger);
+  });
+
+  it("treats a new draw of the same cards and question as new, and another account's draw as theirs", async () => {
+    const { ledger } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    const other = await grantPack(ledger);
+    await ledger.complete(done(reserved(await ledger.reserve(reading(b, { drawKey: DRAW })))));
+    // the same readingHash (cards, topic, question), another draw: a second pack reading
+    await ledger.complete(done(reserved(await ledger.reserve(reading(b, { drawKey: hex("draw-of-reading-2") })))));
+    expect(await credits(ledger, b)).toBe(3);
+    // the same draw key under another account is that account's own draw
+    reserved(await ledger.reserve(reading(other, { drawKey: DRAW })));
+    expect(await credits(ledger, other)).toBe(4);
+    await expectAudit(ledger);
+  });
+
+  it("lets a draw be bought again after its attempt failed (the credit came back)", async () => {
+    const { ledger } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    const failed = reserved(await ledger.reserve(reading(b, { drawKey: DRAW })));
+    await ledger.fail({ requestId: failed, billing: "known", chargedMicro: 5_000, usage: null, errorCode: "bad_json" });
+    expect(await credits(ledger, b)).toBe(5);
+    const again = reserved(await ledger.reserve(reading(b, { drawKey: DRAW })));
+    expect(again).not.toBe(failed);
+    expect(await credits(ledger, b)).toBe(4);
+    await expectAudit(ledger);
+  });
+
+  it("lets a draw be bought again once its reading is past its time to live (it can't be given back)", async () => {
+    const { ledger, clock } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    const first = reserved(await ledger.reserve(reading(b, { drawKey: DRAW })));
+    await ledger.complete(done(first)); // kept for a day in this test
+    clock.advance(25 * 3600_000);
+    const again = await ledger.reserve(reading(b, { drawKey: DRAW }));
+    expect(again.status).toBe("reserved");
+    expect(await credits(ledger, b)).toBe(3);
+    await expectAudit(ledger);
+  });
+
+  it("refuses a pack reading without its draw key", async () => {
+    const { ledger } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    await expect(ledger.reserve(reading(b, { drawKey: undefined }))).rejects.toThrow(/draw key/);
+    expect(await credits(ledger, b)).toBe(5);
   });
 });
 

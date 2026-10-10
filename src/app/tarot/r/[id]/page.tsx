@@ -29,7 +29,8 @@ import { ShareSheet } from "@/components/ShareImage";
 import { readingCard, readingShareText } from "@/lib/share/content";
 import { StateOrb, type OrbMode } from "@/components/cosmos/StateOrb";
 
-// How long a tap's request may still be on its way: until then, a resume told "never made" keeps it.
+// How long a tap's request may still be on its way: until then, a resume told "never made" keeps it
+// (so the page doesn't offer the choice again while it may land). The money side doesn't depend on it.
 const PENDING_GRACE_MS = 3 * 60_000;
 
 // The outages that close the follow-up chat (see `down` below).
@@ -180,7 +181,7 @@ function ReadingView() {
     setNotice(null);
     setPackNote(null);
     setOrb("pulse");
-    const body = { ...bodyFor(r, reqLocale), use: "paid" };
+    const body = { ...bodyFor(r, reqLocale), use: "paid", drawId: r.id }; // one pack reading per draw (the server holds to it)
     // a replay only fetches the answer, so it sends no notes (one shared since can't be sent, or stop it)
     const trace = { maybeRecorded: false };
     const send = (replayOnly: boolean) => requestAi<TarotAiResult>("/api/ai/tarot", replayOnly ? { ...body, notes: [], replayOnly: true } : body, { requestId, trace });
@@ -194,8 +195,11 @@ function ReadingView() {
     }
     if (epoch !== dataEpoch()) return;
     const forget = () => patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
-    const age = sentAt ? Date.now() - Date.parse(sentAt) : NaN; // NaN or negative (a clock set back): not recent
-    if (out.state === "failed" && out.code === "no_such_request" && how === "resume" && age >= 0 && age < PENDING_GRACE_MS) {
+    // within the grace either side of now (a clock set back a little still counts); a far-off or
+    // unreadable time does not. Only the page's offer depends on this: the server never charges one
+    // draw twice, whatever the clock says
+    const age = sentAt ? Date.now() - Date.parse(sentAt) : NaN;
+    if (out.state === "failed" && out.code === "no_such_request" && how === "resume" && Math.abs(age) < PENDING_GRACE_MS) {
       // the tap's own request may still be on its way (slow, or sent from another tab): keep it for now;
       // the server did answer, so AI itself is up
       setDown(null);

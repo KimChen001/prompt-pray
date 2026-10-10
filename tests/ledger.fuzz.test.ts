@@ -177,7 +177,7 @@ async function runPaid(seed: number) {
       op = "paid_reading";
       const accountId = pick(accounts);
       const bound = int(50_000, 300_000);
-      const out = await ledger.reserve({ idemKey: hex(`pr-${seed}-${step}`), subjectKey: `a:${accountId}`, accountId, cacheScope: `a:${accountId}`, purpose: "tarot", mode: "paid_reading", inputHash: hex(`pin-${step}`), boundMicro: bound, readingHash: READING });
+      const out = await ledger.reserve({ idemKey: hex(`pr-${seed}-${step}`), subjectKey: `a:${accountId}`, accountId, cacheScope: `a:${accountId}`, purpose: "tarot", mode: "paid_reading", drawKey: hex(`draw-${seed}-${step}`), inputHash: hex(`pin-${step}`), boundMicro: bound, readingHash: READING });
       note(`reading:${out.status === "denied" ? out.reason : out.status}`);
       if (out.status === "reserved") open.push({ id: out.requestId, mode: "paid_reading", bound });
     } else if (r < 0.54 && readings.length) {

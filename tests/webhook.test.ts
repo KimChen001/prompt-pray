@@ -109,7 +109,7 @@ describe("payment webhook", LEDGER_TIMEOUT, () => {
     const o = await pendingOrder();
     await send(sessionEvent("checkout.session.completed", o));
     const subjectKey = `a:${o.accountId}`;
-    const calling = reserved(await t.ledger.reserve({ idemKey: hex("inflight"), subjectKey, accountId: o.accountId, cacheScope: subjectKey, purpose: "tarot", mode: "paid_reading", inputHash: hex("x"), boundMicro: 100_000, readingHash: hex("r") }));
+    const calling = reserved(await t.ledger.reserve({ idemKey: hex("inflight"), subjectKey, accountId: o.accountId, cacheScope: subjectKey, purpose: "tarot", mode: "paid_reading", drawKey: hex("inflight"), inputHash: hex("x"), boundMicro: 100_000, readingHash: hex("r") }));
     expect(await send(chargeEvent("charge.refunded", { sessionId: o.sessionId, refunded: 200 }))).toMatchObject({ json: { outcome: "partial_refund_review" } });
     expect(await send(chargeEvent("charge.refunded", { sessionId: o.sessionId }))).toMatchObject({ json: { outcome: "revoked" } });
     expect((await row<{ state: string }>(t.exec, "select state from moona.lots")).state).toBe("revoking");

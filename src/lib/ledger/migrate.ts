@@ -1,7 +1,7 @@
 // Applies the ledger SQL (spec §3.3 migrate). Never called on the request path in production: the
-// ledger-admin script runs it with the owner URL. 001 (tables) is immutable once applied; 002
-// (functions, all "create or replace") is re-applied whenever its contents change; 003 (roles) only on
-// real Postgres; 900 (test clock) only in tests, always after 002.
+// ledger-admin script runs it with the owner URL. 001 (tables) and 004 (the draw key) are immutable
+// once applied; 002 (functions, all "create or replace") is re-applied whenever its contents change;
+// 003 (roles) only on real Postgres; 900 (test clock) only in tests, always after 002.
 import "server-only";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -42,6 +42,19 @@ export async function migrate(exec: SqlExecutor, o: { testClock?: boolean; roles
     done.push("001");
   } else if (applied.get("001") !== c1) {
     throw new Error("moona: 001_schema.sql changed after it was applied; write a new migration instead");
+  }
+
+  // tables added after 001, each applied once and never changed after (write a new one instead)
+  for (const [version, file] of [["004", "004_draw_key.sql"]] as const) {
+    const sql = readSql(file);
+    const c = sha(sql);
+    if (!applied.has(version)) {
+      await applyInTransaction(exec, `${sql}
+${record(version, c)}`);
+      done.push(version);
+    } else if (applied.get(version) !== c) {
+      throw new Error(`moona: ${file} changed after it was applied; write a new migration instead`);
+    }
   }
 
   const fns = readSql("002_functions.sql");

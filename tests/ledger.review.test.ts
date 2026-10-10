@@ -26,11 +26,11 @@ describe("ledger review regressions", LEDGER_TIMEOUT, () => {
     expect(await ledger.fulfil({ eventId: "evt_second", type: "checkout.session.completed", orderId: made.order.id, sessionId: "cs_second", paymentId: "pi_2", amountCents: 500, currency: "usd", livemode: false, paid: true })).toBe("granted");
     // drain the older pack's money with failures of unknown billing
     for (let i = 0; i < 2; i++) {
-      const id = reserved(await ledger.reserve({ idemKey: hex(`drain-${i}`), subjectKey: one.subjectKey, accountId: one.accountId, cacheScope: one.subjectKey, purpose: "tarot", mode: "paid_reading", inputHash: hex(`d${i}`), boundMicro: 500_000 }));
+      const id = reserved(await ledger.reserve({ idemKey: hex(`drain-${i}`), subjectKey: one.subjectKey, accountId: one.accountId, cacheScope: one.subjectKey, purpose: "tarot", mode: "paid_reading", drawKey: hex(`drain-${i}`), inputHash: hex(`d${i}`), boundMicro: 500_000 }));
       await ledger.fail({ requestId: id, billing: "unknown", usage: null, errorCode: "timeout" });
       clock.advance(1000);
     }
-    const next = await ledger.reserve({ idemKey: hex("served"), subjectKey: one.subjectKey, accountId: one.accountId, cacheScope: one.subjectKey, purpose: "tarot", mode: "paid_reading", inputHash: hex("s"), boundMicro: 500_000 });
+    const next = await ledger.reserve({ idemKey: hex("served"), subjectKey: one.subjectKey, accountId: one.accountId, cacheScope: one.subjectKey, purpose: "tarot", mode: "paid_reading", drawKey: hex("served"), inputHash: hex("s"), boundMicro: 500_000 });
     expect(next.status).toBe("reserved");
     const lot = await row<{ order_id: string }>(exec, "select lot_id as order_id from moona.requests where idem_key = decode($1, 'hex')", [hex("served")]);
     expect(lot.order_id).toBe(made.order.id);
@@ -41,7 +41,7 @@ describe("ledger review regressions", LEDGER_TIMEOUT, () => {
   it("refuses a follow-up without the reading's hash", async () => {
     const { ledger } = await makeTestLedger({ plan: testPlan({ packsMicro: 5 * M, product: PACK_PRODUCT }) });
     const b = await grantPack(ledger);
-    const id = reserved(await ledger.reserve({ idemKey: hex("p1"), subjectKey: b.subjectKey, accountId: b.accountId, cacheScope: b.subjectKey, purpose: "tarot", mode: "paid_reading", inputHash: hex("p1"), boundMicro: 100_000 }));
+    const id = reserved(await ledger.reserve({ idemKey: hex("p1"), subjectKey: b.subjectKey, accountId: b.accountId, cacheScope: b.subjectKey, purpose: "tarot", mode: "paid_reading", drawKey: hex("p1"), inputHash: hex("p1"), boundMicro: 100_000 }));
     const done = await ledger.complete({ requestId: id, chargedMicro: 10, billing: "known", usage: null, result: RESULT, resultTtlSeconds: 60, readingHash: hex("reading") });
     const paidReadingId = done.status === "succeeded" ? done.request.paidReadingId! : "";
     expect(await ledger.reserve({ idemKey: hex("f1"), subjectKey: b.subjectKey, accountId: b.accountId, cacheScope: b.subjectKey, purpose: "chat", mode: "paid_followup", inputHash: hex("f1"), boundMicro: 50_000, paidReadingId }))

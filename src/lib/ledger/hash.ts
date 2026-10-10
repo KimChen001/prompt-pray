@@ -23,6 +23,14 @@ export function idemKey(k: Buffer, subjectKey: string, purpose: Purpose, request
   return createHmac("sha256", k).update(`idem|${subjectKey}|${purpose}|${requestId}`).digest("hex");
 }
 
+/**
+ * Identifies one draw for one account: the saved reading's own random id (never its content), so the
+ * same draw gets one pack reading however it is asked for, and a new draw of the same cards is new.
+ */
+export function drawKey(k: Buffer, accountId: string, drawId: string): string {
+  return createHmac("sha256", k).update(`draw|${accountId}|${drawId}`).digest("hex");
+}
+
 /** Identifies one tarot reading (not its language), so a paid follow-up can only be about that reading. */
 export function readingHash(k: Buffer, r: { spread: string; topic: string; question?: string; cards: { id: string; reversed: boolean }[] }): string {
   return createHmac("sha256", k).update(`reading|${canonicalJson({ spread: r.spread, topic: r.topic, question: r.question ?? "", cards: r.cards.map((c) => ({ id: c.id, reversed: c.reversed })) })}`).digest("hex");
