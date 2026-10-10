@@ -319,3 +319,12 @@ Built to `docs/ai-ledger-spec.md` §3.3, §4 and §7. Nothing calls it yet: rout
 - Client request ids for replay.
 - Visitor ids become UUIDs minted via `mint_visitor` (the ledger requires `v:<uuid>`; the Phase 0 cookie id is 22 base64url characters).
 - The quota and "simulated" labels in the UI.
+
+## Horoscope rewrite pays once (Codex review 20:51, P2) (2026-10-09, late night)
+
+- **The bug:** after the person asked to rewrite an older saved horoscope, the request stayed "asked for" on that key. Two ways it paid again without a new click:
+  - Coming back to the sign, if the server answered on other versions (deploy skew).
+  - Coming back after a failed rewrite.
+- **The fix:** a rewrite is now a one-shot token, used up when its request starts. The failure notice's retry asks for a new rewrite. A request already running for a key is joined, not sent twice, when the person switches away and back.
+- **Tests:** `tests/horoscope-panel.test.ts` renders the real component (happy-dom, mocked fetch). It runs Codex's sequence: older cache 0 calls → rewrite Leo 1 → Aries 2 → back to Leo still 2. It also covers a failed rewrite, fast switching while a request runs, and strict mode. The old component fails 3 of the 4.
+- **Dev dependency:** `happy-dom` 20.14.6 (jsdom 30 needs Node 24.15+; this machine has 24.11).

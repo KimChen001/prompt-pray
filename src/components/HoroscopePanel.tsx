@@ -32,9 +32,14 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
   const [houseSystem, setHouseSystem] = useState<HouseSystem>("placidus");
   const [ai, setAi] = useState<AiState>({ status: "idle" });
   const [attempt, setAttempt] = useState(0);
-  // The key the person asked to rewrite with the current versions (a paid request they chose).
-  const [rewrite, setRewrite] = useState<string | null>(null);
+  // A rewrite the person asked for is one paid attempt for one key. It is used up when its request
+  // starts, so coming back to that key later shows the saved text instead of paying again.
+  const [rewrite, setRewrite] = useState<{ key: string; n: number } | null>(null);
+  const usedRewrite = useRef(0);
+  // One request per key at a time: switching away and back while it runs joins it.
+  const pending = useRef(new Set<string>());
   const currentKey = useRef<string | null>(null);
+  const askRewrite = (key: string) => setRewrite((r) => ({ key, n: (r?.n ?? 0) + 1 }));
 
   useEffect(() => {
     setBirth(getBirth());
@@ -61,15 +66,19 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
   useEffect(() => {
     if (!day || !cacheKey) return;
     const cached = getCachedHoroscope(cacheKey);
-    // A text saved under the current versions is used as is (even after a rewrite was asked for, so a
-    // rewritten key never pays again). An older one is kept, re-checked, and shown until the person asks.
+    // A text saved under the current versions is used as is. An older one is kept, re-checked, and
+    // shown until the person asks for a rewrite.
     if (cached && cached.versions === HOROSCOPE_VERSIONS) return setAi({ status: "saved", text: cached, key: cacheKey });
     const holds = cached ? savedTextHolds(cached, day, localDate, timeZone, locale) : false;
-    if (cached && rewrite !== cacheKey) return setAi({ status: "older", text: cached, key: cacheKey, holds });
     const key = cacheKey;
-    const epoch = dataEpoch();
     // While rewriting, an older text that still holds stays on screen, and stays if the request fails.
     const keep = cached ? { text: cached, holds } : {};
+    if (pending.current.has(key)) return setAi({ status: "loading", key, ...keep });
+    const asked = rewrite !== null && rewrite.key === key && rewrite.n > usedRewrite.current;
+    if (cached && !asked) return setAi({ status: "older", text: cached, key, holds });
+    if (asked) usedRewrite.current = rewrite.n;
+    const epoch = dataEpoch();
+    pending.current.add(key);
     setAi({ status: "loading", key, ...keep });
     onBusy?.(true);
     (async () => {
@@ -92,6 +101,7 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
       } catch {
         if (currentKey.current === key) setAi({ status: "failed", key, ...keep });
       } finally {
+        pending.current.delete(key);
         onBusy?.(false);
       }
     })();
@@ -158,14 +168,15 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
       {older && (
         <p className="notice-quiet">
           {fmt(ai.holds ? m.horoscope.olderHolds : m.horoscope.olderFails, { v: (older.versions ?? m.horoscope.olderUnknown).replaceAll("|", " · ") })}{" "}
-          <button type="button" className="btn-link" onClick={() => setRewrite(cacheKey)}>{m.horoscope.rewrite}</button>
+          <button type="button" className="btn-link" onClick={() => askRewrite(cacheKey!)}>{m.horoscope.rewrite}</button>
         </p>
       )}
       {fresh && ai.status === "loading" && <span className="status-line"><span className="status-dot" />{m.horoscope.loadingAi}</span>}
       {fresh && ai.status === "failed" && (
         <p className="notice">
           {m.horoscope.aiFallback}{" "}
-          <button type="button" className="btn-link" onClick={() => setAttempt((n) => n + 1)}>{m.horoscope.retry}</button>
+          {/* retrying a failed rewrite is a new rewrite the person asks for; otherwise a plain retry */}
+          <button type="button" className="btn-link" onClick={() => (ai.text ? askRewrite(cacheKey!) : setAttempt((n) => n + 1))}>{m.horoscope.retry}</button>
         </p>
       )}
 
