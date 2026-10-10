@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { AiError, generateJson } from "@/lib/ai/provider";
 import { checkAiAccess } from "@/lib/ai/guard";
-import { checkFacts, HOROSCOPE_PROMPT_VERSION, HOROSCOPE_SCHEMA, horoscopeClaims, horoscopePrompt, parseHoroscopeRequest, referenceSky, validateHoroscope } from "@/lib/ai/horoscope-prompt";
+import { checkFacts, HOROSCOPE_PROMPT_VERSION, HOROSCOPE_SCHEMA, HOROSCOPE_VERSIONS, horoscopeClaims, horoscopePrompt, parseHoroscopeRequest, referenceSky, validateHoroscope } from "@/lib/ai/horoscope-prompt";
 import { aiErrorResponse } from "@/lib/ai/http";
 
 // Request bodies (structured sky facts + sign names) are not logged or stored. The sky is
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       { purpose: "horoscope", system, messages: [{ role: "user", content: user }], schema: HOROSCOPE_SCHEMA, schemaName: "horoscope", timeoutMs: 20_000 },
       (data) => validateHoroscope(data, claims),
     );
-    return NextResponse.json({ ...value, basis: lines, promptVersion: HOROSCOPE_PROMPT_VERSION, meta, source: "live" });
+    return NextResponse.json({ ...value, basis: lines, promptVersion: HOROSCOPE_PROMPT_VERSION, versions: HOROSCOPE_VERSIONS, meta, source: "live" });
   } catch (e) {
     return aiErrorResponse(e instanceof AiError ? e : new AiError("upstream"));
   }

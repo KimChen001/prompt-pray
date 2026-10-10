@@ -6,7 +6,8 @@ import { PLANET_NAME, SIGN_INFO, type Planet } from "./zodiac";
 import { ASPECT_TONE, dayTone, type Fact, type NatalPoint, type Tone } from "./transits";
 
 /** Bump when any sentence rule or fact selection here (or in transits.ts) changes: saved AI text is keyed by it. */
-export const HOROSCOPE_RULES_VERSION = "horoscope-rules@2";
+// horoscope-rules@3: the "why" list (and the AI request) includes every fact the template text uses.
+export const HOROSCOPE_RULES_VERSION = "horoscope-rules@3";
 
 export const HOUSE_THEME: L10n[] = [
   { en: "self and fresh starts", zh: "自我与新开始" },
@@ -169,6 +170,8 @@ export function composeHoroscope(facts: Fact[]): Horoscope {
     overall: join([TONE_LINE[tone], ...(lead ? [factLine(lead)] : []), ...(moon ? [factLine(moon)] : [])]),
     love: love ? factLine(love) : LOVE_FALLBACK[tone],
     work: work ? factLine(work) : WORK_FALLBACK[tone],
-    why: facts.slice(0, 5).map((fact) => ({ fact, line: factLine(fact) })),
+    // The top facts plus any fact the text above uses (in rank order), so every sentence is traceable
+    // and the AI request carries the same facts. At most 5 + 3 = 8, the server's limit.
+    why: facts.filter((f, i) => i < 5 || used.has(f)).map((fact) => ({ fact, line: factLine(fact) })),
   };
 }

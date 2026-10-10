@@ -7,11 +7,12 @@ import type { L10n, Locale } from "@/lib/tarot/types";
 import type { NatalFact } from "@/lib/astro/natal-facts";
 import { factLabel } from "@/lib/astro/natal-text";
 import { PLANETS, SIGNS, type Planet, type Sign } from "@/lib/astro/zodiac";
-import { addAspect, addHouse, addSign, addUncertain, emptyClaimFacts, findInconsistentClaim, type ClaimFacts } from "./claims";
+import { addAspect, addHouse, addSign, addUncertain, allowHouses, emptyClaimFacts, findInconsistentClaim, setAsc, setMc, type ClaimFacts } from "./claims";
 import type { Aspect } from "@/lib/astro/transits";
 import type { JsonSchema } from "./types";
 
-export const NATAL_PROMPT_VERSION = "natal-report@1";
+// natal-report@2: checked with the source-aware claim rules (claims@2); the prompt text is unchanged.
+export const NATAL_PROMPT_VERSION = "natal-report@2";
 
 export interface NatalThemeInput {
   id: string;
@@ -133,21 +134,26 @@ export function natalPrompt(r: NatalRequest): { system: string; user: string } {
 
 // ---- key-field consistency (shared checker in claims.ts) ----
 
-/** The claim facts a natal request supports: its placements, angles, houses (time known) and aspects. */
-export function natalClaimFacts(r: Pick<NatalRequest, "facts" | "timeKnown">): ClaimFacts {
+/**
+ * The claim facts a natal request supports: its placements, angles, houses (time known) and aspects,
+ * all as the "natal" source. `idPrefix` names the context items they come from (Talk: "chart.").
+ * There is no sky source here, so a claim worded about today's sky is treated as invented.
+ */
+export function natalClaimFacts(r: Pick<NatalRequest, "facts" | "timeKnown">, idPrefix?: string): ClaimFacts {
   const cf = emptyClaimFacts();
+  const id = (f: NatalFact) => (idPrefix === undefined ? undefined : `${idPrefix}${f.id}`);
   for (const f of r.facts) {
     if (f.kind === "placement") {
-      addSign(cf, f.body, f.sign);
-      if (f.house) addHouse(cf, f.body, f.house);
+      addSign(cf, "natal", f.body, f.sign, id(f));
+      if (f.house && r.timeKnown) addHouse(cf, "natal", f.body, f.house, id(f));
     }
-    if (f.kind === "uncertainPlacement") addUncertain(cf, f.body, f.options);
-    if (f.kind === "angle" && f.body === "asc") cf.asc = f.sign;
-    if (f.kind === "aspect") addAspect(cf, f.a, f.b, f.aspect);
+    if (f.kind === "uncertainPlacement") addUncertain(cf, "natal", f.body, f.options, id(f));
+    if (f.kind === "angle" && f.body === "asc" && r.timeKnown) setAsc(cf, f.sign, id(f));
+    if (f.kind === "angle" && f.body === "mc" && r.timeKnown) setMc(cf, f.sign, id(f));
+    if (f.kind === "aspect") addAspect(cf, "natal", f.a, f.b, f.aspect, id(f));
   }
   // With a birth time any house may be discussed (planets only in their own); without one, none.
-  if (r.timeKnown) for (let h = 1; h <= 12; h++) cf.anyHouse.add(h);
-  if (!r.timeKnown) cf.asc = null;
+  if (r.timeKnown) allowHouses(cf, "natal", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   return cf;
 }
 

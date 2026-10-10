@@ -242,9 +242,18 @@ export interface CachedText {
   meta: { generatedAt: string; model: string; provider: string };
   /** The fact lines the text was written from, shown with the saved text. */
   basis?: string[];
+  /** Rules, prompt and claim-check versions the text was written and checked under (HOROSCOPE_VERSIONS). */
+  versions?: string;
 }
+/**
+ * The saved text for a day/inputs/language key. Texts saved before versions were stored separately
+ * have keys of the form `${versions}|${key}`; they are found too, with their versions read from the key.
+ */
 export function getCachedHoroscope(key: string): CachedText | null {
-  return read<Record<string, CachedText>>(KEYS.horoscope, {})[key] ?? null;
+  const map = read<Record<string, CachedText>>(KEYS.horoscope, {});
+  if (map[key]) return map[key];
+  const legacy = Object.keys(map).reverse().find((k) => k.endsWith(`|${key}`));
+  return legacy ? { ...map[legacy], versions: map[legacy].versions ?? legacy.slice(0, -key.length - 1) } : null;
 }
 export function cacheHoroscope(key: string, text: CachedText): void {
   const map = read<Record<string, CachedText>>(KEYS.horoscope, {});

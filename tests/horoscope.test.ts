@@ -155,7 +155,8 @@ describe("saved horoscope cache key (review §6)", () => {
     expect(key(b, "placidus", tz, "zh")).not.toBe(base);
     expect(key({ ...b, time: "07:31" })).not.toBe(base);
     expect(key({ ...b, place: { ...boston, tz: "America/Chicago" } })).not.toBe(base);
-    expect(base).toContain("horoscope-rules@2|horoscope@2");
+    // Versions are stored with the saved text, not in the key: a version change keeps the text (and offers an update).
+    expect(base).not.toMatch(/horoscope@|claims@|rules@/);
   });
   it("ignores the house system without a birth time (it can't change anything)", () => {
     const b: BirthData = { date: "1999-08-14", time: null, place: boston };

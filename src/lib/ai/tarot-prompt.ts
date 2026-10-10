@@ -1,12 +1,22 @@
 // Tarot AI: request parsing, prompt and output validation. Pure functions (unit-tested).
 // The server rebuilds every card fact from card ids — card names and meanings sent by a client are
 // never trusted — so the model only sees the cards that were actually drawn.
+// An opted-in chart layer (the person's Sun / Moon / Rising) is accepted only as sign names, and every
+// sign claim in the reading is checked against it as birth-chart facts (claims.ts). There is no sky
+// source here, so claims about today's sky or other planets' placements are treated as invented.
 import { DECK, getCard, hasCard } from "@/lib/tarot/deck";
 import { SPREADS, isSpreadId } from "@/lib/tarot/spreads";
 import type { CardData, DrawnCard, Locale, SpreadId, Topic } from "@/lib/tarot/types";
 import { detectCrisis } from "@/lib/safety";
 import { MAX_NOTES_SENT, NOTE_MAX } from "@/lib/memory";
+import { SIGNS, SIGN_INFO, type Sign } from "@/lib/astro/zodiac";
+import { addSign, addUncertain, CLAIM_RULES_VERSION, emptyClaimFacts, findInconsistentClaim, setAsc, type ClaimFacts } from "./claims";
 import type { JsonSchema } from "./types";
+
+// tarot@2: the chart layer is parsed into signs and the reading's sign claims are checked against it.
+export const TAROT_PROMPT_VERSION = "tarot@2";
+/** Recorded with each saved reading text and follow-up reply. */
+export const TAROT_VERSIONS = `${TAROT_PROMPT_VERSION}|${CLAIM_RULES_VERSION}`;
 
 const TOPICS: Topic[] = ["general", "love", "work", "growth"];
 const MAX_QUESTION = 300;
@@ -57,11 +67,50 @@ export const TAROT_SCHEMA: JsonSchema = {
 
 const shortStr = (v: unknown, max: number) => (typeof v === "string" && v.trim().length > 0 && v.length <= max ? v.trim() : undefined);
 
+const signByName = (name: string): Sign | undefined =>
+  SIGNS.find((s) => SIGN_INFO[s].name.en.toLowerCase() === name.toLowerCase() || SIGN_INFO[s].name.zh.replace(/座$/, "") === name.replace(/座$/, ""));
+
+/** "Leo", or "Virgo or Libra" when the birth time is unknown (English or Chinese names) → signs; null if it is anything else. */
+export function layerSigns(v: string | undefined, max: 1 | 2): Sign[] | null {
+  if (!v) return null;
+  const parts = v.split(/\s+or\s+|或者?/i).map((p) => p.trim());
+  if (parts.length > max) return null;
+  const signs = parts.map(signByName);
+  return signs.every(Boolean) && new Set(signs).size === signs.length ? (signs as Sign[]) : null;
+}
+
+/** Keeps only sign names (anything else is dropped), written back as English names for the prompt. */
 export function parseChartLayer(v: unknown): ChartLayer | undefined {
   if (!v || typeof v !== "object") return undefined;
   const c = v as Record<string, unknown>;
-  const layer = { sun: shortStr(c.sun, 40), moon: shortStr(c.moon, 60), rising: shortStr(c.rising, 40) };
+  const norm = (raw: unknown, max: 1 | 2) => {
+    const signs = layerSigns(shortStr(raw, 60), max);
+    return signs ? signs.map((s) => SIGN_INFO[s].name.en).join(" or ") : undefined;
+  };
+  const layer: ChartLayer = {};
+  const sun = norm(c.sun, 2), moon = norm(c.moon, 2), rising = norm(c.rising, 1);
+  if (sun) layer.sun = sun;
+  if (moon) layer.moon = moon;
+  if (rising) layer.rising = rising;
   return layer.sun || layer.moon || layer.rising ? layer : undefined;
+}
+
+/**
+ * What a reading may say about astrology: the person's Sun / Moon / Rising from the chart layer, as
+ * birth-chart facts (an "X or Y" sign must be named with both options). Without a layer, nothing.
+ * Degrees are allowed ("a 180° turn" is ordinary language here; no positions are given).
+ */
+export function chartLayerClaims(layer: ChartLayer | undefined): ClaimFacts {
+  const cf = emptyClaimFacts();
+  cf.allowDegrees = true;
+  for (const body of ["sun", "moon"] as const) {
+    const signs = layerSigns(layer?.[body], 2);
+    if (signs?.length === 1) addSign(cf, "natal", body, signs[0]);
+    else if (signs) addUncertain(cf, "natal", body, signs);
+  }
+  const rising = layerSigns(layer?.rising, 1);
+  if (rising) setAsc(cf, rising[0]);
+  return cf;
 }
 
 /** undefined = no notes; null = malformed (reject the request). */
@@ -127,7 +176,7 @@ export function tarotPrompt(r: TarotRequest): { system: string; user: string } {
     "Interpret ONLY the cards listed, in their positions and orientations. Never mention, add or swap other cards.",
     "Use the given meanings as the basis; you may phrase freshly and connect the cards to each other and to the question.",
     "If there is a question, speak to it directly. Do not invent facts about the person's life; if you assume something, say it is a possibility.",
-    "If a chart layer is given, you may refer to it lightly; never compute or invent placements.",
+    "If a chart layer is given, it is the person's own birth-chart Sun / Moon / Rising: you may refer to it lightly ('your Sun in Leo'). If a sign is given as 'X or Y', name both together. Never mention today's sky, other planets, houses or aspects, and never compute or invent placements.",
     "Saved notes, if any, are things the person told MOONA earlier and confirmed. They may be out of date: use them only where relevant, never present them as something the cards revealed, and if the question contradicts a note, trust the question (you may ask once whether the note still holds).",
     "Never give medical, legal or financial instructions. Never predict illness, death or pregnancy. Never be fatalistic.",
     "Per card: 2–3 sentences. synthesis: 3–4 sentences. action: one small thing to do today. reflection: one open question for the person.",
@@ -201,5 +250,7 @@ export function validateTarot(data: unknown, r: TarotRequest): TarotText | null 
   const texts = [synthesis, action, reflection, ...cards.map((c) => c.insight)];
   if (mentionsUndrawnCard(texts, r.cards.map((c) => c.id), !!r.chart)) return null;
   if (texts.some((t) => detectCrisis(t))) return null;
+  const claims = chartLayerClaims(r.chart);
+  if (texts.some((t) => findInconsistentClaim(t, claims) !== null)) return null;
   return { cards, synthesis, action, reflection };
 }

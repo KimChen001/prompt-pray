@@ -55,9 +55,9 @@ describe("QR code target", () => {
 
 describe("claim checks catch common phrasings (Sun is in, Moon sits in, 太阳是…)", () => {
   const cf = emptyClaimFacts();
-  addSign(cf, "sun", "aries");
-  addSign(cf, "venus", "taurus");
-  addUncertain(cf, "moon", ["cancer", "leo"]);
+  addSign(cf, "natal", "sun", "aries");
+  addSign(cf, "natal", "venus", "taurus");
+  addUncertain(cf, "natal", "moon", ["cancer", "leo"]);
 
   it.each([
     "Your Sun is in Pisces, which invites quiet reflection.",

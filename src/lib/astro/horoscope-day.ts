@@ -8,7 +8,7 @@ import { composeHoroscope, type Horoscope } from "./horoscope";
 import type { BirthData } from "./birth";
 import type { HouseSystem } from "./houses";
 import type { Sign } from "./zodiac";
-import { HOROSCOPE_VERSIONS, toWire, type HoroscopeRequest, type HoroscopeSubject } from "@/lib/ai/horoscope-prompt";
+import { horoscopeClaims, toWire, validateHoroscope, type HoroscopeRequest, type HoroscopeSubject } from "@/lib/ai/horoscope-prompt";
 import type { Locale } from "@/lib/tarot/types";
 
 export type HoroscopeInput = { birth: BirthData; houseSystem: HouseSystem } | { sunSign: Sign };
@@ -61,9 +61,19 @@ export function dayHoroscope(input: HoroscopeInput, localDate: string, timeZone:
   return { subject, wire, sky, facts, horoscope: composeHoroscope(facts), fingerprint: inputFingerprint(input) };
 }
 
-/** Saved AI text is found again only for the same day, zone, inputs, rules/prompt versions and language. */
+/**
+ * Saved AI text is found again only for the same day, zone, inputs and language. The rules/prompt
+ * versions it was written under are stored with it (store.ts CachedText.versions), so a version change
+ * keeps the saved text and offers an update instead of silently paying for a new one.
+ */
 export function horoscopeCacheKey(d: DayHoroscope, localDate: string, timeZone: string, locale: Locale): string {
-  return `${HOROSCOPE_VERSIONS}|${localDate}|${timeZone}|${d.fingerprint}|${locale}`;
+  return `${localDate}|${timeZone}|${d.fingerprint}|${locale}`;
+}
+
+/** Whether a text saved under earlier versions still passes the current claim checks for this day (no model call). */
+export function savedTextHolds(text: { overall: string; love: string; work: string }, d: DayHoroscope, localDate: string, timeZone: string, locale: Locale): boolean {
+  const claims = horoscopeClaims(horoscopeBody(d, localDate, timeZone, locale), d.sky);
+  return validateHoroscope({ overall: text.overall, love: text.love, work: text.work }, claims) !== null;
 }
 
 export function horoscopeBody(d: DayHoroscope, localDate: string, timeZone: string, locale: Locale): HoroscopeRequest {

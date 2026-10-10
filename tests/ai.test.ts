@@ -274,7 +274,7 @@ describe("routes", () => {
     const res = await horoscopePOST(post(body));
     const json = await res.json();
     expect(res.status).toBe(200);
-    expect(json).toMatchObject({ ...good, source: "live", promptVersion: "horoscope@2", meta: { provider: "openai-compatible", model: "claude-haiku-4-5" } });
+    expect(json).toMatchObject({ ...good, source: "live", promptVersion: "horoscope@3", versions: "horoscope-rules@3|horoscope@3|claims@2", meta: { provider: "openai-compatible", model: "claude-haiku-4-5" } });
     expect(json.basis.length).toBe(body.facts.length); // the server's own fact sentences, saved with the text
     expect(Date.parse(json.meta.generatedAt)).not.toBeNaN();
   });

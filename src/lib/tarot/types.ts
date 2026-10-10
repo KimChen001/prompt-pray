@@ -37,6 +37,8 @@ export interface AiMeta {
   provider: string;
   model: string;
   generatedAt: string; // ISO instant
+  /** Prompt and claim-check versions the text was written and checked under (absent on older saves). */
+  versions?: string;
 }
 
 export interface TarotAiResult {

@@ -119,7 +119,7 @@ describe("Talk: context the person chose, kept in its kinds", () => {
   it("keeps only basis ids it provided, and rejects claims that contradict the chart", () => {
     const r = parseTalkRequest({ ...base, chart: known, notes: [{ id: "n1", text: "Started a new job in May" }] })!;
     const { items, claims } = talkContext(r);
-    const sunId = items.find((i) => i.id.startsWith("chart.") && i.label.startsWith("Sun in"))!.id;
+    const sunId = items.find((i) => i.id.startsWith("chart.") && i.label.startsWith("Birth chart: Sun in"))!.id;
     const ok = validateTalk({ reply: "With your Sun in Leo, being seen matters to you. What would feel like enough today?", basis: [sunId, "note.n1", "made.up"], remember: [] }, r, items, claims)!;
     expect(ok.basis.map((b) => b.id)).toEqual([sunId, "note.n1"]);
     expect(ok.basis.find((b) => b.id === "note.n1")).toMatchObject({ kind: "said", label: "" }); // note text is never stored in the reply

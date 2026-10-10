@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { AiError, generateJson } from "@/lib/ai/provider";
 import { checkAiAccess } from "@/lib/ai/guard";
 import { aiErrorResponse } from "@/lib/ai/http";
-import { TAROT_SCHEMA, parseTarotRequest, tarotNeedsSupport, tarotPrompt, validateTarot } from "@/lib/ai/tarot-prompt";
+import { TAROT_SCHEMA, TAROT_VERSIONS, parseTarotRequest, tarotNeedsSupport, tarotPrompt, validateTarot } from "@/lib/ai/tarot-prompt";
 
 // The question, card ids and shared notes are used only for this request; nothing is logged or stored server-side.
 export async function POST(req: NextRequest) {
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       { purpose: "tarot", system, messages: [{ role: "user", content: user }], schema: TAROT_SCHEMA, schemaName: "tarot_reading", timeoutMs: 30_000 },
       (data) => validateTarot(data, parsed),
     );
-    return NextResponse.json({ ...value, meta: { provider: meta.provider, model: meta.model, generatedAt: meta.generatedAt } });
+    return NextResponse.json({ ...value, meta: { provider: meta.provider, model: meta.model, generatedAt: meta.generatedAt, versions: TAROT_VERSIONS } });
   } catch (e) {
     return aiErrorResponse(e instanceof AiError ? e : new AiError("upstream"));
   }

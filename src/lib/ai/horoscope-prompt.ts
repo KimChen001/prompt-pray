@@ -12,10 +12,11 @@ import { factLine, HOROSCOPE_RULES_VERSION } from "@/lib/astro/horoscope";
 import { TRANSITING, TRANSIT_ORB, signAspect, solarHouse, type Aspect, type Fact, type HouseBasis, type NatalPoint } from "@/lib/astro/transits";
 import { PLANETS, SIGNS, signOf, type Planet, type Sign } from "@/lib/astro/zodiac";
 import type { Locale } from "@/lib/tarot/types";
-import { addAspect, addHouse, addSign, addUncertain, emptyClaimFacts, findInconsistentClaim, type ClaimFacts } from "./claims";
+import { addAspect, addHouse, addSign, addUncertain, CLAIM_RULES_VERSION, emptyClaimFacts, findInconsistentClaim, setAsc, type ClaimFacts } from "./claims";
 import type { JsonSchema } from "./types";
 
-export const HOROSCOPE_PROMPT_VERSION = "horoscope@2";
+// horoscope@3: the person's signs and today's sky are named apart ("your Sun sign" vs "today's Sun").
+export const HOROSCOPE_PROMPT_VERSION = "horoscope@3";
 
 export const HOROSCOPE_SCHEMA: JsonSchema = {
   type: "object",
@@ -165,23 +166,38 @@ export function checkFacts(r: HoroscopeRequest, sky: DaySky): string | null {
   return null;
 }
 
-/** What the reply may say: today's signs, the person's (possibly uncertain) Big Three, fact houses and aspects. */
+/**
+ * What the reply may say, per source: the person's (possibly uncertain) Sun / Moon / Rising as
+ * "natal", and today's sky — planet signs, events, the houses today's bodies pass through, and
+ * transits to the chart — as "sky". A claim with no source wording is read as being about the sky
+ * (the horoscope is about today); the person's own signs must be named as theirs ("your Sun sign").
+ */
 export function horoscopeClaims(r: HoroscopeRequest, sky: DaySky): ClaimFacts {
-  const cf = emptyClaimFacts();
+  const cf = emptyClaimFacts("sky");
   const pos = allPositions(sky.at);
-  for (const p of PLANETS) addSign(cf, p, signOf(pos[p].lon));
-  for (const e of sky.events) if (e.kind !== "lunation") addSign(cf, e.planet, e.sign);
-  if (r.subject.sun.length === 1) addSign(cf, "sun", r.subject.sun[0]);
-  else addUncertain(cf, "sun", r.subject.sun);
-  if (r.subject.moon) {
-    if (r.subject.moon.length === 1) addSign(cf, "moon", r.subject.moon[0]);
-    else addUncertain(cf, "moon", r.subject.moon);
+  for (const p of PLANETS) addSign(cf, "sky", p, signOf(pos[p].lon));
+  // Events of the local day: an ingress puts the planet in both signs today (before and after it); a
+  // lunation names the Moon's sign at that moment.
+  for (const e of sky.events) {
+    if (e.kind === "lunation") {
+      addSign(cf, "sky", "moon", e.sign);
+      continue;
+    }
+    addSign(cf, "sky", e.planet, e.sign);
+    if (e.kind === "ingress") addSign(cf, "sky", e.planet, signOf(allPositions(new Date(e.at.getTime() - 60_000))[e.planet].lon));
   }
-  if (r.subject.rising && r.subject.timeKnown) cf.asc = r.subject.rising;
+  if (r.subject.sun.length === 1) addSign(cf, "natal", "sun", r.subject.sun[0]);
+  else addUncertain(cf, "natal", "sun", r.subject.sun);
+  if (r.subject.moon) {
+    if (r.subject.moon.length === 1) addSign(cf, "natal", "moon", r.subject.moon[0]);
+    else addUncertain(cf, "natal", "moon", r.subject.moon);
+  }
+  if (r.subject.rising && r.subject.timeKnown) setAsc(cf, r.subject.rising);
+  // Houses today's bodies pass through, counted on the basis the fact says (birth chart or Sun sign).
   for (const f of r.facts) {
-    if (f.kind === "moonHouse") addHouse(cf, "moon", f.house);
-    if (f.kind === "event" && f.house) addHouse(cf, f.event.kind === "lunation" ? "moon" : f.event.planet!, f.house);
-    if (f.kind === "aspect" && f.natal !== "asc") addAspect(cf, f.transit, f.natal, f.aspect);
+    if (f.kind === "moonHouse") addHouse(cf, "sky", "moon", f.house, undefined, f.basis);
+    if (f.kind === "event" && f.house) addHouse(cf, "sky", f.event.kind === "lunation" ? "moon" : f.event.planet!, f.house, undefined, f.basis ?? "solar");
+    if (f.kind === "aspect" && (f.natal !== "asc" || cf.asc)) addAspect(cf, "sky", f.transit, f.natal, f.aspect);
   }
   return cf;
 }
@@ -194,6 +210,7 @@ export function horoscopePrompt(r: HoroscopeRequest): { system: string; user: st
     "You are MOONA, a warm, grounded astrology companion.",
     "Write today's horoscope using ONLY the sky facts provided. Do not invent planets, signs, aspects, houses, degrees or dates.",
     "Solar houses are counted from the Sun sign; call them solar houses, never birth-chart houses.",
+    "Keep the person's signs and today's sky apart in every sentence: the person's are 'your Sun sign', 'your Moon' (Chinese: 你的太阳星座, 你的月亮); today's are 'today's Moon', 'the Moon today' (Chinese: 今天的月亮). Never give the person a sign from today's sky, or today's sky a sign from the person.",
     r.subject.timeKnown ? "" : "The birth time is unknown: do not name a Rising sign or any birth-chart house. If the Sun or Moon has two possible signs, name both together.",
     "Each section is 2–3 sentences, in the second person, reflective and practical. Mention at least one concrete fact per section.",
     "Never be fatalistic. Never give medical, legal or financial instructions. Never predict illness, death or pregnancy.",
@@ -204,9 +221,9 @@ export function horoscopePrompt(r: HoroscopeRequest): { system: string; user: st
   const who = [`Sun ${s.sun.join(" or ")}`, s.moon && `Moon ${s.moon.join(" or ")}`, s.rising && `Rising ${s.rising}`].filter(Boolean).join(", ");
   const user = [
     `Date: ${r.date}`,
-    `The person: ${who}${s.mode === "sign" ? " (Sun sign only)" : s.timeKnown ? "" : " (birth time unknown)"}`,
+    `The person's own signs (birth chart, not today's sky): ${who}${s.mode === "sign" ? " (Sun sign only)" : s.timeKnown ? "" : " (birth time unknown)"}`,
     `Overall tone of today's aspects: ${r.tone}`,
-    "Sky facts (most important first):",
+    "Today's sky facts (most important first):",
     ...en.map((f) => `- ${f}`),
   ].join("\n");
   return { system, user, lines };
@@ -224,5 +241,9 @@ export function validateHoroscope(data: unknown, claims?: ClaimFacts): Horoscope
   return out;
 }
 
-/** Everything the saved text depends on; bump any part and the browser asks for a new text. */
-export const HOROSCOPE_VERSIONS = `${HOROSCOPE_RULES_VERSION}|${HOROSCOPE_PROMPT_VERSION}`;
+/**
+ * Everything the saved text depends on. A saved text from other versions is kept and shown with an
+ * offer to update (never regenerated automatically, which would spend money); it is re-checked against
+ * the current rules first (see horoscope-day.ts).
+ */
+export const HOROSCOPE_VERSIONS = `${HOROSCOPE_RULES_VERSION}|${HOROSCOPE_PROMPT_VERSION}|${CLAIM_RULES_VERSION}`;

@@ -192,7 +192,7 @@ describe("natal report versions", () => {
 
   it("separates language and prompt/rule versions; sameChart ignores versions only", () => {
     const zh = { ...key, locale: "zh" as const };
-    const newer = { ...key, promptVersion: "natal-report@2" };
+    const newer = { ...key, promptVersion: "natal-report@99" };
     expect(keyString(zh)).not.toBe(keyString(key));
     expect(keyString(newer)).not.toBe(keyString(key));
     expect(sameChart(newer, key)).toBe(true);

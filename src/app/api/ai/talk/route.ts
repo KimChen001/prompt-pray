@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { AiError, generateJson } from "@/lib/ai/provider";
 import { checkAiAccess } from "@/lib/ai/guard";
 import { aiErrorResponse } from "@/lib/ai/http";
-import { parseTalkRequest, TALK_PROMPT_VERSION, TALK_SCHEMA, talkContext, talkNeedsSupport, talkPrompt, validateTalk } from "@/lib/ai/talk-prompt";
+import { parseTalkRequest, TALK_PROMPT_VERSION, TALK_SCHEMA, TALK_VERSIONS, talkContext, talkNeedsSupport, talkPrompt, validateTalk } from "@/lib/ai/talk-prompt";
 
 // Free conversation. Messages, shared notes and chart facts are used only for this request;
 // nothing is logged or stored server-side. Birth date, time and place are never part of it.
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       { purpose: "talk", system, messages, schema: TALK_SCHEMA, schemaName: "talk_reply", timeoutMs: 25_000 },
       (data) => validateTalk(data, parsed, items, claims),
     );
-    return NextResponse.json({ ...value, promptVersion: TALK_PROMPT_VERSION, meta: { provider: meta.provider, model: meta.model, generatedAt: meta.generatedAt } });
+    return NextResponse.json({ ...value, promptVersion: TALK_PROMPT_VERSION, meta: { provider: meta.provider, model: meta.model, generatedAt: meta.generatedAt, versions: TALK_VERSIONS } });
   } catch (e) {
     return aiErrorResponse(e instanceof AiError ? e : new AiError("upstream"));
   }

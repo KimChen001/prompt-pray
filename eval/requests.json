@@ -2637,10 +2637,16 @@
           {
             "kind": "retrograde",
             "planet": "venus"
+          },
+          {
+            "kind": "moonHouse",
+            "house": 4,
+            "basis": "solar",
+            "sign": "scorpio"
           }
         ]
       },
-      "context": "2026-10-12 · {\"mode\":\"sign\",\"timeKnown\":false,\"sun\":[\"leo\"]} · tone tension\n  - Venus tugs at your Sun; wanting harmony can mean saying yes too fast.\n  - Mars charges your Sun: act on what you've been putting off.\n  - Moods may swing against your Sun; give yourself a pause before reacting.\n  - Wires may cross around your Sun; reread before you hit send.\n  - Venus is retrograde: old feelings may resurface; take your time with new commitments."
+      "context": "2026-10-12 · {\"mode\":\"sign\",\"timeKnown\":false,\"sun\":[\"leo\"]} · tone tension\n  - Venus tugs at your Sun; wanting harmony can mean saying yes too fast.\n  - Mars charges your Sun: act on what you've been putting off.\n  - Moods may swing against your Sun; give yourself a pause before reacting.\n  - Wires may cross around your Sun; reread before you hit send.\n  - Venus is retrograde: old feelings may resurface; take your time with new commitments.\n  - The Moon moves through your 4th solar house (counted from your Sun sign), the area of home and family, today."
     },
     {
       "id": "H2",
@@ -2752,10 +2758,16 @@
           {
             "kind": "retrograde",
             "planet": "venus"
+          },
+          {
+            "kind": "moonHouse",
+            "house": 12,
+            "basis": "solar",
+            "sign": "libra"
           }
         ]
       },
-      "context": "2026-10-10 · {\"mode\":\"sign\",\"timeKnown\":false,\"sun\":[\"scorpio\"]} · tone tension\n  - New Moon in Libra in your zone of rest and the inner world (by Sun sign): a clean slate, so set one intention.\n  - Venus meets your Sun: a moment for affection and for what you value.\n  - Mars rubs against your Sun; turn frustration into movement, not arguments.\n  - Your mind is busy around your Sun; write things down before they slip away.\n  - Venus is retrograde: old feelings may resurface; take your time with new commitments."
+      "context": "2026-10-10 · {\"mode\":\"sign\",\"timeKnown\":false,\"sun\":[\"scorpio\"]} · tone tension\n  - New Moon in Libra in your zone of rest and the inner world (by Sun sign): a clean slate, so set one intention.\n  - Venus meets your Sun: a moment for affection and for what you value.\n  - Mars rubs against your Sun; turn frustration into movement, not arguments.\n  - Your mind is busy around your Sun; write things down before they slip away.\n  - Venus is retrograde: old feelings may resurface; take your time with new commitments.\n  - The Moon moves through your 12th solar house (counted from your Sun sign), the area of rest and the inner world, today."
     },
     {
       "id": "H4",
@@ -2811,10 +2823,16 @@
           {
             "kind": "retrograde",
             "planet": "venus"
+          },
+          {
+            "kind": "moonHouse",
+            "house": 11,
+            "basis": "solar",
+            "sign": "aries"
           }
         ]
       },
-      "context": "2026-10-24 · {\"mode\":\"sign\",\"timeKnown\":false,\"sun\":[\"gemini\"]} · tone flow\n  - 水星在天蝎座开始逆行：放慢脚步，回顾「日常节奏与工作（按太阳星座）」。\n  - 火星为你的太阳助力：精力充沛，付出有回报。\n  - 水星逆行中：计划、行程和消息都多核对一遍。\n  - 情绪和你的太阳很合拍，小事上可以相信直觉。\n  - 金星逆行中：旧情绪可能浮现，新的承诺不必急着给。"
+      "context": "2026-10-24 · {\"mode\":\"sign\",\"timeKnown\":false,\"sun\":[\"gemini\"]} · tone flow\n  - 水星在天蝎座开始逆行：放慢脚步，回顾「日常节奏与工作（按太阳星座）」。\n  - 火星为你的太阳助力：精力充沛，付出有回报。\n  - 水星逆行中：计划、行程和消息都多核对一遍。\n  - 情绪和你的太阳很合拍，小事上可以相信直觉。\n  - 金星逆行中：旧情绪可能浮现，新的承诺不必急着给。\n  - 今天月亮行经你的第 11 太阳宫（从太阳星座起算，朋友、群体与愿望）。"
     },
     {
       "id": "X1",

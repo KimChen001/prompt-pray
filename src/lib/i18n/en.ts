@@ -191,6 +191,10 @@ const en = {
     aiFallback: "AI is unavailable right now, so this is the offline reading.",
     retry: "Try AI again",
     loadingAi: "Asking MOONA…",
+    olderHolds: "Saved earlier, written under older rules ({v}). It still matches today's facts under the current checks.",
+    olderFails: "The AI text saved earlier ({v}) doesn't pass the current fact checks, so the offline reading is shown instead.",
+    olderUnknown: "an earlier version",
+    rewrite: "Write it again with the current rules",
   },
   sky: {
     title: "Today's sky",

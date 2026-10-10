@@ -3,22 +3,26 @@
 // - Facts use the day's fixed reference moment, so the template, the AI request and any saved text
 //   describe the same sky (lib/astro/horoscope-day.ts).
 // - Saved AI text is keyed by every input (birth details incl. DST choice and zone, house system,
-//   the person's time zone, rules/prompt versions, language) and shown with the facts it came from.
+//   the person's time zone, language) and shown with the facts it came from. The rules/prompt/claim
+//   versions are stored with it: a text from earlier versions is kept, re-checked against today's facts
+//   with the current rules (no model call), and only rewritten when the person asks, never silently.
 // - A response that arrives after the language, birth details or day changed is dropped.
 // - Unknown birth time: both candidate signs, no Rising, houses counted from the Sun sign and labelled.
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { cacheHoroscope, dataEpoch, getBirth, getCachedHoroscope, getSettings, updateSettings, useStoreVersion, type CachedText } from "@/lib/store";
-import { dayHoroscope, horoscopeBody, horoscopeCacheKey, type HoroscopeInput } from "@/lib/astro/horoscope-day";
+import { dayHoroscope, horoscopeBody, horoscopeCacheKey, savedTextHolds, type HoroscopeInput } from "@/lib/astro/horoscope-day";
+import { HOROSCOPE_VERSIONS } from "@/lib/ai/horoscope-prompt";
 import { SIGNS, SIGN_INFO, type Sign } from "@/lib/astro/zodiac";
 import type { BirthData } from "@/lib/astro/birth";
 import type { HouseSystem } from "@/lib/astro/houses";
 import { SourceBadge } from "./bits";
 import { ZodiacIcon } from "./AstroIcon";
 
-// "live" = generated for this view just now; "saved" = read back from this device's cache.
-type AiState = { status: "idle" | "loading" | "live" | "saved" | "failed" | "off"; text?: CachedText; key?: string };
+// "live" = generated for this view just now; "saved" = read back from this device's cache;
+// "older" = saved under earlier versions (holds = it still passes the current checks for today's facts).
+type AiState = { status: "idle" | "loading" | "live" | "saved" | "older" | "failed" | "off"; text?: CachedText; key?: string; holds?: boolean };
 
 export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: string; timeZone: string; onBusy?: (busy: boolean) => void }) {
   const { m, fmt, pick, locale } = useI18n();
@@ -28,6 +32,8 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
   const [houseSystem, setHouseSystem] = useState<HouseSystem>("placidus");
   const [ai, setAi] = useState<AiState>({ status: "idle" });
   const [attempt, setAttempt] = useState(0);
+  // The key the person asked to rewrite with the current versions (a paid request they chose).
+  const [rewrite, setRewrite] = useState<string | null>(null);
   const currentKey = useRef<string | null>(null);
 
   useEffect(() => {
@@ -55,13 +61,16 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
   useEffect(() => {
     if (!day || !cacheKey) return;
     const cached = getCachedHoroscope(cacheKey);
-    if (cached) {
-      setAi({ status: "saved", text: cached, key: cacheKey });
-      return;
-    }
+    // A text saved under the current versions is used as is (even after a rewrite was asked for, so a
+    // rewritten key never pays again). An older one is kept, re-checked, and shown until the person asks.
+    if (cached && cached.versions === HOROSCOPE_VERSIONS) return setAi({ status: "saved", text: cached, key: cacheKey });
+    const holds = cached ? savedTextHolds(cached, day, localDate, timeZone, locale) : false;
+    if (cached && rewrite !== cacheKey) return setAi({ status: "older", text: cached, key: cacheKey, holds });
     const key = cacheKey;
     const epoch = dataEpoch();
-    setAi({ status: "loading", key });
+    // While rewriting, an older text that still holds stays on screen, and stays if the request fails.
+    const keep = cached ? { text: cached, holds } : {};
+    setAi({ status: "loading", key, ...keep });
     onBusy?.(true);
     (async () => {
       try {
@@ -70,21 +79,24 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(horoscopeBody(day, localDate, timeZone, locale)),
         });
-        if (currentKey.current !== key || epoch !== dataEpoch()) return; // inputs, language or data changed meanwhile
-        if (res.status === 503) return setAi({ status: "off", key }); // not configured or locked: template only
-        if (!res.ok) return setAi({ status: "failed", key });
+        if (epoch !== dataEpoch()) return; // data cleared or birth details changed: the result belongs to nobody
+        const here = currentKey.current === key;
+        if (res.status === 503) return here && setAi({ status: "off", key, ...keep }); // not configured or locked: template only
+        if (!res.ok) return here && setAi({ status: "failed", key, ...keep });
         const body = (await res.json()) as CachedText & { basis?: string[] };
-        const text: CachedText = { overall: body.overall, love: body.love, work: body.work, meta: body.meta, basis: body.basis };
+        // An unknown server version stays unknown (it is then treated as older), never assumed current.
+        const text: CachedText = { overall: body.overall, love: body.love, work: body.work, meta: body.meta, basis: body.basis, versions: body.versions };
+        // A paid result is saved for its own key even if the language or zone changed meanwhile.
         cacheHoroscope(key, text);
-        setAi({ status: "live", text, key });
+        if (here) setAi({ status: "live", text, key });
       } catch {
-        if (currentKey.current === key) setAi({ status: "failed", key });
+        if (currentKey.current === key) setAi({ status: "failed", key, ...keep });
       } finally {
         onBusy?.(false);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- one request per key and attempt
-  }, [cacheKey, attempt]);
+  }, [cacheKey, attempt, rewrite]);
 
   if (birth === undefined) return null;
 
@@ -109,7 +121,9 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
 
   const h = day.horoscope;
   const fresh = ai.key === cacheKey;
-  const aiText = fresh && (ai.status === "live" || ai.status === "saved") && ai.text ? ai.text : null;
+  const older = fresh && ai.status === "older" && ai.text ? ai.text : null;
+  // An older saved text is shown only if it passes the current checks; it stays while a rewrite runs or fails.
+  const aiText = fresh && ai.text && (ai.status === "live" || ai.status === "saved" || ai.holds) ? ai.text : null;
   const text = aiText ?? { overall: pick(h.overall), love: pick(h.love), work: pick(h.work) };
   const why = aiText?.basis?.length ? aiText.basis : h.why.map((w) => pick(w.line));
   const subject = day.subject;
@@ -141,6 +155,12 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
         </div>
       ))}
 
+      {older && (
+        <p className="notice-quiet">
+          {fmt(ai.holds ? m.horoscope.olderHolds : m.horoscope.olderFails, { v: (older.versions ?? m.horoscope.olderUnknown).replaceAll("|", " · ") })}{" "}
+          <button type="button" className="btn-link" onClick={() => setRewrite(cacheKey)}>{m.horoscope.rewrite}</button>
+        </p>
+      )}
       {fresh && ai.status === "loading" && <span className="status-line"><span className="status-dot" />{m.horoscope.loadingAi}</span>}
       {fresh && ai.status === "failed" && (
         <p className="notice">

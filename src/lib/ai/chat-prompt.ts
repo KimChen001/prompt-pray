@@ -3,7 +3,8 @@
 import { detectCrisis } from "@/lib/safety";
 import { isQuoteOf, normalizeQuote, NOTE_MAX } from "@/lib/memory";
 import { CHAT_LIMITS, parseMessages } from "@/lib/chat/limits";
-import { mentionsUndrawnCard, parseTarotRequest, tarotPrompt, type TarotRequest } from "./tarot-prompt";
+import { chartLayerClaims, mentionsUndrawnCard, parseTarotRequest, tarotPrompt, type TarotRequest } from "./tarot-prompt";
+import { findInconsistentClaim } from "./claims";
 import type { ChatMessage, JsonSchema } from "./types";
 
 export interface ChatRequest {
@@ -83,6 +84,7 @@ export function validateChat(data: unknown, r: ChatRequest): ChatReply | null {
   if (typeof reply !== "string" || !reply.trim() || reply.trim().length > CHAT_LIMITS.assistantMax) return null;
   if (mentionsUndrawnCard([reply], r.reading.cards.map((c) => c.id), !!r.reading.chart)) return null;
   if (detectCrisis(reply)) return null;
+  if (findInconsistentClaim(reply, chartLayerClaims(r.reading.chart)) !== null) return null;
   return { reply: reply.trim(), remember: validSuggestion(d.remember, r) };
 }
 

@@ -193,6 +193,10 @@ const zh: Messages = {
     aiFallback: "AI 暂时不可用，当前显示的是离线运势。",
     retry: "重新调用 AI",
     loadingAi: "MOONA 正在解读…",
+    olderHolds: "这是之前保存的文字，按旧版规则生成（{v}）。用现在的校验对照今天的事实，仍然成立。",
+    olderFails: "之前保存的 AI 文字（{v}）没有通过现在的事实校验，所以这里显示离线解读。",
+    olderUnknown: "较早的版本",
+    rewrite: "按现在的规则重新生成",
   },
   sky: {
     title: "今日天象",
