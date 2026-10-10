@@ -46,7 +46,9 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; background: var(--bg-0); }
+/* Match the approved prototype's 14px rem scale (Moona/src/styles/globals.css).
+   Body copy keeps its explicit 16px size below; Tailwind layout and headings use this scale. */
+html { font-size: 14px; -webkit-text-size-adjust: 100%; background: var(--bg-0); }
 body {
   margin: 0;
   min-height: 100vh;
