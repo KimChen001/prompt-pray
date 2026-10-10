@@ -428,3 +428,23 @@ Nothing here takes real money. Payments are `off` by default. `fake` has no prov
 - The fake checkout page.
 - Scripts: `ledger-admin`, `budget-plan`.
 - Privacy copy for orders and credits.
+
+## Budget S5, part 1: packs panel, fake checkout, scripts (2026-10-10, early morning)
+
+- **Packs panel (`components/packs/PacksPanel.tsx`) on Me:**
+  - **Off by default:** while payments are off (the default) it renders nothing and the Packs tab is hidden, so the approved page is unchanged. This is a deliberate deviation from spec §10.4, which shows a "not enabled" banner.
+  - **Fake and test modes:** the first line says so.
+  - **Content:** the terms are shown before any purchase, along with a gold hairline credit meter, paid readings with their follow-ups, and orders with plain state labels.
+  - **Buy button:** it appears only when the server's `action` allows it. The checkout key is kept in sessionStorage for resume.
+  - **Back from checkout:** `?order=` polls the server until the provider has confirmed.
+- **Fake checkout (`/packs/fake-checkout/[id]`):** a 404 unless payments are fake (operators only on a deployment). Pay / Decline / Expire / Deliver twice send signed events through the real webhook path.
+- **Copy:** the `m.packs.*` copy in both languages comes from spec §10.4 via `payments/copy.ts`. The About page says what packs keep; card details go only to the payment provider.
+- **Scripts:**
+  - `npm run budget:plan` prints bounds, the pack allocation, packs that fit, the windows' typical-call capacity and validatePlan, offline. At Sonnet 5.5 prices, Demo Day's $35 is about 2160 typical calls.
+  - `npm run ledger -- …` runs migrate / sync-plan (records AI_PRIOR_SPEND_USD once) / snapshot / audit / reap / reconcile / record-spend / set-flag / revoke-mode-test. It uses DATABASE_OWNER_URL or MOONA_PGLITE_DIR and never prints keys.
+- **Fix:** on Windows, the legacy file budget's lock can fail with EPERM/EACCES/EBUSY while another worker releases it; it now waits and retries. This was the intermittent `ai.test` failure under the full parallel run.
+- **Verification:**
+  - Tests: 743 tests pass (four full runs in a row); TypeScript passes.
+  - Build: the worktree production build passes.
+  - On 3106 in fake mode, the whole browser flow works: simulated purchase → signed event "granted" → back on Me "5 readings added.", the meter at 5/5, the order marked Simulation. The server was stopped after.
+  - On 3000 with payments off, Me shows no Packs tab or panel.
