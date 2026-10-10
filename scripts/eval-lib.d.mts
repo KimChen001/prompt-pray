@@ -51,6 +51,8 @@ export interface Client {
 export interface RunOptions {
   measure?: (() => Promise<LedgerView | null>) | null;
   networkRetries?: number;
+  /** false where the ledger has no replay (the file ledger): never send a case again */
+  resend?: boolean;
   maxWaitMs?: number;
   sleep: (ms: number) => Promise<void>;
   now?: () => number;
@@ -73,7 +75,7 @@ export function describeLedger(v: LedgerView | null): string;
 export function prepareVisitor(client: Client): Promise<{ ok: true; visitor: string } | { ok: false; reason: string }>;
 export function requestIdFor(runId: string, caseId: string): string;
 export function outputText(kind: string, body: unknown): string;
-export function attribute(before: LedgerView | null, after: LedgerView | null, expectedCalls: number | null): { costUsd: number | null; ledgerCalls: number | null; costNote: string | null };
+export function attribute(before: LedgerView | null, after: LedgerView | null, expected: number | [number, number] | null): { costUsd: number | null; ledgerCalls: number | null; costNote: string | null };
 export function runCase(client: Client, c: EvalCase, o: RunOptions & { requestId: string }): Promise<CaseResult>;
 export function notRun(c: EvalCase, reason: string): CaseResult;
 export function runEval(o: RunOptions & { client: Client; cases: EvalCase[]; runId: string; onResult?: (all: CaseResult[], last: CaseResult) => void | Promise<void> }): Promise<CaseResult[]>;

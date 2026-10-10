@@ -267,9 +267,132 @@ describe("the command line's dry run", () => {
     server.close();
     expect(code, out).toBe(0);
     expect(hits).toEqual(["GET /api/ai/status"]);
-    expect(out).toContain("Dry run");
+    expect(out).toContain("Dry run: no AI request was sent");
     expect(out).toContain("spending: hidden");
     expect(out).toContain("fake provider: simulated replies");
   });
 });
 
+describe("the evaluation runner after its review (verify-eval findings)", () => {
+  it("keeps going and records a sent case when a ledger read fails mid-run", async () => {
+    const s = scripted(() => json(200, tarotReply));
+    let reads = 0;
+    const measure = async () => {
+      if (++reads === 2) throw new TypeError("fetch failed"); // the read after the first case
+      return { kind: "sql" as const, spentMicro: 0, heldMicro: 0, calls: 0, inflight: 0 };
+    };
+    const results = await runEval({ client: s.client, cases: CASES.filter((c) => ["T1", "T2"].includes(c.id)), runId: "readfail", measure, sleep: noSleep });
+    expect(results.map((r) => r.outcome)).toEqual(["completed", "completed"]);
+    expect(results[0]).toMatchObject({ costUsd: null, costNote: expect.stringMatching(/reading the ledger failed/) });
+  });
+
+  it("counts a joined shared request that comes back replayed as a replay, not this case's call", async () => {
+    const s = scripted((_, n) => (n === 1 ? json(202, { code: "in_progress", retryAfterMs: 500 }) : json(200, { ...tarotReply, replayed: true })));
+    const r = await runCase(s.client, T1, { requestId: requestIdFor("join", "T1"), sleep: noSleep });
+    expect(r).toMatchObject({ outcome: "replayed", inferredCalls: 0, waits: 1 });
+  });
+
+  it("attributes an unbilled provider failure (the ledger takes the call back) instead of blaming other traffic", () => {
+    const q = (o: Partial<{ spentMicro: number; heldMicro: number; calls: number; inflight: number }>) => ({ kind: "sql" as const, spentMicro: 0, heldMicro: 0, calls: 0, inflight: 0, ...o });
+    expect(attribute(q({}), q({}), [0, 1])).toEqual({ costUsd: 0, ledgerCalls: 0, costNote: null });
+    expect(attribute(q({}), q({ spentMicro: 900, calls: 1 }), [0, 1])).toMatchObject({ costUsd: 0.0009, ledgerCalls: 1 });
+    expect(attribute(q({}), q({ calls: 2 }), [0, 1]).costUsd).toBeNull();
+  });
+
+  it("attributes cost while money stays held for other reasons (a pack lot, a hold the file ledger keeps)", () => {
+    const q = (o: Partial<{ spentMicro: number; heldMicro: number; calls: number; inflight: number }>) => ({ kind: "sql" as const, spentMicro: 0, heldMicro: 2_000_000, calls: 0, inflight: 0, ...o });
+    expect(attribute(q({}), q({ spentMicro: 1500, calls: 1 }), 1)).toMatchObject({ costUsd: 0.0015 });
+    expect(attribute(q({}), q({ spentMicro: 1500, calls: 1, heldMicro: 2_100_000 }), 1).costUsd).toBeNull(); // something new is held
+    const f = (o: Partial<{ spentMicro: number; calls: number }>) => ({ kind: "file" as const, spentMicro: 0, heldMicro: 39_138, calls: 0, inflight: null, day: "2026-10-10", ...o });
+    expect(attribute(f({}), f({ spentMicro: 13_600, calls: 1 }), 1)).toEqual({ costUsd: 0.0136, ledgerCalls: 1, costNote: "the file ledger reports spending to $0.0001" });
+  });
+
+  it("does not take a visitor check without its cookie as confirmed", async () => {
+    const fetchImpl = (async () => new Response(null, { status: 204 })) as unknown as typeof fetch; // no header, no cookie
+    expect(await prepareVisitor(makeClient({ base: "http://x", fetchImpl }))).toEqual({ ok: false, reason: "cookie_dropped" });
+  });
+
+  it("never re-sends on the file ledger, even when told the request is still running", async () => {
+    const s = scripted(() => json(202, { code: "in_progress", retryAfterMs: 500 }));
+    const r = await runCase(s.client, T1, { requestId: requestIdFor("file", "T1"), resend: false, sleep: noSleep });
+    expect(r).toMatchObject({ outcome: "pending", attempts: 1 });
+    expect(s.posts).toHaveLength(1);
+  });
+
+  it("still sends the crisis cases after a global stop (they are answered before any ledger check)", async () => {
+    const s = scripted((_, n) => (n === 1 ? json(503, { code: "budget" }) : json(200, { code: "crisis" })));
+    const results = await runEval({ client: s.client, cases: CASES.filter((c) => ["T1", "T2", "X1", "X2"].includes(c.id)), runId: "crisis", measure: null, sleep: noSleep });
+    expect(results.map((r) => [r.id, r.outcome])).toEqual([["T1", "refused"], ["T2", "not_run"], ["X1", "handled"], ["X2", "handled"]]);
+  });
+
+  it("splits a joined Set-Cookie header without breaking at the comma inside Expires", () => {
+    const jar = new CookieJar();
+    jar.absorb({ headers: { get: () => "a=1; Path=/; Expires=Wed, 21 Oct 2037 07:28:00 GMT, b=2; Path=/" } } as unknown as Response);
+    expect(jar.header()).toBe("a=1; b=2");
+  });
+
+  it("measures latency on cases answered by a model call only, not on cache replays", () => {
+    const base = { kind: "tarot", endpoint: "/api/ai/tarot", expectCode: null, requestId: "x", httpStatus: 200, code: "ok", attempts: 1, lostResponses: 0, waits: 0, costUsd: null, ledgerCalls: null, costNote: null, text: "", checks: [], response: null, error: null };
+    const s = summarize([
+      { ...base, id: "T1", outcome: "completed", inferredCalls: 1, latencyMs: 900 },
+      { ...base, id: "H1", outcome: "replayed", inferredCalls: 0, latencyMs: 12 },
+    ] as never);
+    expect(s.latencyMs).toMatchObject({ p50: 900, max: 900 });
+  });
+});
+
+describe("the command line's exit codes", () => {
+  type Route = (req: import("node:http").IncomingMessage, res: import("node:http").ServerResponse) => void;
+  async function stub(routes: Record<string, Route>) {
+    const hits: string[] = [];
+    const server = createServer((req, res) => {
+      hits.push(`${req.method} ${req.url}`);
+      const r = routes[`${req.method} ${req.url}`];
+      if (r) return r(req, res);
+      res.statusCode = 404;
+      res.end("{}");
+    });
+    await new Promise<void>((r) => server.listen(0, "127.0.0.1", () => r()));
+    return { hits, port: (server.address() as { port: number }).port, close: () => server.close() };
+  }
+  async function cli(port: number, extra: string[], env: Record<string, string | undefined>) {
+    const e = { ...process.env, ...env };
+    for (const k of Object.keys(env)) if (env[k] === undefined) delete e[k];
+    const run = spawn(process.execPath, ["scripts/eval-run.mjs", "--base", `http://127.0.0.1:${port}`, "--only", "T1", ...extra], { env: e });
+    let out = "";
+    run.stdout.on("data", (d) => (out += d));
+    run.stderr.on("data", (d) => (out += d));
+    const code = await new Promise<number>((r) => run.on("close", (c) => r(c ?? -1)));
+    return { code, out };
+  }
+  const status = (body: unknown): Route => (_, res) => { res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(body)); };
+  const signIn: Route = (_, res) => { res.setHeader("Set-Cookie", "moona_ops=signed; Path=/; HttpOnly"); res.setHeader("Content-Type", "application/json"); res.end('{"operator":true}'); };
+  const OPS_ENV = { MOONA_EVAL_OPS_TOKEN: "stub-operator-token-0123456789", OPS_TOKEN: undefined };
+
+  it("exits 0 from a dry run after an operator sign-in (two requests, then the exit)", async () => {
+    const s = await stub({ "POST /api/ops/session": signIn, "GET /api/ai/status": status({ available: true, provider: "fake", model: "simulated", budget: { kind: "sql", pools: [], gate: { inflight: 0, breaker: "ok" } } }) });
+    const r = await cli(s.port, [], OPS_ENV);
+    s.close();
+    expect(r.code, r.out).toBe(0);
+    expect(s.hits).toEqual(["POST /api/ops/session", "GET /api/ai/status"]);
+    expect(r.out).not.toContain("stub-operator-token-0123456789");
+  });
+
+  it("exits 2 before any AI request when the visitor cookie does not stick", async () => {
+    const s = await stub({
+      "GET /api/ai/status": status({ available: true, provider: "fake", model: "simulated" }),
+      "POST /api/ai/visitor": (_, res) => { res.statusCode = 204; res.setHeader("x-moona-visitor", "new"); res.end(); },
+    });
+    const r = await cli(s.port, ["--yes", "--out", join(tmpdir(), `moona-eval-stub-${process.pid}.json`)], { MOONA_EVAL_OPS_TOKEN: undefined, OPS_TOKEN: undefined });
+    s.close();
+    expect(r.code, r.out).toBe(2);
+    expect(s.hits.filter((h) => h.startsWith("POST /api/ai/") && h !== "POST /api/ai/visitor")).toHaveLength(0);
+  });
+
+  it("exits 1 when AI is not available, after an operator sign-in", async () => {
+    const s = await stub({ "POST /api/ops/session": signIn, "GET /api/ai/status": status({ available: false, reason: "budget" }) });
+    const r = await cli(s.port, [], OPS_ENV);
+    s.close();
+    expect(r.code, r.out).toBe(1);
+  });
+});

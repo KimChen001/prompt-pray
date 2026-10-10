@@ -5,7 +5,7 @@
 // - one request id per case, kept for every wait and retry, so the ledger replays or joins the
 //   request instead of starting another one;
 // - bounded waits for "still running" (202) and "busy", and no automatic retry unless the ledger is
-//   known to replay (the SQL ledger; the legacy file ledger has no replay).
+//   known to replay (the SQL ledger; the legacy file ledger has no replay, so nothing is re-sent there).
 // Spending is visible only to an operator device: the public status hides it. Without one, cost is
 // reported as unknown (null), never as 0. A case's cost is its ledger change, and it is only
 // attributed when nothing else was running or settling meanwhile.
@@ -19,14 +19,18 @@ const REQUEST_ID = /^[A-Za-z0-9_-]{16,64}$/;
 // Refusals: these stop the rest of the cases on the same route (a quota is per route), or all of them.
 const STOP_ROUTE = new Set(["quota", "subject_failures"]);
 const STOP_ALL = new Set(["budget", "paused", "ledger", "locked", "unconfigured", "misconfigured", "paid_capacity", "visitor_cap", "rate_limited", "login_required"]);
-// Failures after the provider was called (the server charged for the attempt).
-const CALLED = new Set(["upstream", "timeout", "bad_output", "refused"]);
+// Failures after the provider was called: billed (its answer was unusable, or it ran out of time and
+// the bound is charged), or maybe not (it turned the request away, e.g. rate limited, unbilled).
+const BILLED_FAILURE = new Set(["timeout", "bad_output"]);
+const MAYBE_BILLED_FAILURE = new Set(["upstream", "refused"]);
 
 /** Cookies for one server origin. Values are never printed. */
 export class CookieJar {
   #c = new Map();
   absorb(res) {
-    const lines = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie() : [res.headers.get("set-cookie")].filter(Boolean);
+    // a joined header is split at the commas that start a new cookie (not the one inside Expires)
+    const joined = res.headers.get("set-cookie");
+    const lines = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie() : joined ? joined.split(/,(?=\s*[^;,=\s]+=)/) : [];
     for (const line of lines) {
       const [pair, ...attrs] = line.split(";");
       const eq = pair.indexOf("=");
@@ -80,7 +84,9 @@ export async function signInOperator(client, token) {
 
 export async function readStatus(client) {
   const res = await client.get("/api/ai/status");
-  return res.json();
+  const body = await res.json().catch(() => null);
+  if (!body || typeof body !== "object") throw new Error(`the status answered HTTP ${res.status} without JSON`);
+  return body;
 }
 
 /**
@@ -141,10 +147,11 @@ export async function prepareVisitor(client) {
   };
   const first = await ask();
   if (!first.ok) return first;
-  if (first.state !== "new") return { ok: true, visitor: "known" };
+  if (first.state === "known" && client.jar.has(VISITOR_COOKIE)) return { ok: true, visitor: "known" };
   const second = await ask();
   if (!second.ok) return second;
-  return second.state === "known" ? { ok: true, visitor: "new, kept" } : { ok: false, reason: "cookie_dropped" };
+  if (second.state === "known" && client.jar.has(VISITOR_COOKIE)) return { ok: true, visitor: first.state === "new" ? "new, kept" : "confirmed" };
+  return { ok: false, reason: second.state === "new" || !client.jar.has(VISITOR_COOKIE) ? "cookie_dropped" : "unconfirmed" };
 }
 
 /** A stable id per logical case and run (the server keys replay on visitor + route + this id). */
@@ -164,19 +171,26 @@ export function outputText(kind, body) {
   return "";
 }
 
-/** A case's ledger change, attributed only when nothing else ran or settled meanwhile. */
-export function attribute(before, after, expectedCalls) {
+/**
+ * A case's ledger change, attributed only when nothing else ran or settled meanwhile: no request in
+ * flight, the money held unchanged (a pack lot's allocation, or a hold the file ledger keeps, is not
+ * traffic), and the call count moved by what the case did (a number, or [min, max] when a failure may
+ * have gone unbilled; null when that can't be known).
+ */
+export function attribute(before, after, expected) {
   if (!before || !after) return { costUsd: null, ledgerCalls: null, costNote: "unknown: spending is visible to operator devices only" };
   if (before.kind !== after.kind || before.spentMicro === null || after.spentMicro === null || before.calls === null || after.calls === null) return { costUsd: null, ledgerCalls: null, costNote: "unknown: the ledger did not report spending" };
   const ledgerCalls = after.calls - before.calls;
-  const quiet = before.heldMicro === 0 && after.heldMicro === 0 && (before.inflight ?? 0) === 0 && (after.inflight ?? 0) === 0 && (before.kind !== "file" || before.day === after.day);
-  if (!quiet || (expectedCalls !== null && ledgerCalls !== expectedCalls)) {
+  const range = expected === null ? null : Array.isArray(expected) ? expected : [expected, expected];
+  const quiet = after.heldMicro === before.heldMicro && (before.inflight ?? 0) === 0 && (after.inflight ?? 0) === 0 && (before.kind !== "file" || before.day === after.day);
+  if (!quiet || (range && (ledgerCalls < range[0] || ledgerCalls > range[1]))) {
     return { costUsd: null, ledgerCalls, costNote: "unknown: other requests ran or settled during this case, so its share can't be told apart" };
   }
-  if (expectedCalls === null) {
+  if (!range) {
     return { costUsd: null, ledgerCalls, costNote: "unknown: a response was lost or delayed, so this case's ledger change can't be checked against what it did" };
   }
-  return { costUsd: +((after.spentMicro - before.spentMicro) / 1e6).toFixed(6), ledgerCalls, costNote: null };
+  const costUsd = +((after.spentMicro - before.spentMicro) / 1e6).toFixed(6);
+  return { costUsd, ledgerCalls, costNote: before.kind === "file" ? "the file ledger reports spending to $0.0001" : null };
 }
 
 /**
@@ -184,8 +198,19 @@ export function attribute(before, after, expectedCalls) {
  * still running or busy, and retries a lost response only when the ledger is known to replay.
  */
 export async function runCase(client, c, o) {
-  const { requestId, maxWaitMs = DEFAULTS.maxWaitMs, networkRetries = 0, sleep, now = () => Date.now(), measure } = o;
-  const before = measure ? await measure() : null;
+  const { requestId, maxWaitMs = DEFAULTS.maxWaitMs, networkRetries = 0, resend = true, sleep, now = () => Date.now(), measure } = o;
+  // a failed ledger read never stops the run or loses a case that was sent: its cost is just unknown
+  let readFailed = false;
+  const read = async () => {
+    if (!measure) return null;
+    try {
+      return await measure();
+    } catch {
+      readFailed = true;
+      return null;
+    }
+  };
+  const before = await read();
   const t0 = now();
   let attempts = 0, lost = 0, waits = 0, res = null, body = null, error = null, stillRunning = false, firstMs = null;
   for (;;) {
@@ -209,27 +234,33 @@ export async function runCase(client, c, o) {
     }
     const code = typeof body?.code === "string" ? body.code : null;
     stillRunning = res.status === 202 || (res.status === 503 && (code === "busy" || code === "cooldown")) || (res.status === 429 && code === "subject_busy");
-    if (!stillRunning) break;
+    if (!stillRunning || !resend) break; // without replay (the file ledger) a re-send would be a second call
     const ms = Math.min(5000, Math.max(500, Number(body?.retryAfterMs) || 2000));
     if (now() - t0 + ms > maxWaitMs) break;
     waits++;
     await sleep(ms);
   }
-  const after = measure ? await measure() : null;
+  const after = await read();
   const httpStatus = res?.status ?? 0;
   const code = error ? "network" : typeof body?.code === "string" ? body.code : httpStatus === 200 ? "ok" : `http_${httpStatus}`;
-  let outcome, calls;
+  // calls: what this case made the model do, as far as the answers show (null: can't be known);
+  // expect: what the ledger's call count may move by for the cost to be this case's alone
+  let outcome, calls, expect;
   if (error) [outcome, calls] = ["lost", null];
-  // a replay on the first try was made earlier (or is a shared cached answer): no call by this run;
-  // after a lost response or a wait it may be this request's own answer, so the count is unknown
-  else if (httpStatus === 200 && code === "ok") [outcome, calls] = body?.replayed === true ? (lost || waits ? ["completed", null] : ["replayed", 0]) : ["completed", 1];
+  // A replay with no lost response is an earlier or shared answer (a 202 on a new id can only have
+  // joined someone else's identical request): no call by this case. After a lost response it may be
+  // this request's own answer, so the count is unknown.
+  else if (httpStatus === 200 && code === "ok") [outcome, calls] = body?.replayed === true ? (lost ? ["completed", null] : ["replayed", 0]) : ["completed", 1];
   else if (httpStatus === 200) [outcome, calls] = ["handled", 0]; // e.g. crisis: answered before any model call
   else if (stillRunning) [outcome, calls] = ["pending", null];
-  else if (httpStatus === 409 && code === "retry_new_key") [outcome, calls] = ["failed", lost || waits ? null : 0]; // an earlier attempt with this id failed
-  else if (CALLED.has(code)) [outcome, calls] = ["failed", lost || waits ? null : 1];
+  else if (httpStatus === 409 && code === "retry_new_key") [outcome, calls] = ["failed", lost ? null : 0]; // an earlier attempt with this id failed
+  else if (BILLED_FAILURE.has(code)) [outcome, calls] = ["failed", lost ? null : 1];
+  else if (MAYBE_BILLED_FAILURE.has(code)) [outcome, calls, expect] = ["failed", null, lost ? null : [0, 1]];
   else if (STOP_ROUTE.has(code) || STOP_ALL.has(code) || httpStatus === 429 || httpStatus === 503) [outcome, calls] = ["refused", 0];
   else [outcome, calls] = ["error", null];
-  const cost = attribute(before, after, calls);
+  const cost = readFailed
+    ? { costUsd: null, ledgerCalls: null, costNote: "unknown: reading the ledger failed during this case" }
+    : attribute(before, after, expect === undefined ? calls : expect);
   const text = outputText(c.kind, body);
   const checks = [
     ...(c.expectCode ? [{ name: `handled as ${c.expectCode}`, pass: body?.code === c.expectCode }] : []),
@@ -254,18 +285,19 @@ export function notRun(c, reason) {
 }
 
 /** Runs the cases in order; a quota stops its route, a global refusal stops the run. */
-export async function runEval({ client, cases, runId, measure, networkRetries = 0, maxWaitMs, sleep, now, onResult }) {
+export async function runEval({ client, cases, runId, measure, networkRetries = 0, resend = true, maxWaitMs, sleep, now, onResult }) {
   const results = [];
   const stoppedRoutes = new Map();
   let stopped = null;
   for (const c of cases) {
-    const why = stopped ?? (c.expectCode ? null : stoppedRoutes.get(c.endpoint));
+    // the crisis cases are answered before any quota, budget or ledger check, and cost nothing
+    const why = c.expectCode ? null : stopped ?? stoppedRoutes.get(c.endpoint);
     if (why) {
       results.push(notRun(c, why));
       await onResult?.(results, results[results.length - 1]);
       continue;
     }
-    const r = await runCase(client, c, { requestId: requestIdFor(runId, c.id), measure, networkRetries, maxWaitMs, sleep, now });
+    const r = await runCase(client, c, { requestId: requestIdFor(runId, c.id), measure, networkRetries, resend, maxWaitMs, sleep, now });
     results.push(r);
     await onResult?.(results, r);
     if (r.outcome === "refused") {
@@ -295,7 +327,7 @@ export function summarize(results) {
   const sent = results.filter((r) => r.outcome !== "not_run");
   const known = sent.filter((r) => r.inferredCalls !== null);
   const attributed = sent.filter((r) => r.costUsd !== null);
-  const lat = modelCases.filter((r) => r.code === "ok").map((r) => r.latencyMs);
+  const lat = modelCases.filter((r) => r.outcome === "completed" && r.code === "ok").map((r) => r.latencyMs); // not replays from a cache
   const allCosted = sent.length > 0 && attributed.length === sent.length;
   return {
     cases: results.length,
