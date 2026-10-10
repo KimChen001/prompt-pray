@@ -18,6 +18,7 @@ describe("ledger review regressions", LEDGER_TIMEOUT, () => {
     const product = { ...PACK_PRODUCT, allocMicro: 1 * M };
     const { ledger, exec, clock } = await makeTestLedger({ plan: testPlan({ packsMicro: 4 * M, packSlackMicro: 500_000, product: { ...product, maxSoldTest: 5 } }) });
     const one = await grantPack(ledger, "00000000-0000-4000-8000-0000000000a1");
+    clock.advance(60_000); // the second pack is strictly newer
     // a second pack for the same account
     const made = await ledger.createOrder({ accountId: one.accountId, productId: "tarot5", mode: "fake", checkoutKey: "second" });
     if (made.status === "denied") throw new Error(made.reason);

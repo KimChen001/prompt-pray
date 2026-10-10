@@ -387,3 +387,44 @@ An independent review agent tried to break the S2 ledger with throwaway tests. I
 - A Stripe adapter with offline signature checks.
 - Account and operator identity.
 - The `/api/packs*`, webhook and `/api/ops/*` routes.
+
+## Budget S4: reading packs, offline (2026-10-10, early morning)
+
+Nothing here takes real money. Payments are `off` by default. `fake` has no provider and works only locally (or on a rehearsal preview that opts in). `test` and `live` need keys the team sets in the host's environment. `live` additionally needs every precondition in spec §7.3.
+
+- **`payments/config.ts`:** the payment mode and every failed precondition. Problems are shown to operators only; the public sees "not enabled". A live key in test mode, a missing confirm, the fake account provider, a non-Postgres ledger, missing terms/refund/support, uncleared commercial assets or a non-https site each make it `misconfigured`.
+- **`payments/stripe.ts`:**
+  - Stripe Checkout with idempotency keys `order:<id>`. Metadata is only the order id.
+  - Webhooks are verified with the SDK's `constructEvent` on the raw body. Stripe 23.0.0 is pinned and makes no network call for signatures.
+  - Each event is normalised to paid / unpaid / expired / async_failed / refund_full / refund_partial / dispute / ignored.
+- **`payments/fake.ts`:** a local checkout. `deliver()` builds Stripe-shaped events, signs them like Stripe and sends them through the real webhook handler.
+- **`payments/service.ts`:**
+  - `startCheckout`: the ledger holds the pack's AI allocation and the fee estimate before any redirect, and the url is released only after the session is attached.
+  - `handleWebhook`: a bad signature returns 400 with nothing written; a livemode mismatch returns 400; ledger down returns 503 so the provider redelivers.
+  - `syncOrder`: the return page's verified retrieve, so a late webhook can't strand a payment.
+  - `reconcile`: reaps, settles finished orders, purges, and audits; any violation trips the breaker.
+  - `salesState`: the first failing reason, in the documented order.
+  - `purchaseAction`: a real purchase only live and open; tests only for operators on a deployment.
+- **Identity:**
+  - `identity/ops.ts`: operator devices via OPS_TOKEN, 12 h, failed attempts throttled. Operators skip free quotas, never money caps.
+  - `identity/auth.ts`: `none` (default: nobody can buy) or `fake` (a test account tied to this browser, local or operators only). The real provider is the team's decision.
+- **Routes:**
+  - `/api/packs`
+  - `/api/packs/checkout`
+  - `/api/packs/orders/[id]`
+  - `/api/stripe/webhook`
+  - `/api/ops/session`
+  - `/api/ops/reconcile` (GET for the scheduler with CRON_SECRET, POST for operators)
+  - `/api/ops/fake-pay`
+- **Paid AI:** tarot `use: "paid"` and chat `paidReadingId`, only when asked for. Without an account the answer is 401; with no credits, 402. A free quota denial reports the account's credits.
+- **Tests:** `ledger.paid` (with isolation), `orders` (with recovery), `webhook` (official SDK, offline), `payments.config`, `packs.flow` (the whole purchase through the routes) and `ops`.
+  - The fuzz gains a packs walk: orders, duplicate and out-of-order events, refunds, disputes, revoke-mode, paid readings, follow-ups and free traffic, with the audit checked after every step.
+
+**Verification:** 738 tests pass; TypeScript passes. The full packs fuzz ran 12 seeds × 1500 steps (88 s) with the audit empty after every step. No real payment provider, account, model or database was used.
+
+**Next (S5):**
+- The packs panel on Me, in the prototype's style.
+- The explicit "use 1 pack reading" choice on the reading page, and follow-up counts.
+- The fake checkout page.
+- Scripts: `ledger-admin`, `budget-plan`.
+- Privacy copy for orders and credits.

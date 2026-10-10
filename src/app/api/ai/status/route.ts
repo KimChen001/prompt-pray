@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { aiConfig } from "@/lib/ai/config";
 import { aiUnavailable, hasAiAccess } from "@/lib/ai/guard";
+import { serverKeys } from "@/lib/identity/keys";
+import { isOperator } from "@/lib/identity/ops";
 import { budgetLevel } from "@/lib/ledger/levels";
 import { getLedger, planWarning } from "@/lib/ledger/factory";
 import { typicalCallMicro } from "@/lib/ledger/plans";
@@ -13,12 +15,13 @@ function warnAt(): [number, number, number] {
 }
 
 // Whether AI is usable from this browser and how close tonight's budget is to its limits. Provider,
-// model and budget details only go to clients with access (the venue code, when one is set).
+// model and budget details only go to clients with access (the venue code, when one is set) and
+// operator devices.
 // Never returns keys or costs per person.
 export async function GET(req: NextRequest) {
   const cfg = aiConfig();
   const off = aiUnavailable();
-  if (off || !hasAiAccess(req)) return NextResponse.json({ available: false, reason: off ?? "locked" }, { headers: NO_STORE });
+  if (off || (!hasAiAccess(req) && !isOperator(req, serverKeys()))) return NextResponse.json({ available: false, reason: off ?? "locked" }, { headers: NO_STORE });
   const got = await getLedger();
   if (!got.ok) return NextResponse.json({ available: false, reason: "ledger" }, { headers: NO_STORE });
   let snapshot;

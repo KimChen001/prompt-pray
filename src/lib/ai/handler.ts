@@ -10,10 +10,12 @@ import { burstLimit, checkAiAccess } from "./guard";
 import { meterResponse } from "./http";
 import { meteredGenerate, type MeterDeps } from "./meter";
 import type { JsonRequest, PublicMeta, Purpose } from "./types";
-import { serverKeys } from "@/lib/identity/keys";
+import { authFromEnv } from "@/lib/identity/auth";
+import { serverKeys, type Keys } from "@/lib/identity/keys";
+import { isOperator } from "@/lib/identity/ops";
 import { ensureVisitor } from "@/lib/identity/visitor";
 import { getLedger } from "@/lib/ledger/factory";
-import type { LedgerPort } from "@/lib/ledger/port";
+import type { LedgerPort, ReqMode } from "@/lib/ledger/port";
 import type { EnvLike } from "@/lib/host";
 
 export interface AiRouteSpec<P, T> {
@@ -28,6 +30,8 @@ export interface AiRouteSpec<P, T> {
   cacheScope?(p: P): "subject" | "shared";
   /** What identifies the request for replay and caching (default: the parsed request). */
   canonical?(p: P): unknown;
+  /** A paid request (a pack reading or follow-up), never assumed: only when the body asks for it. */
+  paid?(body: Record<string, unknown>, p: P, keys: Keys): { mode: "paid_reading" | "paid_followup"; readingHash: string; paidReadingId?: string } | null;
 }
 
 export interface HandlerDeps extends MeterDeps {
@@ -77,23 +81,46 @@ export async function handleAi<P, T>(req: NextRequest, spec: AiRouteSpec<P, T>, 
       ? NextResponse.json({ code: "unconfigured" }, { status: 503 })
       : NextResponse.json({ code: "visitor_cap" }, { status: 429 });
   }
-  const subjectKey = `v:${visitor.id}`;
   const withCookie = (res: NextResponse) => {
     if (visitor.set) res.cookies.set({ name: visitor.set.name, value: visitor.set.value, ...visitor.set.options });
     return res;
   };
+  const operator = isOperator(req, keys);
+  const auth = authFromEnv(env);
+  const raw = (body ?? {}) as Record<string, unknown>;
+
+  // Free requests count against this visitor; a paid one is drawn from the account's pack.
+  const paid = spec.paid?.(raw, parsed, keys) ?? null;
+  let subjectKey = `v:${visitor.id}`, accountId: string | undefined, mode: ReqMode = "free";
+  if (paid) {
+    const account = ledger.supportsPaid ? await auth.getAccount(req, { visitorId: visitor.id, ledger, isOperator: operator }) : null;
+    if (!account) return withCookie(NextResponse.json({ code: "login_required" }, { status: 401 }));
+    subjectKey = `a:${account.accountId}`;
+    accountId = account.accountId;
+    mode = paid.mode;
+  }
   if (ledger.kind === "file" && burstLimit(subjectKey)) return withCookie(NextResponse.json({ code: "rate_limited" }, { status: 429 }));
 
-  const raw = body as { requestId?: unknown };
-  const requestId = typeof raw?.requestId === "string" && REQUEST_ID.test(raw.requestId) ? raw.requestId : randomBytes(16).toString("base64url");
-  const scope = spec.cacheScope?.(parsed) ?? "subject";
-  const versions = spec.versions(parsed);
+  const requestId = typeof raw.requestId === "string" && REQUEST_ID.test(raw.requestId) ? raw.requestId : randomBytes(16).toString("base64url");
+  const scope = paid ? "subject" : spec.cacheScope?.(parsed) ?? "subject";
+  const ttl = paid ? num(env.PAID_RESULT_TTL_DAYS, 30) * 86_400 : scope === "shared" ? 93_600 : num(env.AI_RESULT_TTL_MIN, 120) * 60;
   const outcome = await meteredGenerate({
-    ledger, cfg, keys, subjectKey, purpose: spec.purpose, mode: "free", requestId,
-    req: spec.build(parsed), canonical: spec.canonical ? spec.canonical(parsed) : parsed, versions, validate: spec.validate(parsed),
-    cacheScope: scope, resultTtlSeconds: scope === "shared" ? 93_600 : num(env.AI_RESULT_TTL_MIN, 120) * 60,
+    ledger, cfg, keys, subjectKey, accountId, purpose: spec.purpose, mode, requestId,
+    quotaExempt: !paid && operator && env.AI_OPERATOR_QUOTA_EXEMPT !== "0",
+    req: spec.build(parsed), canonical: spec.canonical ? spec.canonical(parsed) : parsed, versions: spec.versions(parsed), validate: spec.validate(parsed),
+    cacheScope: scope, resultTtlSeconds: ttl, ...(paid ? { paid: { readingHash: paid.readingHash, paidReadingId: paid.paidReadingId } } : {}),
   }, deps);
   const value = outcome.kind === "fresh" || outcome.kind === "replayed" ? spec.respond(outcome.value as T, outcome.meta, parsed) : undefined;
   const level = outcome.kind === "fresh" ? levelFor(outcome.budgetRatio, env) : null;
-  return withCookie(meterResponse(outcome, value, { budgetLevel: level }));
+  // Out of free readings: say how many pack credits this browser's account has, so the page can offer one.
+  let credits: number | null = null;
+  if (outcome.kind === "denied" && outcome.reason === "subject_quota" && ledger.supportsPaid && auth.ready({ isOperator: operator })) {
+    try {
+      const account = await auth.getAccount(req, { visitorId: visitor.id, ledger, isOperator: operator });
+      if (account) credits = (await ledger.entitlements(account.accountId)).credits;
+    } catch {
+      credits = null;
+    }
+  }
+  return withCookie(meterResponse(outcome, value, { budgetLevel: level, credits }));
 }
