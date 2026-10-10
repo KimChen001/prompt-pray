@@ -68,6 +68,8 @@ const zh: Messages = {
     useOne: "要为这次抽牌使用 1 次解读包吗？（剩余 {n} 次）",
     useOneCta: "使用解读包",
     noCredits: "这个浏览器的账户里已没有解读包次数。",
+    paidOtherLanguage: "这次抽牌的解读包解读是{lang}的。切换语言即可查看；追问在两种语言下都能用。",
+    langNames: { en: "英文", zh: "中文" },
     packLink: "解读包",
     packReading: "解读包解读，含 {n} 次追问",
     followupsMeter: "解读包追问剩余：{n}",
@@ -81,6 +83,11 @@ const zh: Messages = {
       twice: "重复发送两次",
       back: "返回解读包",
       sent: "已发送：{outcomes}",
+      outcomes: {
+        granted: "已加入次数", duplicate_event: "重复事件已忽略", already: "已经付过款", not_paid: "等待付款", released: "结账已关闭，预留已释放",
+        noop: "无需更改", revoked: "已退款，次数已收回", partial_refund_review: "部分退款，待核对", amount_mismatch: "金额不符，待核对",
+        paid_unfunded: "已付款但预算不足，将退款", session_mismatch: "未知的结账", mode_mismatch: "模式不符", unknown_order: "未知订单", unknown_session: "未知的结账", unknown_payment: "未知付款", ignored: "已忽略",
+      } as Record<string, string>,
     },
   },
   aiNotice: {
@@ -689,7 +696,7 @@ const zh: Messages = {
       "一个随机访客编号（Cookie），第一次使用实时 AI 时设置，只用来在同一 Wi-Fi 下公平分配免费 AI 次数。服务器按它记录使用次数，它不和你写的任何内容关联。",
       "解读包（仅在开通时）：服务器按账户编号保存你的订单、金额、状态和剩余次数。银行卡信息只交给支付服务商，MOONA 看不到。",
     ],
-    sentNote: "我们的服务器把 AI 请求转给 AI 服务商。为了把花费控制在活动预算内、让重试直接回放而不重复付费，服务器保留：每个访客编号的使用次数、每次请求的加密指纹（不含原文），以及每条 AI 回复 2 小时（只按太阳星座的日运对同星座的人都一样，保留一天；解读包解读保留 30 天），到期后删除。回复里可能引用你的话。没有账号，也没有统计分析。其他内容都只留在这个浏览器里。",
+    sentNote: "我们的服务器把 AI 请求转给 AI 服务商。为了把花费控制在活动预算内、让重试直接回放而不重复付费，服务器保留：每个访客编号的使用次数、每次请求的加密指纹（不含原文），以及每条 AI 回复：多数保留 2 小时，只按太阳星座的日运（同星座的人都一样）约一天，解读包解读及其追问 30 天。到期后不再显示，并在服务器下一次清理时删除。回复里可能引用你的话。没有统计分析；除非开通了解读包并且你购买了，否则也没有账户。其他内容都只留在这个浏览器里。",
     statusTitle: "哪些已经做好，哪些还没有",
     status: [
       ["塔罗、今日、星盘、百科、聊聊、手记", "已完成。AI 文字会和它拿到的事实核对；没有 AI 时一切都能离线使用。"],

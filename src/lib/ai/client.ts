@@ -58,22 +58,44 @@ export interface RequestAiOptions {
 // on the next request.
 export const VISITOR_PREPARE_TIMEOUT_MS = 8000;
 type NotDone = Exclude<AiOutcome<never>, { state: "done" }>;
-type Prepared = { ok: true } | { ok: false; outcome: NotDone };
+// stable: the browser is known to keep the visitor cookie (or it already had one). When it doesn't
+// (cookies blocked), every request runs as a new visitor, so an automatic same-id retry would run again.
+type Prepared = { ok: true; stable: boolean } | { ok: false; outcome: NotDone };
 let visitorReady: Promise<Prepared> | null = null;
+
+async function askVisitor(doFetch: typeof fetch, signal: AbortSignal): Promise<Prepared> {
+  const res = await doFetch("/api/ai/visitor", { method: "POST", signal });
+  if (res.ok) return { ok: true, stable: res.headers.get("x-moona-visitor") !== "new" };
+  const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  const code = typeof json.code === "string" ? json.code : null;
+  if (res.status === 503) return { ok: false, outcome: { state: "offline", reason: (code && OFFLINE[code]) || "unconfigured" } };
+  if (res.status === 429) return { ok: false, outcome: { state: "offline", reason: "busy" } }; // too many new visitors from here right now
+  return { ok: false, outcome: { state: "failed", code: code ?? `http_${res.status}` } };
+}
 
 async function prepareOnce(doFetch: typeof fetch): Promise<Prepared> {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(new Error("visitor preparation timed out")), VISITOR_PREPARE_TIMEOUT_MS);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  // bounded even if a transport ignores the abort signal
+  const timeout = new Promise<Prepared>((resolve) => {
+    timer = setTimeout(() => {
+      ctrl.abort(new Error("visitor preparation timed out"));
+      resolve({ ok: false, outcome: { state: "offline", reason: "network" } });
+    }, VISITOR_PREPARE_TIMEOUT_MS);
+  });
+  const attempt = (async (): Promise<Prepared> => {
+    try {
+      const first = await askVisitor(doFetch, ctrl.signal);
+      if (!first.ok || first.stable) return first;
+      // a visitor was just minted: ask once more to see whether the browser kept the cookie
+      const again = await askVisitor(doFetch, ctrl.signal);
+      return again.ok ? { ok: true, stable: again.stable } : again;
+    } catch {
+      return { ok: false, outcome: { state: "offline", reason: "network" } };
+    }
+  })();
   try {
-    const res = await doFetch("/api/ai/visitor", { method: "POST", signal: ctrl.signal });
-    if (res.ok) return { ok: true };
-    const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-    const code = typeof json.code === "string" ? json.code : null;
-    if (res.status === 503) return { ok: false, outcome: { state: "offline", reason: (code && OFFLINE[code]) || "unconfigured" } };
-    if (res.status === 429) return { ok: false, outcome: { state: "offline", reason: "busy" } }; // too many new visitors from here right now
-    return { ok: false, outcome: { state: "failed", code: code ?? `http_${res.status}` } };
-  } catch {
-    return { ok: false, outcome: { state: "offline", reason: "network" } };
+    return await Promise.race([attempt, timeout]);
   } finally {
     clearTimeout(timer);
   }
@@ -99,7 +121,7 @@ function prepareVisitor(doFetch: typeof fetch, signal?: AbortSignal): Promise<Pr
 
 /** For tests: forget (or pretend) that this page already confirmed its visitor. */
 export function resetVisitorForTests(ready = false): void {
-  visitorReady = ready ? Promise.resolve({ ok: true }) : null;
+  visitorReady = ready ? Promise.resolve({ ok: true, stable: true }) : null;
 }
 
 export async function requestAi<T>(path: string, body: Record<string, unknown>, o: RequestAiOptions): Promise<AiOutcome<T>> {
@@ -116,7 +138,8 @@ export async function requestAi<T>(path: string, body: Record<string, unknown>, 
       res = await doFetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, signal: o.signal });
     } catch (e) {
       if (o.signal?.aborted) throw e;
-      if (networkRetried) return { state: "offline", reason: "network" };
+      // a same-id retry is only safe when the server will recognise this browser again
+      if (networkRetried || !prepared.stable) return { state: "offline", reason: "network" };
       networkRetried = true;
       continue;
     }

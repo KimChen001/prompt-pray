@@ -17,10 +17,10 @@ import { SPREADS } from "@/lib/tarot/spreads";
 import { formatLocalDate } from "@/lib/time";
 import { bigThreeLocalized, bigThreeNames, type BigThreeNames } from "@/lib/astro/summary";
 import type { MemoryNote } from "@/lib/memory";
-import type { Reading, TarotAiResult } from "@/lib/tarot/types";
+import type { Locale, Reading, TarotAiResult } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
 import { SourceBadge, aiSource } from "@/components/bits";
-import { newRequestId, requestAiOnce, type AiOutcome } from "@/lib/ai/client";
+import { newRequestId, requestAi, requestAiOnce, type AiOutcome } from "@/lib/ai/client";
 import { TarotChat } from "@/components/TarotChat";
 import { SharedNotes, sharedNotes } from "@/components/Notes";
 import { CheckInPlanner } from "@/components/CheckIns";
@@ -74,53 +74,14 @@ function ReadingView() {
   const ai = reading?.ai?.[locale];
   const notes = useMemo(() => (reading ? sharedNotes(reading) : []), [reading]);
 
-  // Generate the AI interpretation in the background as soon as the page opens (once per reading +
-  // language). The request id is saved with the reading before sending, so a reload or a second tab
-  // replays the same request for free; "Try again" uses a new one. The result is merged into the
-  // latest copy, for its own language only.
-  // A pack reading is never automatic: it is sent only when the person taps "Use a pack reading"
-  // after the free readings ran out. Its id is kept too, so retrying or reloading replays it and the
-  // credit is used once; a failed attempt gives the credit back.
-  const generate = useCallback(async (r: Reading, fresh: boolean, paid = false) => {
-    const reqLocale = locale;
-    const epoch = dataEpoch();
-    const remember = paid
-      ? (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, paid: { locale: reqLocale, requestId } }))
-      : (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, aiRequest: { ...latest.aiRequest, [reqLocale]: requestId } }));
-    const savedPaid = r.paid && r.paid.locale === reqLocale && !r.paid.paidReadingId ? r.paid.requestId : null;
-    const requestId = (paid ? savedPaid : !fresh && r.aiRequest?.[reqLocale]) || newRequestId();
-    remember(requestId);
-    setAiStatus("loading");
-    setNotice(null);
-    setPackNote(null);
-    setOrb("pulse");
-    let out: AiOutcome<TarotAiResult>;
-    try {
-      out = await requestAiOnce<TarotAiResult>("/api/ai/tarot", {
-        locale: reqLocale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
-        chart: r.includeChart ? chart : undefined,
-        notes: sharedNotes(r).map((n) => n.text),
-        ...(paid ? { use: "paid" } : {}),
-      }, { requestId, onNewId: remember });
-    } catch {
-      out = { state: "offline", reason: "network" };
-    }
-    if (epoch !== dataEpoch()) return;
-    if (out.state === "done") {
-      const body = out.value;
-      const pack = paid && out.paid ? { locale: reqLocale, requestId, paidReadingId: out.paid.paidReadingId, followupsLeft: out.paid.followupsLeft } : null;
-      const next = patchReading(r.id, (latest) => ({
-        ...latest,
-        ...(latest.ai?.[reqLocale] ? {} : { ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }),
-        ...(pack ? { paid: pack } : {}),
-      }));
-      if (!next) return; // deleted while it was being written
-      setCredits(undefined);
-      setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
-      setAiStatus("live");
-      setOrb("settle");
-      return;
-    }
+  // What the AI is asked about this spread, in one language.
+  const bodyFor = useCallback((r: Reading, reqLocale: Locale) => ({
+    locale: reqLocale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
+    chart: r.includeChart ? chart : undefined,
+    notes: sharedNotes(r).map((n) => n.text),
+  }), [chart]);
+
+  const showRefusal = useCallback((out: Exclude<AiOutcome<TarotAiResult>, { state: "done" }>) => {
     setOrb("quiet");
     if (out.state === "quota") {
       setNotice(m.aiNotice.quota);
@@ -139,7 +100,87 @@ function ReadingView() {
       return setAiStatus(r2 === "network" ? "failed" : "off");
     }
     setAiStatus("failed");
-  }, [locale, chart, m]);
+  }, [m]);
+
+  // Generate the AI interpretation in the background as soon as the page opens (once per reading +
+  // language). The request id is saved with the reading before sending, so a reload or a second tab
+  // replays the same request for free; "Try again" uses a new one. The result is merged into the
+  // latest copy, for its own language only.
+  const generate = useCallback(async (r: Reading, fresh: boolean) => {
+    const reqLocale = locale;
+    const epoch = dataEpoch();
+    const remember = (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, aiRequest: { ...latest.aiRequest, [reqLocale]: requestId } }));
+    const requestId = (!fresh && r.aiRequest?.[reqLocale]) || newRequestId();
+    remember(requestId);
+    setAiStatus("loading");
+    setNotice(null);
+    setPackNote(null);
+    setOrb("pulse");
+    let out: AiOutcome<TarotAiResult>;
+    try {
+      out = await requestAiOnce<TarotAiResult>("/api/ai/tarot", bodyFor(r, reqLocale), { requestId, onNewId: remember });
+    } catch {
+      out = { state: "offline", reason: "network" };
+    }
+    if (epoch !== dataEpoch()) return;
+    if (out.state !== "done") return showRefusal(out);
+    const body = out.value;
+    const next = patchReading(r.id, (latest) => (latest.ai?.[reqLocale] ? latest : { ...latest, ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }));
+    if (!next) return; // deleted while it was being written
+    setCredits(undefined);
+    setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
+    setAiStatus("live");
+    setOrb("settle");
+  }, [locale, bodyFor, showRefusal]);
+
+  // A pack reading is never automatic: it starts only when the person taps "Use a pack reading" after
+  // the free readings ran out, and a spread gets at most one, in the language it was asked in (its
+  // follow-ups work in either language). The exact request (id and body) is saved before sending, so a
+  // reload, "Try again" or a lost answer replays it: the credit is used once, and an answer that was
+  // paid for can always be fetched, even when it used the last credit. It never makes a new paid
+  // request by itself: if the attempt failed (the credit came back), the choice is offered again.
+  const generatePaid = useCallback(async (r: Reading) => {
+    if (r.paid?.paidReadingId) return;
+    const pending = r.paid ?? null;
+    const reqLocale = pending?.locale ?? locale;
+    const requestId = pending?.requestId ?? newRequestId();
+    const payload = pending?.body ?? JSON.stringify({ ...bodyFor(r, reqLocale), use: "paid" });
+    const epoch = dataEpoch();
+    patchReading(r.id, (latest) => ({ ...latest, paid: { locale: reqLocale, requestId, body: payload } }));
+    setAiStatus("loading");
+    setNotice(null);
+    setPackNote(null);
+    setOrb("pulse");
+    let out: AiOutcome<TarotAiResult>;
+    try {
+      out = await requestAi<TarotAiResult>("/api/ai/tarot", JSON.parse(payload) as Record<string, unknown>, { requestId });
+    } catch {
+      out = { state: "offline", reason: "network" };
+    }
+    if (epoch !== dataEpoch()) return;
+    if (out.state === "retry" || (out.state === "failed" && out.code === "key_reused")) {
+      // the attempt failed or expired and its credit is back: forget it and ask again
+      const next = patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
+      if (next) void generate(next, true);
+      return;
+    }
+    if (out.state !== "done") {
+      if (out.state === "no_credits" || out.state === "needs_login") patchReading(r.id, (latest) => ({ ...latest, paid: undefined }));
+      return showRefusal(out);
+    }
+    const body = out.value;
+    const left = out.paid?.followupsLeft ?? 0;
+    const next = patchReading(r.id, (latest) => ({
+      ...latest,
+      ai: latest.ai?.[reqLocale] ? latest.ai : { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } },
+      paid: { locale: reqLocale, requestId, ...(out.paid ? { paidReadingId: out.paid.paidReadingId } : {}), followupsLeft: left, followupsTotal: left },
+    }));
+    if (!next) return;
+    setCredits(undefined);
+    setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
+    setAiStatus(reqLocale === locale ? "live" : "off");
+    setOrb("settle");
+  }, [locale, bodyFor, showRefusal, generate]);
 
   useEffect(() => {
     if (!reading) return;
@@ -150,8 +191,22 @@ function ReadingView() {
     const key = `${reading.id}|${locale}|${attempt}`;
     if (requested.current.has(key)) return;
     requested.current.add(key);
-    void generate(reading, attempt > 0);
-  }, [reading, locale, attempt, generate]);
+    // a pack reading already asked for but not yet seen is fetched again (a replay, no new credit)
+    if (reading.paid && !reading.paid.paidReadingId) void generatePaid(reading);
+    else void generate(reading, attempt > 0);
+  }, [reading, locale, attempt, generate, generatePaid]);
+
+  // Out of credits: link to packs only where packs can actually be bought.
+  const [packsOpen, setPacksOpen] = useState(false);
+  useEffect(() => {
+    if (credits !== 0) return;
+    let live = true;
+    fetch("/api/packs", { cache: "no-store" })
+      .then((r) => r.json() as Promise<{ payments?: { state?: string }; sales?: { open?: boolean } }>)
+      .then((p) => { if (live) setPacksOpen(p.payments?.state !== "unconfigured" && !!p.sales?.open); })
+      .catch(() => undefined);
+    return () => { live = false; };
+  }, [credits]);
 
   const onChatBusy = useCallback((busy: boolean) => setOrb((o) => (busy ? "pulse" : o === "pulse" ? "settle" : o)), []);
 
@@ -171,9 +226,10 @@ function ReadingView() {
   const reflection = ai ? ai.reflection : pick(analysis.reflection);
   // this spread's AI text in this language came from a pack reading
   const paidHere = !!(ai && reading?.paid?.paidReadingId && reading.paid.locale === locale);
+  const packFollowups = reading?.paid?.followupsTotal ?? reading?.paid?.followupsLeft ?? 0;
   const statusLine =
     aiStatus === "loading" ? <span className="status-line"><span className="status-dot" />{m.reading.aiPreparing}</span> :
-    ai ? <span className="muted small">{m.reading.aiReady}{paidHere ? ` ${fmt(m.packs.packReading, { n: reading?.paid?.followupsLeft ?? 0 })}` : ""}{low ? ` ${m.aiNotice.low}` : ""}</span> :
+    ai ? <span className="muted small">{m.reading.aiReady}{paidHere ? ` ${fmt(m.packs.packReading, { n: packFollowups })}` : ""}{low ? ` ${m.aiNotice.low}` : ""}</span> :
     aiStatus === "off" || aiStatus === "failed" ? <span className="muted small">{m.reading.offlineReady}</span> : null;
 
   const offlineBlock = (
@@ -280,7 +336,7 @@ function ReadingView() {
             </div>
           )}
 
-          {paidHere && <p className="muted small" style={{ margin: 0 }}>{fmt(m.packs.packReading, { n: reading.paid?.followupsLeft ?? 0 })}</p>}
+          {paidHere && <p className="muted small" style={{ margin: 0 }}>{fmt(m.packs.packReading, { n: packFollowups })}</p>}
           {!ai && aiStatus === "failed" && (
             <p className="notice">
               {m.reading.aiFallback}{" "}
@@ -288,14 +344,17 @@ function ReadingView() {
             </p>
           )}
           {!ai && aiStatus === "off" && <p className="notice-quiet">{notice ?? m.reading.aiOff}</p>}
-          {!ai && aiStatus === "off" && credits !== undefined && credits !== null && (
+          {!ai && reading.paid?.paidReadingId && reading.paid.locale !== locale && (
+            <p className="muted small" style={{ margin: 0 }}>{fmt(m.packs.paidOtherLanguage, { lang: m.packs.langNames[reading.paid.locale] })}</p>
+          )}
+          {!ai && aiStatus === "off" && !reading.paid && credits !== undefined && credits !== null && (
             credits > 0 ? (
               <div className="stack gap-2">
                 <p style={{ margin: 0 }}>{fmt(m.packs.useOne, { n: credits })}</p>
-                <div className="btn-row"><button type="button" className="btn" onClick={() => void generate(reading, false, true)}>{m.packs.useOneCta}</button></div>
+                <div className="btn-row"><button type="button" className="btn btn-ghost" onClick={() => void generatePaid(reading)}>{m.packs.useOneCta}</button></div>
               </div>
             ) : (
-              <p className="muted small" style={{ margin: 0 }}>{packNote ? `${packNote} ` : ""}<Link href="/me#packs">{m.packs.packLink}</Link></p>
+              (packNote || packsOpen) && <p className="muted small" style={{ margin: 0 }}>{packNote ? `${packNote} ` : ""}{packsOpen && <Link href="/me#packs">{m.packs.packLink}</Link>}</p>
             )
           )}
           {!ai && aiStatus === "off" && credits === null && packNote && <p className="muted small" style={{ margin: 0 }}>{packNote}</p>}

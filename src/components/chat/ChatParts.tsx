@@ -116,7 +116,9 @@ export function Composer({
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
         />
-        <button type="button" className="btn btn-primary" onClick={onSend} disabled={disabled || !value.trim()}>{m.reading.send}</button>
+        {/* Pressing Send must not take focus from the text box: on phones the dock sits higher while the
+            keyboard is down, so moving focus mid-press made it jump and the release miss the button. */}
+        <button type="button" className="btn btn-primary" onMouseDown={(e) => e.preventDefault()} onClick={onSend} disabled={disabled || !value.trim()}>{m.reading.send}</button>
       </div>
       {value.length > CHAT_LIMITS.userMax - 80 && <span className="meta" style={{ alignSelf: "flex-end" }}>{value.length} / {CHAT_LIMITS.userMax}</span>}
     </div>

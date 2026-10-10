@@ -19,6 +19,7 @@ import { VISITOR_COOKIE, visitorCookieValue, verifyVisitorCookie } from "@/lib/i
 import { DEV_FAKE_WEBHOOK_SECRET, paymentsConfig } from "@/lib/payments/config";
 import { createFakePayments, resetFakePayments } from "@/lib/payments/fake";
 import { startCheckout } from "@/lib/payments/service";
+import { createStripePayments } from "@/lib/payments/stripe";
 import { dayHoroscope, horoscopeBody } from "@/lib/astro/horoscope-day";
 import { LEDGER_TIMEOUT, M, PACK_PRODUCT, expectAudit, makeTestLedger, row, testPlan, type TestLedger } from "./helpers/ledger";
 
@@ -175,6 +176,23 @@ describe("S3/S4 review regressions", LEDGER_TIMEOUT, () => {
     const payload = JSON.stringify({ id: "evt_refund_1", object: "event", type: "charge.refunded", livemode: true, created: Math.floor(Date.now() / 1000), data: { object: { id: "ch_1", payment_intent: "pi_unknown", amount: 500, amount_refunded: 500 } } });
     const res = await webhookPOST(new NextRequest("http://localhost/api/stripe/webhook", { method: "POST", body: payload, headers: { "stripe-signature": stripe.webhooks.generateTestHeaderString({ payload, secret: "whsec_live_placeholder" }) } }));
     expect([res.status, await res.json()]).toEqual([200, { received: true, outcome: "unknown_payment" }]);
+  });
+
+  it("throttles operator sign-in in total too, so spoofed networks can't guess without limit", async () => {
+    vi.stubEnv("OPS_TOKEN", OPS);
+    let limited = 0;
+    for (let i = 0; i < 120; i++) if ((await sessionPOST(post("/api/ops/session", { token: `guess-${i}` }, undefined, `10.${i}.0.1`))).status === 429) limited++;
+    expect(limited).toBeGreaterThanOrEqual(20); // the total cap (100 per 10 minutes) holds across "networks"
+  });
+
+  it("asks the provider for the price once per process, not per request", async () => {
+    const retrieve = vi.fn(async () => ({ unit_amount: 500, currency: "usd" }));
+    const fakeStripe = { checkout: { sessions: { create: vi.fn(), retrieve: vi.fn(), expire: vi.fn() } }, prices: { retrieve }, webhooks: new Stripe("sk_test_offline_placeholder").webhooks } as never;
+    const cfg = paymentsConfig({ PAYMENTS_MODE: "test", STRIPE_SECRET_KEY: "sk_test_x", STRIPE_WEBHOOK_SECRET: "whsec_x", STRIPE_PRICE_ID: "price_cache_check" }, { ledgerKind: "memory", authKind: "fake" });
+    const a = createStripePayments(cfg, fakeStripe), b = createStripePayments(cfg, fakeStripe);
+    expect(await a.priceCheck!()).toEqual({ amountCents: 500, currency: "usd" });
+    expect(await b.priceCheck!()).toEqual({ amountCents: 500, currency: "usd" });
+    expect(retrieve).toHaveBeenCalledTimes(1);
   });
 
   it("checks the provider's price before holding anything", async () => {

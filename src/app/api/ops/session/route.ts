@@ -4,18 +4,30 @@ import { OPS_COOKIE, OPS_TTL_S, opsCookieValue, opsTokenMatches } from "@/lib/id
 import { netBucket } from "@/lib/identity/visitor";
 
 // Marks this device as an operator's for 12 hours, given OPS_TOKEN (set by the team in the host's
-// environment; at least 24 characters). Failed attempts are throttled per network and server
-// instance, so guessing from one network can't lock the team out everywhere.
-const WINDOW_MS = 10 * 60 * 1000, MAX_FAILS = 10;
+// environment; at least 24 characters). Failed attempts are throttled per network (so guessing from
+// one network can't lock the team out everywhere) and in total per server instance (so spoofed
+// forwarding headers can't buy unlimited guesses where the host doesn't overwrite them).
+const WINDOW_MS = 10 * 60 * 1000, MAX_FAILS = 10, MAX_FAILS_TOTAL = 100;
 const fails = new Map<string, number[]>();
+
+function prune(now: number) {
+  for (const [k, ts] of fails) {
+    const recent = ts.filter((t) => now - t < WINDOW_MS);
+    if (recent.length) fails.set(k, recent);
+    else fails.delete(k);
+  }
+}
 
 export async function POST(req: NextRequest) {
   const keys = serverKeys();
   if (!keys || (process.env.OPS_TOKEN ?? "").length < 24) return NextResponse.json({ code: "not_found" }, { status: 404 });
   const now = Date.now();
+  prune(now);
   const bucket = netBucket(req, keys);
-  const recent = (fails.get(bucket) ?? []).filter((t) => now - t < WINDOW_MS);
-  if (recent.length >= MAX_FAILS) return NextResponse.json({ code: "rate_limited" }, { status: 429 });
+  const recent = fails.get(bucket) ?? [];
+  let total = 0;
+  for (const ts of fails.values()) total += ts.length;
+  if (recent.length >= MAX_FAILS || total >= MAX_FAILS_TOTAL) return NextResponse.json({ code: "rate_limited" }, { status: 429 });
   const body = (await req.json().catch(() => null)) as { token?: unknown } | null;
   if (!opsTokenMatches(body?.token)) {
     fails.set(bucket, [...recent, now]);

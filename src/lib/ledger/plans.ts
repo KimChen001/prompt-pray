@@ -115,9 +115,9 @@ export function resolvePlan(env: EnvLike, cfg: AiConfig): ResolvedPlan {
   // Free readings per visitor and purpose, for every window (a team decision; also used by rehearsals):
   // AI_FREE_QUOTA=tarot:2,chat:4,talk:4,natal:1,horoscope:3
   for (const part of (env.AI_FREE_QUOTA ?? "").split(",").map((x) => x.trim()).filter(Boolean)) {
-    const [purpose, v] = part.split(":");
-    const n = Number(v);
-    if ((PURPOSES as readonly string[]).includes(purpose) && Number.isInteger(n) && n >= 0) for (const w of plan.windows) w.quotas[purpose as Purpose].perSubject = n;
+    const [purpose, v = ""] = part.split(":").map((x) => x.trim());
+    // a whole number only: "tarot:" or "tarot:x" leaves the plan's value alone
+    if ((PURPOSES as readonly string[]).includes(purpose) && /^\d+$/.test(v)) for (const w of plan.windows) w.quotas[purpose as Purpose].perSubject = Number(v);
   }
   plan.packPoolUsd = num(env.PACK_POOL_USD, plan.packPoolUsd);
   plan.packSlackUsd = num(env.PACK_SLACK_USD, plan.packSlackUsd);

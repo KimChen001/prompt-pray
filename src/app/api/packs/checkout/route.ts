@@ -27,6 +27,11 @@ export async function POST(req: NextRequest) {
     const plan = currentPlan();
     const sales = salesState(c.cfg, await c.ledger.snapshot(), { isOperator: c.operator, deployed: c.deployed, authReady: true, product: plan.product, packSlackMicro: Math.round(plan.plan.packSlackUsd * 1e6) });
     if (!sales.open) return json({ code: "sales_closed", reason: sales.reason }, 409);
+    // the provider must charge the pack's price; checked before anything is minted or held
+    if (c.pay.priceCheck) {
+      const p = await c.pay.priceCheck();
+      if (p.amountCents !== plan.product.amountCents || p.currency !== plan.product.currency.toLowerCase()) return json({ code: "sales_closed", reason: c.operator ? "price_mismatch" : "unconfigured" }, 409);
+    }
     const visitor = await ensureVisitor(req, c.ledger, c.keys);
     if ("denied" in visitor) return json({ code: visitor.denied === "plan_unsynced" ? "unconfigured" : "visitor_cap" }, visitor.denied === "plan_unsynced" ? 503 : 429);
     const withCookie = (res: NextResponse) => {

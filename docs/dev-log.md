@@ -474,3 +474,40 @@ An independent review agent tried to break S3 and S4: no P1, 3 P2, 8 P3. Codex's
 **Test stability:** the first ledger hook in a file (PGlite start-up and migration) could take more than vitest's 10 s hook timeout under the full parallel run. This was the intermittent "first test in the file" failure; `hookTimeout` is now 60 s.
 
 **Verification:** 762 tests pass in four full runs in a row; the real-Postgres test is skipped (no TEST_DATABASE_URL). TypeScript and the content check pass.
+
+## S5 part 2 and the verification workflow (2026-10-10, early morning)
+
+**S5 part 2 (19902b9):**
+- Readings stay free by default. Only after the free readings run out does the reading page ask "Use 1 of your N pack readings for this spread?", and a paid request is sent only on that tap.
+- The tarot chat sends the pack's follow-ups, with a gold meter, and falls back to the free allowance (saying so) when they are used.
+- `AI_FREE_QUOTA` sets the free readings per visitor.
+
+**Verification workflow:** nine agents in total. Four independent verifiers each tried to break one area against a fresh worktree build (3108 plain, 3109 rehearsal); every P1/P2 they reported was re-proven by a separate skeptic.
+- **The orb fix passed every check:**
+  - At 390, 320 and 1440 px, `elementFromPoint` at the language button returns the button.
+  - EN→ZH→EN works with ordinary taps and clicks; the Chinese screenshots really contain Chinese.
+  - The account and moon entries work, including with reduced motion and with WebGL off (the static orb is shown).
+  - Pixel difference inside the orb is 0 px against the old 3106 build, which still reproduces the old bug.
+- **Confirmed P2s, now fixed:**
+  - After a pack reading the tarot chat composer stayed hidden until reload. It now opens as soon as the page's AI comes back.
+  - On phones the Talk "Send" tap was lost: the text box lost focus on press, the dock jumped 58 px and the release missed the button. Send now keeps focus in the box, so the dock stays put and the keyboard stays up. This predates S5.
+  - A language switch after a pack reading used a second credit for the same spread. A spread now gets at most one pack reading, in the language it was asked in; the other language says so, and follow-ups work in either language.
+  - An answer lost on the last credit could never be shown. The exact paid request (id and body) is saved before sending; a reload or "Try again" replays it without a new credit. If the saved attempt failed (its credit came back), the choice is offered again, never paid by itself.
+- **P3s, now fixed:**
+  - The pack buttons and the simulated checkout buttons have a visible outline.
+  - The checkout outcome codes are translated.
+  - The "Reading packs" link appears only where packs can be bought.
+  - "N follow-ups included" uses the real total.
+  - `AI_FREE_QUOTA` ignores empty or non-numeric values.
+  - The privacy copy states the deletion timing exactly (at the next cleanup after the time is up), includes pack follow-ups, and says an account exists only with a bought pack.
+  - The visitor pre-call confirms a freshly minted cookie once more. If the browser doesn't keep it, the automatic same-id retry is skipped. The 8 s bound now holds even when a transport ignores the abort signal.
+  - Operator sign-in also has a total cap per instance, and old entries are pruned.
+  - The Stripe price check is cached per process and runs before a visitor is minted.
+- **Left as is (pre-existing typography, approved design):**
+  - The third home prompt chip sits in a swipe row.
+  - At 320 px the Chinese heading wraps its last two characters onto a second line.
+- **Limits:** two first-visit tabs that both mint a visitor can still, in a simulation only, run one lost request twice. Touch was emulated in headless Edge, not on a real phone.
+
+**Tests:**
+- New: `tests/reading-pack.test.ts`, which drives the real page in happy-dom against a scripted credit server; the previous page fails 3 of its 5, the three confirmed P2s. Also `tests/composer.test.ts`, plus new cases in `client.test.ts` and `review-s3s4.test.ts`.
+- **Totals:** 773 tests pass (two full runs); the real-Postgres test is skipped (no TEST_DATABASE_URL). TypeScript and the content check pass.

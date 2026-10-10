@@ -158,7 +158,7 @@ export function PacksPanel({ onVisible }: { onVisible?: (visible: boolean) => vo
       {message && <p className="notice-quiet" aria-live="polite" style={{ margin: 0 }}>{message}</p>}
       {copy.cta && (
         <div className="btn-row">
-          <button type="button" className={info.action?.kind === "buy" ? "btn btn-primary" : "btn"} onClick={() => void buy()} disabled={busy}>{copy.cta}</button>
+          <button type="button" className={info.action?.kind === "buy" ? "btn btn-primary" : "btn btn-ghost"} onClick={() => void buy()} disabled={busy}>{copy.cta}</button>
         </div>
       )}
     </section>

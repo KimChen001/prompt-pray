@@ -47,13 +47,15 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
 
   useEffect(() => setNotes(listNotes()), [version]);
   useEffect(() => {
-    if (aiUnavailable) setState("needsAi");
+    // follows the page: when its AI comes back (e.g. a pack reading just arrived), the chat opens again
+    setState((s) => (aiUnavailable ? "needsAi" : s === "needsAi" ? "idle" : s));
   }, [aiUnavailable]);
   useEffect(() => () => inflight.current?.abort(), []);
   useEffect(() => onBusy?.(state === "sending"), [state, onBusy]);
 
-  // A pack reading's follow-ups, in this language, while some are left (spec §10.2).
-  const packOf = (r: Reading) => (r.paid && r.paid.locale === locale && r.paid.paidReadingId && (r.paid.followupsLeft ?? 0) > 0 ? r.paid : null);
+  // A pack reading's follow-ups, while some are left (spec §10.2). They are tied to the spread, not
+  // the language, so they work after a language switch too.
+  const packOf = (r: Reading) => (r.paid?.paidReadingId && (r.paid.followupsLeft ?? 0) > 0 ? r.paid : null);
 
   async function send(r: Reading, free = false) {
     const pack = free ? null : packOf(r);
@@ -162,8 +164,8 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
         </p>
       )}
 
-      {packOf(reading) && <CreditMeter left={reading.paid!.followupsLeft!} total={Math.max(2, reading.paid!.followupsLeft!)} label={fmt(m.packs.followupsMeter, { n: reading.paid!.followupsLeft! })} />}
-      {!packOf(reading) && reading.paid?.paidReadingId && reading.paid.locale === locale && <span className="muted small">{m.packs.followupsDone}</span>}
+      {packOf(reading) && <CreditMeter left={reading.paid!.followupsLeft!} total={Math.max(reading.paid!.followupsTotal ?? 0, reading.paid!.followupsLeft!)} label={fmt(m.packs.followupsMeter, { n: reading.paid!.followupsLeft! })} />}
+      {!packOf(reading) && reading.paid?.paidReadingId && <span className="muted small">{m.packs.followupsDone}</span>}
       {state !== "needsAi" && state !== "crisis" && (
         <div className="stack gap-2">
           <Composer id="reading-chat" value={draft} onChange={setDraft} onSend={submit} disabled={state === "sending"} placeholder={m.reading.chatPlaceholder} label={m.reading.chatPlaceholder} autoFocus={autoFocus} />

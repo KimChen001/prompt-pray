@@ -118,7 +118,8 @@ describe("resolvePlan and validatePlan", LEDGER_TIMEOUT, () => {
 
   it("sets the free readings per visitor from AI_FREE_QUOTA, for every window", () => {
     const cfg = aiConfig(FAKE);
-    const r = resolvePlan({ MOONA_PLAN: "event-2026-10-28", AI_FREE_QUOTA: "tarot:1, chat:2, bogus:9, natal:x" }, cfg);
+    const r = resolvePlan({ MOONA_PLAN: "event-2026-10-28", AI_FREE_QUOTA: "tarot:1, chat:2, bogus:9, natal:x, horoscope:" }, cfg);
+    expect(r.plan.windows.find((w) => w.id === "win:demo")!.quotas.horoscope.perSubject).toBe(3); // an empty value is not 0
     for (const w of r.plan.windows) expect([w.quotas.tarot.perSubject, w.quotas.chat.perSubject]).toEqual([1, 2]);
     expect(r.plan.windows.find((w) => w.id === "win:demo")!.quotas.natal.perSubject).toBe(1); // unchanged
     expect(r.sync.quotas.filter((q) => q.purpose === "tarot").every((q) => q.per_subject === 1)).toBe(true);

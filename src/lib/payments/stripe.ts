@@ -66,6 +66,8 @@ export function verifyStripeWebhook(raw: string, signature: string | null, secre
   return normalizeStripeEvent(ev);
 }
 
+const prices = new Map<string, Promise<{ amountCents: number | null; currency: string | null }>>();
+
 export function createStripePayments(cfg: PaymentsConfig, stripe?: StripeLike): PaymentsPort {
   if (cfg.state !== "test" && cfg.state !== "live") throw new Error("moona: Stripe needs test or live payments");
   const client = stripe ?? (new Stripe(cfg.secretKey!, { maxNetworkRetries: 1, timeout: 10_000 }) as unknown as StripeLike);
@@ -76,16 +78,21 @@ export function createStripePayments(cfg: PaymentsConfig, stripe?: StripeLike): 
       throw new PaymentProviderError((e as Error).message);
     }
   };
-  let price: Promise<{ amountCents: number | null; currency: string | null }> | null = null;
   return {
     state: cfg.state,
     priceCheck() {
-      // once per process; a failure is retried next time
-      price ??= call(async () => {
-        const p = await client.prices!.retrieve(cfg.priceId!);
-        return { amountCents: num(p?.unit_amount), currency: typeof p?.currency === "string" ? p.currency.toLowerCase() : null };
-      }).catch((e) => { price = null; throw e; });
-      return price;
+      // once per process and price (a port is built per request); a failure is retried next time
+      const key = `${cfg.state}|${cfg.priceId}`;
+      let hit = prices.get(key);
+      if (!hit) {
+        hit = call(async () => {
+          const p = await client.prices!.retrieve(cfg.priceId!);
+          return { amountCents: num(p?.unit_amount), currency: typeof p?.currency === "string" ? p.currency.toLowerCase() : null };
+        });
+        prices.set(key, hit);
+        hit.catch(() => prices.delete(key));
+      }
+      return hit;
     },
     async createCheckout(o) {
       const s = await call(() => client.checkout.sessions.create({

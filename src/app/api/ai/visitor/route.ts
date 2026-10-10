@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
   try {
     const visitor = await ensureVisitor(req, got.ledger, keys);
     if ("denied" in visitor) return NextResponse.json({ code: visitor.denied === "plan_unsynced" ? "unconfigured" : "visitor_cap" }, { status: visitor.denied === "plan_unsynced" ? 503 : 429 });
-    const res = new NextResponse(null, { status: 204 });
+    // "known" when the request already carried this site's cookie, "new" when one was just minted: the
+    // client asks once more after "new" to learn whether the browser keeps it
+    const res = new NextResponse(null, { status: 204, headers: { "x-moona-visitor": visitor.set ? "new" : "known" } });
     if (visitor.set) res.cookies.set({ name: visitor.set.name, value: visitor.set.value, ...visitor.set.options });
     return res;
   } catch {

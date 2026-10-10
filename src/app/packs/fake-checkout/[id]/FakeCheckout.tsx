@@ -8,7 +8,7 @@ import { useI18n } from "@/lib/i18n";
 type Outcome = "pay" | "decline" | "expire";
 
 export function FakeCheckout({ orderId }: { orderId: string }) {
-  const { m, fmt } = useI18n();
+  const { m, fmt, locale } = useI18n();
   const c = m.packs.fakeCheckout;
   const [sent, setSent] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -18,7 +18,7 @@ export function FakeCheckout({ orderId }: { orderId: string }) {
     try {
       const res = await fetch("/api/ops/fake-pay", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ orderId, outcome, duplicate }) });
       const body = (await res.json().catch(() => ({}))) as { outcomes?: string[]; code?: string };
-      setSent(fmt(c.sent, { outcomes: (body.outcomes ?? [body.code ?? String(res.status)]).join(", ") }));
+      setSent(fmt(c.sent, { outcomes: (body.outcomes ?? [body.code ?? String(res.status)]).map((o) => c.outcomes[o] ?? o).join(locale === "zh" ? "，" : ", ") }));
     } finally {
       setBusy(false);
     }
@@ -31,9 +31,9 @@ export function FakeCheckout({ orderId }: { orderId: string }) {
         <h1 className="h3">{c.title}</h1>
         <p className="muted" style={{ margin: 0 }}>{c.body}</p>
         <div className="btn-row">
-          <button type="button" className="btn" disabled={busy} onClick={() => void send("pay")}>{c.pay}</button>
-          <button type="button" className="btn" disabled={busy} onClick={() => void send("decline")}>{c.decline}</button>
-          <button type="button" className="btn" disabled={busy} onClick={() => void send("expire")}>{c.expire}</button>
+          <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => void send("pay")}>{c.pay}</button>
+          <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => void send("decline")}>{c.decline}</button>
+          <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => void send("expire")}>{c.expire}</button>
           <button type="button" className="btn-text" disabled={busy} onClick={() => void send("pay", true)}>{c.twice}</button>
         </div>
         {sent && <p className="notice-quiet" aria-live="polite" style={{ margin: 0 }}>{sent}</p>}

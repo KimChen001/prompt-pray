@@ -161,6 +161,45 @@ describe("visitor confirmed before any AI request", () => {
     expect(t.count().ai).toBe(0);
   });
 
+  it("confirms a freshly minted visitor once more, and skips the same-id retry if the browser drops the cookie", async () => {
+    resetVisitorForTests();
+    const answers = ["new", "known"];
+    let aiCalls = 0;
+    const kept = vi.fn<typeof fetch>(async (url) => {
+      if (String(url) === VISITOR) return new Response(null, { status: 204, headers: { "x-moona-visitor": answers.shift() ?? "known" } });
+      aiCalls++;
+      if (aiCalls === 1) throw new TypeError("lost response");
+      return json(200, { ok: 1 });
+    });
+    expect((await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000f1", fetchImpl: kept })).state).toBe("done");
+    expect(kept.mock.calls.filter((c) => String(c[0]) === VISITOR)).toHaveLength(2);
+    expect(aiCalls).toBe(2); // the cookie stuck: the same id was safely sent again
+
+    resetVisitorForTests();
+    aiCalls = 0;
+    const dropped = vi.fn<typeof fetch>(async (url) => {
+      if (String(url) === VISITOR) return new Response(null, { status: 204, headers: { "x-moona-visitor": "new" } }); // never "known": cookies are not kept
+      aiCalls++;
+      throw new TypeError("lost response");
+    });
+    expect(await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000f2", fetchImpl: dropped })).toEqual({ state: "offline", reason: "network" });
+    expect(aiCalls).toBe(1); // no automatic second run as another visitor
+  });
+
+  it("is bounded even when the transport ignores the abort signal", async () => {
+    vi.useFakeTimers();
+    resetVisitorForTests();
+    const deaf = vi.fn<typeof fetch>(() => new Promise<Response>(() => undefined)); // never settles, ignores signals
+    const pending = requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000f3", fetchImpl: deaf });
+    await vi.advanceTimersByTimeAsync(VISITOR_PREPARE_TIMEOUT_MS + 10);
+    expect(await pending).toEqual({ state: "offline", reason: "network" });
+    // the next request prepares again rather than joining the stuck attempt
+    const again = requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000f4", fetchImpl: deaf });
+    await vi.advanceTimersByTimeAsync(VISITOR_PREPARE_TIMEOUT_MS + 10);
+    expect(await again).toEqual({ state: "offline", reason: "network" });
+    expect(deaf).toHaveBeenCalledTimes(2);
+  });
+
   it("makes one new id when the saved one now describes a different request (422)", async () => {
     const fetchImpl = vi.fn<typeof fetch>().mockResolvedValueOnce(json(422, { code: "key_reused" })).mockResolvedValueOnce(json(200, { ok: 1 }));
     const ids: string[] = [];

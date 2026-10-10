@@ -67,6 +67,8 @@ const en = {
     useOne: "Use 1 of your {n} pack readings for this spread?",
     useOneCta: "Use a pack reading",
     noCredits: "No pack readings left on this browser's account.",
+    paidOtherLanguage: "This spread's pack reading is in {lang}. Switch the language to read it; its follow-ups work in either language.",
+    langNames: { en: "English", zh: "Chinese" },
     packLink: "Reading packs",
     packReading: "Pack reading, {n} follow-ups included",
     followupsMeter: "Pack follow-ups left: {n}",
@@ -80,6 +82,11 @@ const en = {
       twice: "Deliver twice",
       back: "Back to packs",
       sent: "Sent: {outcomes}",
+      outcomes: {
+        granted: "readings added", duplicate_event: "repeat ignored", already: "already paid", not_paid: "waiting for the payment", released: "checkout closed, holds released",
+        noop: "nothing to change", revoked: "refunded, readings withdrawn", partial_refund_review: "partial refund, sent for review", amount_mismatch: "amount did not match, sent for review",
+        paid_unfunded: "paid but no budget left, to be refunded", session_mismatch: "unknown checkout", mode_mismatch: "wrong mode", unknown_order: "unknown order", unknown_session: "unknown checkout", unknown_payment: "unknown payment", ignored: "ignored",
+      } as Record<string, string>,
     },
   },
   // Why a live AI text is not shown (shared by every page that asks for one).
@@ -689,7 +696,7 @@ const en = {
       "A random visitor id (a cookie), set the first time you use live AI, only so free AI readings are shared fairly between people on the same Wi-Fi. The server counts readings against it; it is not linked to anything you write.",
       "Reading packs (only where they are enabled): the server keeps your order, its amount and state, and your pack credits under an account id. Card details go only to the payment provider; MOONA never sees them.",
     ],
-    sentNote: "Our server passes AI requests to the AI provider. To keep spending within the event's budget and let a retry replay instead of paying twice, it keeps: counts per visitor id, a keyed fingerprint of each request (never its text), and each AI reply for 2 hours (a Sun-sign horoscope, the same for everyone with that sign, for a day; a pack reading for 30 days), after which it is deleted. A reply can quote your words. There is no account and no analytics. Everything else stays in this browser.",
+    sentNote: "Our server passes AI requests to the AI provider. To keep spending within the event's budget and let a retry replay instead of paying twice, it keeps: counts per visitor id, a keyed fingerprint of each request (never its text), and each AI reply: 2 hours for most, about a day for a Sun-sign horoscope (the same for everyone with that sign), 30 days for a pack reading and its follow-ups. After that a reply is never shown again and is deleted at the server's next cleanup. A reply can quote your words. There is no analytics, and no account unless reading packs are enabled and you buy one. Everything else stays in this browser.",
     statusTitle: "What is built, and what is not yet",
     status: [
       ["Tarot, Today, Birth chart, Learn, Talk, Journal", "Built. AI texts are checked against the facts they were given; without AI everything still works offline."],
