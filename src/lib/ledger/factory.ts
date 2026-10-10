@@ -15,6 +15,7 @@ import { migrate } from "./migrate";
 import { resolvePlan } from "./plans";
 import type { LedgerPort } from "./port";
 import { createSqlLedger } from "./sql-ledger";
+import { checkFunctionsVersion } from "./version";
 
 export type LedgerChoice = { ok: true; ledger: LedgerPort } | { ok: false; reason: "ledger_down" | "ledger_nondurable" };
 export type LedgerKind = "postgres" | "pglite" | "memory" | "file";
@@ -57,6 +58,7 @@ async function open(kind: LedgerKind, env: EnvLike): Promise<LedgerChoice> {
       queryTimeoutMs: Number(env.DATABASE_QUERY_TIMEOUT_MS) || 4000,
       ...(caPath ? { caCert: readFileSync(caPath, "utf8") } : {}),
     });
+    await checkFunctionsVersion(exec); // never run against the money rules of another version
     const ledger = createSqlLedger(exec);
     void ledger.snapshot().then(
       (s) => { g.__moonaPlanWarning = s.kind === "sql" && s.planHash !== plan.hash ? `database plan ${s.planId ?? "none"}@${s.planHash ?? "none"} differs from the environment plan ${plan.plan.id}@${plan.hash}` : null; },
@@ -66,6 +68,7 @@ async function open(kind: LedgerKind, env: EnvLike): Promise<LedgerChoice> {
   }
   const exec = await pgliteExecutor(kind === "pglite" ? env.MOONA_PGLITE_DIR || join(process.cwd(), ".data", "pglite") : undefined);
   await migrate(exec);
+  await checkFunctionsVersion(exec);
   const ledger = createSqlLedger(exec);
   await ledger.syncPlan(plan.sync);
   return { ok: true, ledger };

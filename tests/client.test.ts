@@ -42,9 +42,10 @@ describe("requestAi", () => {
     expect(await one(429, { code: "quota", credits: null })).toEqual({ state: "quota", credits: null });
     expect(await one(402, { code: "no_credits" })).toEqual({ state: "no_credits" });
     expect(await one(401, { code: "login_required" })).toEqual({ state: "needs_login" });
-    expect(await one(503, { code: "budget" })).toEqual({ state: "offline", reason: "budget" });
-    expect(await one(503, { code: "misconfigured" })).toEqual({ state: "offline", reason: "unconfigured" });
-    expect(await one(503, { code: "ledger" })).toEqual({ state: "offline", reason: "ledger" });
+    expect(await one(503, { code: "budget" })).toEqual({ state: "offline", reason: "budget", code: "budget" });
+    expect(await one(503, { code: "misconfigured" })).toEqual({ state: "offline", reason: "unconfigured", code: "misconfigured" });
+    expect(await one(503, {})).toEqual({ state: "offline", reason: "unconfigured" }); // a bare 503 (a gateway) carries no code
+    expect(await one(503, { code: "ledger" })).toEqual({ state: "offline", reason: "ledger", code: "ledger" });
     expect(await one(200, { code: "crisis" })).toEqual({ state: "crisis" });
     expect(await one(422, { code: "key_reused" })).toEqual({ state: "failed", code: "key_reused" });
     expect(await one(504, { code: "timeout" })).toEqual({ state: "failed", code: "timeout" });
@@ -103,7 +104,7 @@ describe("visitor confirmed before any AI request", () => {
     resetVisitorForTests();
     let answer: number | "lost" = 503;
     const t = transport(() => answer);
-    expect(await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000b1", fetchImpl: t.fetchImpl })).toEqual({ state: "offline", reason: "ledger" });
+    expect(await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000b1", fetchImpl: t.fetchImpl })).toEqual({ state: "offline", reason: "ledger", code: "ledger" });
     answer = 429;
     expect(await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000b2", fetchImpl: t.fetchImpl })).toEqual({ state: "offline", reason: "busy" });
     answer = "lost";

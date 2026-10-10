@@ -12,7 +12,7 @@ import { windowMessages } from "@/lib/chat/limits";
 import type { ChatTurn, Reading } from "@/lib/tarot/types";
 import type { BigThreeNames } from "@/lib/astro/summary";
 import { SupportPanel } from "./bits";
-import { newRequestId, requestAiOnce } from "@/lib/ai/client";
+import { newRequestId, requestAi, requestAiOnce, type AiOutcome } from "@/lib/ai/client";
 import { CreditMeter } from "./packs/PacksPanel";
 
 // When the pack's follow-ups for this reading can't be used, replies go back to the free allowance.
@@ -74,7 +74,8 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
     setState("sending");
     setNotice(null);
     try {
-      const out = await requestAiOnce<{ reply?: unknown; remember?: unknown; meta?: ChatTurn["meta"] }>("/api/ai/chat", {
+      type Reply = { reply?: unknown; remember?: unknown; meta?: ChatTurn["meta"] };
+      const payload = {
         reading: {
           locale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
           chart: r.includeChart ? chart : undefined,
@@ -83,7 +84,21 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
         shown,
         messages,
         ...(pack ? { paidReadingId: pack.paidReadingId } : {}),
-      }, { requestId, signal: ctrl.signal, onNewId: remember });
+      };
+      let out: AiOutcome<Reply>;
+      if (!pack) out = await requestAiOnce<Reply>("/api/ai/chat", payload, { requestId, signal: ctrl.signal, onNewId: remember });
+      else {
+        // A pack follow-up sent again with other context (another language, a new interpretation
+        // shown) fetches the reply it already paid for instead of using a second follow-up. Only when
+        // that request never reached the ledger, or failed with its follow-up given back, is a new one made.
+        out = await requestAi<Reply>("/api/ai/chat", payload, { requestId, signal: ctrl.signal });
+        if (out.state === "failed" && out.code === "key_reused") out = await requestAi<Reply>("/api/ai/chat", { ...payload, replayOnly: true }, { requestId, signal: ctrl.signal });
+        if (out.state === "retry" || (out.state === "failed" && (out.code === "no_such_request" || out.code === "key_reused"))) {
+          const id = newRequestId();
+          remember(id);
+          out = await requestAi<Reply>("/api/ai/chat", payload, { requestId: id, signal: ctrl.signal });
+        }
+      }
       if (pack && out.state === "failed" && PACK_GONE.has(out.code)) {
         // the pack's follow-ups are used (or its pack was refunded): say so, and answer from the free allowance
         const next = patchReading(r.id, (latest) => (latest.paid ? { ...latest, paid: { ...latest.paid, followupsLeft: 0 } } : latest));

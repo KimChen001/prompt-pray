@@ -1,3 +1,10 @@
+-- Which version of these functions the database runs. The server checks it before using the ledger
+-- (factory.ts) and refuses to start against any other, so a deploy that skipped
+-- `npm run ledger -- migrate` fails closed instead of running new code on old rules. The marker is
+-- derived from this file's text (ledger/version.ts; a test keeps the two in step).
+create or replace function moona.functions_version() returns text language sql immutable
+set search_path = pg_catalog, pg_temp as $$ select 'ledger-fns:ee25ebaaa430'::text $$;
+
 -- Helpers (security invoker; called only from the definer functions below; EXECUTE revoked from public in 003)
 create or replace function moona._clock(p jsonb) returns timestamptz
 language sql volatile set search_path = pg_catalog, pg_temp as $$ select clock_timestamp() $$;   -- production: ignores p
@@ -151,8 +158,15 @@ begin
   select * into v_r from moona.requests where idem_key = v_idem;
   if found then
     -- replay_only (paid only): the subject asks for the answer to its own earlier request, whatever has
-    -- changed in its context since (notes withdrawn, a new model); it can never create a request
-    if v_r.mode <> v_mode or (v_r.input_hash <> v_hash and not (v_mode <> 'free' and coalesce((p->>'replay_only')::boolean, false))) then return moona._deny('key_reused'); end if;
+    -- changed in its context since (notes withdrawn, a new model, another language); it can never
+    -- create a request, and only answers for the same spread (a reading) or pack reading (a follow-up)
+    if v_r.mode <> v_mode then return moona._deny('key_reused'); end if;
+    if v_r.input_hash <> v_hash then
+      if v_mode = 'free' or not coalesce((p->>'replay_only')::boolean, false) then return moona._deny('key_reused'); end if;
+      if v_mode = 'paid_reading' and exists (select 1 from moona.paid_readings y where y.request_id = v_r.id
+           and y.reading_hash is distinct from decode(p->>'reading_hash','hex')) then return moona._deny('key_reused'); end if;
+      if v_mode = 'paid_followup' and v_r.paid_reading_id is distinct from nullif(p->>'paid_reading_id','')::uuid then return moona._deny('key_reused'); end if;
+    end if;
     if v_r.result is not null and not v_r.result_purged and v_r.result_expires_at <= v_now then
       -- past its time to live: never replayed (the caller makes a new request id)
       update moona.requests set result = null, result_purged = true where id = v_r.id returning * into v_r;

@@ -3,7 +3,9 @@
 // credits like the ledger does (one credit per new paid request id; a known id replays for free).
 // Verification-workflow findings, 2026-10-10: a language switch must not use a second credit, an
 // answer lost on the last credit must still be fetched, a failed attempt is offered again, and the
-// follow-up composer opens as soon as a pack reading arrives.
+// follow-up composer opens as soon as a pack reading arrives. Third round: a pending pack request is
+// kept through any refusal that doesn't prove it was never made, a follow-up sent again after a
+// language switch replays rather than paying twice, and the chat closes only for a real outage.
 import { createElement, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { act } from "react";
@@ -28,15 +30,42 @@ const tarotText = (locale: string, paid: boolean) => ({ cards: [0, 1, 2].map((po
 const json = (status: number, b: unknown) => new Response(JSON.stringify(b), { status, headers: { "Content-Type": "application/json" } });
 
 /** A server that keeps credits like the ledger: one credit per new paid id; a known id replays. */
-interface Server { freeLeft: number; credits: number; paid: Map<string, { locale: string; failed?: boolean }>; lose: number; paidPosts: string[]; creating: string[]; bodies: string[]; refuseNext?: { status: number; code: string } }
+type Refusal = { status: number; code?: string };
+interface Server {
+  freeLeft: number; credits: number; paid: Map<string, { locale: string; failed?: boolean }>; lose: number; paidPosts: string[]; creating: string[]; bodies: string[];
+  refuseNext?: { status: number; code: string };
+  /** every AI request is refused before the ledger (an outage), or only free ones */
+  outage?: Refusal; freeRefusal?: Refusal; visitorDown?: boolean;
+  /** the next new pack request is recorded and charged, then its answer is lost behind this error */
+  chargeThenRefuse?: Refusal;
+  followups: number; chatPaid: Map<string, string>; chatCreates: string[]; chatLose: number;
+}
 let server: Server;
 let root: Root | null = null;
 let container: HTMLElement;
 
+const refuse = (r: Refusal) => (r.code ? json(r.status, { code: r.code }) : new Response("Bad gateway", { status: r.status }));
+
 function handle(url: string, init?: RequestInit): Response | Promise<Response> {
-  if (url === "/api/ai/visitor") return new Response(null, { status: 204 });
+  if (url === "/api/ai/visitor") return server.visitorDown ? json(503, { code: "ledger" }) : new Response(null, { status: 204 });
   if (url === "/api/packs") return json(200, { payments: { state: "fake" }, sales: { open: true } });
   const body = init?.body ? JSON.parse(String(init.body)) : {};
+  if (server.outage && url.startsWith("/api/ai/")) return refuse(server.outage);
+  if (url === "/api/ai/chat" && body.paidReadingId) {
+    // like the ledger: a known id with other context is refused unless replay-only; replay-only never creates
+    const ctx = JSON.stringify([body.reading.locale, body.shown, body.messages]);
+    const known = server.chatPaid.get(body.requestId);
+    if (known !== undefined && known !== ctx && !body.replayOnly) return json(422, { code: "key_reused" });
+    if (known === undefined) {
+      if (body.replayOnly) return json(404, { code: "no_such_request" });
+      if (server.followups <= 0) return json(409, { code: "no_followups" });
+      server.followups--;
+      server.chatCreates.push(body.requestId);
+      server.chatPaid.set(body.requestId, ctx);
+    }
+    if (server.chatLose > 0) { server.chatLose--; throw new TypeError("reply lost on the way"); }
+    return json(200, { reply: "[MOCK] pack follow-up reply", remember: null, meta, paidReadingId: "00000000-0000-4000-8000-0000000000aa", followupsLeft: server.followups });
+  }
   if (url === "/api/ai/tarot" && body.use === "paid") {
     server.paidPosts.push(body.requestId);
     server.bodies.push(String(init?.body));
@@ -49,11 +78,13 @@ function handle(url: string, init?: RequestInit): Response | Promise<Response> {
       server.credits--;
       server.creating.push(body.requestId);
       server.paid.set(body.requestId, { locale: body.locale });
+      if (server.chargeThenRefuse) { const r = server.chargeThenRefuse; server.chargeThenRefuse = undefined; return refuse(r); }
     }
     if (server.lose > 0) { server.lose--; throw new TypeError("answer lost on the way"); }
     return json(200, { ...tarotText(body.locale, true), paidReadingId: "00000000-0000-4000-8000-0000000000aa", followupsLeft: 2, ...(known ? { replayed: true } : {}) });
   }
   if (url === "/api/ai/tarot") {
+    if (server.freeRefusal) return refuse(server.freeRefusal);
     if (server.freeLeft > 0) { server.freeLeft--; return json(200, tarotText(body.locale, false)); }
     return json(429, { code: "quota", credits: server.credits });
   }
@@ -70,6 +101,12 @@ async function open(locale: Locale) {
   await act(async () => { root!.render(createElement(I18nProvider, { initialLocale: locale, children: createElement(ReadingPage) })); });
   await settle();
 }
+async function say(words: string) {
+  const box = container.querySelector("#reading-chat") as HTMLTextAreaElement | null;
+  if (!box) throw new Error(`no composer in: ${text().slice(0, 300)}`);
+  const setValue = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!;
+  await act(async () => { setValue.call(box, words); box.dispatchEvent(new Event("input", { bubbles: true })); });
+}
 async function tap(label: string) {
   const b = button(label);
   if (!b) throw new Error(`no "${label}" in: ${text().slice(0, 300)}`);
@@ -80,7 +117,7 @@ async function tap(label: string) {
 beforeEach(() => {
   localStorage.clear();
   resetVisitorForTests(true);
-  server = { freeLeft: 0, credits: 5, paid: new Map(), lose: 0, paidPosts: [], creating: [], bodies: [] };
+  server = { freeLeft: 0, credits: 5, paid: new Map(), lose: 0, paidPosts: [], creating: [], bodies: [], followups: 2, chatPaid: new Map(), chatCreates: [], chatLose: 0 };
   container = document.createElement("div");
   document.body.appendChild(container);
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => handle(url, init)));
@@ -203,5 +240,94 @@ describe("pack readings on the reading page", () => {
     expect(flags[0]).toBe(false); // the tap
     expect(flags.slice(-1)[0]).toBe(true); // the resume after reload
     expect(server.creating).toHaveLength(1);
+  });
+
+  it("keeps a pending pack request through an outage on the resume, then replays it for free", async () => {
+    server.lose = 2; // the tap's answer and its same-id retry are both lost
+    await open("en");
+    await tap("Use a pack reading");
+    const id = getReading("reading-1")!.paid!.requestId;
+    expect(server.credits).toBe(4);
+    for (const outage of [{ status: 503, code: "ledger" }, { status: 503, code: "locked" }, { status: 503, code: "unconfigured" }, { status: 500 }, { status: 502 }]) {
+      server.outage = outage;
+      await open("en"); // reload while the server refuses before the ledger
+      expect(getReading("reading-1")?.paid).toEqual({ locale: "en", requestId: id });
+      expect(text()).toContain("Your pack reading hasn't arrived yet");
+      expect(text()).not.toContain("Use a pack reading");
+    }
+    server.outage = undefined;
+    server.visitorDown = true; // the visitor check is refused as well: nothing is even sent
+    resetVisitorForTests(false);
+    await open("en");
+    expect(getReading("reading-1")?.paid?.requestId).toBe(id);
+    server.visitorDown = false;
+    await tap("Try AI again");
+    expect(text()).toContain("[MOCK] pack reading in en");
+    expect(server.creating).toEqual([id]); // one pack request for the spread, replayed
+    expect(server.credits).toBe(4);
+  });
+
+  it("keeps a tap's request when the refusal proves nothing, and fetches it on Try again", async () => {
+    server.chargeThenRefuse = { status: 503, code: "ledger" }; // reserved and charged, then the ledger looked down
+    await open("en");
+    await tap("Use a pack reading");
+    expect(server.credits).toBe(4);
+    expect(getReading("reading-1")?.paid?.requestId).toBeTruthy();
+    expect(text()).toContain("Your pack reading hasn't arrived yet");
+    await tap("Try AI again");
+    expect(text()).toContain("[MOCK] pack reading in en");
+    expect(server.creating).toHaveLength(1);
+    expect(server.credits).toBe(4);
+  });
+
+  it("keeps a tap's request behind a gateway error without a code", async () => {
+    server.chargeThenRefuse = { status: 504 };
+    await open("en");
+    await tap("Use a pack reading");
+    expect(getReading("reading-1")?.paid?.requestId).toBeTruthy();
+    await open("en");
+    expect(text()).toContain("[MOCK] pack reading in en");
+    expect(server.creating).toHaveLength(1);
+    expect(server.credits).toBe(4);
+  });
+
+  it("replays a pack follow-up sent again after a language switch instead of using a second one", async () => {
+    await open("en");
+    await tap("Use a pack reading");
+    server.chatLose = 2; // the reply and its same-id retry are lost
+    await say("What should I do first?");
+    await tap("Send");
+    expect(server.followups).toBe(1);
+    await open("zh");
+    await tap("重试"); // other language, other context: the reply already paid for is fetched
+    expect(text()).toContain("[MOCK] pack follow-up reply");
+    expect(server.chatCreates).toHaveLength(1);
+    expect(server.followups).toBe(1);
+    expect(text()).toContain("解读包追问剩余：1");
+  });
+
+  it("closes the follow-up chat while AI is paused or the ledger is down, but not when only the free readings ran out", async () => {
+    for (const code of ["paused", "ledger"]) {
+      server.outage = { status: 503, code };
+      await open("en");
+      expect(container.querySelector("#reading-chat")).toBeNull();
+      expect(text()).toContain("Talking it through needs AI");
+    }
+    server.outage = undefined;
+    await open("en"); // only the free readings are used up
+    expect(container.querySelector("#reading-chat")).not.toBeNull();
+  });
+
+  it("keeps pack follow-ups open when the free budget is spent, and closes the chat without them", async () => {
+    server.freeRefusal = { status: 503, code: "budget" };
+    await open("en");
+    expect(container.querySelector("#reading-chat")).toBeNull(); // no pack here: the chat would be refused
+    server.freeRefusal = undefined;
+    await open("en");
+    await tap("Use a pack reading");
+    server.freeRefusal = { status: 503, code: "budget" };
+    await open("zh"); // this language's free reading is refused for budget; pack money is separate
+    expect(container.querySelector("#reading-chat")).not.toBeNull();
+    expect(text()).toContain("解读包追问剩余：2");
   });
 });

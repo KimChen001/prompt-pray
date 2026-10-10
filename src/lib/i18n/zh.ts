@@ -67,6 +67,7 @@ const zh: Messages = {
     reasons: { sold_out: "暂时售罄。", budget_short: "今晚剩余的预算不够再售出一个解读包。", paused: "暂停中。", closed: "暂时关闭。", ledger: "暂时不可用。", no_pack_pool: "没有为解读包留出预算。", login_unavailable: "暂时还不能登录。", operators_only: "测试购买仅限团队设备。", unconfigured: "尚未开通支付。", misconfigured: "尚未开通支付。" },
     useOne: "要为这次抽牌使用 1 次解读包吗？（剩余 {n} 次）",
     useOneCta: "使用解读包",
+    pending: "解读包解读还没送达。重试只会取回这一次解读，不会再扣次数。",
     noCredits: "这个浏览器的账户里已没有解读包次数。",
     paidOtherLanguage: "这次抽牌的解读包解读是{lang}的。切换语言即可查看；追问在两种语言下都能用。",
     langNames: { en: "英文", zh: "中文" },

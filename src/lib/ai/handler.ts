@@ -14,9 +14,10 @@ import { authFromEnv } from "@/lib/identity/auth";
 import { serverKeys, type Keys } from "@/lib/identity/keys";
 import { isOperator } from "@/lib/identity/ops";
 import { ensureVisitor } from "@/lib/identity/visitor";
-import { getLedger } from "@/lib/ledger/factory";
+import { getLedger, ledgerKind } from "@/lib/ledger/factory";
 import { LedgerUnavailable, type LedgerPort, type ReqMode } from "@/lib/ledger/port";
 import type { EnvLike } from "@/lib/host";
+import { paymentsConfig } from "@/lib/payments/config";
 
 export interface AiRouteSpec<P, T> {
   purpose: Purpose;
@@ -118,9 +119,13 @@ export async function handleAi<P, T>(req: NextRequest, spec: AiRouteSpec<P, T>, 
   }, deps);
   const value = outcome.kind === "fresh" || outcome.kind === "replayed" ? spec.respond(outcome.value as T, outcome.meta, parsed) : undefined;
   const level = outcome.kind === "fresh" ? levelFor(outcome.budgetRatio, env) : null;
-  // Out of free readings: say how many pack credits this browser's account has, so the page can offer one.
+  // Out of free readings: say how many pack credits this browser's account has, so the page can offer
+  // one. Only where reading packs are on (or were, and orders still settle): elsewhere no account is
+  // looked up, so none is ever made for a free visitor.
   let credits: number | null = null;
-  if (outcome.kind === "denied" && outcome.reason === "subject_quota" && ledger.supportsPaid && auth.ready({ isOperator: operator })) {
+  const pay = outcome.kind === "denied" && outcome.reason === "subject_quota" ? paymentsConfig(env, { ledgerKind: ledgerKind(env), authKind: auth.kind }) : null;
+  const packsOn = !!pay && (pay.state === "fake" || pay.state === "test" || pay.state === "live" || !!pay.webhookMode);
+  if (packsOn && ledger.supportsPaid && auth.ready({ isOperator: operator })) {
     try {
       const account = await auth.getAccount(req, { visitorId: visitor.id, ledger, isOperator: operator });
       if (account) credits = (await ledger.entitlements(account.accountId)).credits;

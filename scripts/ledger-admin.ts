@@ -10,6 +10,7 @@
 import { aiConfig } from "@/lib/ai/config";
 import { pgExecutor, pgliteExecutor, type SqlExecutor } from "@/lib/ledger/drivers";
 import { migrate } from "@/lib/ledger/migrate";
+import { checkFunctionsVersion, LEDGER_FUNCTIONS_VERSION } from "@/lib/ledger/version";
 import { resolvePlan, validatePlan } from "@/lib/ledger/plans";
 import { createSqlLedger } from "@/lib/ledger/sql-ledger";
 import { reconcile } from "@/lib/payments/service";
@@ -40,6 +41,8 @@ async function main() {
     switch (cmd) {
       case "migrate":
         console.log(`applied: ${(await migrate(exec, { roles: has("roles") })).join(", ") || "nothing (up to date)"}`);
+        await checkFunctionsVersion(exec);
+        console.log(`functions: ${LEDGER_FUNCTIONS_VERSION}`);
         break;
       case "sync-plan": {
         const cfg = aiConfig();

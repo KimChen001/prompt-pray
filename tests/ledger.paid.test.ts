@@ -111,6 +111,26 @@ describe("replay-only paid requests", LEDGER_TIMEOUT, () => {
     await expectAudit(ledger);
   });
 
+  it("answer only for the same spread, or the same pack reading for a follow-up", async () => {
+    const { ledger } = await makeTestLedger({ plan: PLAN });
+    const b = await grantPack(ledger);
+    const first = await ledger.complete(done(reserved(await ledger.reserve(reading(b, { idemKey: hex("spread-a") })))));
+    const second = await ledger.complete(done(reserved(await ledger.reserve(reading(b)))));
+    const [pr, pr2] = [first, second].map((c) => (c.status === "succeeded" ? c.request.paidReadingId! : ""));
+    // the same id asked for another spread (other cards, topic or question): no answer and no charge
+    expect(await ledger.reserve(reading(b, { idemKey: hex("spread-a"), inputHash: hex("other"), readingHash: hex("another spread"), replayOnly: true }))).toEqual({ status: "denied", reason: "key_reused" });
+    // the same spread with other context (a note withdrawn, another language): the answer paid for
+    expect((await ledger.reserve(reading(b, { idemKey: hex("spread-a"), inputHash: hex("other"), replayOnly: true }))).status).toBe("existing");
+    const f = reserved(await ledger.reserve(followup(b, pr, { idemKey: hex("fu-a") })));
+    await ledger.complete(done(f));
+    expect(await ledger.reserve(followup(b, pr2, { idemKey: hex("fu-a"), inputHash: hex("x"), replayOnly: true }))).toEqual({ status: "denied", reason: "key_reused" });
+    expect((await ledger.reserve(followup(b, pr, { idemKey: hex("fu-a"), inputHash: hex("x"), replayOnly: true }))).status).toBe("existing");
+    const e = await ledger.entitlements(b.accountId);
+    expect(e.credits).toBe(3);
+    expect(e.readings.map((r) => r.followupsLeft).sort()).toEqual([1, 2]);
+    await expectAudit(ledger);
+  });
+
   it("are ignored for free requests: a changed free input is still refused", async () => {
     const { ledger } = await makeTestLedger({ plan: PLAN });
     const v = visitor();

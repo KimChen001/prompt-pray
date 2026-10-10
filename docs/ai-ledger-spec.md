@@ -375,6 +375,8 @@ export function setLedgerForTests(l: LedgerPort | null): void
 // pglite, memory and file on a serverless host -> ledger_nondurable.
 // pglite/memory run migrate + syncPlan(resolvePlan(env)) once per process (development convenience).
 // postgres never migrates or syncs; if the DB plan_hash differs from the env plan, it warns once (shown to operators).
+// every SQL ledger checks moona.functions_version() against LEDGER_FUNCTIONS_VERSION (ledger/version.ts) before use and
+// refuses to open on any other version: after a 002 change, run `npm run ledger -- migrate` before the new code serves.
 
 // plans.ts
 export interface WindowPlan { id: string; startsAt: string; endsAt: string; capUsd: number; callsCap: number | null; slice: { capUsd: number; seconds: 3600 | 86400 } | null; mintCap: number | null; quotas: Record<Purpose, { perSubject: number; failedCap: number }> }

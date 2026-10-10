@@ -13,7 +13,8 @@ export type AiOutcome<T> =
   | { state: "no_credits" }
   | { state: "needs_login" }
   | { state: "retry" }
-  | { state: "offline"; reason: OfflineReason }
+  /** code: the server's own code, when it gave one (a gateway's bare 503 has none). */
+  | { state: "offline"; reason: OfflineReason; code?: string }
   | { state: "failed"; code: string };
 
 /** 16 random bytes, base64url (22 characters). Works without crypto.randomUUID. */
@@ -68,7 +69,7 @@ async function askVisitor(doFetch: typeof fetch, signal: AbortSignal): Promise<P
   if (res.ok) return { ok: true, stable: res.headers.get("x-moona-visitor") !== "new" };
   const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   const code = typeof json.code === "string" ? json.code : null;
-  if (res.status === 503) return { ok: false, outcome: { state: "offline", reason: (code && OFFLINE[code]) || "unconfigured" } };
+  if (res.status === 503) return { ok: false, outcome: { state: "offline", reason: (code && OFFLINE[code]) || "unconfigured", ...(code ? { code } : {}) } };
   if (res.status === 429) return { ok: false, outcome: { state: "offline", reason: "busy" } }; // too many new visitors from here right now
   return { ok: false, outcome: { state: "failed", code: code ?? `http_${res.status}` } };
 }
@@ -174,7 +175,7 @@ export async function requestAi<T>(path: string, body: Record<string, unknown>, 
     if (res.status === 429 && code === "quota") return { state: "quota", credits: typeof json.credits === "number" ? json.credits : null };
     if (res.status === 402) return { state: "no_credits" };
     if (res.status === 401) return { state: "needs_login" };
-    if (res.status === 503) return { state: "offline", reason: (code && OFFLINE[code]) || "unconfigured" };
+    if (res.status === 503) return { state: "offline", reason: (code && OFFLINE[code]) || "unconfigured", ...(code ? { code } : {}) };
     return { state: "failed", code: code ?? `http_${res.status}` };
   }
 }

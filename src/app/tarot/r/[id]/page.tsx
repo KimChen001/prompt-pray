@@ -20,7 +20,7 @@ import type { MemoryNote } from "@/lib/memory";
 import type { Locale, Reading, TarotAiResult } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
 import { SourceBadge, aiSource } from "@/components/bits";
-import { newRequestId, requestAi, requestAiOnce, type AiOutcome } from "@/lib/ai/client";
+import { newRequestId, requestAi, requestAiOnce, type AiOutcome, type OfflineReason } from "@/lib/ai/client";
 import { TarotChat } from "@/components/TarotChat";
 import { SharedNotes, sharedNotes } from "@/components/Notes";
 import { CheckInPlanner } from "@/components/CheckIns";
@@ -28,6 +28,23 @@ import { learnHref } from "@/lib/learn";
 import { ShareSheet } from "@/components/ShareImage";
 import { readingCard, readingShareText } from "@/lib/share/content";
 import { StateOrb, type OrbMode } from "@/components/cosmos/StateOrb";
+
+// The outages that close the follow-up chat (see `down` below).
+const CLOSES_CHAT: ReadonlySet<OfflineReason> = new Set(["unconfigured", "locked", "paused", "ledger", "budget"]);
+
+// A refusal that proves this tap's pack request was never recorded, or was recorded as failed (its
+// credit came back): the gates in front of the ledger, the ledger's own refusals, a crisis reply,
+// and a provider error after which the request was failed. Network loss, "still busy" (a 202 may
+// mean it is running), a ledger outage (a reserve may have committed) and errors without a code (a
+// gateway may have cut off a request that still finishes) prove nothing, so the id is kept for them.
+const NOT_RECORDED_503 = new Set(["unconfigured", "misconfigured", "locked", "paused", "budget", "paid_capacity"]);
+const NOT_RECORDED_CODES = new Set(["bad_request", "visitor_cap", "rate_limited", "subject_failures", "lot_closed", "no_such_reading", "upstream", "timeout", "bad_output", "refused"]);
+function refusedBeforeRecording(out: Exclude<AiOutcome<TarotAiResult>, { state: "done" }>): boolean {
+  if (out.state === "crisis" || out.state === "quota" || out.state === "no_credits" || out.state === "needs_login") return true;
+  if (out.state === "offline") return !!out.code && NOT_RECORDED_503.has(out.code);
+  if (out.state === "failed") return NOT_RECORDED_CODES.has(out.code);
+  return false;
+}
 
 export default function ReadingPage() {
   return (
@@ -57,9 +74,11 @@ function ReadingView() {
   // Out of free readings: this browser's pack credits (null when there is no account), and what
   // happened when the person chose to use one.
   const [credits, setCredits] = useState<number | null | undefined>(undefined);
-  // AI itself can't be used here (not configured, or locked): only then is the follow-up chat closed.
-  // Running out of free readings is not that: pack follow-ups and the chat's own allowance still work.
-  const [aiDown, setAiDown] = useState(false);
+  // Why AI itself can't be used here right now (not configured, locked, paused, the ledger down, the
+  // free budget spent): only then is the follow-up chat closed. Running out of free readings is not
+  // that (pack follow-ups and the chat's own allowance still work), nor is the free budget while this
+  // spread has pack follow-ups left (pack money is kept apart).
+  const [down, setDown] = useState<OfflineReason | null>(null);
   const [packNote, setPackNote] = useState<string | null>(null);
   const [orb, setOrb] = useState<OrbMode>("quiet");
   const requested = useRef(new Set<string>());
@@ -86,7 +105,7 @@ function ReadingView() {
 
   const showRefusal = useCallback((out: Exclude<AiOutcome<TarotAiResult>, { state: "done" }>) => {
     setOrb("quiet");
-    setAiDown(out.state === "offline" && (out.reason === "unconfigured" || out.reason === "locked"));
+    setDown(out.state === "offline" && CLOSES_CHAT.has(out.reason) ? out.reason : null);
     if (out.state === "quota") {
       setNotice(m.aiNotice.quota);
       setCredits(out.credits);
@@ -128,7 +147,7 @@ function ReadingView() {
     }
     if (epoch !== dataEpoch()) return;
     if (out.state !== "done") return showRefusal(out);
-    setAiDown(false);
+    setDown(null);
     const body = out.value;
     const next = patchReading(r.id, (latest) => (latest.ai?.[reqLocale] ? latest : { ...latest, ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }));
     if (!next) return; // deleted while it was being written
@@ -175,9 +194,11 @@ function ReadingView() {
       if (next) void generate(next, true);
       return;
     }
-    if (out.state === "offline" && out.reason === "network") return showRefusal(out); // may have reached the server: kept, replayed later
     if (out.state !== "done") {
-      forget(); // refused before anything was recorded (paused, busy, crisis, no credits...): offer again later
+      // Anything else keeps the id, unless a fresh tap was refused before the ledger recorded it (or
+      // recorded it as failed, which gives the credit back). A kept id costs nothing: the next resume
+      // asks for that answer only, and is told when there is none.
+      if (how === "tap" && refusedBeforeRecording(out)) forget();
       return showRefusal(out);
     }
     const value = out.value;
@@ -190,7 +211,7 @@ function ReadingView() {
     if (!next) return;
     setCredits(undefined);
     setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
-    setAiDown(false);
+    setDown(null);
     setOrb("settle");
     if (reqLocale === locale) setAiStatus("live");
     else void generate(next, false); // this page is in the other language: its own (free) reading, if any is left
@@ -242,6 +263,9 @@ function ReadingView() {
   const paidHere = !!(ai && reading?.paid?.paidReadingId && reading.paid.locale === locale);
   // records from before the total was saved: the product's 2, or more if more are left
   const packFollowups = reading?.paid?.followupsTotal ?? Math.max(2, reading?.paid?.followupsLeft ?? 0);
+  const chatClosed = down !== null && !(down === "budget" && !!reading.paid?.paidReadingId && (reading.paid.followupsLeft ?? 0) > 0);
+  // a pack reading asked for whose answer hasn't arrived: it is fetched again, never paid again
+  const paidPending = !ai && aiStatus !== "loading" && !!reading.paid && !reading.paid.paidReadingId;
   const statusLine =
     aiStatus === "loading" ? <span className="status-line"><span className="status-dot" />{m.reading.aiPreparing}</span> :
     ai ? <span className="muted small">{m.reading.aiReady}{paidHere ? ` ${fmt(m.packs.packReading, { n: packFollowups })}` : ""}{low ? ` ${m.aiNotice.low}` : ""}</span> :
@@ -352,7 +376,13 @@ function ReadingView() {
           )}
 
           {paidHere && <p className="muted small" style={{ margin: 0 }}>{fmt(m.packs.packReading, { n: packFollowups })}</p>}
-          {!ai && aiStatus === "failed" && (
+          {paidPending && (
+            <p className="notice">
+              {m.packs.pending}{" "}
+              <button type="button" className="btn-link" onClick={() => setAttempt((n) => n + 1)}>{m.reading.retryAi}</button>
+            </p>
+          )}
+          {!ai && aiStatus === "failed" && !paidPending && (
             <p className="notice">
               {m.reading.aiFallback}{" "}
               <button type="button" className="btn-link" onClick={() => setAttempt((n) => n + 1)}>{m.reading.retryAi}</button>
@@ -394,7 +424,7 @@ function ReadingView() {
           <div className="stack gap-3">
             <h2 className="h3">{m.reading.talk}</h2>
             <p className="muted small" style={{ margin: 0 }}>{m.reading.talkIntro}</p>
-            <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={aiDown} onBusy={onChatBusy} />
+            <TarotChat reading={reading} shown={shownSummary} chart={chart} autoFocus={params.get("talk") === "1"} aiUnavailable={chatClosed} onBusy={onChatBusy} />
           </div>
 
           <CheckInPlanner readingId={reading.id} suggestedAction={ai ? ai.action : pick(analysis.action)} />
