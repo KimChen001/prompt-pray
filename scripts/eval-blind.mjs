@@ -78,7 +78,10 @@ const [ra, rb] = runs.map(byId);
 const key = { labels, seed: seed0, measured: {}, cases: {} };
 runs.forEach((run, i) => {
   const s = run.summary;
-  key.measured[labels[i]] = `${run.provider}/${run.model}: ${s.ok}/${s.modelCalls} ok, $${s.costUsd}, p50 ${s.latencyMs.p50} ms, p90 ${s.latencyMs.p90} ms`;
+  // runs saved by the older runner have no modelCases (their modelCalls counted the model cases)
+  const of = s.modelCases ?? s.modelCalls;
+  const cost = s.costUsd === null || s.costUsd === undefined ? `cost unknown (${s.costAttributed?.cases ?? 0}/${s.costAttributed?.of ?? "?"} cases attributed)` : `$${s.costUsd}`;
+  key.measured[labels[i]] = `${run.provider}/${run.model}: ${s.ok}/${of} ok, ${cost}, p50 ${s.latencyMs.p50} ms, p90 ${s.latencyMs.p90} ms${run.provider === "fake" ? " (simulated: pipeline only, not model quality)" : ""}`;
 });
 
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
