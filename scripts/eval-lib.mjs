@@ -161,18 +161,21 @@ export function requestIdFor(runId, caseId) {
   return id;
 }
 
-// What each route's answer must hold (the fields the graders read), with their types.
+// What each route's answer must hold (the fields the graders read): the right types and not empty, as
+// the routes' validators guarantee. Keyed by route, so a crisis case answered by a model is checked too.
+const filled = (x) => typeof x === "string" && x.trim().length > 0;
+const items = (x) => Array.isArray(x) && x.length > 0;
 const ANSWER = {
-  natal: (b) => typeof b.overview === "string" && Array.isArray(b.themes),
-  tarot: (b) => typeof b.synthesis === "string" && Array.isArray(b.cards),
-  chat: (b) => typeof b.reply === "string",
-  horoscope: (b) => typeof b.overall === "string" && typeof b.love === "string" && typeof b.work === "string",
+  "/api/ai/natal": (b) => filled(b.overview) && items(b.themes) && b.themes.every((t) => t && filled(t.text)),
+  "/api/ai/tarot": (b) => filled(b.synthesis) && items(b.cards) && b.cards.every((c) => c && filled(c.insight)),
+  "/api/ai/chat": (b) => filled(b.reply),
+  "/api/ai/horoscope": (b) => filled(b.overall) && filled(b.love) && filled(b.work),
 };
 
 /** Whether a 200 body is this route's answer: the right shape, and no code (a real answer has none). */
-function looksLikeAnswer(kind, body) {
+function looksLikeAnswer(endpoint, body) {
   if (!body || typeof body !== "object" || Array.isArray(body) || "code" in body) return false;
-  return ANSWER[kind] ? ANSWER[kind](body) : true;
+  return ANSWER[endpoint] ? ANSWER[endpoint](body) : false;
 }
 
 /** All model-written text in a response, for checks and for graders. */
@@ -268,7 +271,7 @@ export async function runCase(client, c, o) {
   // isn't this route's answer (a captive portal, a proxy page, {"code":"ok"}, a wrong shape) is not one
   const bodyCode = typeof body?.code === "string" ? body.code : null;
   const code = error ? "network"
-    : httpStatus === 200 ? (bodyCode === "crisis" ? "crisis" : looksLikeAnswer(c.kind, body) ? "ok" : "bad_response")
+    : httpStatus === 200 ? (bodyCode === "crisis" ? "crisis" : looksLikeAnswer(c.endpoint, body) ? "ok" : "bad_response")
     : bodyCode ?? `http_${httpStatus}`;
   // calls: what this case made the model do, as far as the answers show (null: can't be known);
   // expect: what the ledger's call count may move by for the cost to be this case's alone

@@ -49,6 +49,8 @@ export interface TarotAiResult {
   action: string;
   reflection: string;
   meta: AiMeta;
+  /** The language it was written in (older stored readings don't say). */
+  locale?: Locale;
 }
 
 export interface ChatTurn {

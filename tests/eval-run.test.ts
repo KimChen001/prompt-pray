@@ -170,7 +170,7 @@ function scripted(ai: (body: Record<string, unknown>, n: number) => Response | P
 const T1 = CASES.find((c) => c.id === "T1")!;
 const tarotReply = { cards: [{ position: 0, insight: "a" }], synthesis: "s", action: "a", reflection: "r", meta: { provider: "fake", model: "simulated", source: "simulated" } };
 // an answer with every route's main field, for runs over cases of several kinds
-const anyReply = { ...tarotReply, overview: "o", themes: [], reply: "r", overall: "d", love: "l", work: "w" };
+const anyReply = { ...tarotReply, overview: "o", themes: [{ text: "t" }], reply: "r", overall: "d", love: "l", work: "w" };
 
 describe("the evaluation runner's failure paths", () => {
   it("stops before any AI request when the server's visitor cookie does not stick", async () => {
@@ -315,9 +315,23 @@ describe("the evaluation runner after its review (verify-eval findings)", () => 
     const r = await runCase(s.client, T1, { requestId: requestIdFor("html", "T1"), sleep: noSleep });
     expect(r).toMatchObject({ outcome: "error", code: "bad_response", inferredCalls: null, costNote: expect.stringMatching(/wasn't readable/) });
     expect(summarize([r]).ok).toBe(0);
-    for (const odd of ["{}", '{"error":"blocked by proxy"}', "[]", '{"code":"ok"}', '{"code":"proxy_login_required"}', '{"synthesis":5,"cards":[]}', '{"synthesis":"s","cards":"x"}', '{"code":"ok","synthesis":"s","cards":[]}']) {
+    for (const odd of ["{}", '{"error":"blocked by proxy"}', "[]", '{"code":"ok"}', '{"code":"proxy_login_required"}', '{"synthesis":5,"cards":[]}', '{"synthesis":"s","cards":"x"}', '{"code":"ok","synthesis":"s","cards":[]}', '{"synthesis":"","cards":[]}', '{"synthesis":"s","cards":[]}', '{"synthesis":"s","cards":[{"insight":""}]}']) {
       const p = scripted(() => new Response(odd, { status: 200, headers: { "Content-Type": "application/json" } }));
       expect((await runCase(p.client, T1, { requestId: requestIdFor("odd", "T1"), sleep: noSleep })).code, odd).toBe("bad_response");
+    }
+  });
+
+  it("checks a crisis case's 200 as its route's answer too, and empty fields on every route", async () => {
+    const X1 = CASES.find((c) => c.id === "X1")!;
+    for (const odd of ["{}", '{"error":"blocked by proxy"}', '{"html":"<p>login</p>"}']) {
+      const p = scripted(() => new Response(odd, { status: 200, headers: { "Content-Type": "application/json" } }));
+      const r = await runCase(p.client, X1, { requestId: requestIdFor("x1", "X1"), sleep: noSleep });
+      expect(r.code, odd).toBe("bad_response");
+    }
+    const empty: Record<string, string> = { N1: '{"overview":"","themes":[]}', N2: '{"overview":"o","themes":[1,2]}', C1: '{"reply":"  "}', H1: '{"overall":"","love":"l","work":"w"}' };
+    for (const [id, odd] of Object.entries(empty)) {
+      const p = scripted(() => new Response(odd, { status: 200, headers: { "Content-Type": "application/json" } }));
+      expect((await runCase(p.client, CASES.find((c) => c.id === id)!, { requestId: requestIdFor("empty", id), sleep: noSleep })).code, `${id} ${odd}`).toBe("bad_response");
     }
   });
 

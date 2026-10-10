@@ -19,7 +19,12 @@ export function POST(req: NextRequest) {
       const { system, user } = tarotPrompt(p);
       return { purpose: "tarot", system, messages: [{ role: "user", content: user }], schema: TAROT_SCHEMA, schemaName: "tarot_reading", timeoutMs: 30_000 };
     },
-    validate: (p) => (data) => validateTarot(data, p),
+    // the reading keeps the language it was written in: a draw's pack reading replayed to a request in
+    // the other language says so, and the page files it under its own language
+    validate: (p) => (data) => {
+      const v = validateTarot(data, p);
+      return v ? { ...v, locale: p.locale } : null;
+    },
     versions: () => TAROT_VERSIONS,
     respond: (value, meta) => ({ ...value, meta: { ...meta, versions: TAROT_VERSIONS } }),
     // a pack reading only when the person chose it ("use": "paid"); never assumed. drawId is the saved

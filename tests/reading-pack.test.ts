@@ -26,7 +26,7 @@ import type { Locale } from "@/lib/tarot/types";
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const meta = { provider: "fake", model: "simulated", generatedAt: "2026-10-12T12:00:00Z", source: "simulated" };
-const tarotText = (locale: string, paid: boolean) => ({ cards: [0, 1, 2].map((position) => ({ position, insight: `[MOCK] ${locale} card ${position}` })), synthesis: `[MOCK] ${paid ? "pack" : "free"} reading in ${locale}`, action: "Write one thing down.", reflection: "What matters?", meta });
+const tarotText = (locale: string, paid: boolean) => ({ cards: [0, 1, 2].map((position) => ({ position, insight: `[MOCK] ${locale} card ${position}` })), synthesis: `[MOCK] ${paid ? "pack" : "free"} reading in ${locale}`, action: "Write one thing down.", reflection: "What matters?", meta, locale });
 const json = (status: number, b: unknown) => new Response(JSON.stringify(b), { status, headers: { "Content-Type": "application/json" } });
 
 /** A server that keeps credits like the ledger: one credit per new paid id; a known id replays. */
@@ -437,6 +437,24 @@ describe("pack readings on the reading page", () => {
     expect(server.creating).not.toContain(first);
     expect(server.credits).toBe(4);
     expect(text()).toContain("[MOCK] pack reading in en");
+  });
+
+  it("files a draw's pack reading under the language it was bought in, when the other language gets it back", async () => {
+    server.holdNext = true;
+    await open("en");
+    await tap("Use a pack reading"); // the English tap is on its way
+    saveReading({ ...getReading("reading-1")!, paid: { ...getReading("reading-1")!.paid!, sentAt: new Date(Date.now() + 10 * 60_000).toISOString() } });
+    await open("zh"); // a clock far off: the Chinese page forgets the tap and offers the choice
+    expect(text()).toContain("要为这次抽牌使用 1 次解读包吗");
+    server.lose = 2; // the English tap lands and is charged, but its answer never comes back
+    await act(async () => server.release!());
+    await settle();
+    await tap("使用解读包"); // the Chinese tap gets the draw's English reading back, free
+    expect(server.credits).toBe(4);
+    expect(getReading("reading-1")?.ai?.en?.synthesis).toBe("[MOCK] pack reading in en");
+    expect(getReading("reading-1")?.ai?.zh).toBeUndefined(); // not filed as a Chinese reading
+    expect(getReading("reading-1")?.paid?.locale).toBe("en");
+    expect(text()).toContain("这次抽牌的解读包解读是英文的");
   });
 
   it("does not treat a pending tap from the future (a clock set back) as just sent", async () => {

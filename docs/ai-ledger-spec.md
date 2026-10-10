@@ -379,9 +379,13 @@ export function setLedgerForTests(l: LedgerPort | null): void
 // ledger, and so does every ledger-admin command except migrate; on any other version it refuses (fails closed).
 // After a 002 change, run `npm run ledger -- migrate` (with --roles on Postgres) before the new code serves.
 // 004_draw_key.sql (immutable once applied, like 001) adds moona.requests.draw_key: a pack reading carries
-// HMAC(account | the saved reading's own id), and reserve gives any other request for that draw the live one
-// (in progress, or done with its text kept) instead of a second charge; a failed or expired one, or one past
-// its result TTL, may be bought again. The tarot route refuses a pack reading without drawId (400).
+// HMAC(account | the saved reading's own id | its reading hash), and reserve gives any other request for that
+// draw the live one (in progress, or done with its text kept) instead of a second charge; a failed or expired
+// one, or one past its result TTL, may be bought again; the same id with other cards is another draw. The
+// tarot route refuses a pack reading without drawId (400), and a tarot reading says which locale it is in.
+// Applying 004 to a live database: close sales (`npm run ledger -- set-flag sales closed`) and wait until no
+// pack reading is in flight (`npm run ledger -- snapshot`: inflight 0) before migrating; a request already
+// running when 004 lands has no draw key, so it can't be matched by a second id for its draw.
 
 // plans.ts
 export interface WindowPlan { id: string; startsAt: string; endsAt: string; capUsd: number; callsCap: number | null; slice: { capUsd: number; seconds: 3600 | 86400 } | null; mintCap: number | null; quotas: Record<Purpose, { perSubject: number; failedCap: number }> }

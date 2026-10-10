@@ -221,18 +221,21 @@ function ReadingView() {
       return showRefusal(out);
     }
     const value = out.value;
+    // a draw has one pack reading, in the language it was bought in: a request in the other language
+    // (a page that forgot its tap) gets that one back, and it is filed under its own language
+    const gotLocale: Locale = value.locale === "en" || value.locale === "zh" ? value.locale : reqLocale;
     const left = out.paid?.followupsLeft ?? 0;
     const next = patchReading(r.id, (latest) => ({
       ...latest,
-      ai: latest.ai?.[reqLocale] ? latest.ai : { ...latest.ai, [reqLocale]: { cards: value.cards, synthesis: value.synthesis, action: value.action, reflection: value.reflection, meta: value.meta } },
-      paid: { locale: reqLocale, requestId, ...(out.paid ? { paidReadingId: out.paid.paidReadingId } : {}), followupsLeft: left, followupsTotal: left },
+      ai: latest.ai?.[gotLocale] ? latest.ai : { ...latest.ai, [gotLocale]: { cards: value.cards, synthesis: value.synthesis, action: value.action, reflection: value.reflection, meta: value.meta } },
+      paid: { locale: gotLocale, requestId, ...(out.paid ? { paidReadingId: out.paid.paidReadingId } : {}), followupsLeft: left, followupsTotal: left },
     }));
     if (!next) return;
     setCredits(undefined);
     setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
     setDown(null);
     setOrb("settle");
-    if (reqLocale === locale) setAiStatus("live");
+    if (gotLocale === locale) setAiStatus("live");
     else void generate(next, false); // this page is in the other language: its own (free) reading, if any is left
   }, [locale, bodyFor, showRefusal, generate]);
 

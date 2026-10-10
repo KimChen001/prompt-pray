@@ -79,9 +79,18 @@ describe("buying and using a pack, offline", LEDGER_TIMEOUT, () => {
     // the same draw under a new request id (a page that forgot its id): that reading back, no new credit
     const sameDraw = await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-flow-1", requestId: "paid-reading-0000002" });
     expect(sameDraw.json).toMatchObject({ replayed: true, paidReadingId });
+    // the same id with other cards (a daily card drawn again after clearing local data) is another draw
+    const otherCards = { ...triad, cards: [{ id: "cups-02", reversed: false }, { id: "major-16", reversed: true }, { id: "wands-10", reversed: false }] };
+    const another = await call(tarotPOST, "POST", "/api/ai/tarot", { ...otherCards, use: "paid", drawId: "draw-flow-1", requestId: "paid-reading-0000004" });
+    expect(another.status).toBe(200);
+    expect(another.json.replayed).toBeUndefined();
+    expect(another.json.paidReadingId).not.toBe(paidReadingId);
+    expect((await call(packsGET, "GET", "/api/packs")).json.entitlements.credits).toBe(3);
     // a pack reading must name its draw
     expect(await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", requestId: "paid-reading-0000003" })).toEqual({ status: 400, json: { code: "bad_request" } });
-    expect((await call(packsGET, "GET", "/api/packs")).json.entitlements.credits).toBe(4);
+    expect((await call(packsGET, "GET", "/api/packs")).json.entitlements.credits).toBe(3);
+    // a reading says which language it is in
+    expect(sameDraw.json.locale).toBe("en");
     // another browser has no account here, and no pack
     expect(await call(tarotPOST, "POST", "/api/ai/tarot", { ...triad, use: "paid", drawId: "draw-flow-b" }, "b")).toMatchObject({ status: 402, json: { code: "no_credits" } });
     await expectAudit(t.ledger);

@@ -118,7 +118,7 @@ export async function handleAi<P, T>(req: NextRequest, spec: AiRouteSpec<P, T>, 
     quotaExempt: !paid && operator && env.AI_OPERATOR_QUOTA_EXEMPT !== "0",
     req: spec.build(parsed), canonical: spec.canonical ? spec.canonical(parsed) : parsed, versions: spec.versions(parsed), validate: spec.validate(parsed),
     cacheScope: scope, resultTtlSeconds: ttl,
-    ...(paid ? { paid: { readingHash: paid.readingHash, paidReadingId: paid.paidReadingId, ...(paid.drawId && accountId ? { drawKey: drawKey(keys.input, accountId, paid.drawId) } : {}) }, replayOnly: raw.replayOnly === true } : {}),
+    ...(paid ? { paid: { readingHash: paid.readingHash, paidReadingId: paid.paidReadingId, ...(paid.drawId && accountId ? { drawKey: drawKey(keys.input, accountId, paid.drawId, paid.readingHash) } : {}) }, replayOnly: raw.replayOnly === true } : {}),
   }, deps);
   const value = outcome.kind === "fresh" || outcome.kind === "replayed" ? spec.respond(outcome.value as T, outcome.meta, parsed) : undefined;
   const level = outcome.kind === "fresh" ? levelFor(outcome.budgetRatio, env) : null;
