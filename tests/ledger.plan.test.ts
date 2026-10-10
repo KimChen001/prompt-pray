@@ -72,7 +72,7 @@ describe("sync_plan", LEDGER_TIMEOUT, () => {
     const { ledger, exec } = await makeTestLedger({ plan: plan(1 * M) });
     reserved(await ledger.reserve(freeReq(visitor(), { boundMicro: 400_000 })));
     await ledger.syncPlan(syncPayload(plan(100_000)));
-    expect(await pool(exec, "slice:win:t:20261012T1200Z")).toMatchObject({ cap: 400_000, held: 400_000 });
+    expect(await pool(exec, "slice:win:t:3600:20261012T1200Z")).toMatchObject({ cap: 400_000, held: 400_000 });
     expect(await ledger.reserve(freeReq(visitor()))).toEqual({ status: "denied", reason: "slice_usd" });
     await expectAudit(ledger);
   });

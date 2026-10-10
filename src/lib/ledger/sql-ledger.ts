@@ -24,13 +24,19 @@ const numOrNull = (v: unknown) => (v === null || v === undefined ? null : num(v)
 const iso = (v: unknown) => (v === null || v === undefined ? null : new Date(String(v)).toISOString());
 
 const UNAVAILABLE_CODES = /^(08|53300|55P03|57014|57P01|57P03)/;
-const NETWORK_ERRORS = new Set(["ECONNREFUSED", "ETIMEDOUT", "ENOTFOUND", "ECONNRESET", "EPIPE", "EAI_AGAIN"]);
+const NETWORK_ERRORS = new Set([
+  "ECONNREFUSED", "ETIMEDOUT", "ENOTFOUND", "ECONNRESET", "EPIPE", "EAI_AGAIN",
+  // TLS: a database we can't verify is a database we can't use
+  "SELF_SIGNED_CERT_IN_CHAIN", "DEPTH_ZERO_SELF_SIGNED_CERT", "UNABLE_TO_VERIFY_LEAF_SIGNATURE", "UNABLE_TO_GET_ISSUER_CERT_LOCALLY", "CERT_HAS_EXPIRED", "ERR_TLS_CERT_ALTNAME_INVALID",
+]);
 
 function classify(e: unknown): never {
   const code = (e as { code?: unknown }).code;
   if (typeof code === "string" && (UNAVAILABLE_CODES.test(code) || NETWORK_ERRORS.has(code))) throw new LedgerUnavailable("ledger_down", (e as Error).message);
+  // Only an error without a code is judged by its message (pg's own timeouts and closed connections);
+  // a database error always has a code, and its message may echo client-supplied values.
   const msg = (e as Error).message ?? "";
-  if (/timeout|terminat|Connection|connect/i.test(msg) && !/moona:/.test(msg)) throw new LedgerUnavailable("ledger_down", msg);
+  if (code === undefined && /timeout|terminat|Connection|connect/i.test(msg) && !/moona:/.test(msg)) throw new LedgerUnavailable("ledger_down", msg);
   throw e;
 }
 
@@ -80,7 +86,8 @@ export function createSqlLedger(exec: SqlExecutor, o: { clock?: () => Date } = {
     if (!FUNCTIONS.has(fn)) throw new Error(`moona: unknown ledger function ${fn}`);
     const body = o.clock ? { ...payload, now: o.clock().toISOString() } : payload;
     try {
-      const r = await exec.query<{ r: unknown }>(`select moona.${fn}($1::jsonb) as r`, [JSON.stringify(body)]);
+      // jsonb can't hold U+0000; it is never meaningful in a reply, so it is dropped rather than failing the call
+      const r = await exec.query<{ r: unknown }>(`select moona.${fn}($1::jsonb) as r`, [JSON.stringify(body).replace(/\\u0000/g, "")]);
       return (r.rows[0]?.r ?? null) as J;
     } catch (e) {
       return classify(e);
@@ -115,7 +122,7 @@ export function createSqlLedger(exec: SqlExecutor, o: { clock?: () => Date } = {
 
     async fail(r): Promise<FailOutcome> {
       const j = await call("fail", {
-        request_id: r.requestId, billing: r.billing, charged_micro: r.chargedMicro ?? 0, usage: r.usage, error_code: r.errorCode, rate_limited: !!r.rateLimited, retry_after_s: r.retryAfterS ?? 0,
+        request_id: r.requestId, billing: r.billing, charged_micro: r.chargedMicro ?? null, usage: r.usage, error_code: r.errorCode, rate_limited: !!r.rateLimited, retry_after_s: r.retryAfterS ?? 0,
       });
       if (j.status === "failed") return { status: "failed", chargedMicro: num(j.charged_micro), overrunMicro: num(j.overrun_micro) };
       return { status: j.status as "already" | "late" };

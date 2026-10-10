@@ -175,7 +175,8 @@ begin
     if v_win.calls_cap is not null and v_win.calls_used >= v_win.calls_cap then return moona._deny('window_calls'); end if;
     if v_win.slice_cap_micro is not null then
       v_slice_start := to_timestamp((floor(extract(epoch from v_now) / v_win.slice_seconds) * v_win.slice_seconds)::double precision);
-      v_slice_id := 'slice:' || v_win.id || ':' || to_char(v_slice_start at time zone 'UTC', 'YYYYMMDD"T"HH24MI"Z"');
+      -- the slice length is part of the id, so switching hourly <-> daily never reuses a row
+      v_slice_id := 'slice:' || v_win.id || ':' || v_win.slice_seconds || ':' || to_char(v_slice_start at time zone 'UTC', 'YYYYMMDD"T"HH24MI"Z"');
       insert into moona.pools (id, kind, parent_id, cap_micro, starts_at, ends_at)
       values (v_slice_id, 'slice', v_win.id, v_win.slice_cap_micro, v_slice_start, v_slice_start + make_interval(secs => v_win.slice_seconds))
       on conflict (id) do nothing;
@@ -198,12 +199,13 @@ begin
     select * into strict v_pk from moona.pools where id = 'packs';
     if v_mode = 'paid_reading' then
       select * into v_lot from moona.lots where account_id = v_acct and state = 'open'
-         and readings_reserved + readings_used < readings_total order by created_at, order_id limit 1;
+         and readings_reserved + readings_used < readings_total
+       order by (alloc_micro - alloc_spent_micro - alloc_held_micro >= v_bound) desc, created_at, order_id limit 1; -- a lot that can still pay first
       if not found then return moona._deny('no_credits'); end if;
     else
       select * into v_pr from moona.paid_readings where id = nullif(p->>'paid_reading_id','')::uuid and account_id = v_acct;
       if not found then return moona._deny('no_such_reading'); end if;
-      if v_pr.reading_hash <> decode(p->>'reading_hash','hex') then return moona._deny('reading_mismatch'); end if;
+      if v_pr.reading_hash is distinct from decode(p->>'reading_hash','hex') then return moona._deny('reading_mismatch'); end if;
       if v_pr.followups_reserved + v_pr.followups_used >= v_pr.followups_total then return moona._deny('no_followups'); end if;
       select * into strict v_lot from moona.lots where order_id = v_pr.lot_id;
       if v_lot.state <> 'open' then return moona._deny('lot_closed'); end if;
@@ -246,10 +248,11 @@ begin
   if r.state = 'succeeded' then return jsonb_build_object('status','already','request', moona._view(r)); end if;
   if r.state = 'failed' then return jsonb_build_object('status','conflict'); end if;
   if r.state = 'expired' then           -- late: bound already charged, entitlement already released; keep the text for replay only
-    update moona.requests set result = coalesce(result, p->'result'), usage = coalesce(usage, p->'usage'),
+    update moona.requests set result = case when result_purged then null else coalesce(result, p->'result') end, usage = coalesce(usage, p->'usage'),
            result_expires_at = coalesce(result_expires_at, v_now + make_interval(secs => v_ttl)) where id = r.id;
     return jsonb_build_object('status','late');
   end if;
+  if p->>'billing' = 'bound' then v_charge := greatest(coalesce(v_charge, 0), r.bound_micro); end if;  -- unknown usage: never less than the bound
   if v_charge is null or v_charge < 0 or p->'result' is null or p->>'billing' not in ('known','bound') or v_ttl is null
     then raise exception 'moona: invalid completion'; end if;
   update moona.requests set result = p->'result', result_expires_at = v_now + make_interval(secs => v_ttl) where id = r.id;
@@ -553,6 +556,9 @@ begin
   perform moona._lock();
   v_ids := array(select e->>'id' from jsonb_array_elements(p->'pools') e);
   if not (v_ids @> array['ai','packs','hosting','reserve']) then raise exception 'moona: plan lacks base pools'; end if;
+  select e->>'id' into v_bad from jsonb_array_elements(p->'pools') e join moona.pools w on w.id = e->>'id'
+   where w.kind = 'window' and (e->>'starts_at')::timestamptz > v_now and (w.spent_micro + w.held_micro > 0 or w.calls_used > 0 or w.minted > 0) limit 1;
+  if v_bad is not null then raise exception 'moona: window % was already used and cannot start in the future', v_bad; end if;
   for x in select * from jsonb_array_elements(p->'pools') loop
     insert into moona.pools as t (id, kind, cap_micro, calls_cap, slice_cap_micro, slice_seconds, mint_cap, starts_at, ends_at)
     values (x->>'id', x->>'kind', (x->>'cap_micro')::bigint, (x->>'calls_cap')::int, (x->>'slice_cap_micro')::bigint,

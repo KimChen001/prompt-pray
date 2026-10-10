@@ -8,7 +8,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { SqlExecutor } from "./drivers";
 
-const sha = (s: string) => createHash("sha256").update(s).digest("hex");
+// Line endings are normalised, so a Windows checkout and a Linux deploy agree on every checksum.
+const sha = (s: string) => createHash("sha256").update(s.replace(/\r\n/g, "\n")).digest("hex");
 
 export function sqlDir(): string {
   return join(process.cwd(), "src/lib/ledger/sql");
@@ -45,15 +46,19 @@ export async function migrate(exec: SqlExecutor, o: { testClock?: boolean; roles
 
   const fns = readSql("002_functions.sql");
   const c2 = sha(fns);
-  if (applied.get("002") !== c2) {
-    await applyInTransaction(exec, `${fns}\n${record("002", c2)}`);
+  // A database once migrated for tests gets the production clock back before anything else runs.
+  const testClockLeft = applied.has("900") && !o.testClock;
+  if (applied.get("002") !== c2 || testClockLeft) {
+    const forget = testClockLeft ? "\ndelete from moona.schema_migrations where version = '900';" : "";
+    await applyInTransaction(exec, `${fns}\n${record("002", c2)}${forget}`);
     done.push("002");
   }
 
   if (o.roles) {
     const roles = readSql("003_roles.sql");
     const c3 = sha(roles);
-    if (applied.get("003") !== c3) {
+    // re-granted after every function change: a recreated function starts with default privileges
+    if (applied.get("003") !== c3 || done.includes("002")) {
       await applyInTransaction(exec, `${roles}\n${record("003", c3)}`);
       done.push("003");
     }

@@ -17,9 +17,12 @@ export function pgExecutor(url: string, o: { max?: number; queryTimeoutMs?: numb
     const hit = pools.get(url);
     if (hit) return hit;
     const { Pool } = await import("pg");
-    const local = /@(localhost|127\.0\.0\.1|\[::1\])(:|\/)/.test(url);
+    const parsed = new URL(url);
+    const local = ["localhost", "127.0.0.1", "[::1]", "::1"].includes(parsed.hostname);
+    // sslmode in the URL would replace the explicit TLS settings below (and drop the CA), so it is removed
+    parsed.searchParams.delete("sslmode");
     const pool = new Pool({
-      connectionString: url,
+      connectionString: parsed.toString(),
       max: o.max ?? 2,
       query_timeout: o.queryTimeoutMs ?? 4000,
       connectionTimeoutMillis: 3000,

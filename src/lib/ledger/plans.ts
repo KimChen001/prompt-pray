@@ -188,7 +188,27 @@ export function validatePlan(r: ResolvedPlan, cfg: AiConfig, o: { routeMaxDurati
   if (maxDuration <= providerTimeout) errors.push(`route maxDuration (${maxDuration}s) must exceed the longest provider timeout (${providerTimeout}s)`);
   const ints = [plan.inflightCap, plan.subjectInflightCap, plan.leaseSeconds, plan.unknownTrip, plan.unknownCooldownS, plan.rlTrip, plan.rlWindowS, plan.rlCooldownS, plan.mintNetLimit, plan.mintNetWindowS, product.readings, product.followupsPerReading, product.maxSoldTest, product.maxSoldLive];
   if (ints.some((x) => !Number.isInteger(x) || x < 0)) errors.push("a count is not a non-negative integer");
-  if ([plan.aiUsd, plan.hostingUsd, plan.reserveUsd, plan.packPoolUsd, plan.packSlackUsd, ...plan.windows.map((w) => w.capUsd)].some((x) => !Number.isFinite(x) || x < 0)) errors.push("a dollar amount is negative");
+  if ([plan.aiUsd, plan.hostingUsd, plan.reserveUsd, plan.packPoolUsd, plan.packSlackUsd, plan.overrunTripUsd, ...plan.windows.map((w) => w.capUsd), ...plan.windows.map((w) => w.slice?.capUsd ?? 0)].some((x) => !Number.isFinite(x) || x < 0)) errors.push("a dollar amount is negative");
+  // the database's own ranges (001_schema.sql), so a bad value is named here rather than failing the sync
+  const within = (name: string, v: number, lo: number, hi = Number.MAX_SAFE_INTEGER) => { if (!(Number.isInteger(v) && v >= lo && v <= hi)) errors.push(`${name} must be a whole number from ${lo}${hi < Number.MAX_SAFE_INTEGER ? ` to ${hi}` : ""}`); };
+  within("lease seconds", plan.leaseSeconds, 30, 900);
+  within("checkout time to live", product.checkoutTtlS, 1860, 86000);
+  within("in-flight cap", plan.inflightCap, 1);
+  within("per-visitor in-flight cap", plan.subjectInflightCap, 1);
+  within("unknown-billing trip", plan.unknownTrip, 1);
+  within("rate-limit trip", plan.rlTrip, 1);
+  within("rate-limit window", plan.rlWindowS, 1);
+  within("mint limit", plan.mintNetLimit, 1);
+  within("mint window", plan.mintNetWindowS, 1);
+  within("pack price in cents", product.amountCents, 1);
+  within("readings per pack", product.readings, 1);
+  within("attempts per unit", product.attemptsPerUnit, 1);
+  if (!(product.feeHoldMicro >= 0)) errors.push("the fee hold is negative");
+  if (!/^[a-z]{3}$/.test(product.currency)) errors.push("the currency must be a 3-letter code");
+  for (const w of plan.windows) for (const p of PURPOSES) {
+    const q = w.quotas[p];
+    if (q && !(Number.isInteger(q.perSubject) && q.perSubject >= 0 && Number.isInteger(q.failedCap) && q.failedCap >= 1)) errors.push(`${w.id} ${p}: quotas are whole numbers and the failure cap is at least 1`);
+  }
 
   const typical = typicalCallMicro(cfg);
   const demo = plan.windows.find((w) => w.id === "win:demo");

@@ -8,6 +8,8 @@ import type { Purpose } from "@/lib/ai/types";
 /** JSON with sorted keys and undefined dropped: the same value always hashes the same. */
 export function canonicalJson(v: unknown): string {
   if (v === null || typeof v !== "object") return JSON.stringify(v ?? null);
+  const withJson = v as { toJSON?: () => unknown };
+  if (typeof withJson.toJSON === "function") return canonicalJson(withJson.toJSON()); // Dates hash by their value
   if (Array.isArray(v)) return `[${v.map((x) => (x === undefined ? "null" : canonicalJson(x))).join(",")}]`;
   const o = v as Record<string, unknown>;
   return `{${Object.keys(o).filter((k) => o[k] !== undefined).sort().map((k) => `${JSON.stringify(k)}:${canonicalJson(o[k])}`).join(",")}}`;

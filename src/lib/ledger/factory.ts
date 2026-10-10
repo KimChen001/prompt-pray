@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { aiConfig, type EnvLike } from "@/lib/ai/config";
 import { Budget, usageFilePath } from "@/lib/ai/budget";
-import { isServerlessHost } from "@/lib/host";
+import { isDeployed, isServerlessHost } from "@/lib/host";
 import { pgExecutor, pgliteExecutor } from "./drivers";
 import { createFileLedger } from "./file-ledger";
 import { migrate } from "./migrate";
@@ -26,7 +26,8 @@ export function ledgerKind(env: EnvLike = process.env): LedgerKind | null {
   const want = (env.MOONA_LEDGER ?? "auto").toLowerCase();
   const serverless = isServerlessHost(env);
   if (want === "postgres") return env.DATABASE_URL ? "postgres" : null;
-  if (want === "pglite" || want === "memory" || want === "file") return serverless ? null : want;
+  if (want === "memory") return serverless || isDeployed(env) ? null : "memory"; // spending would reset on every restart
+  if (want === "pglite" || want === "file") return serverless ? null : want;
   if (env.DATABASE_URL) return "postgres";
   return serverless ? null : "file";
 }

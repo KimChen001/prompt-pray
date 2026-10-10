@@ -13,7 +13,7 @@ describe("free reserve and complete", LEDGER_TIMEOUT, () => {
     const { ledger, exec } = await makeTestLedger({ plan: testPlan({ windows: [{ ...WIN, capMicro: 10 * M, slice: { capMicro: 5 * M, seconds: 3600 } }] }) });
     const v = visitor();
     const id = reserved(await ledger.reserve(freeReq(v, { boundMicro: 100_000 })));
-    const slice = "slice:win:t:20261012T1200Z";
+    const slice = "slice:win:t:3600:20261012T1200Z";
     expect(await pool(exec, "win:t")).toMatchObject({ held: 100_000, spent: 0, calls: 1 });
     expect(await pool(exec, slice)).toMatchObject({ held: 100_000, spent: 0, calls: 1 });
     expect(await pool(exec, "ai")).toMatchObject({ held: 100_000, spent: 0, calls: 1 });

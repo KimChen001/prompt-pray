@@ -20,7 +20,6 @@ describe("ledger smoke (PGlite)", LEDGER_TIMEOUT, () => {
     const versions = (await exec.query<{ version: string }>("select version from moona.schema_migrations order by version")).rows.map((r) => r.version);
     expect(versions).toEqual(["001", "002", "900"]);
     expect(await migrate(exec, { testClock: true })).toEqual([]);
-    expect(await migrate(exec)).toEqual([]);
 
     const ledger = createSqlLedger(exec, { clock: () => new Date("2026-10-12T12:00:00Z") });
     // a plpgsql function under the gate lock, with the test clock honoured
@@ -32,6 +31,9 @@ describe("ledger smoke (PGlite)", LEDGER_TIMEOUT, () => {
     const clock = await exec.query<{ t: string }>(`select moona._clock('{"now":"2026-10-12T12:00:00Z"}'::jsonb) as t`);
     expect(new Date(clock.rows[0].t).toISOString()).toBe("2026-10-12T12:00:00.000Z");
     await expectAudit(ledger);
+    // a production migrate afterwards puts the real clock back, once
+    expect(await migrate(exec)).toEqual(["002"]);
+    expect(await migrate(exec)).toEqual([]);
     await exec.close();
   });
 
