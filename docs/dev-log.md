@@ -549,3 +549,151 @@ Six agents re-checked build a47f13b in a real browser, in English and Chinese at
 - Two first-visit tabs minting two visitors (simulation only).
 
 **Verification:** 779 tests pass (two full runs); the real-Postgres test is skipped. TypeScript and the content check pass. New: replay-only ledger tests, and page tests for the other-language chat, the refused tap, a never-recorded request, and replayOnly on resumes.
+
+## Third verification round (2026-10-10, late morning)
+
+Build 3e0c408 was checked in a real browser in English and Chinese at 390×844 (33 of 33 checks per language), and its diff was reviewed. A skeptic re-proved the one P2 in code, in a component test and in the browser.
+
+**Confirmed P2, now fixed (abbbb69)**
+- **A pending pack request was dropped by a refusal on the resume.**
+  - Sequence: a tap's answer is lost, the page resumes it, and the resume gets a 503 (ledger, locked), a 5xx, a refused visitor check, or "still busy" after 45 s.
+  - The page treated every such refusal as "never recorded" and forgot the id. The next tap then used a second credit for the same spread, and the first paid answer was never shown.
+  - Now the id is forgotten only when the answer proves the request was never recorded, or was failed with its credit given back. That means: the gates before the ledger, the ledger's own refusals, a crisis reply, or a provider error after which the request was failed.
+  - Network loss, "still busy", a ledger outage and errors without a code (a gateway) prove nothing, so the id is kept. The client now carries the server's 503 code, so a bare gateway 503 is told apart from a real "not configured".
+  - While a request is pending, the page says so: "Your pack reading hasn't arrived yet. Trying again fetches that same reading and never uses another credit." A Try again link replays it.
+
+**P3s, now fixed**
+- **Pack follow-up re-sent after a language switch** (abbbb69): the changed context got 422 `key_reused`, a new id, and a second follow-up. It is now re-sent with `replayOnly` and the same id. A new id is made only for `no_such_request` or `retry`.
+- **The follow-up chat stayed open during an outage** (abbbb69): it now closes for not configured, locked, paused and the ledger down. It also closes when the free budget is spent, unless this spread has pack follow-ups left (pack money is kept apart).
+- **Replay-only had no tie to the spread** (abbbb69): `reserve` now answers it only for the same spread (`paid_readings.reading_hash`), or for a follow-up the same pack reading (`paid_reading_id`).
+- **New code on old ledger functions failed open** (abbbb69):
+  - A Postgres database that was not re-migrated ignored `replay_only` and could create and charge.
+  - New `moona.functions_version()` is derived from the text of `002_functions.sql`. Every SQL ledger checks it against `LEDGER_FUNCTIONS_VERSION` before use and refuses to open on any other version. `003_roles.sql` grants it to `moona_app`, and `npm run ledger -- migrate` prints it.
+  - `tests/review-round3.test.ts` fails until the file's marker and the constant agree.
+  - Deploy order after any 002 change: migrate first, then the new code.
+- **Accounts with packs off** (abbbb69): a quota refusal looked up (and with fake accounts, created) an account even where packs were off. It now looks one up only where payments are fake, test or live, or still settle old orders.
+- **Operator sign-in throttle** (abbbb69): moved to `lib/identity/ops-throttle.ts`, at most 5000 networks (oldest dropped first), swept at most every 30 s.
+- **Chat note retention** (7ea0303): it said every reply is kept 2 hours. While pack follow-ups are in use it now says 30 days, which is what the server keeps.
+
+**Tests:** 791 pass; the real-Postgres test is skipped (no TEST_DATABASE_URL). TypeScript and the content check pass. The six new page tests in `reading-pack.test.ts` all fail on 3e0c408, and the packs-off account test fails on the old handler.
+
+## Fourth verification round (2026-10-10, late morning)
+
+Build 7ea0303 was checked in a real browser in English and Chinese at 390×844, and its diff was reviewed. There were no P1 or P2 findings.
+
+**Browser (PASS, 30 of 30 checks per language, 60 of 60)**
+- **The fixed P2 holds.** A tap's answer was lost twice. On the reloads, the replay-only resume was answered 503 ledger, 503 locked, and a bare 502, in turn. The pending id stayed, the pending line and Try again showed, and the offer did not. Try again replayed the same id: one credit, one paid request id.
+- **Ambiguous refusal on the tap.** A tap the server charged but the page saw as 503 ledger was kept, then fetched with one credit.
+- **Refused tap.** A tap refused for "paused" was offered again with no charge.
+- **Follow-up after a language switch.** A follow-up whose answer was lost, re-sent after a language switch, replayed with one follow-up used.
+- **Chat note.** It says 30 days on pack follow-ups and 2 hours on free readings.
+- **Chat outages.** The chat closed for "paused" and stayed open on quota.
+
+**Diff review: 8 P3s**
+- Fixed in 4d9667e:
+  - A tap was forgotten when a same-id retry was turned away by a check in front of the ledger after the first attempt may have been recorded. The client now reports that an earlier attempt may have got through.
+  - Replays sent the current notes; they now send none.
+  - "Budget" closed the chat although a shorter chat reply may still fit; it no longer does.
+  - A short outage left no way back but a reload; the page now offers Try again.
+  - `GET /api/packs` made an account for a free visitor where packs are off.
+  - Parallel operator guesses from one network all passed the throttle.
+  - The version guard named a test file that doesn't exist, ledger-admin commands other than migrate skipped it, and a missing grant read as "before versioning".
+- Left as is, documented:
+  - A resume refused for good (for example 401 when the fake-account cookie has expired) keeps the spread pending. No money is lost; the answer comes back once the refusal clears.
+  - A late-completed request that had expired has no `paid_readings` row. This is unreachable, because the lease outlasts the route's maximum duration.
+  - Credits are not offered while payments are off. Keep payments (or the webhook mode) on until the sold packs are used or refunded.
+  - A follow-up replayed after a language switch is in the language it was asked in. This is by design: it is the reply that was paid for.
+
+## Evaluation runner (2026-10-10, Codex 08:00 review)
+
+- **The P2.** `scripts/eval-run.mjs` crashed on the public status, which has no budget, and counted an unreadable cost as 0. It also kept no cookies, sent no request id, and ignored 202.
+- **The rewrite** (8d616bc; logic in `scripts/eval-lib.mjs`) talks to the server like the browser does:
+  - One visitor, confirmed before any AI request.
+  - One request id per case for every attempt.
+  - Bounded waits on 202 and "busy".
+  - A lost response is retried with the same id only on the SQL ledger.
+  - A quota stops its route and a global refusal stops the run.
+  - A replay check after the run.
+  - The dry run only reads the status.
+- **Cost** comes only from an operator device, with the token read from the environment and never printed. Both ledger shapes are read, and a cost is attributed only when nothing else ran or settled; otherwise it is null with the reason.
+- **README.** `eval/README.md` was rewritten, and the "restart resets the 40/hour limit" advice is gone.
+- **Acceptance on local servers**, all simulated (fake AI, no money):
+  - The exact repro (dry run against 3109) exits 0.
+  - All 28 cases ran on the SQL ledger with an operator: 26 calls measured, $0.373 attributed case by case, replay check 0 new calls.
+  - Without an operator, cost is unknown, and 3 horoscopes came from the shared cache as replays.
+  - On the file ledger, cost was attributed and re-sending is off.
+  - With a one-reading quota, tarot and chat stop and the rest are not run, with one visitor.
+  - Through a lossy proxy, a lost answer and a fake 202 were each retried with the same id, with one ledger call per case.
+  - Evidence: `outputs/review-2026-10-10-claude/eval-runner/`.
+- **Not done:** the real GPT vs Claude comparison on the 28 cases waits for API credit.
+
+### Eval runner review (afde6f7)
+
+An adversarial check of 8d616bc passed all 18 of the acceptance runner's checks and 18 of the code reviewer's 21 checks; the 3 others could not be run. Skeptics confirmed two P2s, both now fixed:
+- **`process.exit()` after two or more requests** aborted Node 24 on Windows with a libuv assertion (exit 127). This hit the dry run with an operator token and the coded stops. The command line now sets the exit code and returns: 0 done, 1 unusable server, 2 stopped before any AI request, 3 broke off (what was done is saved).
+- **A failed status read mid-run** crashed the run and lost a case that was already sent and charged. Ledger reads are now guarded: the case is kept, with its cost unknown and that reason.
+
+P3s fixed:
+- **Joined 202.** A 202 on a new id followed by a replay counts as a replay; it joined someone else's request.
+- **Unbilled failure.** A provider failure that may be unbilled is an unknown call, attributed within [0, 1].
+- **Lasting holds.** Money held the whole time (a pack lot, a kept file-ledger hold) no longer blocks attribution.
+- **Visitor check.** It now needs the cookie in the jar.
+- **File ledger.** Nothing is re-sent there, even after a 202.
+- **Crisis cases** still run after a stop.
+- **Set-Cookie.** Joined headers are split correctly.
+- **Latency** counts only cases answered by a model call.
+- **`--operator-requests`** says when the sign-in failed.
+- **`--run-id`** is removed; it never replayed across runs.
+- **README.** It now gives the event plan's real quotas per window, notes that the dry run signs in with a token and that retry and replay need an operator device, and covers the file ledger's 40/hour limit and $0.0001 rounding, and the exit codes.
+
+**Tests:** 822 pass; the real-Postgres test is skipped. TypeScript and the content check pass. The new tests crash the test worker on the old runner.
+
+## Final verification rounds (2026-10-10, midday)
+
+**afde6f7.** Three verifiers, no P1 or P2:
+- Browser, 18 of 18 checks per language. Covered:
+  - a short outage's Try again;
+  - budget keeping the chat open;
+  - a tap kept after a gate refused its retry;
+  - replays sending no notes, with a note shared through the UI;
+  - the regression flow;
+  - the home page at 390 and 1440 px in both languages (no overflow, orb and language button hit).
+- Eval acceptance on real servers, 13 of 13.
+- Diff review: no regression.
+
+Its P3s were fixed in 98220a2:
+- **The older race.** A resume that overtook a slow tap, or came from another tab, was told "never made", and the page forgot the tap; a second tap then used a second credit. Now `paid.sentAt` keeps the tap pending for 3 minutes after it was sent.
+- **Account note.** It no longer sits beside the pending line.
+- **Eval runner:**
+  - The result file is checked before any AI request.
+  - A non-JSON 200 is an error.
+  - A maybe-unbilled failure is attributed only when the call count didn't move.
+  - A change in what is held has its own reason.
+  - The README matches.
+
+**98220a2.** The browser verifier passed 24 of 24 checks per language. Two tabs in the same browser:
+- Tab B's resume was told "never made" while tab A's tap was held. Tab B kept the record and showed the pending line, not the offer.
+- After release, both tabs showed the pack reading through the shared storage, for one credit.
+- With tab A's answer lost, tab B's Try again fetched it.
+
+The diff review's P3s were fixed in 793d430:
+- A `sentAt` in the future (a clock set back) is not "just sent".
+- During the grace, the server's answer reopens a chat closed by an outage.
+- Once a pack reading lands, the other language asks for its own reading again instead of showing "AI unavailable".
+- Eval runner:
+  - A 200 of another shape is `bad_response`.
+  - The result-file check never empties an existing file and removes one it made.
+  - The test cleans up.
+
+Left as is, written down:
+- **A forward clock jump over 3 minutes, or a tap that takes longer than that to arrive, plus a second tap, can still use two credits for one spread.** The full fix is a server-side rule of one pack reading per spread for each account: `reserve` would return the earlier reading for the same `reading_hash`. It changes the ledger rules and many tests, so it is left for a decision.
+- **A login refusal on a resume** keeps the spread pending without naming the cause. Unreachable while there is no real sign-in.
+
+**Tests:** 830 pass; the real-Postgres test is skipped (no TEST_DATABASE_URL). TypeScript and the content check pass.
+
+**793d430.** A last browser check passed all 16 checks in each language:
+- **Chat during the grace.** The chat reopens once the server answers during the grace.
+- **Other language.** After the pack reading lands from another tab, the other language sends its own reading request and shows the note. "AI unavailable" never appeared.
+- **Regression.** The flow holds.
+
+Screenshots: `outputs/review-2026-10-10-claude/` (`final-afde6f7/`, `two-tabs-98220a2/`, `final-793d430/`). Real Postgres, a real model and real payments remain unverified.
