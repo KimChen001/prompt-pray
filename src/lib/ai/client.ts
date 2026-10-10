@@ -51,8 +51,61 @@ export interface RequestAiOptions {
   fetchImpl?: typeof fetch;
 }
 
+// The visitor cookie is set before the first AI request of a page (see /api/ai/visitor). Without a
+// confirmed visitor, a request that has to be sent again (a lost response, a double tap) could run as
+// a second visitor and be paid twice, so no AI request is sent until this has succeeded once.
+// Only success is kept; a refusal, a lost response or a timeout is answered as offline and tried again
+// on the next request.
+export const VISITOR_PREPARE_TIMEOUT_MS = 8000;
+type NotDone = Exclude<AiOutcome<never>, { state: "done" }>;
+type Prepared = { ok: true } | { ok: false; outcome: NotDone };
+let visitorReady: Promise<Prepared> | null = null;
+
+async function prepareOnce(doFetch: typeof fetch): Promise<Prepared> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(new Error("visitor preparation timed out")), VISITOR_PREPARE_TIMEOUT_MS);
+  try {
+    const res = await doFetch("/api/ai/visitor", { method: "POST", signal: ctrl.signal });
+    if (res.ok) return { ok: true };
+    const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    const code = typeof json.code === "string" ? json.code : null;
+    if (res.status === 503) return { ok: false, outcome: { state: "offline", reason: (code && OFFLINE[code]) || "unconfigured" } };
+    if (res.status === 429) return { ok: false, outcome: { state: "offline", reason: "busy" } }; // too many new visitors from here right now
+    return { ok: false, outcome: { state: "failed", code: code ?? `http_${res.status}` } };
+  } catch {
+    return { ok: false, outcome: { state: "offline", reason: "network" } };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function prepareVisitor(doFetch: typeof fetch, signal?: AbortSignal): Promise<Prepared> {
+  if (!visitorReady) {
+    const attempt = prepareOnce(doFetch);
+    visitorReady = attempt;
+    // concurrent first requests share one attempt; only a success is remembered
+    void attempt.then((r) => { if (!r.ok && visitorReady === attempt) visitorReady = null; });
+  }
+  const shared = visitorReady;
+  if (!signal) return shared;
+  // a caller that gives up stops waiting; the shared attempt carries on for the others
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) return reject(signal.reason);
+    const onAbort = () => reject(signal.reason);
+    signal.addEventListener("abort", onAbort, { once: true });
+    void shared.then((r) => { signal.removeEventListener("abort", onAbort); resolve(r); });
+  });
+}
+
+/** For tests: forget (or pretend) that this page already confirmed its visitor. */
+export function resetVisitorForTests(ready = false): void {
+  visitorReady = ready ? Promise.resolve({ ok: true }) : null;
+}
+
 export async function requestAi<T>(path: string, body: Record<string, unknown>, o: RequestAiOptions): Promise<AiOutcome<T>> {
   const doFetch = o.fetchImpl ?? fetch;
+  const prepared = await prepareVisitor(doFetch, o.signal);
+  if (!prepared.ok) return prepared.outcome;
   const started = Date.now();
   const maxWait = o.maxWaitMs ?? 45_000;
   const payload = JSON.stringify({ ...body, requestId: o.requestId });
@@ -92,10 +145,14 @@ export async function requestAi<T>(path: string, body: Record<string, unknown>, 
   }
 }
 
-/** One request, retried once with a new id when the server says the old one can't be replayed. */
+/**
+ * One request, retried once with a new id when the old one can't be used again: its attempt failed
+ * or expired (409), or what is being asked has changed since it was saved (422 key_reused, e.g. the
+ * interpretation shown arrived, or the chosen context changed).
+ */
 export async function requestAiOnce<T>(path: string, body: Record<string, unknown>, o: RequestAiOptions & { onNewId?: (id: string) => void }): Promise<AiOutcome<T>> {
   const first = await requestAi<T>(path, body, o);
-  if (first.state !== "retry") return first;
+  if (first.state !== "retry" && !(first.state === "failed" && first.code === "key_reused")) return first;
   const id = newRequestId();
   o.onNewId?.(id);
   return requestAi<T>(path, body, { ...o, requestId: id });

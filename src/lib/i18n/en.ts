@@ -688,7 +688,7 @@ const en = {
       "A random visitor id (a cookie), set the first time you use live AI, only so free AI readings are shared fairly between people on the same Wi-Fi. The server counts readings against it; it is not linked to anything you write.",
       "Reading packs (only where they are enabled): the server keeps your order, its amount and state, and your pack credits under an account id. Card details go only to the payment provider; MOONA never sees them.",
     ],
-    sentNote: "Our server passes AI requests to the AI provider. To keep spending within the event's budget and let a retry replay instead of paying twice, it keeps: counts per visitor id, a keyed fingerprint of each request (never its text), and each AI reply for 2 hours (a Sun-sign horoscope, the same for everyone with that sign, for a day). A reply can quote your words. There is no account and no analytics. Everything else stays in this browser.",
+    sentNote: "Our server passes AI requests to the AI provider. To keep spending within the event's budget and let a retry replay instead of paying twice, it keeps: counts per visitor id, a keyed fingerprint of each request (never its text), and each AI reply for 2 hours (a Sun-sign horoscope, the same for everyone with that sign, for a day; a pack reading for 30 days), after which it is deleted. A reply can quote your words. There is no account and no analytics. Everything else stays in this browser.",
     statusTitle: "What is built, and what is not yet",
     status: [
       ["Tarot, Today, Birth chart, Learn, Talk, Journal", "Built. AI texts are checked against the facts they were given; without AI everything still works offline."],

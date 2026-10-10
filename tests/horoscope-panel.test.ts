@@ -57,9 +57,12 @@ beforeEach(() => {
   calls = [];
   container = document.createElement("div");
   document.body.appendChild(container);
-  vi.stubGlobal("fetch", vi.fn((_url: string, init: RequestInit) => new Promise<Response>((resolve) => {
-    calls.push({ sun: JSON.parse(String(init.body)).subject.sun, resolve });
-  })));
+  vi.stubGlobal("fetch", vi.fn((url: string, init: RequestInit) => {
+    if (url === "/api/ai/visitor") return Promise.resolve(new Response(null, { status: 204 })); // the visitor is confirmed first
+    return new Promise<Response>((resolve) => {
+      calls.push({ sun: JSON.parse(String(init.body)).subject.sun, resolve });
+    });
+  }));
   updateSettings({ sunSign: "leo" });
   cacheHoroscope(keyFor("leo"), { overall: "A steady day to reflect.", love: "Say plainly what you feel.", work: "Finish one thing fully.", meta, versions: OLD });
 });

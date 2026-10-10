@@ -25,10 +25,12 @@ export async function GET(req: NextRequest) {
   } catch {
     accountId = null;
   }
+  // The public never learns that the setup is wrong, only that payments aren't enabled.
   const publicState = c.cfg.state === "misconfigured" && !c.operator ? "unconfigured" : c.cfg.state;
+  const publicSales = sales.reason === "misconfigured" && !c.operator ? { ...sales, reason: "unconfigured" as const } : sales;
   return NextResponse.json({
     payments: { state: publicState, ...(c.operator && c.cfg.problems.length ? { problems: c.cfg.problems } : {}) },
-    sales,
+    sales: publicSales,
     // what the buy button may do here (never more than the mode allows)
     action: purchaseAction(c.cfg.state, sales.open, { isOperator: c.operator, deployed: c.deployed }),
     product: {

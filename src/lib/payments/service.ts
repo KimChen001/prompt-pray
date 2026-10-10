@@ -15,10 +15,18 @@ const uuidOrNull = (v: string | null) => (v && UUID.test(v) ? v : null);
 export function paymentsFromConfig(cfg: PaymentsConfig, deps: { stripe?: StripeLike; sink?: WebhookSink } = {}): PaymentsPort | null {
   if (cfg.state === "fake") return createFakePayments(cfg, deps.sink);
   if (cfg.state === "test" || cfg.state === "live") return createStripePayments(cfg, deps.stripe);
+  // misconfigured for selling only: the provider port still verifies events and syncs existing orders
+  if (cfg.state === "misconfigured" && cfg.webhookEnabled && cfg.webhookMode) return createStripePayments({ ...cfg, state: cfg.webhookMode }, deps.stripe);
   return null;
 }
 
-export async function startCheckout(c: { ledger: LedgerPort; pay: PaymentsPort; accountId: string; productId: string; checkoutKey: string; siteUrl: string }): Promise<{ url: string; orderId: string } | { denied: string }> {
+export async function startCheckout(c: { ledger: LedgerPort; pay: PaymentsPort; accountId: string; productId: string; checkoutKey: string; siteUrl: string; expected?: { amountCents: number; currency: string } }): Promise<{ url: string; orderId: string } | { denied: string }> {
+  // The provider's price must be the pack's price, or every payment would end as amount_mismatch
+  // (charged, nothing granted, a refund to make). Checked before anything is held.
+  if (c.expected && c.pay.priceCheck) {
+    const p = await c.pay.priceCheck();
+    if (p.amountCents !== c.expected.amountCents || p.currency !== c.expected.currency.toLowerCase()) return { denied: "price_mismatch" };
+  }
   const made = await c.ledger.createOrder({ accountId: c.accountId, productId: c.productId, mode: c.pay.state, checkoutKey: c.checkoutKey });
   if (made.status === "denied") return { denied: made.reason };
   const order = made.order;

@@ -9,5 +9,7 @@ export default defineConfig({
       "server-only": fileURLToPath(new URL("./tests/stubs/empty.ts", import.meta.url)),
     },
   },
-  test: { include: ["tests/**/*.test.ts"] },
+  // The first ledger hook in a file starts PGlite and migrates it; under a full parallel run that can
+  // take longer than the default 10 s.
+  test: { include: ["tests/**/*.test.ts"], hookTimeout: 60_000 },
 });

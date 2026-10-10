@@ -9,6 +9,8 @@ import { Budget } from "@/lib/ai/budget";
 import { AiError, extractJson, generateJson, requestCostBound } from "@/lib/ai/provider";
 import { HOROSCOPE_SCHEMA, horoscopePrompt, parseHoroscopeRequest, referenceSky, validateHoroscope } from "@/lib/ai/horoscope-prompt";
 import { resetAiLimits } from "@/lib/ai/guard";
+import { serverKeys } from "@/lib/identity/keys";
+import { OPS_COOKIE, opsCookieValue } from "@/lib/identity/ops";
 import { POST as horoscopePOST } from "@/app/api/ai/horoscope/route";
 import { GET as statusGET } from "@/app/api/ai/status/route";
 import type { JsonRequest } from "@/lib/ai/types";
@@ -291,15 +293,19 @@ describe("routes", () => {
     expect(await res.json()).toEqual({ code: "bad_facts" });
     expect(fetchSpy).not.toHaveBeenCalled();
   });
-  it("status: hides details from locked clients, shows budget to the demo device", async () => {
+  it("status: hides details from locked clients; spending details only to operator devices", async () => {
     vi.stubEnv("AI_API_KEY", "");
     expect(await (await statusGET(get())).json()).toEqual({ available: false, reason: "unconfigured" });
     vi.stubEnv("AI_API_KEY", "k");
     vi.stubEnv("AI_ACCESS_CODE", "demo");
     expect(await (await statusGET(get())).json()).toEqual({ available: false, reason: "locked" });
     const open = await (await statusGET(get("moona-ai-access=demo"))).json();
-    expect(open).toMatchObject({ available: true, provider: "openai-compatible", budget: { callsToday: 0, durable: true } });
-    expect(JSON.stringify(open)).not.toContain("\"k\""); // the API key value never appears
+    expect(open).toMatchObject({ available: true, provider: "openai-compatible", level: "ok" });
+    expect(open).not.toHaveProperty("budget"); // the venue code is shared with every attendee
+    vi.stubEnv("OPS_TOKEN", "operator-token-for-tests-0123456789");
+    const ops = await (await statusGET(get(`moona-ai-access=demo; ${OPS_COOKIE}=${opsCookieValue(serverKeys()!)}`))).json();
+    expect(ops).toMatchObject({ available: true, budget: { callsToday: 0, durable: true } });
+    expect(JSON.stringify(ops)).not.toContain("\"k\""); // the API key value never appears
   });
   it("status: returns unavailable when the ledger is corrupt or its money is fully reserved", async () => {
     vi.stubEnv("AI_API_KEY", "k");
@@ -307,6 +313,8 @@ describe("routes", () => {
     writeFileSync(file, "{broken ledger");
     expect(await (await statusGET(get())).json()).toEqual({ available: false, reason: "budget" });
     writeFileSync(file, JSON.stringify({ totalUsd: 0, totalCalls: 1, days: {}, reservations: { pending: { day: new Date().toISOString().slice(0, 10), usd: 25 } } }));
-    expect(await (await statusGET(get())).json()).toMatchObject({ available: false, reason: "budget", budget: { reservedUsdTotal: 25 } });
+    expect(await (await statusGET(get())).json()).toMatchObject({ available: false, reason: "budget", level: "exhausted" });
+    vi.stubEnv("OPS_TOKEN", "operator-token-for-tests-0123456789");
+    expect(await (await statusGET(get(`${OPS_COOKIE}=${opsCookieValue(serverKeys()!)}`))).json()).toMatchObject({ available: false, reason: "budget", budget: { reservedUsdTotal: 25 } });
   });
 });

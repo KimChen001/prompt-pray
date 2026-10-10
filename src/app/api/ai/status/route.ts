@@ -14,14 +14,15 @@ function warnAt(): [number, number, number] {
   return w.length === 3 && w.every(Number.isFinite) ? (w as [number, number, number]) : [0.5, 0.8, 0.95];
 }
 
-// Whether AI is usable from this browser and how close tonight's budget is to its limits. Provider,
-// model and budget details only go to clients with access (the venue code, when one is set) and
-// operator devices.
-// Never returns keys or costs per person.
+// Whether AI is usable from this browser and how close tonight's budget is to its limits. Clients with
+// access (the venue code, shared with every attendee) see only that, plus the provider and model.
+// Spending, holds, sales and order states, and plan problems go to operator devices only.
+// Never returns keys.
 export async function GET(req: NextRequest) {
   const cfg = aiConfig();
   const off = aiUnavailable();
-  if (off || (!hasAiAccess(req) && !isOperator(req, serverKeys()))) return NextResponse.json({ available: false, reason: off ?? "locked" }, { headers: NO_STORE });
+  const operator = isOperator(req, serverKeys());
+  if (off || (!hasAiAccess(req) && !operator)) return NextResponse.json({ available: false, reason: off ?? "locked" }, { headers: NO_STORE });
   const got = await getLedger();
   if (!got.ok) return NextResponse.json({ available: false, reason: "ledger" }, { headers: NO_STORE });
   let snapshot;
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
   const paused = snapshot.kind === "sql" && (snapshot.gate.breaker === "tripped" || !snapshot.planId);
   const available = level !== "exhausted" && !paused;
   return NextResponse.json(
-    { available, reason: available ? null : "budget", level, provider: cfg.provider, model: cfg.model, budget },
+    { available, reason: available ? null : "budget", level, provider: cfg.provider, model: cfg.model, ...(operator ? { budget } : {}) },
     { headers: NO_STORE },
   );
 }

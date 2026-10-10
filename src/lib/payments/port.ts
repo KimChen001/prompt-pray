@@ -28,6 +28,8 @@ export interface PaymentsPort {
   expire(sessionId: string): Promise<void>;
   /** Throws WebhookSignatureError for a bad, stale or re-serialised payload. */
   verifyWebhook(raw: string, signature: string | null): NormalizedPaymentEvent;
+  /** What the provider will actually charge (Stripe: the configured price), checked before any order. */
+  priceCheck?(): Promise<{ amountCents: number | null; currency: string | null }>;
 }
 
 export class WebhookSignatureError extends Error {}

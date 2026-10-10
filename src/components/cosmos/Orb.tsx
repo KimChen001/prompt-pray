@@ -3,7 +3,9 @@
 // shader feathered into the sky with a violet → candle-gold → rose aura and a warm tarot tint; it
 // follows the pointer slightly, and shrinks and rises once a conversation starts.
 // Added for the real site: a static fallback when WebGL is unavailable or motion is off, and a still
-// frame when motion is reduced.
+// frame when motion is reduced. The orb is decoration: none of its layers take taps or clicks (its outer
+// aura reaches past the orb and over the header on phones). Only the shader itself still sees a fine
+// pointer, so it keeps following the mouse on desktop.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useMotionLevel } from "@/lib/motion";
@@ -35,7 +37,7 @@ export function Orb({ small, max = 440 }: { small: boolean; max?: number }) {
       id="orb"
       animate={{ scale: small ? 0.55 : 1, y: small ? -60 : 0 }}
       transition={{ duration: level === "full" ? 1.2 : 0, ease: [0.2, 0.8, 0.2, 1] }}
-      className="relative"
+      className="pointer-events-none relative"
       style={{ width: base, height: base }}
       aria-hidden="true"
     >
@@ -44,7 +46,7 @@ export function Orb({ small, max = 440 }: { small: boolean; max?: number }) {
         <div className="absolute inset-[-25%] rounded-full bg-[radial-gradient(circle,rgba(120,105,235,0.22)_30%,rgba(200,160,220,0.06)_55%,transparent_70%)] blur-2xl" />
         {showShader ? (
           /* shader, feathered into the sky and screened so the black hole dissolves into space */
-          <div className="absolute inset-0 mix-blend-screen [mask-image:radial-gradient(circle,black_60%,transparent_71%)]">
+          <div className="absolute inset-0 mix-blend-screen [mask-image:radial-gradient(circle,black_60%,transparent_71%)] [@media(pointer:fine)]:pointer-events-auto">
             <div className="saturate-[0.9] sepia-[0.12] hue-rotate-[-6deg]">
               <ShaderCanvas size={base} still={level === "reduced"} onFail={() => setFailed(true)} />
             </div>

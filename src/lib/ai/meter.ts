@@ -131,9 +131,16 @@ export async function meteredGenerate<T>(a: MeterInput<T>, deps: MeterDeps = {})
 
   const meta: PublicMeta = { provider: cfg.provider, model: result.model, generatedAt: now().toISOString(), source: cfg.provider === "fake" ? "simulated" : "live" };
   const stored: StoredResult = { value, meta };
-  const done = await settleWithRetry(() => ledger.complete({
-    requestId, chargedMicro, billing, usage: result.usage, result: stored, resultTtlSeconds: a.resultTtlSeconds, readingHash: a.mode === "paid_reading" ? a.paid?.readingHash : undefined,
-  }), sleep);
+  let done;
+  try {
+    done = await settleWithRetry(() => ledger.complete({
+      requestId, chargedMicro, billing, usage: result.usage, result: stored, resultTtlSeconds: a.resultTtlSeconds, readingHash: a.mode === "paid_reading" ? a.paid?.readingHash : undefined,
+    }), sleep);
+  } catch {
+    // The ledger refused the reply itself (it could not be stored): settle what was billed now,
+    // give the entitlement back, and answer as an unusable reply rather than leaving it to the reaper.
+    return fail(new AiError("bad_output", "reply could not be stored", { usage: result.usage }), "known", chargedMicro);
+  }
   const view = done && done.status !== "late" && done.status !== "conflict" ? done : null;
   return {
     kind: "fresh", value, meta,

@@ -9,6 +9,7 @@ import { PaymentProviderError, WebhookSignatureError, type CheckoutSession, type
 /* eslint-disable @typescript-eslint/no-explicit-any -- Stripe objects are read defensively, field by field */
 export interface StripeLike {
   checkout: { sessions: { create(p: object, o: { idempotencyKey: string }): Promise<any>; retrieve(id: string): Promise<any>; expire(id: string): Promise<any> } };
+  prices?: { retrieve(id: string): Promise<any> };
   webhooks: { constructEvent(raw: string, sig: string, secret: string): any; generateTestHeaderString(o: { payload: string; secret: string; timestamp?: number }): string };
 }
 
@@ -75,8 +76,17 @@ export function createStripePayments(cfg: PaymentsConfig, stripe?: StripeLike): 
       throw new PaymentProviderError((e as Error).message);
     }
   };
+  let price: Promise<{ amountCents: number | null; currency: string | null }> | null = null;
   return {
     state: cfg.state,
+    priceCheck() {
+      // once per process; a failure is retried next time
+      price ??= call(async () => {
+        const p = await client.prices!.retrieve(cfg.priceId!);
+        return { amountCents: num(p?.unit_amount), currency: typeof p?.currency === "string" ? p.currency.toLowerCase() : null };
+      }).catch((e) => { price = null; throw e; });
+      return price;
+    },
     async createCheckout(o) {
       const s = await call(() => client.checkout.sessions.create({
         mode: "payment", line_items: [{ price: cfg.priceId, quantity: 1 }], payment_method_types: ["card"],

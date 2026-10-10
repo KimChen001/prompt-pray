@@ -448,3 +448,29 @@ Nothing here takes real money. Payments are `off` by default. `fake` has no prov
   - Build: the worktree production build passes.
   - On 3106 in fake mode, the whole browser flow works: simulated purchase → signed event "granted" → back on Me "5 readings added.", the meter at 5/5, the order marked Simulation. The server was stopped after.
   - On 3000 with payments off, Me shows no Packs tab or panel.
+
+## S3/S4 review fixes and Codex 03:00 (2026-10-10, night)
+
+An independent review agent tried to break S3 and S4: no P1, 3 P2, 8 P3. Codex's 03:00 review added two P2s. All are fixed, with regressions in `tests/review-s3s4.test.ts` and `tests/client.test.ts`.
+
+**From the S3/S4 review**
+- **P2 – replies outlived the privacy copy.** The reaper inside every `reserve` now also forgets texts past their time to live, and a replay never returns an expired text (the client makes a new id). The copy now states every period: 2 h, a shared Sun-sign horoscope 26 h, a pack reading 30 days.
+- **P2 – the status route showed costs and order states to everyone with the venue code.** Spending, holds, sales and order reasons, and plan problems now go to operator devices only. Venue-code holders see availability, level, provider and model.
+- **P2 – checkout minted visitors before its cheap refusals.** The venue code, account readiness and open sales are now checked first, so checkout can't use up the event's new-visitor allowance.
+- **P3 fixes:**
+  - The public sees "unconfigured" in the sales reason too.
+  - A saved request id refused as "reused" (422) gets one new id.
+  - A reply jsonb can't hold is cleaned per string (U+0000 dropped, lone surrogates replaced). If the ledger still refuses it, the request is settled as failed with what was billed, never left in flight.
+  - A production server without SESSION_SECRET signs with a random key made at start-up, never the public development one; the same applies to the fake-mode webhook secret.
+  - A ledger outage during the pack-account lookup answers 503.
+  - Operator cookies are bound to the current OPS_TOKEN, so rotating it signs devices out, and failed sign-ins are throttled per network.
+  - A live or test setup closed only for selling keeps its webhook on, so refunds still land.
+- **Also:** checkout checks that the provider's price equals the pack price before holding anything.
+
+**From Codex 03:00**
+- **P2 – the orb's glow blocked taps on phones.** Its outer aura reaches over the header, so at 390 and 320 px a tap on the language button hit the glow. The orb is decoration: none of its layers take pointer events now, except the shader for fine pointers (desktop), so it still follows the mouse. The look is unchanged.
+- **P2 – the visitor pre-call.** A failed pre-call (503, 429, lost response, 8 s timeout) used to be cached, or let the billable request go out without a confirmed visitor. Now only a 2xx counts and is kept; anything else returns an offline or failed outcome without sending the AI request, and the next request prepares again. Concurrent first requests share one attempt, and each caller can cancel its own wait. Codex's probe `work/review-visitor-0300.ts` now shows 0 AI requests for both of its cases.
+
+**Test stability:** the first ledger hook in a file (PGlite start-up and migration) could take more than vitest's 10 s hook timeout under the full parallel run. This was the intermittent "first test in the file" failure; `hookTimeout` is now 60 s.
+
+**Verification:** 762 tests pass in four full runs in a row; the real-Postgres test is skipped (no TEST_DATABASE_URL). TypeScript and the content check pass.

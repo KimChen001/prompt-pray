@@ -9,6 +9,8 @@ import { POST as talkPOST } from "@/app/api/ai/talk/route";
 import { GET as statusGET } from "@/app/api/ai/status/route";
 import { setLedgerForTests } from "@/lib/ledger/factory";
 import { VISITOR_COOKIE } from "@/lib/identity/visitor";
+import { serverKeys } from "@/lib/identity/keys";
+import { OPS_COOKIE, opsCookieValue } from "@/lib/identity/ops";
 import { dayHoroscope, horoscopeBody } from "@/lib/astro/horoscope-day";
 import type { BirthData } from "@/lib/astro/birth";
 import { M, LEDGER_TIMEOUT, expectAudit, makeTestLedger, row, testPlan, type TestLedger } from "./helpers/ledger";
@@ -130,7 +132,7 @@ describe("AI routes on the ledger", LEDGER_TIMEOUT, () => {
     expect(sent.max_tokens ?? sent.max_completion_tokens).toBe(3000);
   });
 
-  it("maps budget use to status levels, and shows details only with access", async () => {
+  it("maps budget use to status levels; spending details go to operators only", async () => {
     const plan = testPlan({ aiMicro: 10 * M, windows: [{ id: "win:t", startsAt: "2026-10-01T00:00:00Z", endsAt: "2026-11-01T00:00:00Z", capMicro: 10 * M }] });
     const levels: string[] = [];
     for (const [i, used] of [0.5, 0.8, 0.95, 1].entries()) {
@@ -145,6 +147,10 @@ describe("AI routes on the ledger", LEDGER_TIMEOUT, () => {
     vi.stubEnv("AI_ACCESS_CODE", "venue");
     expect(await (await statusGET(new NextRequest("http://localhost/api/ai/status"))).json()).toEqual({ available: false, reason: "locked" });
     const open = await (await statusGET(new NextRequest("http://localhost/api/ai/status", { headers: { cookie: "moona-ai-access=venue" } }))).json();
-    expect(open).toMatchObject({ available: false, reason: "budget", level: "exhausted", budget: { kind: "sql" } });
+    expect(open).toMatchObject({ available: false, reason: "budget", level: "exhausted" });
+    expect(open).not.toHaveProperty("budget");
+    vi.stubEnv("OPS_TOKEN", "operator-token-for-tests-0123456789");
+    const ops = await (await statusGET(new NextRequest("http://localhost/api/ai/status", { headers: { cookie: `${OPS_COOKIE}=${opsCookieValue(serverKeys()!)}` } }))).json();
+    expect(ops).toMatchObject({ level: "exhausted", budget: { kind: "sql" } });
   });
 });

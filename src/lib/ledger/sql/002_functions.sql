@@ -117,6 +117,11 @@ begin
            and created_at <= p_now - interval '10 minutes' order by created_at limit p_limit loop
     perform moona._release_order(o, 'canceled', p_now); n := n + 1;
   end loop;
+  -- texts past their time to live are forgotten here too (every reserve runs this), not only by the
+  -- scheduled reconcile: the privacy copy promises how long a reply is kept
+  update moona.requests set result = null, result_purged = true
+   where id in (select id from moona.requests where result is not null and not result_purged and result_expires_at <= p_now
+                order by result_expires_at limit p_limit);
   return n;
 end $$;
 
@@ -146,6 +151,10 @@ begin
   select * into v_r from moona.requests where idem_key = v_idem;
   if found then
     if v_r.input_hash <> v_hash or v_r.mode <> v_mode then return moona._deny('key_reused'); end if;
+    if v_r.result is not null and not v_r.result_purged and v_r.result_expires_at <= v_now then
+      -- past its time to live: never replayed (the caller makes a new request id)
+      update moona.requests set result = null, result_purged = true where id = v_r.id returning * into v_r;
+    end if;
     return jsonb_build_object('status','existing','request', moona._view(v_r));
   end if;
   -- 2. free only: replay a saved result, or join an identical in-flight request

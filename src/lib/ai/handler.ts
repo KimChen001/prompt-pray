@@ -15,7 +15,7 @@ import { serverKeys, type Keys } from "@/lib/identity/keys";
 import { isOperator } from "@/lib/identity/ops";
 import { ensureVisitor } from "@/lib/identity/visitor";
 import { getLedger } from "@/lib/ledger/factory";
-import type { LedgerPort, ReqMode } from "@/lib/ledger/port";
+import { LedgerUnavailable, type LedgerPort, type ReqMode } from "@/lib/ledger/port";
 import type { EnvLike } from "@/lib/host";
 
 export interface AiRouteSpec<P, T> {
@@ -93,7 +93,13 @@ export async function handleAi<P, T>(req: NextRequest, spec: AiRouteSpec<P, T>, 
   const paid = spec.paid?.(raw, parsed, keys) ?? null;
   let subjectKey = `v:${visitor.id}`, accountId: string | undefined, mode: ReqMode = "free";
   if (paid) {
-    const account = ledger.supportsPaid ? await auth.getAccount(req, { visitorId: visitor.id, ledger, isOperator: operator }) : null;
+    let account;
+    try {
+      account = ledger.supportsPaid ? await auth.getAccount(req, { visitorId: visitor.id, ledger, isOperator: operator }) : null;
+    } catch (e) {
+      if (e instanceof LedgerUnavailable) return withCookie(NextResponse.json({ code: "ledger" }, { status: 503 }));
+      throw e;
+    }
     if (!account) return withCookie(NextResponse.json({ code: "login_required" }, { status: 401 }));
     subjectKey = `a:${account.accountId}`;
     accountId = account.accountId;

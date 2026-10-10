@@ -40,6 +40,13 @@ function classify(e: unknown): never {
   throw e;
 }
 
+// jsonb can't hold U+0000 or an unpaired surrogate. Neither is ever meaningful in a reply, so each
+// string is cleaned before it is serialised (a regex on the serialised text could cut an escape apart).
+const LONE_SURROGATE = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
+export function jsonSafe(_key: string, v: unknown): unknown {
+  return typeof v === "string" ? v.replace(/\u0000/g, "").replace(LONE_SURROGATE, "�") : v;
+}
+
 export function requestView(j: J): RequestView {
   return {
     id: String(j.id),
@@ -86,8 +93,7 @@ export function createSqlLedger(exec: SqlExecutor, o: { clock?: () => Date } = {
     if (!FUNCTIONS.has(fn)) throw new Error(`moona: unknown ledger function ${fn}`);
     const body = o.clock ? { ...payload, now: o.clock().toISOString() } : payload;
     try {
-      // jsonb can't hold U+0000; it is never meaningful in a reply, so it is dropped rather than failing the call
-      const r = await exec.query<{ r: unknown }>(`select moona.${fn}($1::jsonb) as r`, [JSON.stringify(body).replace(/\\u0000/g, "")]);
+      const r = await exec.query<{ r: unknown }>(`select moona.${fn}($1::jsonb) as r`, [JSON.stringify(body, jsonSafe)]);
       return (r.rows[0]?.r ?? null) as J;
     } catch (e) {
       return classify(e);

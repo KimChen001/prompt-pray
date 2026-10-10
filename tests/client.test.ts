@@ -1,10 +1,11 @@
 // The browser request helper (spec §11 client): one request id per attempt, "still running" and
 // "busy" retried with the same id and body, and every refusal mapped to an honest outcome.
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { newRequestId, requestAi, requestAiOnce } from "@/lib/ai/client";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { VISITOR_PREPARE_TIMEOUT_MS, newRequestId, requestAi, requestAiOnce, resetVisitorForTests } from "@/lib/ai/client";
 
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
+beforeEach(() => resetVisitorForTests(true)); // the visitor pre-call has its own test below
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
@@ -64,6 +65,107 @@ describe("requestAi", () => {
     expect(out.state).toBe("done");
     expect(ids).toHaveLength(1);
     expect(JSON.parse(String((fetchImpl.mock.calls[1][1] as RequestInit).body)).requestId).toBe(ids[0]);
+  });
+});
+
+describe("visitor confirmed before any AI request", () => {
+  const VISITOR = "/api/ai/visitor";
+  /** A transport that answers the visitor pre-call with `prep` (a status, or "lost") and AI calls with 200. */
+  function transport(prep: () => number | "lost" | "hang") {
+    const urls: string[] = [];
+    const ids: string[] = [];
+    const fetchImpl = vi.fn<typeof fetch>(async (url, init) => {
+      urls.push(String(url));
+      if (String(url) === VISITOR) {
+        const p = prep();
+        if (p === "lost") throw new TypeError("lost response");
+        if (p === "hang") return new Promise<Response>((_, reject) => init?.signal?.addEventListener("abort", () => reject(init.signal!.reason), { once: true }));
+        return p === 204 ? new Response(null, { status: 204 }) : json(p, { code: p === 503 ? "ledger" : "visitor_cap" });
+      }
+      ids.push(JSON.parse(String(init?.body)).requestId);
+      return json(200, { ok: 1 });
+    });
+    const count = () => ({ visitor: urls.filter((u) => u === VISITOR).length, ai: urls.filter((u) => u !== VISITOR).length });
+    return { fetchImpl, count, ids };
+  }
+
+  it("prepares once, before any AI request, shared by concurrent first requests", async () => {
+    resetVisitorForTests();
+    const t = transport(() => 204);
+    await Promise.all([1, 2, 3].map((i) => requestAi("/api/ai/tarot", {}, { requestId: `id-00000000000000a${i}`, fetchImpl: t.fetchImpl })));
+    expect(t.count()).toEqual({ visitor: 1, ai: 3 });
+    expect(t.fetchImpl.mock.calls[0][0]).toBe(VISITOR);
+    await requestAi("/api/ai/tarot", {}, { requestId: "id-00000000000000a4", fetchImpl: t.fetchImpl });
+    expect(t.count()).toEqual({ visitor: 1, ai: 4 });
+  });
+
+  it("sends nothing billable when the visitor can't be confirmed, and prepares again later", async () => {
+    resetVisitorForTests();
+    let answer: number | "lost" = 503;
+    const t = transport(() => answer);
+    expect(await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000b1", fetchImpl: t.fetchImpl })).toEqual({ state: "offline", reason: "ledger" });
+    answer = 429;
+    expect(await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000b2", fetchImpl: t.fetchImpl })).toEqual({ state: "offline", reason: "busy" });
+    answer = "lost";
+    expect(await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000b3", fetchImpl: t.fetchImpl })).toEqual({ state: "offline", reason: "network" });
+    expect(t.count()).toEqual({ visitor: 3, ai: 0 }); // no refusal was remembered as ready
+    answer = 204;
+    expect((await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000b4", fetchImpl: t.fetchImpl })).state).toBe("done");
+    expect(t.count()).toEqual({ visitor: 4, ai: 1 });
+  });
+
+  it("concurrent first requests during a failed preparation all stop, then all recover", async () => {
+    resetVisitorForTests();
+    let answer: number = 503;
+    const t = transport(() => answer);
+    const first = await Promise.all([1, 2].map((i) => requestAi("/api/ai/talk", {}, { requestId: `id-00000000000000c${i}`, fetchImpl: t.fetchImpl })));
+    expect(first.map((o) => o.state)).toEqual(["offline", "offline"]);
+    expect(t.count()).toEqual({ visitor: 1, ai: 0 });
+    answer = 204;
+    const second = await Promise.all([1, 2].map((i) => requestAi("/api/ai/talk", {}, { requestId: `id-00000000000000c${i}`, fetchImpl: t.fetchImpl })));
+    expect(second.map((o) => o.state)).toEqual(["done", "done"]);
+    expect(t.count()).toEqual({ visitor: 2, ai: 2 });
+  });
+
+  it("keeps the same request id on a lost AI response once the visitor is confirmed", async () => {
+    resetVisitorForTests();
+    let lostOnce = true;
+    const ids: string[] = [];
+    const fetchImpl = vi.fn<typeof fetch>(async (url, init) => {
+      if (String(url) === VISITOR) return new Response(null, { status: 204 });
+      ids.push(JSON.parse(String(init?.body)).requestId);
+      if (lostOnce) { lostOnce = false; throw new TypeError("lost response"); }
+      return json(200, { ok: 1, replayed: true });
+    });
+    expect((await requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000d1", fetchImpl })).state).toBe("done");
+    expect(ids).toEqual(["id-00000000000000d1", "id-00000000000000d1"]); // the server replays it for the same visitor
+  });
+
+  it("bounds the preparation with a timeout, and lets a caller cancel its wait", async () => {
+    vi.useFakeTimers();
+    resetVisitorForTests();
+    const t = transport(() => "hang");
+    const pending = requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000e1", fetchImpl: t.fetchImpl });
+    await vi.advanceTimersByTimeAsync(VISITOR_PREPARE_TIMEOUT_MS + 10);
+    expect(await pending).toEqual({ state: "offline", reason: "network" });
+    expect(t.count().ai).toBe(0);
+
+    resetVisitorForTests();
+    const ctrl = new AbortController();
+    const other = requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000e2", fetchImpl: t.fetchImpl });
+    const mine = requestAi("/api/ai/talk", {}, { requestId: "id-00000000000000e3", fetchImpl: t.fetchImpl, signal: ctrl.signal });
+    ctrl.abort(new Error("left the page"));
+    await expect(mine).rejects.toThrow("left the page");
+    await vi.advanceTimersByTimeAsync(VISITOR_PREPARE_TIMEOUT_MS + 10);
+    expect(await other).toEqual({ state: "offline", reason: "network" }); // the shared attempt carried on for the other caller
+    expect(t.count().ai).toBe(0);
+  });
+
+  it("makes one new id when the saved one now describes a different request (422)", async () => {
+    const fetchImpl = vi.fn<typeof fetch>().mockResolvedValueOnce(json(422, { code: "key_reused" })).mockResolvedValueOnce(json(200, { ok: 1 }));
+    const ids: string[] = [];
+    expect((await requestAiOnce("/x", {}, { requestId: "id-0000000000000007", fetchImpl, onNewId: (id) => ids.push(id) })).state).toBe("done");
+    expect(ids).toHaveLength(1);
   });
 });
 
