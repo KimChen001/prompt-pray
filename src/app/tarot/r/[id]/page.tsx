@@ -19,7 +19,8 @@ import { bigThreeLocalized, bigThreeNames, type BigThreeNames } from "@/lib/astr
 import type { MemoryNote } from "@/lib/memory";
 import type { Reading, TarotAiResult } from "@/lib/tarot/types";
 import { TarotCard } from "@/components/TarotCard";
-import { SourceBadge } from "@/components/bits";
+import { SourceBadge, aiSource } from "@/components/bits";
+import { newRequestId, requestAiOnce, type AiOutcome } from "@/lib/ai/client";
 import { TarotChat } from "@/components/TarotChat";
 import { SharedNotes, sharedNotes } from "@/components/Notes";
 import { CheckInPlanner } from "@/components/CheckIns";
@@ -50,6 +51,9 @@ function ReadingView() {
   const [showOffline, setShowOffline] = useState(false);
   const [aiStatus, setAiStatus] = useState<AiStatus>("idle");
   const [attempt, setAttempt] = useState(0);
+  // Why live AI is not shown (quota, budget, paused, busy), and whether tonight's budget runs low.
+  const [notice, setNotice] = useState<string | null>(null);
+  const [low, setLow] = useState(false);
   const [orb, setOrb] = useState<OrbMode>("quiet");
   const requested = useRef(new Set<string>());
 
@@ -67,41 +71,50 @@ function ReadingView() {
   const notes = useMemo(() => (reading ? sharedNotes(reading) : []), [reading]);
 
   // Generate the AI interpretation in the background as soon as the page opens (once per reading +
-  // language). The result is merged into the latest copy, for its own language only.
-  const generate = useCallback(async (r: Reading) => {
+  // language). The request id is saved with the reading before sending, so a reload or a second tab
+  // replays the same request for free; "Try again" uses a new one. The result is merged into the
+  // latest copy, for its own language only.
+  const generate = useCallback(async (r: Reading, fresh: boolean) => {
     const reqLocale = locale;
     const epoch = dataEpoch();
+    const remember = (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, aiRequest: { ...latest.aiRequest, [reqLocale]: requestId } }));
+    const requestId = (!fresh && r.aiRequest?.[reqLocale]) || newRequestId();
+    remember(requestId);
     setAiStatus("loading");
+    setNotice(null);
     setOrb("pulse");
+    let out: AiOutcome<TarotAiResult>;
     try {
-      const res = await fetch("/api/ai/tarot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          locale: reqLocale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
-          chart: r.includeChart ? chart : undefined,
-          notes: sharedNotes(r).map((n) => n.text),
-        }),
-      });
-      if (res.status === 503) {
-        setOrb("quiet");
-        return setAiStatus("off");
-      }
-      const body = (await res.json().catch(() => ({}))) as TarotAiResult & { code?: string };
-      if (!res.ok || body.code) {
-        setOrb("quiet");
-        return setAiStatus("failed");
-      }
-      if (epoch !== dataEpoch()) return;
+      out = await requestAiOnce<TarotAiResult>("/api/ai/tarot", {
+        locale: reqLocale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
+        chart: r.includeChart ? chart : undefined,
+        notes: sharedNotes(r).map((n) => n.text),
+      }, { requestId, onNewId: remember });
+    } catch {
+      out = { state: "offline", reason: "network" };
+    }
+    if (epoch !== dataEpoch()) return;
+    if (out.state === "done") {
+      const body = out.value;
       const next = patchReading(r.id, (latest) => (latest.ai?.[reqLocale] ? latest : { ...latest, ai: { ...latest.ai, [reqLocale]: { cards: body.cards, synthesis: body.synthesis, action: body.action, reflection: body.reflection, meta: body.meta } } }));
       if (!next) return; // deleted while it was being written
+      setLow(out.budgetLevel === "warn" || out.budgetLevel === "critical");
       setAiStatus("live");
       setOrb("settle");
-    } catch {
-      setOrb("quiet");
-      setAiStatus("failed");
+      return;
     }
-  }, [locale, chart]);
+    setOrb("quiet");
+    if (out.state === "quota") {
+      setNotice(m.aiNotice.quota);
+      return setAiStatus("off");
+    }
+    if (out.state === "offline") {
+      const r2 = out.reason;
+      setNotice(r2 === "budget" ? m.aiNotice.budget : r2 === "busy" ? m.aiNotice.busy : r2 === "ledger" || r2 === "paused" || r2 === "paid_capacity" ? m.aiNotice.paused : null);
+      return setAiStatus(r2 === "network" ? "failed" : "off");
+    }
+    setAiStatus("failed");
+  }, [locale, chart, m]);
 
   useEffect(() => {
     if (!reading) return;
@@ -112,7 +125,7 @@ function ReadingView() {
     const key = `${reading.id}|${locale}|${attempt}`;
     if (requested.current.has(key)) return;
     requested.current.add(key);
-    void generate(reading);
+    void generate(reading, attempt > 0);
   }, [reading, locale, attempt, generate]);
 
   const onChatBusy = useCallback((busy: boolean) => setOrb((o) => (busy ? "pulse" : o === "pulse" ? "settle" : o)), []);
@@ -133,7 +146,7 @@ function ReadingView() {
   const reflection = ai ? ai.reflection : pick(analysis.reflection);
   const statusLine =
     aiStatus === "loading" ? <span className="status-line"><span className="status-dot" />{m.reading.aiPreparing}</span> :
-    ai ? <span className="muted small">{m.reading.aiReady}</span> :
+    ai ? <span className="muted small">{m.reading.aiReady}{low ? ` ${m.aiNotice.low}` : ""}</span> :
     aiStatus === "off" || aiStatus === "failed" ? <span className="muted small">{m.reading.offlineReady}</span> : null;
 
   const offlineBlock = (
@@ -211,7 +224,7 @@ function ReadingView() {
               <StateOrb mode={orb} size="56px" />
               <h2 className="h2">{m.reading.synthesis}</h2>
             </div>
-            {ai ? <SourceBadge source={aiStatus === "live" ? "live" : "saved"} time={ai.meta.generatedAt} title={ai.meta.model} /> : aiStatus !== "loading" && <SourceBadge source="offline" />}
+            {ai ? <SourceBadge source={aiSource(ai.meta, aiStatus === "live")} time={ai.meta.generatedAt} title={ai.meta.model} /> : aiStatus !== "loading" && <SourceBadge source="offline" />}
           </div>
 
           {aiStatus === "loading" && !ai && (
@@ -246,7 +259,7 @@ function ReadingView() {
               <button type="button" className="btn-link" onClick={() => setAttempt((n) => n + 1)}>{m.reading.retryAi}</button>
             </p>
           )}
-          {!ai && aiStatus === "off" && <p className="notice-quiet">{m.reading.aiOff}</p>}
+          {!ai && aiStatus === "off" && <p className="notice-quiet">{notice ?? m.reading.aiOff}</p>}
           {!ai && aiStatus !== "loading" && offlineBlock}
 
           {ai && (

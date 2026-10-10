@@ -63,11 +63,18 @@ export function requestCostBound(req: JsonRequest, cfg: AiConfig): number {
   return requestBoundMicro(sized, cfg, sized.maxOutputTokens!) / 1e6;
 }
 
-let fakeScripts: (() => FakeScript) | null = null;
+// Per-call fake scripts, rebuilt when the FAKE_AI_* settings change (a rehearsal can switch usage modes).
+let fakeScripts: { key: string; next: () => FakeScript } | null = null;
+function nextFakeScript(): FakeScript {
+  const env = process.env;
+  const key = [env.FAKE_AI_FAILURES, env.FAKE_AI_USAGE, env.FAKE_AI_LATENCY_MS].join("|");
+  if (fakeScripts?.key !== key) fakeScripts = { key, next: fakeScriptFromEnv(env) };
+  return fakeScripts.next();
+}
 
 export async function callProvider(req: JsonRequest, cfg: AiConfig, deps: { fetchImpl?: typeof fetch; fake?: FakeScript } = {}): Promise<ProviderResult> {
   const caps = modelCaps(cfg.provider, cfg.model);
-  if (cfg.provider === "fake") return callFake(cfg, caps, req, deps.fake ?? (fakeScripts ??= fakeScriptFromEnv(process.env))());
+  if (cfg.provider === "fake") return callFake(cfg, caps, req, deps.fake ?? nextFakeScript());
   if (cfg.provider === "anthropic") return callAnthropic(cfg, caps, req, deps.fetchImpl);
   if (cfg.provider === "openai") return callOpenAi(cfg, caps, req, deps.fetchImpl);
   return callOpenAiCompatible(cfg, caps, req, deps.fetchImpl);

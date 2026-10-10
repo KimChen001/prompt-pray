@@ -28,6 +28,19 @@ const en = {
     dev: "In development",
     calc: "Calculated",
     saved: "AI · saved {time}",
+    simulated: "Simulated reading — no AI call",
+  },
+  // Why a live AI text is not shown (shared by every page that asks for one).
+  aiNotice: {
+    quota: "You've used this event's free live readings here. The offline reading below is complete.",
+    budget: "Tonight's live AI readings are used up. This reading comes from MOONA's offline card engine.",
+    paused: "Live AI is paused for a moment. Everything else works; your offline reading is below.",
+    busy: "Too many readings at once. Your offline reading is below; try live AI again in a minute.",
+    low: "Live readings are running low tonight.",
+    quotaShort: "You've used this event's free live AI replies here.",
+    budgetShort: "Tonight's live AI is used up.",
+    pausedShort: "Live AI is paused for a moment.",
+    busyShort: "Too many requests at once; try again in a minute.",
   },
   disclaimer: "For reflection and entertainment. Not medical, legal, or financial advice.",
   home: {
@@ -158,7 +171,7 @@ const en = {
     chatFailed: "That message didn't go through.",
     retrySend: "Try again",
     you: "You",
-    chatNote: "To reply, your messages and this reading's cards are sent to the AI service. Our server stores none of it.",
+    chatNote: "To reply, your messages and this reading's cards are sent to the AI service. Our server keeps only the reply, for 2 hours, so a retry doesn't pay twice.",
   },
   daily: {
     title: "Today",
@@ -276,7 +289,7 @@ const en = {
     earlierChart: "earlier birth details",
     aiNote: "The AI only puts these calculated placements into words; it doesn't calculate or add any.",
     libraryNote: "Library text is written from the same placements, without AI.",
-    sentNote: "For the AI version, only your chart placements (signs, houses, aspects) are sent, never your birth date, time or place, and nothing is stored on the server.",
+    sentNote: "For the AI version, only your chart placements (signs, houses, aspects) are sent, never your birth date, time or place. The server keeps the written report for 2 hours, so a retry doesn't pay twice.",
   },
   notes: {
     shareLabel: "Share my saved notes with the AI for this reading ({n})",
@@ -594,7 +607,7 @@ const en = {
     confirmClear: "Delete all readings, conversations, notes, check-ins, daily cards, birth details, saved chart readings, matches, Whispers entries and settings from this browser?",
 
     export: "Download my data (JSON)",
-    privacy: "Your readings, conversations, notes, check-ins, settings and birth details are stored only in this browser. AI features send only what each request needs to our server, which passes it to the AI provider and keeps none of it. About lists exactly what is sent.",
+    privacy: "Your readings, conversations, notes, check-ins, settings and birth details are stored only in this browser. AI features send only what each request needs to our server, which passes it to the AI provider and keeps only the AI's reply for a short time (so a retry replays it) and spending counts. About lists exactly what is sent and kept.",
 
     confirmDeleteReading: "Delete this reading, its conversation, and the notes and check-ins that came from it?",
     removeBirth: "Remove birth details",
@@ -621,9 +634,9 @@ const en = {
       "Talk with MOONA: your recent messages and only what you tick: your chart placements (never your birth date, time or place), today's date and time zone (the sky is recalculated on the server), and the notes you choose.",
       "Daily horoscope: the date, your time zone, your Sun, Moon and Rising signs and the day's sky facts, which the server checks against its own calculation.",
       "Birth-chart reading: your chart placements (signs, houses, aspects).",
-      "A random visitor id (a cookie), only so AI limits are shared fairly between people on the same Wi-Fi. It is not linked to anything you write and the server keeps nothing about it.",
+      "A random visitor id (a cookie), set the first time you use live AI, only so free AI readings are shared fairly between people on the same Wi-Fi. The server counts readings against it; it is not linked to anything you write.",
     ],
-    sentNote: "Our server passes AI requests to the AI provider and keeps no content, only a count of calls and their cost for the spending cap. There is no account and no analytics. Everything else stays in this browser.",
+    sentNote: "Our server passes AI requests to the AI provider. To keep spending within the event's budget and let a retry replay instead of paying twice, it keeps: counts per visitor id, a keyed fingerprint of each request (never its text), and each AI reply for 2 hours (a Sun-sign horoscope, the same for everyone with that sign, for a day). A reply can quote your words. There is no account and no analytics. Everything else stays in this browser.",
     statusTitle: "What is built, and what is not yet",
     status: [
       ["Tarot, Today, Birth chart, Learn, Talk, Journal", "Built. AI texts are checked against the facts they were given; without AI everything still works offline."],
@@ -688,7 +701,7 @@ const en = {
     failed: "That message didn't go through.",
     unanswered: "Your last message hasn't been answered.",
     needsAi: "Talking needs AI, which isn't available on this device right now. Your messages are saved here.",
-    sendNote: "Each reply sends your recent messages and only the ticked context to the AI service. Our server stores none of it.",
+    sendNote: "Each reply sends your recent messages and only the ticked context to the AI service. Our server keeps only the reply, for 2 hours, so a retry doesn't pay twice.",
     delete: "Delete",
     confirmDelete: "Delete this conversation and the notes saved from it?",
     notFoundTitle: "This conversation isn't on this device",

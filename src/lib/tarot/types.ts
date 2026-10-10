@@ -39,6 +39,8 @@ export interface AiMeta {
   generatedAt: string; // ISO instant
   /** Prompt and claim-check versions the text was written and checked under (absent on older saves). */
   versions?: string;
+  /** "simulated" = the offline fake provider (rehearsals): never shown as live AI. */
+  source?: "live" | "simulated";
 }
 
 export interface TarotAiResult {
@@ -54,6 +56,8 @@ export interface ChatTurn {
   content: string;
   at: string; // ISO instant
   meta?: AiMeta; // assistant turns only
+  /** User turns: the id of the AI request that answers this turn (a retry replays it for free). */
+  requestId?: string;
   /** Assistant turns: a note MOONA offered to remember, from the person's own words. Saved only if they confirm. */
   suggestion?: { text: string; quote: string; status: "pending" | "saved" | "dismissed" };
   /** Assistant turns in free conversations: the context items the reply says it relied on (checked by the server). */
@@ -81,6 +85,8 @@ export interface Reading {
   includeChart?: boolean;
   /** AI interpretation per language, saved once generated (never regenerated silently). */
   ai?: Partial<Record<Locale, TarotAiResult>>;
+  /** The request id of the AI interpretation per language, kept before sending so a retry or reload replays it for free. */
+  aiRequest?: Partial<Record<Locale, string>>;
   /** Follow-up conversation about this reading. */
   thread?: ChatTurn[];
   /** Saved notes the person chose to share with the AI for this reading (ids into the note store). */

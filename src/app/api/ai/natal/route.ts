@@ -1,25 +1,24 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { AiError, generateJson } from "@/lib/ai/provider";
-import { checkAiAccess } from "@/lib/ai/guard";
-import { aiErrorResponse } from "@/lib/ai/http";
+import type { NextRequest } from "next/server";
+import { handleAi } from "@/lib/ai/handler";
 import { NATAL_PROMPT_VERSION, NATAL_SCHEMA, natalPrompt, parseNatalRequest, validateNatal } from "@/lib/ai/natal-prompt";
 import { CLAIM_RULES_VERSION } from "@/lib/ai/claims";
 
-// Receives computed chart facts and themes only (no birth date, time or place). Nothing is stored server-side.
-export async function POST(req: NextRequest) {
-  const denied = checkAiAccess(req);
-  if (denied) return NextResponse.json({ code: denied }, { status: denied === "rate_limited" ? 429 : 503 });
-  const parsed = parseNatalRequest(await req.json().catch(() => null));
-  if (!parsed) return NextResponse.json({ code: "bad_request" }, { status: 400 });
+export const maxDuration = 60;
 
-  try {
-    const { system, user } = natalPrompt(parsed);
-    const { value, meta } = await generateJson(
-      { purpose: "natal", system, messages: [{ role: "user", content: user }], schema: NATAL_SCHEMA, schemaName: "natal_report", timeoutMs: 40_000, maxOutputTokens: undefined },
-      (data) => validateNatal(data, parsed),
-    );
-    return NextResponse.json({ ...value, promptVersion: NATAL_PROMPT_VERSION, meta: { provider: meta.provider, model: meta.model, generatedAt: meta.generatedAt, versions: `${NATAL_PROMPT_VERSION}|${CLAIM_RULES_VERSION}` } });
-  } catch (e) {
-    return aiErrorResponse(e instanceof AiError ? e : new AiError("upstream"));
-  }
+const VERSIONS = `${NATAL_PROMPT_VERSION}|${CLAIM_RULES_VERSION}`;
+
+// Receives computed chart facts and themes only (no birth date, time or place). The ledger keeps a
+// keyed hash of the request and the report for 2 hours, for replay.
+export function POST(req: NextRequest) {
+  return handleAi(req, {
+    purpose: "natal",
+    parse: parseNatalRequest,
+    build: (p) => {
+      const { system, user } = natalPrompt(p);
+      return { purpose: "natal", system, messages: [{ role: "user", content: user }], schema: NATAL_SCHEMA, schemaName: "natal_report", timeoutMs: 40_000 };
+    },
+    validate: (p) => (data) => validateNatal(data, p),
+    versions: () => VERSIONS,
+    respond: (value, meta) => ({ ...value, promptVersion: NATAL_PROMPT_VERSION, meta: { ...meta, versions: VERSIONS } }),
+  });
 }

@@ -19,15 +19,17 @@ import {
   type NatalAiResponse, type SavedNatalReport, type SavedNatalTheme,
 } from "@/lib/astro/natal-report";
 import { NATAL_PROMPT_VERSION } from "@/lib/ai/natal-prompt";
-import { SourceBadge } from "./bits";
+import { SourceBadge, aiSource } from "./bits";
+import { newRequestId, requestAiOnce, type OfflineReason } from "@/lib/ai/client";
 
 type GenStatus = "idle" | "loading" | "live" | "failed" | "off";
 const LIBRARY = "library";
 
 export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem: HouseSystem) {
-  const { pick, locale } = useI18n();
+  const { m, pick, locale } = useI18n();
   const storeVersion = useStoreVersion();
   const [gen, setGen] = useState<GenStatus>("idle");
+  const [notice, setNotice] = useState<string | null>(null); // why live AI is off (quota, budget, paused)
   const [liveAt, setLiveAt] = useState<string | null>(null); // createdAt of the version generated in this view
   const [memory, setMemory] = useState<SavedNatalReport | null>(null); // when storage is blocked
   const [selected, setSelected] = useState<string | null>(null); // a createdAt, LIBRARY, or null = default
@@ -56,18 +58,21 @@ export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem:
     const requestedFor = currentId;
     const epoch = dataEpoch();
     setGen("loading");
+    setNotice(null);
     try {
-      const res = await fetch("/api/ai/natal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(natalRequestBody(nf, sel, locale)),
-      });
+      // one id per attempt: a retry inside it (still running, busy) replays rather than pays twice
+      const out = await requestAiOnce<NatalAiResponse>("/api/ai/natal", natalRequestBody(nf, sel, locale) as unknown as Record<string, unknown>, { requestId: newRequestId() });
       // Birth details were removed or changed while this was being written: it belongs to nobody now.
       if (epoch !== dataEpoch()) return;
       const stillHere = latestId.current === requestedFor; // the person may have switched language or house system
-      if (res.status === 503) return stillHere && setGen("off"); // not configured / locked: library text, no warning
-      if (!res.ok) return stillHere && setGen("failed");
-      const body = (await res.json()) as NatalAiResponse;
+      const why = (r: OfflineReason | "quota") => (r === "quota" ? m.aiNotice.quotaShort : r === "budget" ? m.aiNotice.budgetShort : r === "ledger" || r === "paused" ? m.aiNotice.pausedShort : r === "busy" ? m.aiNotice.busyShort : null);
+      if (out.state === "quota" || out.state === "offline") {
+        if (!stillHere) return;
+        setNotice(why(out.state === "quota" ? "quota" : out.reason));
+        return setGen(out.state === "offline" && (out.reason === "network" || out.reason === "busy") ? "failed" : "off"); // off: library text
+      }
+      if (out.state !== "done") return stillHere && setGen("failed");
+      const body = out.value;
       // A valid result for its own key (chart + rules + language) is kept even if the view moved on.
       const report = toSavedReport({ ...key, promptVersion: body.promptVersion }, nf, sel, body);
       if (!saveNatalReport(report)) setMemory(report);
@@ -78,7 +83,7 @@ export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem:
     } catch {
       if (latestId.current === requestedFor) setGen("failed");
     }
-  }, [currentId, nf, sel, locale, key]);
+  }, [currentId, nf, sel, locale, key, m]);
 
   // Write the first version for a chart automatically; never silently replace an existing one.
   useEffect(() => {
@@ -107,7 +112,7 @@ export function useNatalReport(birth: BirthData, chart: NatalChart, houseSystem:
     deleteNatalReport(r.createdAt);
   };
 
-  return { nf, gen, liveAt, saved, exact, older, chosen, report, themes: report ? report.themes : library, selected, setSelected, generate, removeVersion, key, currentId };
+  return { nf, gen, notice, liveAt, saved, exact, older, chosen, report, themes: report ? report.themes : library, selected, setSelected, generate, removeVersion, key, currentId };
 }
 
 export type NatalState = ReturnType<typeof useNatalReport>;
@@ -124,7 +129,7 @@ export function SynthesisCard({ natal }: { natal: NatalState }) {
   return (
     <article className="interp-card">
       {report ? (
-        <SourceBadge source={report.createdAt === liveAt ? "live" : "saved"} time={report.createdAt} title={report.meta.model} />
+        <SourceBadge source={aiSource(report.meta, report.createdAt === liveAt)} time={report.createdAt} title={report.meta.model} />
       ) : (
         <SourceBadge source="library" />
       )}
@@ -137,7 +142,7 @@ export function SynthesisCard({ natal }: { natal: NatalState }) {
 
 export function NatalReport({ natal }: { natal: NatalState }) {
   const { m, fmt, pick, locale } = useI18n();
-  const { gen, liveAt, saved, exact, older, chosen, report, themes, selected, setSelected, generate, removeVersion, key, currentId } = natal;
+  const { gen, notice, liveAt, saved, exact, older, chosen, report, themes, selected, setSelected, generate, removeVersion, key, currentId } = natal;
   const describe = (r: SavedNatalReport) =>
     keyString(r.key) === currentId ? m.natal.thisChart : sameChart(r.key, key) ? m.natal.earlierRules : m.natal.earlierChart;
   const fmtTime = (iso: string) =>
@@ -148,7 +153,7 @@ export function NatalReport({ natal }: { natal: NatalState }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <h2 className="h2" id="natal-title" style={{ scrollMarginTop: 100 }}>{m.natal.title}</h2>
         {report ? (
-          <SourceBadge source={report.createdAt === liveAt ? "live" : "saved"} time={report.createdAt} title={report.meta.model} />
+          <SourceBadge source={aiSource(report.meta, report.createdAt === liveAt)} time={report.createdAt} title={report.meta.model} />
         ) : (
           <SourceBadge source="library" />
         )}
@@ -156,6 +161,7 @@ export function NatalReport({ natal }: { natal: NatalState }) {
       <p className="muted small" style={{ margin: 0 }}>{m.natal.intro}</p>
 
       {gen === "loading" && <p className="muted small" style={{ margin: 0 }}>{m.natal.loadingAi}</p>}
+      {(gen === "off" || gen === "failed") && notice && <p className="muted small" style={{ margin: 0 }}>{notice}</p>}
       {gen === "failed" && !report && (
         <p className="notice" style={{ margin: 0 }}>
           {m.natal.aiFallback}{" "}

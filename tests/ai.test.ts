@@ -299,7 +299,7 @@ describe("routes", () => {
     expect(await (await statusGET(get())).json()).toEqual({ available: false, reason: "locked" });
     const open = await (await statusGET(get("moona-ai-access=demo"))).json();
     expect(open).toMatchObject({ available: true, provider: "openai-compatible", budget: { callsToday: 0, durable: true } });
-    expect(JSON.stringify(open)).not.toContain("k\"");
+    expect(JSON.stringify(open)).not.toContain("\"k\""); // the API key value never appears
   });
   it("status: returns unavailable when the ledger is corrupt or its money is fully reserved", async () => {
     vi.stubEnv("AI_API_KEY", "k");

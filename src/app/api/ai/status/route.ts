@@ -1,24 +1,39 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { aiConfig } from "@/lib/ai/config";
-import { budgetFor } from "@/lib/ai/provider";
 import { aiUnavailable, hasAiAccess } from "@/lib/ai/guard";
+import { budgetLevel } from "@/lib/ledger/levels";
+import { getLedger, planWarning } from "@/lib/ledger/factory";
+import { typicalCallMicro } from "@/lib/ledger/plans";
 
-// Whether AI is usable from this browser, and — only for clients with access — which provider/model
-// and how much of the budget is used. Never returns keys.
+const NO_STORE = { "Cache-Control": "no-store" };
+
+function warnAt(): [number, number, number] {
+  const w = (process.env.AI_WARN_AT ?? "").split(",").map(Number);
+  return w.length === 3 && w.every(Number.isFinite) ? (w as [number, number, number]) : [0.5, 0.8, 0.95];
+}
+
+// Whether AI is usable from this browser and how close tonight's budget is to its limits. Provider,
+// model and budget details only go to clients with access (the venue code, when one is set).
+// Never returns keys or costs per person.
 export async function GET(req: NextRequest) {
   const cfg = aiConfig();
   const off = aiUnavailable();
-  if (off || !hasAiAccess(req)) {
-    return NextResponse.json({ available: false, reason: off ?? "locked" }, { headers: { "Cache-Control": "no-store" } });
+  if (off || !hasAiAccess(req)) return NextResponse.json({ available: false, reason: off ?? "locked" }, { headers: NO_STORE });
+  const got = await getLedger();
+  if (!got.ok) return NextResponse.json({ available: false, reason: "ledger" }, { headers: NO_STORE });
+  let snapshot;
+  try {
+    snapshot = await got.ledger.snapshot();
+  } catch {
+    // an unreadable file ledger, or a database that is down
+    return NextResponse.json({ available: false, reason: got.ledger.kind === "file" ? "budget" : "ledger" }, { headers: NO_STORE });
   }
-  let budget;
-  try { budget = await budgetFor(cfg).snapshot(); }
-  catch {
-    return NextResponse.json({ available: false, reason: "budget" }, { headers: { "Cache-Control": "no-store" } });
-  }
-  const exhausted = budget.usdTotal + budget.reservedUsdTotal >= budget.limits.maxUsdTotal || budget.usdToday + budget.reservedUsdToday >= budget.limits.maxUsdPerDay || budget.callsToday >= budget.limits.maxCallsPerDay;
+  const { level, ratio } = budgetLevel(snapshot, warnAt(), typicalCallMicro(cfg));
+  const budget = snapshot.kind === "file" ? snapshot.legacy : { ...snapshot, ratio, planMismatch: planWarning() };
+  const paused = snapshot.kind === "sql" && (snapshot.gate.breaker === "tripped" || !snapshot.planId);
+  const available = level !== "exhausted" && !paused;
   return NextResponse.json(
-    { available: !exhausted, reason: exhausted ? "budget" : null, provider: cfg.provider, model: cfg.model, budget },
-    { headers: { "Cache-Control": "no-store" } },
+    { available, reason: available ? null : "budget", level, provider: cfg.provider, model: cfg.model, budget },
+    { headers: NO_STORE },
   );
 }

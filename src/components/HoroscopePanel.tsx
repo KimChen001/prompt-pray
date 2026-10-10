@@ -17,12 +17,14 @@ import { HOROSCOPE_VERSIONS } from "@/lib/ai/horoscope-prompt";
 import { SIGNS, SIGN_INFO, type Sign } from "@/lib/astro/zodiac";
 import type { BirthData } from "@/lib/astro/birth";
 import type { HouseSystem } from "@/lib/astro/houses";
-import { SourceBadge } from "./bits";
+import { SourceBadge, aiSource } from "./bits";
+import { newRequestId, requestAiOnce } from "@/lib/ai/client";
 import { ZodiacIcon } from "./AstroIcon";
 
 // "live" = generated for this view just now; "saved" = read back from this device's cache;
 // "older" = saved under earlier versions (holds = it still passes the current checks for today's facts).
-type AiState = { status: "idle" | "loading" | "live" | "saved" | "older" | "failed" | "off"; text?: CachedText; key?: string; holds?: boolean };
+// `why` = the server's reason when live AI is off (quota, budget, paused), shown under the template.
+type AiState = { status: "idle" | "loading" | "live" | "saved" | "older" | "failed" | "off"; text?: CachedText; key?: string; holds?: boolean; why?: string };
 
 export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: string; timeZone: string; onBusy?: (busy: boolean) => void }) {
   const { m, fmt, pick, locale } = useI18n();
@@ -83,16 +85,18 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
     onBusy?.(true);
     (async () => {
       try {
-        const res = await fetch("/api/ai/horoscope", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(horoscopeBody(day, localDate, timeZone, locale)),
-        });
+        // one id per attempt: a retry inside it (still running, busy) replays rather than pays twice
+        const out = await requestAiOnce<CachedText & { basis?: string[] }>("/api/ai/horoscope", horoscopeBody(day, localDate, timeZone, locale) as unknown as Record<string, unknown>, { requestId: newRequestId() });
         if (epoch !== dataEpoch()) return; // data cleared or birth details changed: the result belongs to nobody
         const here = currentKey.current === key;
-        if (res.status === 503) return here && setAi({ status: "off", key, ...keep }); // not configured or locked: template only
-        if (!res.ok) return here && setAi({ status: "failed", key, ...keep });
-        const body = (await res.json()) as CachedText & { basis?: string[] };
+        if (out.state === "quota") return here && setAi({ status: "off", key, ...keep, why: m.aiNotice.quotaShort });
+        if (out.state === "offline" && out.reason !== "network" && out.reason !== "busy") {
+          // not configured, locked, budget used up or paused: the template only
+          const why = out.reason === "budget" ? m.aiNotice.budgetShort : out.reason === "ledger" || out.reason === "paused" ? m.aiNotice.pausedShort : undefined;
+          return here && setAi({ status: "off", key, ...keep, why });
+        }
+        if (out.state !== "done") return here && setAi({ status: "failed", key, ...keep });
+        const body = out.value;
         // An unknown server version stays unknown (it is then treated as older), never assumed current.
         const text: CachedText = { overall: body.overall, love: body.love, work: body.work, meta: body.meta, basis: body.basis, versions: body.versions };
         // A paid result is saved for its own key even if the language or zone changed meanwhile.
@@ -143,7 +147,7 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
     <section className="panel stack gap-4" aria-labelledby="horoscope-title" aria-busy={fresh && ai.status === "loading"}>
       <div className="row-between">
         <h2 className="h3" id="horoscope-title">{m.horoscope.title}</h2>
-        {aiText ? <SourceBadge source={ai.status === "live" ? "live" : "saved"} time={aiText.meta.generatedAt} title={aiText.meta.model} /> : <SourceBadge source="template" />}
+        {aiText ? <SourceBadge source={aiSource(aiText.meta, ai.status === "live")} time={aiText.meta.generatedAt} title={aiText.meta.model} /> : <SourceBadge source="template" />}
       </div>
       <div className="row" style={{ gap: 8 }}>
         <span className="badge badge-mist">{m.horoscope.tones[h.tone]}</span>
@@ -172,6 +176,7 @@ export function HoroscopePanel({ localDate, timeZone, onBusy }: { localDate: str
         </p>
       )}
       {fresh && ai.status === "loading" && <span className="status-line"><span className="status-dot" />{m.horoscope.loadingAi}</span>}
+      {fresh && ai.status === "off" && ai.why && <p className="muted small" style={{ margin: 0 }}>{ai.why}</p>}
       {fresh && ai.status === "failed" && (
         <p className="notice">
           {m.horoscope.aiFallback}{" "}

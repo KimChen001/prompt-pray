@@ -21,6 +21,7 @@ import type { BirthData } from "@/lib/astro/birth";
 import type { AiMeta, BasisItem, ChatTurn } from "@/lib/tarot/types";
 import { StateOrb, type OrbMode } from "../cosmos/StateOrb";
 import { SupportPanel } from "../bits";
+import { newRequestId, requestAiOnce } from "@/lib/ai/client";
 import { ChatThread, Composer } from "./ChatParts";
 import { ContextPanel } from "./ContextPanel";
 
@@ -45,6 +46,7 @@ export function Conversation({ id }: { id: string | null }) {
   const [draftContext, setDraftContext] = useState<ChatContextChoice>(DEFAULT_CONTEXT);
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [notice, setNotice] = useState<string | null>(null); // the server's reason when replies are off or failed
   const [orb, setOrb] = useState<OrbMode>("quiet");
   const [birth, setBirth] = useState<BirthData | null>(null);
   const [notes, setNotes] = useState<MemoryNote[]>([]);
@@ -117,22 +119,29 @@ export function Conversation({ id }: { id: string | null }) {
     const shared = chosenNotes(s.context, activeNotes());
     if (shared.length) body.notes = shared.map((n) => ({ id: n.id, text: n.text }));
 
+    // The id is kept on the message it answers, so "Try again" replays a reply already paid for.
+    const remember = (requestId: string) => patchChat(s.id, (latest) => ({ ...latest, turns: latest.turns.map((t) => (t.at === answered.at && t.role === "user" ? { ...t, requestId } : t)) }));
+    const requestId = answered.requestId ?? newRequestId();
+    if (!answered.requestId) remember(requestId);
+    setNotice(null);
+    const stop = (next: Status, why: string | null = null) => {
+      setOrb("quiet");
+      setNotice(why);
+      setStatus(next);
+    };
+
     try {
-      const res = await fetch("/api/ai/talk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ctrl.signal });
+      const out = await requestAiOnce<TalkResponse>("/api/ai/talk", body as unknown as Record<string, unknown>, { requestId, signal: ctrl.signal, onNewId: remember });
       if (ctrl.signal.aborted) return;
-      if (res.status === 503) {
-        setOrb("quiet");
-        return setStatus("needsAi");
+      if (out.state === "crisis") return stop("crisis");
+      if (out.state === "quota") return stop("needsAi", m.aiNotice.quotaShort);
+      if (out.state === "offline") {
+        if (out.reason === "busy") return stop("failed", m.aiNotice.busyShort);
+        if (out.reason === "network") return stop("failed");
+        return stop("needsAi", out.reason === "budget" ? m.aiNotice.budgetShort : out.reason === "ledger" || out.reason === "paused" ? m.aiNotice.pausedShort : null);
       }
-      const data = (await res.json().catch(() => ({}))) as TalkResponse;
-      if (data.code === "crisis") {
-        setOrb("quiet");
-        return setStatus("crisis");
-      }
-      if (!res.ok || !data.reply) {
-        setOrb("quiet");
-        return setStatus("failed");
-      }
+      if (out.state !== "done" || !out.value.reply) return stop("failed");
+      const data = out.value;
       if (epoch !== dataEpoch()) return; // data was cleared meanwhile
       const suggestion = data.remember && !hasSimilarNote(listNotes(), data.remember.text) ? { ...data.remember, status: "pending" as const } : undefined;
       const reply: ChatTurn = { role: "assistant", content: data.reply, at: new Date().toISOString(), meta: data.meta, basis: data.basis, ...(suggestion ? { suggestion } : {}) };
@@ -150,7 +159,7 @@ export function Conversation({ id }: { id: string | null }) {
     } finally {
       if (inflight.current === ctrl) inflight.current = null;
     }
-  }, [locale]);
+  }, [locale, m]);
 
   function send() {
     const text = draft.trim();
@@ -257,11 +266,11 @@ export function Conversation({ id }: { id: string | null }) {
         )}
         {status === "crisis" && <SupportPanel onEdit={() => setStatus("idle")} />}
         {status === "needsAi" && (
-          <p className="notice">{m.talk.needsAi}{unanswered && <> <button type="button" className="btn-link" onClick={undoLast}>{m.talk.editLast}</button></>}</p>
+          <p className="notice">{notice ?? m.talk.needsAi}{unanswered && <> <button type="button" className="btn-link" onClick={undoLast}>{m.talk.editLast}</button></>}</p>
         )}
         {(status === "failed" || (status === "idle" && unanswered && session)) && (
           <p className="notice">
-            {status === "failed" ? m.talk.failed : m.talk.unanswered}{" "}
+            {status === "failed" ? notice ?? m.talk.failed : m.talk.unanswered}{" "}
             <button type="button" className="btn-link" onClick={() => session && void request(session)}>{m.talk.retry}</button>
             {" · "}
             <button type="button" className="btn-link" onClick={undoLast}>{m.talk.editLast}</button>

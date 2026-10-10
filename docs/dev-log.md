@@ -328,3 +328,62 @@ Built to `docs/ai-ledger-spec.md` §3.3, §4 and §7. Nothing calls it yet: rout
 - **The fix:** a rewrite is now a one-shot token, used up when its request starts. The failure notice's retry asks for a new rewrite. A request already running for a key is joined, not sent twice, when the person switches away and back.
 - **Tests:** `tests/horoscope-panel.test.ts` renders the real component (happy-dom, mocked fetch). It runs Codex's sequence: older cache 0 calls → rewrite Leo 1 → Aries 2 → back to Leo still 2. It also covers a failed rewrite, fast switching while a request runs, and strict mode. The old component fails 3 of the 4.
 - **Dev dependency:** `happy-dom` 20.14.6 (jsdom 30 needs Node 24.15+; this machine has 24.11).
+
+## S2 review fixes (2026-10-09, late night)
+
+An independent review agent tried to break the S2 ledger with throwaway tests. It found no P1: no cap overrun, double charge, stuck hold, double grant or audit corruption. The fixes are in commit a09c0d5, with regressions in `tests/ledger.review.test.ts`.
+
+**P2**
+- An exhausted older pack could block a funded newer one and close sales for everyone. A pack that can still pay is now used first.
+- A follow-up without a reading hash skipped the reading check. A missing hash now counts as a mismatch.
+
+**P3**
+- Bound billing never charges less than the bound.
+- A late text is never stored again after a purge.
+- Slice ids include their length, so hourly and daily slices never share a row.
+- A used window can't move into the future.
+- U+0000 is dropped before jsonb.
+- Only errors without a code are classified by their message, and TLS failures count as the ledger being down.
+- `sslmode` in the URL no longer overrides the TLS settings.
+- A production migrate puts the real clock back.
+- Checksums ignore line endings.
+- Roles are re-granted after a function change.
+- Dates hash by their value.
+- `validatePlan` names the database's own ranges.
+- There is no in-memory ledger on a deployment.
+
+**Left as is**
+- The rate-limit window is tumbling, not sliding; only unbilled 429s are counted there.
+- A late payment re-acquires its holds without the pack slack.
+
+## Budget S3: every AI route on the ledger (2026-10-09, late night)
+
+- **`ai/meter.ts`:**
+  - It reserves the request's bound, calls the provider exactly once, then completes or fails by billing class.
+  - Completion is retried through a ledger hiccup. If the ledger stays down, the reading is still returned and the reaper charges the bound.
+  - Nothing is called without "reserved".
+- **`ai/handler.ts`:** the shared order of every route: access → parse → preflight (crisis and bad facts reserve nothing) → ledger → visitor → burst limit (file ledger only) → meter → response.
+  - The five routes are now short specs; each exports `maxDuration = 60`.
+  - A Sun-sign-only horoscope is shared between visitors; anything with a Moon or Rising sign is not.
+- **Status (`http.ts` `meterResponse`):** the codes of spec §8.2. For example 202 still running, 409 make a new id, 422 id reused, 429 quota, 503 budget/ledger/busy/cooldown/paused.
+- **Status route:** shows budget levels (notice/warn/critical/exhausted) and details only to clients with access. It never shows costs or keys.
+- **Identity:**
+  - `identity/keys.ts` derives separate HKDF keys from SESSION_SECRET.
+  - `identity/visitor.ts` holds a UUID in a signed `moona_vid` cookie. It is minted lazily through the ledger's mint caps (per window and per hashed /24 or /48 network).
+  - The Phase 0 proxy and its 22-character ids are removed.
+- **Browser (`ai/client.ts` `requestAi`):** every request carries a request id, saved with its record before sending: the reading per language, or the chat turn. 202, busy and cooldown are retried with the same id; a failed id gets exactly one new id.
+  - Every call site is switched over: reading page, tarot follow-ups, Talk, home Talk, horoscope and birth-chart report.
+  - The quota, budget, paused and busy lines come from spec §10.1, in both languages, with a "low tonight" line.
+  - Fake-provider texts show "Simulated reading — no AI call", never "Live AI".
+- **Privacy copy (EN/ZH):** it now says what the server keeps: visitor counts, keyed request fingerprints (never text), and each AI reply for 2 hours (a shared Sun-sign horoscope for a day).
+- **Tests:** `identity`, `meter`, `routes.ai`, `client`, `event-sim`.
+  - **Demo Day simulation:** 200 visitors behind one address in three hourly waves on the real event plan. The fake provider adds 2% rate limits and 1% timeouts; visitors double-click, reload and clear cookies; the ledger goes down for 60 s.
+  - **Result:** all 1000 demanded readings are served, every pool stays within its cap, no visitor goes over quota, nothing is left in flight, and the audit is empty.
+  - **At maximum cost:** with 450 visitors, the $15 hourly slice refuses requests before the 2500 call cap.
+- **Verification:** 700 tests pass; TypeScript passes. Not covered: no real model or database was used, and the fallback-attempt share of the simulation is not modelled.
+
+**Next (S4):** paid packs, still offline:
+- Order, lot and webhook flows through fake payments.
+- A Stripe adapter with offline signature checks.
+- Account and operator identity.
+- The `/api/packs*`, webhook and `/api/ops/*` routes.

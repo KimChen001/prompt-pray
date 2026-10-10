@@ -21,6 +21,7 @@ import {
   patchChat, recordVisit, saveDaily, saveReading,
 } from "@/lib/store";
 import { checkInsDue, hasSimilarNote } from "@/lib/memory";
+import { newRequestId, requestAiOnce } from "@/lib/ai/client";
 import { detectCrisis } from "@/lib/safety";
 import { windowMessages } from "@/lib/chat/limits";
 import { newSession, type ChatContextChoice } from "@/lib/chat/session";
@@ -105,11 +106,19 @@ export default function AskPage() {
     const epoch = dataEpoch();
     try {
       const body = talkBody(session, locale, { birth: getBirth(), houseSystem: getSettings().houseSystem, notes: activeNotes(), today: { date: localDateKey(), timeZone: userTimeZone() } }, messages);
-      const res = await fetch("/api/ai/talk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      if (res.status === 503) return push({ from: "moona", kind: "notice", text: m.cosmos.noAi, offerCard: true });
-      const data = (await res.json().catch(() => ({}))) as { reply?: string; code?: string; basis?: BasisItem[]; remember?: { text: string; quote: string } | null; meta?: AiMeta };
-      if (data.code === "crisis") return push({ from: "moona", kind: "support" });
-      if (!res.ok || !data.reply) return push({ from: "moona", kind: "notice", text: m.talk.failed, retry: true });
+      // The id is kept on the message it answers, so a retry replays a reply already paid for.
+      const remember = (requestId: string) => patchChat(id, (s) => ({ ...s, turns: s.turns.map((t) => (t.at === answered.at && t.role === "user" ? { ...t, requestId } : t)) }));
+      const requestId = answered.requestId ?? newRequestId();
+      if (!answered.requestId) remember(requestId);
+      const out = await requestAiOnce<{ reply?: string; basis?: BasisItem[]; remember?: { text: string; quote: string } | null; meta?: AiMeta }>("/api/ai/talk", body as unknown as Record<string, unknown>, { requestId, onNewId: remember });
+      if (out.state === "crisis") return push({ from: "moona", kind: "support" });
+      if (out.state === "quota") return push({ from: "moona", kind: "notice", text: m.aiNotice.quotaShort, offerCard: true });
+      if (out.state === "offline" && out.reason !== "network") {
+        const why = out.reason === "busy" ? m.aiNotice.busyShort : out.reason === "budget" ? m.aiNotice.budgetShort : out.reason === "ledger" || out.reason === "paused" ? m.aiNotice.pausedShort : m.cosmos.noAi;
+        return push({ from: "moona", kind: "notice", text: why, offerCard: true, ...(out.reason === "busy" ? { retry: true } : {}) });
+      }
+      if (out.state !== "done" || !out.value.reply) return push({ from: "moona", kind: "notice", text: m.talk.failed, retry: true });
+      const data = out.value as { reply: string; basis?: BasisItem[]; remember?: { text: string; quote: string } | null; meta?: AiMeta };
       if (epoch !== dataEpoch()) return;
       const suggestion = data.remember && !hasSimilarNote(listNotes(), data.remember.text) ? { ...data.remember, status: "pending" as const } : undefined;
       const reply: ChatTurn = { role: "assistant", content: data.reply, at: new Date().toISOString(), meta: data.meta, basis: data.basis, ...(suggestion ? { suggestion } : {}) };

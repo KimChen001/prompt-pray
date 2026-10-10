@@ -6,7 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { CHAT_LIMITS } from "@/lib/chat/limits";
 import type { MemoryNote } from "@/lib/memory";
 import type { BasisItem, ChatTurn } from "@/lib/tarot/types";
-import { SourceBadge } from "../bits";
+import { SourceBadge, aiSource } from "../bits";
 import { NoteSuggestion } from "../Notes";
 
 export function BasisChips({ basis, notes }: { basis: BasisItem[]; notes: MemoryNote[] }) {
@@ -50,7 +50,7 @@ export function ChatThread({
           {t.role === "assistant" && (
             <>
               {t.basis && <BasisChips basis={t.basis} notes={notes} />}
-              {t.meta && <SourceBadge source={i >= freshFrom ? "live" : "saved"} time={t.meta.generatedAt} title={t.meta.model} />}
+              {t.meta && <SourceBadge source={aiSource(t.meta, i >= freshFrom)} time={t.meta.generatedAt} title={t.meta.model} />}
               {t.suggestion && <NoteSuggestion turn={t} source={source} onStatus={(status, text) => onSuggestion(t.at, status, text)} />}
             </>
           )}

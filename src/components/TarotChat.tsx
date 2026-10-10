@@ -12,6 +12,7 @@ import { windowMessages } from "@/lib/chat/limits";
 import type { ChatTurn, Reading } from "@/lib/tarot/types";
 import type { BigThreeNames } from "@/lib/astro/summary";
 import { SupportPanel } from "./bits";
+import { newRequestId, requestAiOnce } from "@/lib/ai/client";
 import { setReadingSuggestion, sharedNotes } from "./Notes";
 import { ChatThread, Composer } from "./chat/ChatParts";
 
@@ -33,6 +34,8 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
   const [draft, setDraft] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "failed" | "needsAi" | "crisis">(aiUnavailable ? "needsAi" : "idle");
   const [notes, setNotes] = useState<MemoryNote[]>([]);
+  // Why replies are off or failed, when the server said (quota, budget, paused, busy).
+  const [notice, setNotice] = useState<string | null>(null);
   const thread = reading.thread ?? [];
   // Replies created after this view opened are "live"; older ones were read back from storage.
   const [freshFrom] = useState(thread.length);
@@ -54,31 +57,40 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
     inflight.current?.abort();
     inflight.current = ctrl;
     const epoch = dataEpoch();
+    // The id is kept on the message it answers, so sending again replays a reply already paid for.
+    const remember = (requestId: string) => patchReading(r.id, (latest) => ({ ...latest, thread: (latest.thread ?? []).map((t) => (t.at === answered.at && t.role === "user" ? { ...t, requestId } : t)) }));
+    const requestId = answered.requestId ?? newRequestId();
+    if (!answered.requestId) remember(requestId);
     setState("sending");
+    setNotice(null);
     try {
-      const res = await fetch("/api/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: ctrl.signal,
-        body: JSON.stringify({
-          reading: {
-            locale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
-            chart: r.includeChart ? chart : undefined,
-            notes: sharedNotes(r).map((n) => n.text),
-          },
-          shown,
-          messages,
-        }),
-      });
-      if (res.status === 503) return setState("needsAi");
-      const body = await res.json().catch(() => ({}));
-      if (body.code === "crisis") return setState("crisis");
-      if (!res.ok || typeof body.reply !== "string") return setState("failed");
+      const out = await requestAiOnce<{ reply?: unknown; remember?: unknown; meta?: ChatTurn["meta"] }>("/api/ai/chat", {
+        reading: {
+          locale, spread: r.spread, topic: r.topic, question: r.question, cards: r.cards,
+          chart: r.includeChart ? chart : undefined,
+          notes: sharedNotes(r).map((n) => n.text),
+        },
+        shown,
+        messages,
+      }, { requestId, signal: ctrl.signal, onNewId: remember });
+      const stop = (next: "failed" | "needsAi", why: string | null = null) => {
+        setNotice(why);
+        setState(next);
+      };
+      if (out.state === "crisis") return setState("crisis");
+      if (out.state === "quota") return stop("needsAi", m.aiNotice.quotaShort);
+      if (out.state === "offline") {
+        if (out.reason === "busy") return stop("failed", m.aiNotice.busyShort);
+        if (out.reason === "network") return stop("failed");
+        return stop("needsAi", out.reason === "budget" ? m.aiNotice.budgetShort : out.reason === "ledger" || out.reason === "paused" ? m.aiNotice.pausedShort : null);
+      }
+      if (out.state !== "done" || typeof out.value.reply !== "string") return setState("failed");
+      const body = out.value;
       if (epoch !== dataEpoch()) return;
       // A suggestion is only offered; it becomes a note if the person saves it.
       const s = body.remember as { text: string; quote: string } | null | undefined;
       const suggestion = s && !hasSimilarNote(listNotes(), s.text) ? { text: s.text, quote: s.quote, status: "pending" as const } : undefined;
-      const reply: ChatTurn = { role: "assistant", content: body.reply, at: new Date().toISOString(), meta: body.meta, ...(suggestion ? { suggestion } : {}) };
+      const reply: ChatTurn = { role: "assistant", content: body.reply as string, at: new Date().toISOString(), meta: body.meta, ...(suggestion ? { suggestion } : {}) };
       patchReading(r.id, (latest) => {
         const next = appendReply(latest.thread ?? [], answered, reply);
         return next ? { ...latest, thread: next } : latest;
@@ -95,7 +107,7 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
     const text = draft.trim();
     if (!text || state === "sending") return;
     if (detectCrisis(text)) return setState("crisis");
-    const next = patchReading(reading.id, (latest) => ({ ...latest, thread: [...(latest.thread ?? []), { role: "user", content: text, at: new Date().toISOString() }] }));
+    const next = patchReading(reading.id, (latest) => ({ ...latest, thread: [...(latest.thread ?? []), { role: "user", content: text, at: new Date().toISOString(), requestId: newRequestId() }] }));
     if (!next) return;
     setDraft("");
     void send(next);
@@ -123,10 +135,10 @@ export function TarotChat({ reading, shown, chart, autoFocus, aiUnavailable, onB
         </div>
       )}
       {state === "crisis" && <SupportPanel onEdit={() => setState("idle")} />}
-      {state === "needsAi" && <p className="notice">{m.reading.chatNeedsAi}</p>}
+      {state === "needsAi" && <p className="notice">{notice ?? m.reading.chatNeedsAi}</p>}
       {(state === "failed" || (state === "idle" && lastIsUnanswered)) && (
         <p className="notice">
-          {state === "failed" ? m.reading.chatFailed : m.talk.unanswered}{" "}
+          {state === "failed" ? notice ?? m.reading.chatFailed : m.talk.unanswered}{" "}
           <button type="button" className="btn-link" onClick={() => void send(reading)}>{m.reading.retrySend}</button>
           {" · "}
           <button type="button" className="btn-link" onClick={undoLast}>{m.talk.editLast}</button>
